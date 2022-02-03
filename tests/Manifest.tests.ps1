@@ -17,49 +17,40 @@ BeforeAll {
 
     $script:manifest = $null
 }
-Describe 'Module manifest' {
+Describe "module manifest" {
 
-    Context 'Validation' {
+    Context '- Validation' {
 
-        It 'Has a valid manifest' {
+        It 'is a valid manifest' {
             $manifestData | Should -Not -BeNullOrEmpty
         }
 
-        It 'Has a valid name in the manifest' {
+        It 'has a valid name in the manifest' {
             $manifestData.Name | Should -Be $moduleName
         }
 
-        It 'Has a valid root module' {
-            $manifestData.RootModule | Should -Be "$($moduleName).psm1"
+        It 'has a valid root module' {
+            $manifestData.RootModule | Should -Be $moduleName
         }
 
-        It 'Has a valid version in the manifest' {
+        It 'has a valid version' {
             $manifestData.Version -as [Version] | Should -Not -BeNullOrEmpty
         }
 
-        It 'Has a valid description' {
+        It 'has a valid description' {
             $manifestData.Description | Should -Not -BeNullOrEmpty
         }
 
-        It 'Has a valid author' {
+        It 'has a valid author' {
             $manifestData.Author | Should -Not -BeNullOrEmpty
         }
 
-        It 'Has a valid guid' {
+        It 'has a valid guid' {
             { [guid]::Parse($manifestData.Guid) } | Should -Not -Throw
         }
 
-        It 'Has a valid copyright' {
+        It 'has a valid copyright' {
             $manifestData.CopyRight | Should -Not -BeNullOrEmpty
-        }
-
-        It 'Has a valid version in the changelog' {
-            $changelogVersion               | Should -Not -BeNullOrEmpty
-            $changelogVersion -as [Version] | Should -Not -BeNullOrEmpty
-        }
-
-        It 'Changelog and manifest versions are the same' {
-            $changelogVersion -as [Version] | Should -Be ( $manifestData.Version -as [Version] )
         }
     }
 }

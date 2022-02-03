@@ -9,14 +9,14 @@ function Resolve-IdentityReference {
         ForEach ($ThisACE in $AccessControlEntry) {
             $ThisServer = $null
             $AdsiProvider = $null
-            $ThisServer = $ThisACE.Path -split '\\' | Where-Object {$_ -ne ''} | Select-Object -First 1
-            $ResolvedIdentityReference = $ThisACE.IdentityReference -replace 'NT AUTHORITY',$ThisServer -replace 'BUILTIN',$ThisServer
+            $ThisServer = $ThisACE.Path -split '\\' | Where-Object { $_ -ne '' } | Select-Object -First 1
+            $ResolvedIdentityReference = $ThisACE.IdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
 
-            $ThisServer = $ResolvedIdentityReference -split '\\' | Where-Object {$_ -ne ''} | Select-Object -First 1
+            $ThisServer = $ResolvedIdentityReference -split '\\' | Where-Object { $_ -ne '' } | Select-Object -First 1
             $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
             $ThisACE | Add-Member -PassThru -Force -NotePropertyMembers @{
                 ResolvedIdentityReference = $ResolvedIdentityReference
-                AdsiProvider = $AdsiProvider
+                AdsiProvider              = $AdsiProvider
             }
         }
     }

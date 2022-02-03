@@ -9,7 +9,7 @@ function Get-TrustedDomainSidNameMap {
     )
 
     $Map = @{}
-    
+
     $nltestresults = & nltest /domain_trusts
     $NlTestRegEx = '[\d]*: .*'
     $TrustRelationships = $nltestresults -match $NlTestRegEx
@@ -27,21 +27,20 @@ function Get-TrustedDomainSidNameMap {
         $DistinguishedName = ConvertTo-DistinguishedName -Domain $DomainNetbios
 
         try {
-            $DomainDirectoryEntry.RefreshCache({"objectSid"})
+            $DomainDirectoryEntry.RefreshCache({ "objectSid" })
             $DomainSid = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$DomainDirectoryEntry.Properties["objectSid"].Value, 0).ToString()
             if ($KeyByNetbios -eq $true) {
                 $Map[$DomainNetbios] = [pscustomobject]@{
-                    Dns = $DomainDnsName
-                    Netbios = $DomainNetbios
-                    Sid = $DomainSid
+                    Dns               = $DomainDnsName
+                    Netbios           = $DomainNetbios
+                    Sid               = $DomainSid
                     DistinguishedName = $DistinguishedName
                 }
-            }
-            else {
+            } else {
                 $Map[$DomainSid] = [pscustomobject]@{
-                    Dns = $DomainDnsName
-                    Netbios = $DomainNetbios
-                    Sid = $DomainSid
+                    Dns               = $DomainDnsName
+                    Netbios           = $DomainNetbios
+                    Sid               = $DomainSid
                     DistinguishedName = $DistinguishedName
                 }
             }
@@ -50,16 +49,16 @@ function Get-TrustedDomainSidNameMap {
         }
     }
 
-    $LocalAccountSID = Get-WmiObject -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" |
-        Select-Object -First 1 -ExpandProperty SID
-    $DomainSid = $LocalAccountSID.Substring(0,$LocalAccountSID.LastIndexOf("-"))
+    $LocalAccountSID = Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" |
+    Select-Object -First 1 -ExpandProperty SID
+    $DomainSid = $LocalAccountSID.Substring(0, $LocalAccountSID.LastIndexOf("-"))
     $DomainNetBios = hostname
     $DomainDnsName = "$DomainNetbios.$((Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters').'NV Domain')"
 
     $Map[$DomainSid] = [pscustomobject]@{
-        Dns = $DomainDnsName
+        Dns     = $DomainDnsName
         Netbios = $DomainNetbios
-        Sid = $DomainSid
+        Sid     = $DomainSid
     }
 
     Write-Output $Map

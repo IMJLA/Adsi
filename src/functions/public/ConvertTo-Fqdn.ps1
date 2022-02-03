@@ -5,7 +5,7 @@ function ConvertTo-Fqdn {
     )
     process {
         ForEach ($DN in $DistinguishedName) {
-            $DN -replace ',DC=','.' -replace 'DC=',''
+            $DN -replace ',DC=', '.' -replace 'DC=', ''
         }
     }
 }

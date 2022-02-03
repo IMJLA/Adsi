@@ -3,7 +3,7 @@ function ConvertTo-HexStringRepresentation {
         [byte[]]$SIDByteArray
     )
     $SIDByteArray |
-        ForEach-Object {
-            '{0:X}' -f $_
-        }
+    ForEach-Object {
+        '{0:X}' -f $_
+    }
 }

@@ -1,6 +1,6 @@
 function Search-Directory {
     param (
-        
+
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
         [string]$Filter,
         [int]$PageSize = 1000,
@@ -10,12 +10,11 @@ function Search-Directory {
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
     )
-    
+
     if ($Credential) {
         #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath,$($Credential.UserName),$($Credential.GetNetworkCredential().password))
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -Credential $Credential -DirectoryEntryCache $DirectoryEntryCache
-    }
-    else {
+    } else {
         #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache
     }
@@ -37,7 +36,7 @@ function Search-Directory {
     #$null = $DirectorySearcher.Dispose()
     #$null = $DirectoryEntry.Dispose()
     $Output = [System.DirectoryServices.SearchResult[]]::new($SearchResultCollection.Count)
-    $SearchResultCollection.CopyTo($Output,0)
+    $SearchResultCollection.CopyTo($Output, 0)
     #$null = $SearchResultCollection.Dispose()
     Write-Output $Output
 

@@ -2,7 +2,7 @@
 param(
     # Build task(s) to execute
     [parameter(ParameterSetName = 'task', position = 0)]
-    [string[]]$Task = 'default',
+    [string[]]$Task = @('ExportPublicFunctions', 'default'),
 
     # Bootstrap dependencies
     [switch]$Bootstrap,
@@ -15,10 +15,19 @@ param(
     [hashtable]$Properties,
 
     # Optional parameters to pass to psake
-    [hashtable]$Parameters
+    [hashtable]$Parameters,
+
+    # Git commit message
+    [parameter(Mandatory)]
+    [string]$GitCommitMessage
 )
 
 $ErrorActionPreference = 'Stop'
+
+if (!($PSBoundParameters.ContainsKey('Parameters'))) {
+    $Parameters = @{}
+}
+$Parameters['GitCommitMessage'] = $GitCommitMessage
 
 # Bootstrap dependencies
 if ($Bootstrap.IsPresent) {
@@ -39,9 +48,9 @@ if ($Bootstrap.IsPresent) {
 $psakeFile = './psakeFile.ps1'
 if ($PSCmdlet.ParameterSetName -eq 'Help') {
     Get-PSakeScriptTasks -buildFile $psakeFile |
-        Format-Table -Property Name, Description, Alias, DependsOn
+    Format-Table -Property Name, Description, Alias, DependsOn
 } else {
     Set-BuildEnvironment -Force
-    Invoke-psake -buildFile $psakeFile -taskList $Task -nologo -properties $Properties -parameters $Parameters
+    Invoke-psake -buildFile $psakeFile -taskList $Task -properties $Properties -parameters $Parameters
     exit ([int](-not $psake.build_success))
 }

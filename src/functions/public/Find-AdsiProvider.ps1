@@ -7,17 +7,16 @@ function Find-AdsiProvider {
     $AdsiProvider = $null
     if ($KnownServers[$AdsiServer]) {
         $AdsiProvider = $KnownServers[$AdsiServer]
-    }
-    else {
-        try{
+    } else {
+        try {
             $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$AdsiServer")
             $AdsiProvider = 'LDAP'
-        }catch{}
+        } catch {}
         if (!$AdsiProvider) {
-            try{
+            try {
                 $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$AdsiServer")
                 $AdsiProvider = 'WinNT'
-            }catch{}
+            } catch {}
         }
         if (!$AdsiProvider) {
             $AdsiProvider = 'none'

@@ -3,8 +3,10 @@ function ConvertTo-SidByteArray {
         [Parameter(ValueFromPipeline)]
         [string]$SidString
     )
-    $SID = [System.Security.Principal.SecurityIdentifier]::new($SidString)
-    [byte[]]$Bytes = [byte[]]::new($SID.BinaryLength)
-    $SID.GetBinaryForm($Bytes,0)
-    Write-Output $Bytes
+    process {
+        $SID = [System.Security.Principal.SecurityIdentifier]::new($SidString)
+        [byte[]]$Bytes = [byte[]]::new($SID.BinaryLength)
+        $SID.GetBinaryForm($Bytes, 0)
+        Write-Output $Bytes
+    }
 }
