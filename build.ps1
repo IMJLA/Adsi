@@ -2,7 +2,7 @@
 param(
     # Build task(s) to execute
     [parameter(ParameterSetName = 'task', position = 0)]
-    [string[]]$Task = @('ExportPublicFunctions', 'default'),
+    [string[]]$Task = 'default', #@('ExportPublicFunctions', 'default'),
 
     # Bootstrap dependencies
     [switch]$Bootstrap,
@@ -17,9 +17,9 @@ param(
     # Optional parameters to pass to psake
     [hashtable]$Parameters,
 
-    # Git commit message
+    # Commit message for source control
     [parameter(Mandatory)]
-    [string]$GitCommitMessage
+    [string]$CommitMessage
 )
 
 $ErrorActionPreference = 'Stop'
@@ -27,7 +27,7 @@ $ErrorActionPreference = 'Stop'
 if (!($PSBoundParameters.ContainsKey('Parameters'))) {
     $Parameters = @{}
 }
-$Parameters['GitCommitMessage'] = $GitCommitMessage
+$Parameters['CommitMessage'] = $CommitMessage
 
 # Bootstrap dependencies
 if ($Bootstrap.IsPresent) {

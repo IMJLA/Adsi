@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.75] - 2022-02-08 - pipelinified the RotateBuilds psake task
+## [1.0.74] - 2022-02-08 - beautified psakefile output
+## [1.0.73] - 2022-02-08 - fixed psakefile
+## [1.0.72] - 2022-02-08 - more psakefile fixes
+## [1.0.71] - 2022-02-08 - more psakefile upgrades
+## [1.0.70] - 2022-02-08 - how about now
+## [1.0.69] - 2022-02-08 - same as before, but it'll work this time
+## [1.0.68] - 2022-02-08 - Fixed path to ScriptAnalyzerSettings.psd1
+## [1.0.67] - 2022-02-08 - fixed tests
+## [1.0.66] - 2022-02-08 - Always use BuildHelpers
+## [1.0.65] - 2022-02-08 - lets try again
+## [1.0.64] - 2022-02-08 - more psake fix attempts
+## [1.0.63] - 2022-02-08 - Added Remove-Variable to psakefile Init
+## [1.0.62] - 2022-02-08 - Removed RO from variable
+## [1.0.61] - 2022-02-08 - removed extraneous space
+## [1.0.60] - 2022-02-08 - fixed the fix for the fix
+## [1.0.59] - 2022-02-08 - fixed the fix
+## [1.0.58] - 2022-02-08 - fixed the psakefile upgrades
+## [1.0.57] - 2022-02-08 - psakefile and build upgraded
+## [1.0.56] - 2022-02-08 - psakefile upgraded
+## [1.0.55] - 2022-02-08 - psake upgraded
+## [1.0.54] - 2022-02-08 - test
 ## [1.0.53] - 2022-01-30 - Added task to rotate builds and retain the last 10
 ## [1.0.52] - 2022-01-30 - Replaced WMI with CIM
 ## [1.0.51] - 2022-01-29 - Fixed more issues identified by linter

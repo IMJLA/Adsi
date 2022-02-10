@@ -4,9 +4,9 @@ BeforeDiscovery {
 
     $manifest = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
     $outputDir = Join-Path -Path $env:BHProjectPath -ChildPath 'dist'
-    $outputModDir = Join-Path -Path $outputDir -ChildPath $env:BHProjectName
-    $outputModVerDir = Join-Path -Path $outputModDir -ChildPath $manifest.ModuleVersion
-    $outputModVerManifest = Join-Path -Path $outputModVerDir -ChildPath "$($env:BHProjectName).psd1"
+    $outputModVerDir = Join-Path -Path $outputDir -ChildPath $manifest.ModuleVersion
+    $outputModDir = Join-Path -Path $outputModVerDir -ChildPath $env:BHProjectName
+    $outputModVerManifest = Join-Path -Path $outputModDir -ChildPath "$($env:BHProjectName).psd1"
 
     # Get module commands
     # Remove all versions of the module from the session. Pester can't handle multiple versions.

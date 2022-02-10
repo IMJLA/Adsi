@@ -1,10 +1,10 @@
 BeforeAll {
     $moduleName = $env:BHProjectName
     $manifest = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
-    $outputDir = Join-Path -Path $ENV:BHProjectPath -ChildPath 'dist'
-    $outputModDir = Join-Path -Path $outputDir -ChildPath $env:BHProjectName
-    $outputModVerDir = Join-Path -Path $outputModDir -ChildPath $manifest.ModuleVersion
-    $outputManifestPath = Join-Path -Path $outputModVerDir -Child "$($moduleName).psd1"
+    $outputDir = Join-Path -Path $env:BHProjectPath -ChildPath 'dist'
+    $outputModVerDir = Join-Path -Path $outputDir -ChildPath $manifest.ModuleVersion
+    $outputModDir = Join-Path -Path $outputModVerDir -ChildPath $env:BHProjectName
+    $outputManifestPath = Join-Path -Path $outputModDir -ChildPath "$($env:BHProjectName).psd1"
     $manifestData = Test-ModuleManifest -Path $outputManifestPath -Verbose:$false -ErrorAction Stop -WarningAction SilentlyContinue
 
     $changelogPath = Join-Path -Path $env:BHProjectPath -Child 'CHANGELOG.md'
