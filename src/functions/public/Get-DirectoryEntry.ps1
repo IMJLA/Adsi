@@ -5,10 +5,13 @@ function Get-DirectoryEntry {
         .DESCRIPTION
         Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
         .EXAMPLE
-        ----------  EXAMPLE 1  ----------
+        Get-DirectoryEntry
+
+        distinguishedName : {DC=ad,DC=contoso,DC=com}
+        Path              : LDAP://DC=ad,DC=contoso,DC=com
+
         As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
 
-        Get-DirectoryEntry
     #>
     [OutputType([PSObject[]])]
     [CmdletBinding()]
