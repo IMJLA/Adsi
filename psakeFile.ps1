@@ -406,6 +406,7 @@ task Test -depends Pester, Analyze {
 } -description 'Execute Pester and ScriptAnalyzer tests'
 
 task Git -depends Test {
+    # Commit to Git
     git add .
     git commit -m $CommitMessage
     git push origin main
@@ -418,6 +419,7 @@ task Publish -depends Git {
         Path       = $PSBPreference.Build.ModuleOutDir
         Repository = $PSBPreference.Publish.PSRepository
         Verbose    = $VerbosePreference
+        WhatIf     = $true
     }
     if ($PSBPreference.Publish.PSRepositoryApiKey) {
         $publishParams.NuGetApiKey = $PSBPreference.Publish.PSRepositoryApiKey

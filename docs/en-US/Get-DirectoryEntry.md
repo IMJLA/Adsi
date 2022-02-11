@@ -1,6 +1,6 @@
 ---
-external help file: PsAdsi-help.xml
-Module Name: PsAdsi
+external help file: Adsi-help.xml
+Module Name: Adsi
 online version:
 schema: 2.0.0
 ---
