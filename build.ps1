@@ -2,7 +2,7 @@
 param(
     # Build task(s) to execute
     [parameter(ParameterSetName = 'task', position = 0)]
-    [string[]]$Task = 'default', #@('ExportPublicFunctions', 'default'),
+    [string[]]$Task = 'default',
 
     # Bootstrap dependencies
     [switch]$Bootstrap,

@@ -16,12 +16,13 @@ FormatTaskName {
     Write-Host $taskName.ToUpper() -ForegroundColor Blue
 }
 
-task Default -depends Test
+task Default -depends Publish
 
-#Task Init -FromModule Init -minimumVersion 0.6.1
+#Task Init -FromModule PowerShellBuild -minimumVersion 0.6.1
 
 task InitializeBuildHelpers {
     BuildHelpers\Set-BuildEnvironment -Force
+    $env:BHCommitMessage = $CommitMessage
 } -description 'Initialize the environment variables from the BuildHelpers module'
 
 task UpdateModuleVersion -depends InitializeBuildHelpers -Action {
@@ -40,12 +41,9 @@ task UpdateModuleVersion -depends InitializeBuildHelpers -Action {
     "`tNew Version: $NextVersion$nl"
 
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $NextVersion -ErrorAction Stop
-    $PSBPreference.General.ModuleVersion = $NextVersion
 } -description 'Increment the module version and update the module manifest accordingly'
 
 task InitializePowershellBuild -depends UpdateModuleVersion {
-
-    $env:BHCommitMessage = $CommitMessage
 
     Remove-Variable -Name PSBPreference -Scope Script -Force -ErrorAction Ignore
 
@@ -163,7 +161,8 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
                 PSRepository           = 'PSGallery'
 
                 # API key to authenticate to PowerShell repository with
-                PSRepositoryApiKey     = $env:PSGALLERY_API_KEY
+                #PSRepositoryApiKey     = $env:PSGALLERY_API_KEY
+                PSRepositoryApiKey     = $PSGAPIK
 
                 # Credential to authenticate to PowerShell repository with
                 PSRepositoryCredential = $null
@@ -207,7 +206,7 @@ task RotateBuilds -depends InitializePowershellBuild {
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
     ForEach-Object {
         "`tDeleting old build .\$((($_.FullName -split '\\') | Select-Object -Last 2) -join '\')"
-        $_ | Remove-Item -Recurse -Force -WhatIf
+        $_ | Remove-Item -Recurse -Force
     }
 
 } -description 'Delete all but the last 4 builds, so we will have our 5 most recent builds after the new one is complete'
@@ -296,6 +295,51 @@ task StageFiles -depends CleanOutputDir {
     Build-PSBuildModule @buildParams
 } -description 'Builds module based on source directory'
 
+$genMarkdownPreReqs = {
+    $result = $true
+    if (-not (Get-Module platyPS -ListAvailable)) {
+        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
+        $result = $false
+    }
+    $result
+}
+task GenerateMarkdown -depends StageFiles -precondition $genMarkdownPreReqs {
+    $buildMDParams = @{
+        ModulePath = $PSBPreference.Build.ModuleOutDir
+        ModuleName = $PSBPreference.General.ModuleName
+        DocsPath   = $PSBPreference.Docs.RootDir
+        Locale     = $PSBPreference.Help.DefaultLocale
+    }
+    Build-PSBuildMarkdown @buildMDParams
+} -description 'Generates PlatyPS markdown files from module help'
+
+$genHelpFilesPreReqs = {
+    $result = $true
+    if (-not (Get-Module platyPS -ListAvailable)) {
+        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
+        $result = $false
+    }
+    $result
+}
+
+task GenerateMAML -depends GenerateMarkdown -precondition $genHelpFilesPreReqs {
+    Build-PSBuildMAMLHelp -Path $PSBPreference.Docs.RootDir -DestinationPath $PSBPreference.Build.ModuleOutDir
+} -description 'Generates MAML-based help from PlatyPS markdown files'
+
+task BuildHelp -depends GenerateMarkdown, GenerateMAML {} -description 'Builds help documentation'
+
+$genUpdatableHelpPreReqs = {
+    $result = $true
+    if (-not (Get-Module platyPS -ListAvailable)) {
+        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
+        $result = $false
+    }
+    $result
+}
+task GenerateUpdatableHelp -depends BuildHelp -precondition $genUpdatableHelpPreReqs {
+    Build-PSBuildUpdatableHelp -DocsPath $PSBPreference.Docs.RootDir -OutputPath $PSBPreference.Help.UpdatableHelpOutDir
+} -description 'Create updatable help .cab file based on PlatyPS markdown help'
+
 task Build -depends StageFiles, BuildHelp {
 
     Write-Host "$nl`tEnvironment variables:" -ForegroundColor Yellow
@@ -327,18 +371,18 @@ task Analyze -depends Build -precondition $analyzePreReqs {
 
 $pesterPreReqs = {
     $result = $true
-    if (-not $PSBPreference.Test.Enabled) {
-        Write-Warning 'Pester testing is not enabled.'
-        $result = $false
-    }
+    #if (-not $PSBPreference.Test.Enabled) {
+    #    Write-Warning 'Pester testing is not enabled.'
+    #    $result = $false
+    #}
     if (-not (Get-Module -Name Pester -ListAvailable)) {
         Write-Warning 'Pester module is not installed'
         $result = $false
     }
-    if (-not (Test-Path -Path $PSBPreference.Test.RootDir)) {
-        Write-Warning "Test directory [$($PSBPreference.Test.RootDir)] not found"
-        $result = $false
-    }
+    #if (-not (Test-Path -Path $PSBPreference.Test.RootDir)) {
+    #    Write-Warning "Test directory [$($PSBPreference.Test.RootDir)] not found"
+    #    $result = $false
+    #}
     return $result
 }
 task Pester -depends Build -precondition $pesterPreReqs {
@@ -361,74 +405,35 @@ task Pester -depends Build -precondition $pesterPreReqs {
 task Test -depends Pester, Analyze {
 } -description 'Execute Pester and ScriptAnalyzer tests'
 
-task BuildHelp -depends GenerateMarkdown, GenerateMAML {} -description 'Builds help documentation'
-
-$genMarkdownPreReqs = {
-    $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
-        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
-        $result = $false
-    }
-    $result
+task Git -depends Test {
+    git add .
+    git commit -m $CommitMessage
+    git push origin main
 }
-task GenerateMarkdown -depends StageFiles -precondition $genMarkdownPreReqs {
-    $buildMDParams = @{
-        ModulePath = $PSBPreference.Build.ModuleOutDir
-        ModuleName = $PSBPreference.General.ModuleName
-        DocsPath   = $PSBPreference.Docs.RootDir
-        Locale     = $PSBPreference.Help.DefaultLocale
-    }
-    Build-PSBuildMarkdown @buildMDParams
-} -description 'Generates PlatyPS markdown files from module help'
 
-$genHelpFilesPreReqs = {
-    $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
-        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
-        $result = $false
-    }
-    $result
-}
-task GenerateMAML -depends GenerateMarkdown -precondition $genHelpFilesPreReqs {
-    Build-PSBuildMAMLHelp -Path $PSBPreference.Docs.RootDir -DestinationPath $PSBPreference.Build.ModuleOutDir
-} -description 'Generates MAML-based help from PlatyPS markdown files'
-
-$genUpdatableHelpPreReqs = {
-    $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
-        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
-        $result = $false
-    }
-    $result
-}
-task GenerateUpdatableHelp -depends BuildHelp -precondition $genUpdatableHelpPreReqs {
-    Build-PSBuildUpdatableHelp -DocsPath $PSBPreference.Docs.RootDir -OutputPath $PSBPreference.Help.UpdatableHelpOutDir
-} -description 'Create updatable help .cab file based on PlatyPS markdown help'
-
-task Publish -depends Test {
+task Publish -depends Git {
     Assert -conditionToCheck ($PSBPreference.Publish.PSRepositoryApiKey -or $PSBPreference.Publish.PSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$($PSBPreference.Publish.PSRepository)] with."
 
     $publishParams = @{
         Path       = $PSBPreference.Build.ModuleOutDir
-        Version    = $PSBPreference.General.ModuleVersion
         Repository = $PSBPreference.Publish.PSRepository
         Verbose    = $VerbosePreference
+        WhatIf     = $true
     }
     if ($PSBPreference.Publish.PSRepositoryApiKey) {
-        $publishParams.ApiKey = $PSBPreference.Publish.PSRepositoryApiKey
+        $publishParams.NuGetApiKey = $PSBPreference.Publish.PSRepositoryApiKey
     }
 
     if ($PSBPreference.Publish.PSRepositoryCredential) {
         $publishParams.Credential = $PSBPreference.Publish.PSRepositoryCredential
     }
 
-    Publish-PSBuildModule @publishParams
+
+    # Publish to PSGallery
+    Publish-Module @publishParams
 } -description 'Publish module to the defined PowerShell repository'
 
 task ? -description 'Lists the available tasks' {
     'Available tasks:'
     $psake.context.Peek().Tasks.Keys | Sort-Object
 }
-
-
-

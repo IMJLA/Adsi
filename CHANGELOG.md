@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.85] - 2022-02-10 - Added Git psake task
+## [1.0.84] - 2022-02-10 - Repeating with verbose output
+## [1.0.83] - 2022-02-10 - Fixed params for Publish-Module
+## [1.0.82] - 2022-02-10 - Removing PowerShellbBuild from the equation
+## [1.0.81] - 2022-02-10 - Bug fix one line 418 of psakefile
+## [1.0.80] - 2022-02-10 - Trying with new API key for PSGallery
+## [1.0.79] - 2022-02-10 - Trying again
+## [1.0.78] - 2022-02-10 - Removed unnecessary update of PSBPreference variable in UpdateModuleVersion task before the var is created in a later task
+## [1.0.76] - 2022-02-09 - more psakefile updates
 ## [1.0.75] - 2022-02-08 - pipelinified the RotateBuilds psake task
 ## [1.0.74] - 2022-02-08 - beautified psakefile output
 ## [1.0.73] - 2022-02-08 - fixed psakefile
