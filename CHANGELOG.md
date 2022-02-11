@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.89] - 2022-02-10 - Wait a minute I already got rid of that WhatIf....oh well got rid of it again
 ## [1.0.88] - 2022-02-10 - Trying new build with fixed PSGallery API Key
 ## [1.0.87] - 2022-02-10 - Renamed from PsAdsi to Adsi due to unexpected conflict with unlisted module in PSGallery
 ## [1.0.86] - 2022-02-10 - Removed WhatIf from PSGallery Publish-Module command in psakefile
