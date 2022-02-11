@@ -161,8 +161,7 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
                 PSRepository           = 'PSGallery'
 
                 # API key to authenticate to PowerShell repository with
-                #PSRepositoryApiKey     = $env:PSGALLERY_API_KEY
-                PSRepositoryApiKey     = $PSGAPIK
+                PSRepositoryApiKey     = $env:PSGALLERY_API_KEY
 
                 # Credential to authenticate to PowerShell repository with
                 PSRepositoryCredential = $null

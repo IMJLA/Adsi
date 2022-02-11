@@ -1,667 +1,667 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="272" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="2" invalid="0" date="2022-02-10" time="18:06:48">
-  <environment platform="Microsoft Windows 10 Pro|C:\WINDOWS|\Device\Harddisk0\Partition2" machine-name="JLA-LOFTHTPC" cwd="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests" clr-version="Unknown" os-version="10.0.19044" user="Owner" nunit-version="2.5.8.0" user-domain="JLA-LoftHTPC" />
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="272" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="2" invalid="0" date="2022-02-10" time="18:11:22">
+  <environment os-version="10.0.19044" machine-name="JLA-LOFTHTPC" platform="Microsoft Windows 10 Pro|C:\WINDOWS|\Device\Harddisk0\Partition2" clr-version="Unknown" cwd="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests" user-domain="JLA-LoftHTPC" nunit-version="2.5.8.0" user="Owner" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="TestFixture" name="Pester" executed="True" result="Ignored" success="True" time="6.4486" asserts="0" description="Pester">
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Ignored" success="True" time="5.5047" asserts="0" description="Pester">
     <results>
-      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1" executed="True" result="Success" success="True" time="4.572" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1">
+      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1" executed="True" result="Success" success="True" time="4.2199" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Test help for Add-DomainFqdnToLdapPath" executed="True" result="Success" success="True" time="0.5882" asserts="0" description="Test help for Add-DomainFqdnToLdapPath">
+          <test-suite type="TestFixture" name="Test help for Add-DomainFqdnToLdapPath" executed="True" result="Success" success="True" time="0.5291" asserts="0" description="Test help for Add-DomainFqdnToLdapPath">
             <results>
-              <test-suite type="TestFixture" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.5212" asserts="0" description="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath">
+              <test-suite type="TestFixture" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.4996" asserts="0" description="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath">
                 <results>
-                  <test-case description="Has description" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath.Has description" time="0.0209" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0546" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath.Has correct parameter type" time="0.0185" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath.Has description" time="0.0535" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0516" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Add-DomainFqdnToLdapPath.Parameter DirectoryPath.Has correct parameter type" time="0.0216" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Add-DomainFqdnToLdapPath.Help is not auto-generated" time="0.2377" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Add-DomainFqdnToLdapPath.Has description" time="0.044" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Add-DomainFqdnToLdapPath.Has example code" time="0.0261" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Add-DomainFqdnToLdapPath.Has example help" time="0.0159" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Add-DomainFqdnToLdapPath.Help is not auto-generated" time="0.204" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Add-DomainFqdnToLdapPath.Has description" time="0.0166" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Add-DomainFqdnToLdapPath.Has example code" time="0.056" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Add-DomainFqdnToLdapPath.Has example help" time="0.0219" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Add-SidInfo" executed="True" result="Success" success="True" time="0.8223" asserts="0" description="Test help for Add-SidInfo">
+          <test-suite type="TestFixture" name="Test help for Add-SidInfo" executed="True" result="Success" success="True" time="0.7662" asserts="0" description="Test help for Add-SidInfo">
             <results>
-              <test-suite type="TestFixture" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.1057" asserts="0" description="Test help for Add-SidInfo.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.1014" asserts="0" description="Test help for Add-SidInfo.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache.Has description" time="0.0081" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0285" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache.Has description" time="0.009" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0318" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Add-SidInfo.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0143" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Add-SidInfo.Parameter InputObject" executed="True" result="Success" success="True" time="0.1628" asserts="0" description="Test help for Add-SidInfo.Parameter InputObject">
+              <test-suite type="TestFixture" name="Test help for Add-SidInfo.Parameter InputObject" executed="True" result="Success" success="True" time="0.176" asserts="0" description="Test help for Add-SidInfo.Parameter InputObject">
                 <results>
-                  <test-case description="Has description" name="Test help for Add-SidInfo.Parameter InputObject.Has description" time="0.0177" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Add-SidInfo.Parameter InputObject.Has correct [mandatory] value" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Add-SidInfo.Parameter InputObject.Has correct parameter type" time="0.0193" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Add-SidInfo.Parameter InputObject.Has description" time="0.0328" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Add-SidInfo.Parameter InputObject.Has correct [mandatory] value" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Add-SidInfo.Parameter InputObject.Has correct parameter type" time="0.0152" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap" executed="True" result="Success" success="True" time="0.2182" asserts="0" description="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap">
+              <test-suite type="TestFixture" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap" executed="True" result="Success" success="True" time="0.2252" asserts="0" description="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap">
                 <results>
-                  <test-case description="Has description" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap.Has description" time="0.009" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap.Has correct [mandatory] value" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap.Has correct parameter type" time="0.0108" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap.Has description" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap.Has correct [mandatory] value" time="0.0184" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Add-SidInfo.Parameter TrustedDomainSidNameMap.Has correct parameter type" time="0.0097" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Add-SidInfo.Help is not auto-generated" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Add-SidInfo.Has description" time="0.0119" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Add-SidInfo.Has example code" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Add-SidInfo.Has example help" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Add-SidInfo.Help is not auto-generated" time="0.0142" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Add-SidInfo.Has description" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Add-SidInfo.Has example code" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Add-SidInfo.Has example help" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for ConvertTo-DistinguishedName" executed="True" result="Success" success="True" time="0.9141" asserts="0" description="Test help for ConvertTo-DistinguishedName">
+          <test-suite type="TestFixture" name="Test help for ConvertTo-DistinguishedName" executed="True" result="Success" success="True" time="0.8583" asserts="0" description="Test help for ConvertTo-DistinguishedName">
             <results>
-              <test-suite type="TestFixture" name="Test help for ConvertTo-DistinguishedName.Parameter Domain" executed="True" result="Success" success="True" time="0.0733" asserts="0" description="Test help for ConvertTo-DistinguishedName.Parameter Domain">
+              <test-suite type="TestFixture" name="Test help for ConvertTo-DistinguishedName.Parameter Domain" executed="True" result="Success" success="True" time="0.0764" asserts="0" description="Test help for ConvertTo-DistinguishedName.Parameter Domain">
                 <results>
-                  <test-case description="Has description" name="Test help for ConvertTo-DistinguishedName.Parameter Domain.Has description" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-DistinguishedName.Parameter Domain.Has correct [mandatory] value" time="0.0107" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-DistinguishedName.Parameter Domain.Has correct parameter type" time="0.0067" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for ConvertTo-DistinguishedName.Parameter Domain.Has description" time="0.009" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-DistinguishedName.Parameter Domain.Has correct [mandatory] value" time="0.0188" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-DistinguishedName.Parameter Domain.Has correct parameter type" time="0.0091" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-DistinguishedName.Help is not auto-generated" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for ConvertTo-DistinguishedName.Has description" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for ConvertTo-DistinguishedName.Has example code" time="0.01" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for ConvertTo-DistinguishedName.Has example help" time="0.0126" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-DistinguishedName.Help is not auto-generated" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for ConvertTo-DistinguishedName.Has description" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for ConvertTo-DistinguishedName.Has example code" time="0.0063" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for ConvertTo-DistinguishedName.Has example help" time="0.0098" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for ConvertTo-Fqdn" executed="True" result="Success" success="True" time="0.9987" asserts="0" description="Test help for ConvertTo-Fqdn">
+          <test-suite type="TestFixture" name="Test help for ConvertTo-Fqdn" executed="True" result="Success" success="True" time="1.0879" asserts="0" description="Test help for ConvertTo-Fqdn">
             <results>
-              <test-suite type="TestFixture" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName" executed="True" result="Success" success="True" time="0.0631" asserts="0" description="Test help for ConvertTo-Fqdn.Parameter DistinguishedName">
+              <test-suite type="TestFixture" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName" executed="True" result="Success" success="True" time="0.2108" asserts="0" description="Test help for ConvertTo-Fqdn.Parameter DistinguishedName">
                 <results>
-                  <test-case description="Has description" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName.Has description" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName.Has correct [mandatory] value" time="0.0184" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName.Has correct parameter type" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName.Has description" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName.Has correct [mandatory] value" time="0.1444" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-Fqdn.Parameter DistinguishedName.Has correct parameter type" time="0.0201" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-Fqdn.Help is not auto-generated" time="0.0095" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for ConvertTo-Fqdn.Has description" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for ConvertTo-Fqdn.Has example code" time="0.004" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for ConvertTo-Fqdn.Has example help" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-Fqdn.Help is not auto-generated" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for ConvertTo-Fqdn.Has description" time="0.0101" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for ConvertTo-Fqdn.Has example code" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for ConvertTo-Fqdn.Has example help" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentation" executed="True" result="Success" success="True" time="1.0915" asserts="0" description="Test help for ConvertTo-HexStringRepresentation">
+          <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentation" executed="True" result="Success" success="True" time="1.2127" asserts="0" description="Test help for ConvertTo-HexStringRepresentation">
             <results>
-              <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray" executed="True" result="Success" success="True" time="0.0759" asserts="0" description="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray">
+              <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray" executed="True" result="Success" success="True" time="0.1044" asserts="0" description="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray">
                 <results>
-                  <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray.Has description" time="0.0152" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray.Has correct [mandatory] value" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray.Has correct parameter type" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray.Has description" time="0.01" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray.Has correct [mandatory] value" time="0.0091" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-HexStringRepresentation.Parameter SIDByteArray.Has correct parameter type" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-HexStringRepresentation.Help is not auto-generated" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentation.Has description" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for ConvertTo-HexStringRepresentation.Has example code" time="0.0134" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for ConvertTo-HexStringRepresentation.Has example help" time="0.0063" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-HexStringRepresentation.Help is not auto-generated" time="0.0137" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentation.Has description" time="0.0308" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for ConvertTo-HexStringRepresentation.Has example code" time="0.0155" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for ConvertTo-HexStringRepresentation.Has example help" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString" executed="True" result="Success" success="True" time="1.2024" asserts="0" description="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString">
+          <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString" executed="True" result="Success" success="True" time="1.2776" asserts="0" description="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString">
             <results>
-              <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray" executed="True" result="Success" success="True" time="0.0931" asserts="0" description="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray">
+              <test-suite type="TestFixture" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray" executed="True" result="Success" success="True" time="0.052" asserts="0" description="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray">
                 <results>
-                  <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray.Has description" time="0.0108" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray.Has correct [mandatory] value" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray.Has correct parameter type" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray.Has description" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray.Has correct [mandatory] value" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Parameter SIDByteArray.Has correct parameter type" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Help is not auto-generated" time="0.013" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Has description" time="0.0131" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Has example code" time="0.015" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Has example help" time="0.0179" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Help is not auto-generated" time="0.0081" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Has description" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Has example code" time="0.0099" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for ConvertTo-HexStringRepresentationForLDAPFilterString.Has example help" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for ConvertTo-SidByteArray" executed="True" result="Success" success="True" time="1.2733" asserts="0" description="Test help for ConvertTo-SidByteArray">
+          <test-suite type="TestFixture" name="Test help for ConvertTo-SidByteArray" executed="True" result="Success" success="True" time="1.3427" asserts="0" description="Test help for ConvertTo-SidByteArray">
             <results>
-              <test-suite type="TestFixture" name="Test help for ConvertTo-SidByteArray.Parameter SidString" executed="True" result="Success" success="True" time="0.0565" asserts="0" description="Test help for ConvertTo-SidByteArray.Parameter SidString">
+              <test-suite type="TestFixture" name="Test help for ConvertTo-SidByteArray.Parameter SidString" executed="True" result="Success" success="True" time="0.0483" asserts="0" description="Test help for ConvertTo-SidByteArray.Parameter SidString">
                 <results>
-                  <test-case description="Has description" name="Test help for ConvertTo-SidByteArray.Parameter SidString.Has description" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-SidByteArray.Parameter SidString.Has correct [mandatory] value" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-SidByteArray.Parameter SidString.Has correct parameter type" time="0.0089" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for ConvertTo-SidByteArray.Parameter SidString.Has description" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for ConvertTo-SidByteArray.Parameter SidString.Has correct [mandatory] value" time="0.0109" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for ConvertTo-SidByteArray.Parameter SidString.Has correct parameter type" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-SidByteArray.Help is not auto-generated" time="0.0162" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for ConvertTo-SidByteArray.Has description" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for ConvertTo-SidByteArray.Has example code" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for ConvertTo-SidByteArray.Has example help" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for ConvertTo-SidByteArray.Help is not auto-generated" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for ConvertTo-SidByteArray.Has description" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for ConvertTo-SidByteArray.Has example code" time="0.0032" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for ConvertTo-SidByteArray.Has example help" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember" executed="True" result="Success" success="True" time="1.4402" asserts="0" description="Test help for Expand-AdsiGroupMember">
+          <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember" executed="True" result="Success" success="True" time="1.4827" asserts="0" description="Test help for Expand-AdsiGroupMember">
             <results>
-              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry" executed="True" result="Success" success="True" time="0.0597" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry">
+              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry" executed="True" result="Success" success="True" time="0.048" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry.Has description" time="0.0099" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry.Has correct [mandatory] value" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry.Has description" time="0.0157" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry.Has correct [mandatory] value" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
                   <test-case description="Has correct parameter type" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntry.Has correct parameter type" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0928" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0774" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0115" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-AdsiGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.1177" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad">
+              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.0975" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad">
                 <results>
                   <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad.Has description" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad.Has correct parameter type" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-AdsiGroupMember.Parameter PropertiesToLoad.Has correct parameter type" time="0.008" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap" executed="True" result="Success" success="True" time="0.1482" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap">
+              <test-suite type="TestFixture" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap" executed="True" result="Success" success="True" time="0.128" asserts="0" description="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap.Has description" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap.Has correct [mandatory] value" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap.Has correct parameter type" time="0.0101" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap.Has description" time="0.0132" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap.Has correct [mandatory] value" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-AdsiGroupMember.Parameter TrustedDomainSidNameMap.Has correct parameter type" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Expand-AdsiGroupMember.Help is not auto-generated" time="0.0076" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Has description" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Expand-AdsiGroupMember.Has example code" time="0.0077" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Expand-AdsiGroupMember.Has example help" time="0.0061" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Expand-AdsiGroupMember.Help is not auto-generated" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Expand-AdsiGroupMember.Has description" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Expand-AdsiGroupMember.Has example code" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Expand-AdsiGroupMember.Has example help" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Expand-IdentityReference" executed="True" result="Success" success="True" time="1.6392" asserts="0" description="Test help for Expand-IdentityReference">
+          <test-suite type="TestFixture" name="Test help for Expand-IdentityReference" executed="True" result="Success" success="True" time="1.6479" asserts="0" description="Test help for Expand-IdentityReference">
             <results>
-              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry" executed="True" result="Success" success="True" time="0.0437" asserts="0" description="Test help for Expand-IdentityReference.Parameter AccessControlEntry">
+              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry" executed="True" result="Success" success="True" time="0.0419" asserts="0" description="Test help for Expand-IdentityReference.Parameter AccessControlEntry">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry.Has description" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry.Has correct [mandatory] value" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry.Has correct parameter type" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry.Has description" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry.Has correct [mandatory] value" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter AccessControlEntry.Has correct parameter type" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0677" asserts="0" description="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0666" asserts="0" description="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache.Has description" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache.Has correct parameter type" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache.Has description" time="0.0111" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter GroupMember" executed="True" result="Success" success="True" time="0.0939" asserts="0" description="Test help for Expand-IdentityReference.Parameter GroupMember">
+              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter GroupMember" executed="True" result="Success" success="True" time="0.092" asserts="0" description="Test help for Expand-IdentityReference.Parameter GroupMember">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter GroupMember.Has description" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter GroupMember.Has correct [mandatory] value" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter GroupMember.Has correct parameter type" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter GroupMember.Has description" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter GroupMember.Has correct [mandatory] value" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter GroupMember.Has correct parameter type" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion" executed="True" result="Success" success="True" time="0.1261" asserts="0" description="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion">
+              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion" executed="True" result="Success" success="True" time="0.1203" asserts="0" description="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion.Has description" time="0.006" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion.Has correct [mandatory] value" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion.Has correct parameter type" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion.Has description" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion.Has correct [mandatory] value" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter GroupMemberRecursion.Has correct parameter type" time="0.0079" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache" executed="True" result="Success" success="True" time="0.183" asserts="0" description="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache">
+              <test-suite type="TestFixture" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache" executed="True" result="Success" success="True" time="0.1512" asserts="0" description="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache.Has description" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache.Has correct [mandatory] value" time="0.0381" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache.Has correct parameter type" time="0.0061" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache.Has description" time="0.015" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache.Has correct [mandatory] value" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-IdentityReference.Parameter IdentityReferenceCache.Has correct parameter type" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Expand-IdentityReference.Help is not auto-generated" time="0.0095" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Expand-IdentityReference.Has description" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Expand-IdentityReference.Has example code" time="0.0032" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Expand-IdentityReference.Has example help" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Expand-IdentityReference.Help is not auto-generated" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Expand-IdentityReference.Has description" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Expand-IdentityReference.Has example code" time="0.0108" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Expand-IdentityReference.Has example help" time="0.004" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Expand-WinNTGroupMember" executed="True" result="Success" success="True" time="1.7559" asserts="0" description="Test help for Expand-WinNTGroupMember">
+          <test-suite type="TestFixture" name="Test help for Expand-WinNTGroupMember" executed="True" result="Success" success="True" time="1.732" asserts="0" description="Test help for Expand-WinNTGroupMember">
             <results>
-              <test-suite type="TestFixture" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry" executed="True" result="Success" success="True" time="0.0655" asserts="0" description="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry">
+              <test-suite type="TestFixture" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry" executed="True" result="Success" success="True" time="0.0519" asserts="0" description="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry.Has description" time="0.008" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry.Has correct [mandatory] value" time="0.0137" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry.Has correct parameter type" time="0.0081" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry.Has description" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry.Has correct [mandatory] value" time="0.0081" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntry.Has correct parameter type" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0964" asserts="0" description="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0738" asserts="0" description="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0119" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0065" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Expand-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Expand-WinNTGroupMember.Help is not auto-generated" time="0.0095" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Expand-WinNTGroupMember.Has description" time="0.004" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Expand-WinNTGroupMember.Has example code" time="0.006" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Expand-WinNTGroupMember.Has example help" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Expand-WinNTGroupMember.Help is not auto-generated" time="0.0077" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Expand-WinNTGroupMember.Has description" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Expand-WinNTGroupMember.Has example code" time="0.0031" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Expand-WinNTGroupMember.Has example help" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Find-AdsiProvider" executed="True" result="Success" success="True" time="1.8765" asserts="0" description="Test help for Find-AdsiProvider">
+          <test-suite type="TestFixture" name="Test help for Find-AdsiProvider" executed="True" result="Success" success="True" time="1.8227" asserts="0" description="Test help for Find-AdsiProvider">
             <results>
-              <test-suite type="TestFixture" name="Test help for Find-AdsiProvider.Parameter AdsiServer" executed="True" result="Success" success="True" time="0.0767" asserts="0" description="Test help for Find-AdsiProvider.Parameter AdsiServer">
+              <test-suite type="TestFixture" name="Test help for Find-AdsiProvider.Parameter AdsiServer" executed="True" result="Success" success="True" time="0.0494" asserts="0" description="Test help for Find-AdsiProvider.Parameter AdsiServer">
                 <results>
-                  <test-case description="Has description" name="Test help for Find-AdsiProvider.Parameter AdsiServer.Has description" time="0.0106" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Find-AdsiProvider.Parameter AdsiServer.Has correct [mandatory] value" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Find-AdsiProvider.Parameter AdsiServer.Has correct parameter type" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Find-AdsiProvider.Parameter AdsiServer.Has description" time="0.0093" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Find-AdsiProvider.Parameter AdsiServer.Has correct [mandatory] value" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Find-AdsiProvider.Parameter AdsiServer.Has correct parameter type" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Find-AdsiProvider.Parameter KnownServers" executed="True" result="Success" success="True" time="0.1" asserts="0" description="Test help for Find-AdsiProvider.Parameter KnownServers">
+              <test-suite type="TestFixture" name="Test help for Find-AdsiProvider.Parameter KnownServers" executed="True" result="Success" success="True" time="0.0766" asserts="0" description="Test help for Find-AdsiProvider.Parameter KnownServers">
                 <results>
-                  <test-case description="Has description" name="Test help for Find-AdsiProvider.Parameter KnownServers.Has description" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Find-AdsiProvider.Parameter KnownServers.Has correct [mandatory] value" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Find-AdsiProvider.Parameter KnownServers.Has correct parameter type" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Find-AdsiProvider.Parameter KnownServers.Has description" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Find-AdsiProvider.Parameter KnownServers.Has correct [mandatory] value" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Find-AdsiProvider.Parameter KnownServers.Has correct parameter type" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Find-AdsiProvider.Help is not auto-generated" time="0.011" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Find-AdsiProvider.Has description" time="0.0105" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Find-AdsiProvider.Has example code" time="0.0081" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Find-AdsiProvider.Has example help" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Find-AdsiProvider.Help is not auto-generated" time="0.0065" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Find-AdsiProvider.Has description" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Find-AdsiProvider.Has example code" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Find-AdsiProvider.Has example help" time="0.0097" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Get-ADSIGroup" executed="True" result="Success" success="True" time="2.0146" asserts="0" description="Test help for Get-ADSIGroup">
+          <test-suite type="TestFixture" name="Test help for Get-ADSIGroup" executed="True" result="Success" success="True" time="1.9676" asserts="0" description="Test help for Get-ADSIGroup">
             <results>
-              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0534" asserts="0" description="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0554" asserts="0" description="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache.Has description" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0112" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache.Has description" time="0.0095" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.0719" asserts="0" description="Test help for Get-ADSIGroup.Parameter DirectoryPath">
+              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.0741" asserts="0" description="Test help for Get-ADSIGroup.Parameter DirectoryPath">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter DirectoryPath.Has description" time="0.0065" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter DirectoryPath.Has correct parameter type" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter DirectoryPath.Has description" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter DirectoryPath.Has correct [mandatory] value" time="0.005" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter DirectoryPath.Has correct parameter type" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter GroupName" executed="True" result="Success" success="True" time="0.0937" asserts="0" description="Test help for Get-ADSIGroup.Parameter GroupName">
+              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter GroupName" executed="True" result="Success" success="True" time="0.0958" asserts="0" description="Test help for Get-ADSIGroup.Parameter GroupName">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter GroupName.Has description" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter GroupName.Has correct [mandatory] value" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter GroupName.Has correct parameter type" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter GroupName.Has description" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter GroupName.Has correct [mandatory] value" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter GroupName.Has correct parameter type" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.1104" asserts="0" description="Test help for Get-ADSIGroup.Parameter PropertiesToLoad">
+              <test-suite type="TestFixture" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.1193" asserts="0" description="Test help for Get-ADSIGroup.Parameter PropertiesToLoad">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad.Has description" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0031" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad.Has correct parameter type" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad.Has description" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroup.Parameter PropertiesToLoad.Has correct parameter type" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Get-ADSIGroup.Help is not auto-generated" time="0.009" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Get-ADSIGroup.Has description" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Get-ADSIGroup.Has example code" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Get-ADSIGroup.Has example help" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Get-ADSIGroup.Help is not auto-generated" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Get-ADSIGroup.Has description" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Get-ADSIGroup.Has example code" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Get-ADSIGroup.Has example help" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember" executed="True" result="Success" success="True" time="2.1307" asserts="0" description="Test help for Get-ADSIGroupMember">
+          <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember" executed="True" result="Success" success="True" time="2.0729" asserts="0" description="Test help for Get-ADSIGroupMember">
             <results>
-              <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0447" asserts="0" description="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0499" asserts="0" description="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.011" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember.Parameter Group" executed="True" result="Success" success="True" time="0.07" asserts="0" description="Test help for Get-ADSIGroupMember.Parameter Group">
+              <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember.Parameter Group" executed="True" result="Success" success="True" time="0.0696" asserts="0" description="Test help for Get-ADSIGroupMember.Parameter Group">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Parameter Group.Has description" time="0.0074" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroupMember.Parameter Group.Has correct [mandatory] value" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Parameter Group.Has description" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroupMember.Parameter Group.Has correct [mandatory] value" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
                   <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroupMember.Parameter Group.Has correct parameter type" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.0989" asserts="0" description="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad">
+              <test-suite type="TestFixture" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.0935" asserts="0" description="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad.Has description" time="0.0107" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad.Has correct parameter type" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad.Has description" time="0.0063" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-ADSIGroupMember.Parameter PropertiesToLoad.Has correct parameter type" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Get-ADSIGroupMember.Help is not auto-generated" time="0.006" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Has description" time="0.004" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Get-ADSIGroupMember.Has example code" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Get-ADSIGroupMember.Has example help" time="0.0061" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Get-ADSIGroupMember.Help is not auto-generated" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Get-ADSIGroupMember.Has description" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Get-ADSIGroupMember.Has example code" time="0.007" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Get-ADSIGroupMember.Has example help" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Get-CurrentDomain" executed="True" result="Success" success="True" time="2.166" asserts="0" description="Test help for Get-CurrentDomain">
+          <test-suite type="TestFixture" name="Test help for Get-CurrentDomain" executed="True" result="Success" success="True" time="2.1127" asserts="0" description="Test help for Get-CurrentDomain">
             <results>
-              <test-case description="Help is not auto-generated" name="Test help for Get-CurrentDomain.Help is not auto-generated" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Get-CurrentDomain.Has description" time="0.0032" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Get-CurrentDomain.Has example code" time="0.0076" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Get-CurrentDomain.Has example help" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Get-CurrentDomain.Help is not auto-generated" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Get-CurrentDomain.Has description" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Get-CurrentDomain.Has example code" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Get-CurrentDomain.Has example help" time="0.005" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry" executed="True" result="Success" success="True" time="2.3218" asserts="0" description="Test help for Get-DirectoryEntry">
+          <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry" executed="True" result="Success" success="True" time="2.2611" asserts="0" description="Test help for Get-DirectoryEntry">
             <results>
-              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter Credential" executed="True" result="Success" success="True" time="0.0382" asserts="0" description="Test help for Get-DirectoryEntry.Parameter Credential">
+              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter Credential" executed="True" result="Success" success="True" time="0.0495" asserts="0" description="Test help for Get-DirectoryEntry.Parameter Credential">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter Credential.Has description" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter Credential.Has correct [mandatory] value" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter Credential.Has correct parameter type" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter Credential.Has description" time="0.009" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter Credential.Has correct [mandatory] value" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter Credential.Has correct parameter type" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0588" asserts="0" description="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.076" asserts="0" description="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache.Has description" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache.Has description" time="0.011" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter DirectoryEntryCache.Has correct parameter type" time="0.006" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.0904" asserts="0" description="Test help for Get-DirectoryEntry.Parameter DirectoryPath">
+              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.0975" asserts="0" description="Test help for Get-DirectoryEntry.Parameter DirectoryPath">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath.Has description" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0116" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath.Has correct parameter type" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath.Has description" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter DirectoryPath.Has correct parameter type" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.1324" asserts="0" description="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad">
+              <test-suite type="TestFixture" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.118" asserts="0" description="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad.Has description" time="0.0163" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.009" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad.Has correct parameter type" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad.Has description" time="0.0072" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-DirectoryEntry.Parameter PropertiesToLoad.Has correct parameter type" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Get-DirectoryEntry.Help is not auto-generated" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Get-DirectoryEntry.Has description" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Get-DirectoryEntry.Has example code" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Get-DirectoryEntry.Has example help" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Get-DirectoryEntry.Help is not auto-generated" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Get-DirectoryEntry.Has description" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Get-DirectoryEntry.Has example code" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Get-DirectoryEntry.Has example help" time="0.0059" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Get-TrustedDomainSidNameMap" executed="True" result="Success" success="True" time="2.4252" asserts="0" description="Test help for Get-TrustedDomainSidNameMap">
+          <test-suite type="TestFixture" name="Test help for Get-TrustedDomainSidNameMap" executed="True" result="Success" success="True" time="2.3483" asserts="0" description="Test help for Get-TrustedDomainSidNameMap">
             <results>
-              <test-suite type="TestFixture" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0636" asserts="0" description="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0538" asserts="0" description="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache.Has description" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0117" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache.Has correct parameter type" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache.Has description" time="0.0059" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-TrustedDomainSidNameMap.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios" executed="True" result="Success" success="True" time="0.0822" asserts="0" description="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios">
+              <test-suite type="TestFixture" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios" executed="True" result="Success" success="True" time="0.0775" asserts="0" description="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios.Has description" time="0.004" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios.Has correct [mandatory] value" time="0.0061" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios.Has correct parameter type" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios.Has description" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios.Has correct [mandatory] value" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-TrustedDomainSidNameMap.Parameter KeyByNetbios.Has correct parameter type" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Get-TrustedDomainSidNameMap.Help is not auto-generated" time="0.0121" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Get-TrustedDomainSidNameMap.Help is not auto-generated" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
               <test-case description="Has description" name="Test help for Get-TrustedDomainSidNameMap.Has description" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Get-TrustedDomainSidNameMap.Has example code" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Get-TrustedDomainSidNameMap.Has example help" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Get-TrustedDomainSidNameMap.Has example code" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Get-TrustedDomainSidNameMap.Has example help" time="0.0108" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Get-WinNTGroupMember" executed="True" result="Success" success="True" time="2.5181" asserts="0" description="Test help for Get-WinNTGroupMember">
+          <test-suite type="TestFixture" name="Test help for Get-WinNTGroupMember" executed="True" result="Success" success="True" time="2.4304" asserts="0" description="Test help for Get-WinNTGroupMember">
             <results>
-              <test-suite type="TestFixture" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry" executed="True" result="Success" success="True" time="0.0529" asserts="0" description="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry">
+              <test-suite type="TestFixture" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry" executed="True" result="Success" success="True" time="0.0495" asserts="0" description="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry.Has description" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry.Has correct [mandatory] value" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry.Has correct parameter type" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry.Has description" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry.Has correct [mandatory] value" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntry.Has correct parameter type" time="0.0079" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0787" asserts="0" description="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0728" asserts="0" description="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.003" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache.Has description" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Get-WinNTGroupMember.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0072" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Get-WinNTGroupMember.Help is not auto-generated" time="0.0129" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Get-WinNTGroupMember.Has description" time="0.006" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Get-WinNTGroupMember.Has example code" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Get-WinNTGroupMember.Has example help" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Get-WinNTGroupMember.Help is not auto-generated" time="0.0112" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Get-WinNTGroupMember.Has description" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Get-WinNTGroupMember.Has example code" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Get-WinNTGroupMember.Has example help" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Invoke-ComObject" executed="True" result="Success" success="True" time="2.6486" asserts="0" description="Test help for Invoke-ComObject">
+          <test-suite type="TestFixture" name="Test help for Invoke-ComObject" executed="True" result="Success" success="True" time="2.5495" asserts="0" description="Test help for Invoke-ComObject">
             <results>
-              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter ComObject" executed="True" result="Success" success="True" time="0.0475" asserts="0" description="Test help for Invoke-ComObject.Parameter ComObject">
+              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter ComObject" executed="True" result="Success" success="True" time="0.0409" asserts="0" description="Test help for Invoke-ComObject.Parameter ComObject">
                 <results>
-                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter ComObject.Has description" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter ComObject.Has correct [mandatory] value" time="0.0094" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter ComObject.Has correct parameter type" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter ComObject.Has description" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter ComObject.Has correct [mandatory] value" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter ComObject.Has correct parameter type" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter Method" executed="True" result="Success" success="True" time="0.0684" asserts="0" description="Test help for Invoke-ComObject.Parameter Method">
+              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter Method" executed="True" result="Success" success="True" time="0.064" asserts="0" description="Test help for Invoke-ComObject.Parameter Method">
                 <results>
-                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter Method.Has description" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter Method.Has correct [mandatory] value" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter Method.Has correct parameter type" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter Method.Has description" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter Method.Has correct [mandatory] value" time="0.0094" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter Method.Has correct parameter type" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter Property" executed="True" result="Success" success="True" time="0.0906" asserts="0" description="Test help for Invoke-ComObject.Parameter Property">
+              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter Property" executed="True" result="Success" success="True" time="0.083" asserts="0" description="Test help for Invoke-ComObject.Parameter Property">
                 <results>
-                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter Property.Has description" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter Property.Has correct [mandatory] value" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter Property.Has correct parameter type" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter Property.Has description" time="0.0079" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter Property.Has correct [mandatory] value" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter Property.Has correct parameter type" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter Value" executed="True" result="Success" success="True" time="0.1168" asserts="0" description="Test help for Invoke-ComObject.Parameter Value">
+              <test-suite type="TestFixture" name="Test help for Invoke-ComObject.Parameter Value" executed="True" result="Success" success="True" time="0.1069" asserts="0" description="Test help for Invoke-ComObject.Parameter Value">
                 <results>
-                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter Value.Has description" time="0.0062" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter Value.Has correct [mandatory] value" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter Value.Has correct parameter type" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Invoke-ComObject.Parameter Value.Has description" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Invoke-ComObject.Parameter Value.Has correct [mandatory] value" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Invoke-ComObject.Parameter Value.Has correct parameter type" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Invoke-ComObject.Help is not auto-generated" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Invoke-ComObject.Has description" time="0.0033" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Invoke-ComObject.Has example code" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Invoke-ComObject.Has example help" time="0.005" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Invoke-ComObject.Help is not auto-generated" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Invoke-ComObject.Has description" time="0.0034" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Invoke-ComObject.Has example code" time="0.0038" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Invoke-ComObject.Has example help" time="0.0081" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry" executed="True" result="Success" success="True" time="2.8052" asserts="0" description="Test help for New-FakeDirectoryEntry">
+          <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry" executed="True" result="Success" success="True" time="2.6838" asserts="0" description="Test help for New-FakeDirectoryEntry">
             <results>
-              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter Credential" executed="True" result="Success" success="True" time="0.056" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter Credential">
+              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter Credential" executed="True" result="Success" success="True" time="0.0401" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter Credential">
                 <results>
-                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter Credential.Has description" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter Credential.Has correct [mandatory] value" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter Credential.Has correct parameter type" time="0.014" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter Credential.Has description" time="0.0067" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter Credential.Has correct [mandatory] value" time="0.005" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter Credential.Has correct parameter type" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0808" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0665" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache.Has description" time="0.007" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache.Has description" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.1046" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath">
+              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.0841" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath">
                 <results>
-                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath.Has description" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0063" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath.Has correct parameter type" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath.Has description" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter DirectoryPath.Has correct parameter type" time="0.004" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.1343" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad">
+              <test-suite type="TestFixture" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.113" asserts="0" description="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad">
                 <results>
-                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad.Has description" time="0.0076" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad.Has correct parameter type" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad.Has description" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for New-FakeDirectoryEntry.Parameter PropertiesToLoad.Has correct parameter type" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for New-FakeDirectoryEntry.Help is not auto-generated" time="0.0097" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Has description" time="0.004" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for New-FakeDirectoryEntry.Has example code" time="0.0059" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for New-FakeDirectoryEntry.Has example help" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for New-FakeDirectoryEntry.Help is not auto-generated" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for New-FakeDirectoryEntry.Has description" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for New-FakeDirectoryEntry.Has example code" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for New-FakeDirectoryEntry.Has example help" time="0.0041" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Resolve-IdentityReference" executed="True" result="Success" success="True" time="2.9615" asserts="0" description="Test help for Resolve-IdentityReference">
+          <test-suite type="TestFixture" name="Test help for Resolve-IdentityReference" executed="True" result="Success" success="True" time="2.7724" asserts="0" description="Test help for Resolve-IdentityReference">
             <results>
-              <test-suite type="TestFixture" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry" executed="True" result="Success" success="True" time="0.0799" asserts="0" description="Test help for Resolve-IdentityReference.Parameter AccessControlEntry">
+              <test-suite type="TestFixture" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry" executed="True" result="Success" success="True" time="0.0509" asserts="0" description="Test help for Resolve-IdentityReference.Parameter AccessControlEntry">
                 <results>
-                  <test-case description="Has description" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry.Has description" time="0.0161" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry.Has correct [mandatory] value" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry.Has correct parameter type" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry.Has description" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry.Has correct [mandatory] value" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Resolve-IdentityReference.Parameter AccessControlEntry.Has correct parameter type" time="0.0061" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Resolve-IdentityReference.Parameter KnownServers" executed="True" result="Success" success="True" time="0.1095" asserts="0" description="Test help for Resolve-IdentityReference.Parameter KnownServers">
+              <test-suite type="TestFixture" name="Test help for Resolve-IdentityReference.Parameter KnownServers" executed="True" result="Success" success="True" time="0.074" asserts="0" description="Test help for Resolve-IdentityReference.Parameter KnownServers">
                 <results>
-                  <test-case description="Has description" name="Test help for Resolve-IdentityReference.Parameter KnownServers.Has description" time="0.0064" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Resolve-IdentityReference.Parameter KnownServers.Has correct [mandatory] value" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Resolve-IdentityReference.Parameter KnownServers.Has correct parameter type" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Resolve-IdentityReference.Parameter KnownServers.Has description" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Resolve-IdentityReference.Parameter KnownServers.Has correct [mandatory] value" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Resolve-IdentityReference.Parameter KnownServers.Has correct parameter type" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Resolve-IdentityReference.Help is not auto-generated" time="0.0156" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Resolve-IdentityReference.Has description" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Resolve-IdentityReference.Has example code" time="0.0114" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Resolve-IdentityReference.Has example help" time="0.0082" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Resolve-IdentityReference.Help is not auto-generated" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Resolve-IdentityReference.Has description" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Resolve-IdentityReference.Has example code" time="0.0076" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Resolve-IdentityReference.Has example help" time="0.006" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Search-Directory" executed="True" result="Success" success="True" time="3.2227" asserts="0" description="Test help for Search-Directory">
+          <test-suite type="TestFixture" name="Test help for Search-Directory" executed="True" result="Success" success="True" time="3.0115" asserts="0" description="Test help for Search-Directory">
             <results>
-              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter Credential" executed="True" result="Success" success="True" time="0.0685" asserts="0" description="Test help for Search-Directory.Parameter Credential">
+              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter Credential" executed="True" result="Success" success="True" time="0.0459" asserts="0" description="Test help for Search-Directory.Parameter Credential">
                 <results>
-                  <test-case description="Has description" name="Test help for Search-Directory.Parameter Credential.Has description" time="0.0154" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter Credential.Has correct [mandatory] value" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter Credential.Has correct parameter type" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Search-Directory.Parameter Credential.Has description" time="0.005" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter Credential.Has correct [mandatory] value" time="0.004" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter Credential.Has correct parameter type" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.096" asserts="0" description="Test help for Search-Directory.Parameter DirectoryEntryCache">
+              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter DirectoryEntryCache" executed="True" result="Success" success="True" time="0.0988" asserts="0" description="Test help for Search-Directory.Parameter DirectoryEntryCache">
                 <results>
-                  <test-case description="Has description" name="Test help for Search-Directory.Parameter DirectoryEntryCache.Has description" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter DirectoryEntryCache.Has correct parameter type" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Search-Directory.Parameter DirectoryEntryCache.Has description" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter DirectoryEntryCache.Has correct [mandatory] value" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter DirectoryEntryCache.Has correct parameter type" time="0.005" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.1394" asserts="0" description="Test help for Search-Directory.Parameter DirectoryPath">
+              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter DirectoryPath" executed="True" result="Success" success="True" time="0.1303" asserts="0" description="Test help for Search-Directory.Parameter DirectoryPath">
                 <results>
-                  <test-case description="Has description" name="Test help for Search-Directory.Parameter DirectoryPath.Has description" time="0.0121" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter DirectoryPath.Has correct parameter type" time="0.0173" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Search-Directory.Parameter DirectoryPath.Has description" time="0.0045" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter DirectoryPath.Has correct [mandatory] value" time="0.0119" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter DirectoryPath.Has correct parameter type" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter Filter" executed="True" result="Success" success="True" time="0.1775" asserts="0" description="Test help for Search-Directory.Parameter Filter">
+              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter Filter" executed="True" result="Success" success="True" time="0.1519" asserts="0" description="Test help for Search-Directory.Parameter Filter">
                 <results>
-                  <test-case description="Has description" name="Test help for Search-Directory.Parameter Filter.Has description" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter Filter.Has correct [mandatory] value" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter Filter.Has correct parameter type" time="0.011" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Search-Directory.Parameter Filter.Has description" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter Filter.Has correct [mandatory] value" time="0.0035" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter Filter.Has correct parameter type" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter PageSize" executed="True" result="Success" success="True" time="0.1957" asserts="0" description="Test help for Search-Directory.Parameter PageSize">
+              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter PageSize" executed="True" result="Success" success="True" time="0.181" asserts="0" description="Test help for Search-Directory.Parameter PageSize">
                 <results>
-                  <test-case description="Has description" name="Test help for Search-Directory.Parameter PageSize.Has description" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter PageSize.Has correct [mandatory] value" time="0.0043" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter PageSize.Has correct parameter type" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Search-Directory.Parameter PageSize.Has description" time="0.0072" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter PageSize.Has correct [mandatory] value" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter PageSize.Has correct parameter type" time="0.004" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.2236" asserts="0" description="Test help for Search-Directory.Parameter PropertiesToLoad">
+              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter PropertiesToLoad" executed="True" result="Success" success="True" time="0.2015" asserts="0" description="Test help for Search-Directory.Parameter PropertiesToLoad">
                 <results>
-                  <test-case description="Has description" name="Test help for Search-Directory.Parameter PropertiesToLoad.Has description" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0036" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter PropertiesToLoad.Has correct parameter type" time="0.0046" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Search-Directory.Parameter PropertiesToLoad.Has description" time="0.0051" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter PropertiesToLoad.Has correct [mandatory] value" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter PropertiesToLoad.Has correct parameter type" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter SearchScope" executed="True" result="Success" success="True" time="0.2473" asserts="0" description="Test help for Search-Directory.Parameter SearchScope">
+              <test-suite type="TestFixture" name="Test help for Search-Directory.Parameter SearchScope" executed="True" result="Success" success="True" time="0.2279" asserts="0" description="Test help for Search-Directory.Parameter SearchScope">
                 <results>
-                  <test-case description="Has description" name="Test help for Search-Directory.Parameter SearchScope.Has description" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter SearchScope.Has correct [mandatory] value" time="0.0085" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter SearchScope.Has correct parameter type" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Search-Directory.Parameter SearchScope.Has description" time="0.0068" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Search-Directory.Parameter SearchScope.Has correct [mandatory] value" time="0.0049" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct parameter type" name="Test help for Search-Directory.Parameter SearchScope.Has correct parameter type" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Search-Directory.Help is not auto-generated" time="0.016" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Search-Directory.Has description" time="0.0066" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example code" name="Test help for Search-Directory.Has example code" time="0.0058" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Search-Directory.Has example help" time="0.0044" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Search-Directory.Help is not auto-generated" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Search-Directory.Has description" time="0.0055" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example code" name="Test help for Search-Directory.Has example code" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Search-Directory.Has example help" time="0.0053" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b" executed="True" result="Success" success="True" time="3.303" asserts="0" description="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b">
+          <test-suite type="TestFixture" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b" executed="True" result="Success" success="True" time="3.0709" asserts="0" description="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b">
             <results>
-              <test-suite type="TestFixture" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject" executed="True" result="Success" success="True" time="0.06" asserts="0" description="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject">
+              <test-suite type="TestFixture" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject" executed="True" result="Success" success="True" time="0.0353" asserts="0" description="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject">
                 <results>
-                  <test-case description="Has description" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject.Has description" time="0.0072" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Has correct [mandatory] value" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject.Has correct [mandatory] value" time="0.008" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has description" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject.Has description" time="0.0047" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Has correct [mandatory] value" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject.Has correct [mandatory] value" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
                   <test-case description="Has correct parameter type" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Parameter InputObject.Has correct parameter type" time="0.004" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-case description="Help is not auto-generated" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Help is not auto-generated" time="0.0082" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has description" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Has description" time="0.006" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Help is not auto-generated" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Help is not auto-generated" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has description" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Has description" time="0.0033" asserts="0" success="True" result="Success" executed="True" />
               <test-case description="Has example code" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Has example code" time="0.0048" asserts="0" success="True" result="Success" executed="True" />
-              <test-case description="Has example help" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Has example help" time="0.0059" asserts="0" success="True" result="Success" executed="True" />
+              <test-case description="Has example help" name="Test help for Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.Has example help" time="0.0042" asserts="0" success="True" result="Success" executed="True" />
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Manifest.tests.ps1" executed="True" result="Ignored" success="True" time="0.5993" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Manifest.tests.ps1">
+      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Manifest.tests.ps1" executed="True" result="Ignored" success="True" time="0.3389" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Manifest.tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="module manifest" executed="True" result="Success" success="True" time="0.2692" asserts="0" description="module manifest">
+          <test-suite type="TestFixture" name="module manifest" executed="True" result="Success" success="True" time="0.1219" asserts="0" description="module manifest">
             <results>
-              <test-suite type="TestFixture" name="module manifest.- Validation" executed="True" result="Success" success="True" time="0.2617" asserts="0" description="module manifest.- Validation">
+              <test-suite type="TestFixture" name="module manifest.- Validation" executed="True" result="Success" success="True" time="0.119" asserts="0" description="module manifest.- Validation">
                 <results>
-                  <test-case description="is a valid manifest" name="module manifest.- Validation.is a valid manifest" time="0.0144" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has a valid name in the manifest" name="module manifest.- Validation.has a valid name in the manifest" time="0.0377" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has a valid root module" name="module manifest.- Validation.has a valid root module" time="0.0305" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has a valid version" name="module manifest.- Validation.has a valid version" time="0.035" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has a valid description" name="module manifest.- Validation.has a valid description" time="0.0345" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has a valid author" name="module manifest.- Validation.has a valid author" time="0.029" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has a valid guid" name="module manifest.- Validation.has a valid guid" time="0.0523" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has a valid copyright" name="module manifest.- Validation.has a valid copyright" time="0.0183" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="is a valid manifest" name="module manifest.- Validation.is a valid manifest" time="0.0124" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid name in the manifest" name="module manifest.- Validation.has a valid name in the manifest" time="0.0153" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid root module" name="module manifest.- Validation.has a valid root module" time="0.0071" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid version" name="module manifest.- Validation.has a valid version" time="0.0118" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid description" name="module manifest.- Validation.has a valid description" time="0.0143" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid author" name="module manifest.- Validation.has a valid author" time="0.019" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid guid" name="module manifest.- Validation.has a valid guid" time="0.0279" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid copyright" name="module manifest.- Validation.has a valid copyright" time="0.0073" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
-          <test-suite type="TestFixture" name="Git tagging" executed="True" result="Ignored" success="True" time="0.3108" asserts="0" description="Git tagging">
+          <test-suite type="TestFixture" name="Git tagging" executed="True" result="Ignored" success="True" time="0.1411" asserts="0" description="Git tagging">
             <results>
-              <test-case description="Is tagged with a valid version" name="Git tagging.Is tagged with a valid version" time="0.0107" asserts="0" success="False" result="Ignored" executed="False" />
-              <test-case description="Matches manifest version" name="Git tagging.Matches manifest version" time="0.0237" asserts="0" success="False" result="Ignored" executed="False" />
+              <test-case description="Is tagged with a valid version" name="Git tagging.Is tagged with a valid version" time="0.0091" asserts="0" success="False" result="Ignored" executed="False" />
+              <test-case description="Matches manifest version" name="Git tagging.Matches manifest version" time="0.0027" asserts="0" success="False" result="Ignored" executed="False" />
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Meta.tests.ps1" executed="True" result="Success" success="True" time="0.5293" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Meta.tests.ps1">
+      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Meta.tests.ps1" executed="True" result="Success" success="True" time="0.3989" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Meta.tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Text files formatting" executed="True" result="Success" success="True" time="0.0458" asserts="0" description="Text files formatting">
+          <test-suite type="TestFixture" name="Text files formatting" executed="True" result="Success" success="True" time="0.0379" asserts="0" description="Text files formatting">
             <results>
-              <test-suite type="TestFixture" name="Text files formatting.File encoding" executed="True" result="Success" success="True" time="0.0172" asserts="0" description="Text files formatting.File encoding">
+              <test-suite type="TestFixture" name="Text files formatting.File encoding" executed="True" result="Success" success="True" time="0.0181" asserts="0" description="Text files formatting.File encoding">
                 <results>
-                  <test-case description="No text file uses Unicode/UTF-16 encoding" name="Text files formatting.File encoding.No text file uses Unicode/UTF-16 encoding" time="0.0135" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="No text file uses Unicode/UTF-16 encoding" name="Text files formatting.File encoding.No text file uses Unicode/UTF-16 encoding" time="0.0143" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="TestFixture" name="Text files formatting.Indentations" executed="True" result="Success" success="True" time="0.0413" asserts="0" description="Text files formatting.Indentations">
+              <test-suite type="TestFixture" name="Text files formatting.Indentations" executed="True" result="Success" success="True" time="0.0307" asserts="0" description="Text files formatting.Indentations">
                 <results>
-                  <test-case description="No text file use tabs for indentations" name="Text files formatting.Indentations.No text file use tabs for indentations" time="0.0172" asserts="0" success="True" result="Success" executed="True" />
-                </results>
-              </test-suite>
-            </results>
-          </test-suite>
-        </results>
-      </test-suite>
-      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Module.tests.ps1" executed="True" result="Success" success="True" time="0.2796" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Module.tests.ps1">
-        <results>
-          <test-suite type="TestFixture" name="'Adsi' Function Tests" executed="True" result="Success" success="True" time="0.1034" asserts="0" description="'Adsi' Function Tests">
-            <results>
-              <test-suite type="ParameterizedTest" name="'Adsi' Function Tests.Script '&lt;Script&gt;' is valid PowerShell" executed="True" result="Success" success="True" time="0.0984" asserts="0" description="Script '&lt;Script&gt;' is valid PowerShell">
-                <results>
-                  <test-case description="Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.87\Adsi\Adsi.psd1' is valid PowerShell" name="'Adsi' Function Tests.Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.87\Adsi\Adsi.psd1' is valid PowerShell" time="0.0686" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.87\Adsi\Adsi.psm1' is valid PowerShell" name="'Adsi' Function Tests.Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.87\Adsi\Adsi.psm1' is valid PowerShell" time="0.0297" asserts="0" success="True" result="Success" executed="True" />
-                </results>
-              </test-suite>
-            </results>
-          </test-suite>
-          <test-suite type="TestFixture" name="module" executed="True" result="Success" success="True" time="0.1479" asserts="0" description="module">
-            <results>
-              <test-suite type="ParameterizedTest" name="module.can be imported without any errors" executed="True" result="Success" success="True" time="0.0395" asserts="0" description="can be imported without any errors">
-                <results>
-                  <test-case description="can be imported without any errors" name="module.can be imported without any errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.87\Adsi\Adsi.psm1&quot;)" time="0.0395" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="No text file use tabs for indentations" name="Text files formatting.Indentations.No text file use tabs for indentations" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Project.tests.ps1" executed="True" result="Success" success="True" time="0.2981" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Project.tests.ps1">
+      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Module.tests.ps1" executed="True" result="Success" success="True" time="0.2086" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Module.tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="change log" executed="True" result="Success" success="True" time="0.0497" asserts="0" description="change log">
+          <test-suite type="TestFixture" name="'Adsi' Function Tests" executed="True" result="Success" success="True" time="0.0913" asserts="0" description="'Adsi' Function Tests">
             <results>
-              <test-suite type="TestFixture" name="change log.- Version" executed="True" result="Success" success="True" time="0.0419" asserts="0" description="change log.- Version">
+              <test-suite type="ParameterizedTest" name="'Adsi' Function Tests.Script '&lt;Script&gt;' is valid PowerShell" executed="True" result="Success" success="True" time="0.0853" asserts="0" description="Script '&lt;Script&gt;' is valid PowerShell">
                 <results>
-                  <test-case description="has a valid version" name="change log.- Version.has a valid version" time="0.0155" asserts="0" success="True" result="Success" executed="True" />
-                  <test-case description="has the same version as the manifest" name="change log.- Version.has the same version as the manifest" time="0.0233" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.88\Adsi\Adsi.psd1' is valid PowerShell" name="'Adsi' Function Tests.Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.88\Adsi\Adsi.psd1' is valid PowerShell" time="0.0477" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.88\Adsi\Adsi.psm1' is valid PowerShell" name="'Adsi' Function Tests.Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.88\Adsi\Adsi.psm1' is valid PowerShell" time="0.0376" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="module" executed="True" result="Success" success="True" time="0.1213" asserts="0" description="module">
+            <results>
+              <test-suite type="ParameterizedTest" name="module.can be imported without any errors" executed="True" result="Success" success="True" time="0.0245" asserts="0" description="can be imported without any errors">
+                <results>
+                  <test-case description="can be imported without any errors" name="module.can be imported without any errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\dist\1.0.88\Adsi\Adsi.psm1&quot;)" time="0.0245" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
           </test-suite>
         </results>
       </test-suite>
-      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.tests.ps1" executed="True" result="Success" success="True" time="0.1702" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.tests.ps1">
+      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Project.tests.ps1" executed="True" result="Success" success="True" time="0.2239" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Project.tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests" executed="True" result="Success" success="True" time="0.0851" asserts="0" description="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests">
+          <test-suite type="TestFixture" name="change log" executed="True" result="Success" success="True" time="0.0192" asserts="0" description="change log">
             <results>
-              <test-suite type="ParameterizedTest" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors" executed="True" result="Success" success="True" time="0.0601" asserts="0" description="Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors">
+              <test-suite type="TestFixture" name="change log.- Version" executed="True" result="Success" success="True" time="0.0163" asserts="0" description="change log.- Version">
                 <results>
-                  <test-case description="Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1&quot;)" time="0.0601" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has a valid version" name="change log.- Version.has a valid version" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="has the same version as the manifest" name="change log.- Version.has the same version as the manifest" time="0.0059" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
-              <test-suite type="ParameterizedTest" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script '&lt;Script&gt;' is valid PowerShell" executed="True" result="Success" success="True" time="0.0172" asserts="0" description="Script '&lt;Script&gt;' is valid PowerShell">
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.tests.ps1" executed="True" result="Success" success="True" time="0.1144" asserts="0" description="E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests" executed="True" result="Success" success="True" time="0.0648" asserts="0" description="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests">
+            <results>
+              <test-suite type="ParameterizedTest" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors" executed="True" result="Success" success="True" time="0.031" asserts="0" description="Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors">
                 <results>
-                  <test-case description="Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' is valid PowerShell" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' is valid PowerShell" time="0.0172" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script file 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' can be run without any errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1&quot;)" time="0.031" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="ParameterizedTest" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script '&lt;Script&gt;' is valid PowerShell" executed="True" result="Success" success="True" time="0.0293" asserts="0" description="Script '&lt;Script&gt;' is valid PowerShell">
+                <results>
+                  <test-case description="Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' is valid PowerShell" name="'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' Function Tests.Script 'E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1' is valid PowerShell" time="0.0293" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>
