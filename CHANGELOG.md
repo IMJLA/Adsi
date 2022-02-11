@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.86] - 2022-02-10 - Removed WhatIf from PSGallery Publish-Module command in psakefile
 ## [1.0.85] - 2022-02-10 - Added Git psake task
 ## [1.0.84] - 2022-02-10 - Repeating with verbose output
 ## [1.0.83] - 2022-02-10 - Fixed params for Publish-Module

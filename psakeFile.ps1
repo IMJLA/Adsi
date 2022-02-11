@@ -418,7 +418,6 @@ task Publish -depends Git {
         Path       = $PSBPreference.Build.ModuleOutDir
         Repository = $PSBPreference.Publish.PSRepository
         Verbose    = $VerbosePreference
-        WhatIf     = $true
     }
     if ($PSBPreference.Publish.PSRepositoryApiKey) {
         $publishParams.NuGetApiKey = $PSBPreference.Publish.PSRepositoryApiKey
