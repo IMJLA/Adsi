@@ -1599,10 +1599,10 @@
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>----------  EXAMPLE 1  ----------
-As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain</dev:code>
+        <dev:code>Get-DirectoryEntry</dev:code>
         <dev:remarks>
-          <maml:para>Get-DirectoryEntry</maml:para>
+          <maml:para>distinguishedName : {DC=ad,DC=contoso,DC=com} Path              : LDAP://DC=ad,DC=contoso,DC=com</maml:para>
+          <maml:para>As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

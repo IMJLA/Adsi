@@ -24,13 +24,11 @@ Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
 
 ### EXAMPLE 1
 ```
-Get-DirectoryEntry
+----------  EXAMPLE 1  ----------
+As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
 ```
 
-distinguishedName : {DC=ad,DC=contoso,DC=com}
-Path              : LDAP://DC=ad,DC=contoso,DC=com
-
-As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+Get-DirectoryEntry
 
 ## PARAMETERS
 

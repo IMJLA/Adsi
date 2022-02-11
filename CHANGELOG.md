@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.92] - 2022-02-10 - Discovered that PlatyPS did not update the markdown file for Get-DirectoryEntry during previous build
 ## [1.0.91] - 2022-02-10 - Updating help for Get-DirectoryEntry
 ## [1.0.90] - 2022-02-10 - Updated psake tasks
 ## [1.0.89] - 2022-02-10 - Wait a minute I already got rid of that WhatIf....oh well got rid of it again
