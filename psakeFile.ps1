@@ -335,11 +335,12 @@ $genUpdatableHelpPreReqs = {
     }
     $result
 }
+
 task GenerateUpdatableHelp -depends BuildHelp -precondition $genUpdatableHelpPreReqs {
     Build-PSBuildUpdatableHelp -DocsPath $PSBPreference.Docs.RootDir -OutputPath $PSBPreference.Help.UpdatableHelpOutDir
 } -description 'Create updatable help .cab file based on PlatyPS markdown help'
 
-task Build -depends StageFiles, BuildHelp {
+task BuildPowerShell -depends StageFiles, BuildHelp {
 
     Write-Host "$nl`tEnvironment variables:" -ForegroundColor Yellow
     (Get-Item ENV:BH*).Foreach({
@@ -359,7 +360,8 @@ $analyzePreReqs = {
     }
     $result
 }
-task Analyze -depends Build -precondition $analyzePreReqs {
+
+task Lint -depends BuildPowerShell -precondition $analyzePreReqs {
     $analyzeParams = @{
         Path              = $PSBPreference.Build.ModuleOutDir
         SeverityThreshold = $PSBPreference.Test.ScriptAnalysis.FailBuildOnSeverityLevel
@@ -384,7 +386,8 @@ $pesterPreReqs = {
     #}
     return $result
 }
-task Pester -depends Build -precondition $pesterPreReqs {
+
+task UnitTests -depends Lint -precondition $pesterPreReqs {
     $pesterParams = @{
         Path                         = $PSBPreference.Test.RootDir
         ModuleName                   = $PSBPreference.General.ModuleName
@@ -401,17 +404,14 @@ task Pester -depends Build -precondition $pesterPreReqs {
     Test-PSBuildPester @pesterParams
 } -description 'Execute Pester tests'
 
-task Test -depends Pester, Analyze {
-} -description 'Execute Pester and ScriptAnalyzer tests'
-
-task Git -depends Test {
+task SourceControl -depends UnitTests {
     # Commit to Git
     git add .
     git commit -m $CommitMessage
     git push origin main
-}
+} -description 'git add, commit, and push'
 
-task Publish -depends Git {
+task Publish -depends SourceControl {
     Assert -conditionToCheck ($PSBPreference.Publish.PSRepositoryApiKey -or $PSBPreference.Publish.PSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$($PSBPreference.Publish.PSRepository)] with."
 
     $publishParams = @{
