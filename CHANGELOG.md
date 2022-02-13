@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.107] - 2022-02-12 - Added -WithModulePage to New-MarkdownHelp
+## [1.0.106] - 2022-02-12 - Unsuppressed output from New-MarkdownHelp
+## [1.0.105] - 2022-02-12 - More psakefile bug fixes
+## [1.0.104] - 2022-02-12 - Fixed mistake in psakefile
+## [1.0.103] - 2022-02-12 - More psakefile customization
+## [1.0.102] - 2022-02-12 - More psakefile changes
+## [1.0.101] - 2022-02-12 - Updated psakefile
+## [1.0.100] - 2022-02-12 - Build output cleanup
+## [1.0.99] - 2022-02-12 - Troubleshooting BuildUpdatableHelp
+## [1.0.98] - 2022-02-12 - Workaround for Build-PSBuildUpdatableHelp implemented in psakefile
+## [1.0.98] - 2022-02-12 - Getting mad at psake for scoping nonsense
+## [1.0.97] - 2022-02-11 - More debugging
+## [1.0.96] - 2022-02-11 - Debugging psakefile
+## [1.0.95] - 2022-02-10 - How bout now
+## [1.0.94] - 2022-02-10 - Trying again
+## [1.0.93] - 2022-02-10 - Added DeleteExistingMarkdown psaketask in WhatIf mode
 ## [1.0.92] - 2022-02-10 - Discovered that PlatyPS did not update the markdown file for Get-DirectoryEntry during previous build
 ## [1.0.91] - 2022-02-10 - Updating help for Get-DirectoryEntry
 ## [1.0.90] - 2022-02-10 - Updated psake tasks
