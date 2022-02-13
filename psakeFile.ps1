@@ -3,6 +3,7 @@ Remove-Variable -Name PSBPreference -Scope Script -Force -ErrorAction Ignore
 
 $outDir = [IO.Path]::Combine($env:BHProjectPath, $BuildOutputFolderName)
 $moduleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
+$NextVersion = ''
 
 Set-Variable -Name PSBPreference -Scope Script -Value ([ordered]@{
         General = @{
@@ -131,7 +132,6 @@ properties {
     $BuildExclude = @('gitkeep', "$env:BHProjectName.psm1")
     $BuildOutDir = "$env:BHProjectPath\$BuildOutputFolderName"
     $TestOutputFile = 'out/testResults.xml'
-    $NextVersion = ''
     $NewLine = [System.Environment]::NewLine
 }
 
