@@ -3,6 +3,7 @@ Remove-Variable -Name PSBPreference -Scope Script -Force -ErrorAction Ignore
 
 $outDir = [IO.Path]::Combine($env:BHProjectPath, $BuildOutputFolderName)
 $moduleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
+
 Set-Variable -Name PSBPreference -Scope Script -Value ([ordered]@{
         General = @{
             # Root directory for the project
@@ -130,7 +131,8 @@ properties {
     $BuildExclude = @('gitkeep', "$env:BHProjectName.psm1")
     $BuildOutDir = "$env:BHProjectPath\$BuildOutputFolderName"
     $TestOutputFile = 'out/testResults.xml'
-    $nl = [System.Environment]::NewLine
+    $NextVersion = $null
+    $NewLine = [System.Environment]::NewLine
 }
 
 FormatTaskName {
@@ -150,7 +152,7 @@ task InitializeBuildHelpers {
     (Get-Item ENV:BH*).Foreach({
             "`t{0,-20}{1}" -f $_.name, $_.value
         })
-    $nl
+    $NewLine
 } -description 'Initialize the environment variables from the BuildHelpers module'
 
 task UpdateModuleVersion -depends InitializeBuildHelpers -Action {
@@ -166,7 +168,7 @@ task UpdateModuleVersion -depends InitializeBuildHelpers -Action {
         "`tThis is a new build"
         $NextVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
     }
-    "`tNew Version: $NextVersion$nl"
+    "`tNew Version: $NextVersion$NewLine"
 
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $NextVersion -ErrorAction Stop
 } -description 'Increment the module version and update the module manifest accordingly'
@@ -320,7 +322,7 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
     $buildModuleName = $MyInvocation.MyCommand.Module.Name
     $buildModuleVersion = $MyInvocation.MyCommand.Module.Version
     "`tBuild Module:       $buildModuleName`:$buildModuleVersion"
-    "`tPowerShell Version: $psVersion$nl"
+    "`tPowerShell Version: $psVersion$NewLine"
 
 
 
@@ -334,7 +336,7 @@ task RotateBuilds -depends InitializePowershellBuild {
         "`tDeleting old build .\$((($_.FullName -split '\\') | Select-Object -Last 2) -join '\')"
         $_ | Remove-Item -Recurse -Force
     }
-    $nl
+    $NewLine
 } -description 'Delete all but the last 4 builds, so we will have our 5 most recent builds after the new one is complete'
 
 task UpdateChangeLog -depends RotateBuilds -Action {
@@ -347,7 +349,7 @@ TODO
         New/removed files
 #>
     $ChangeLog = "$env:BHProjectPath\CHANGELOG.md"
-    $NewChanges = "## [$($moduleVersion)] - $(Get-Date -format 'yyyy-MM-dd') - $CommitMessage"
+    $NewChanges = "## [$NextVersion] - $(Get-Date -format 'yyyy-MM-dd') - $CommitMessage"
     [string[]]$ChangeLogContents = Get-Content -Path $ChangeLog
     $LineNumberOfLastChange = Select-String -Path $ChangeLog -Pattern '^\#\# \[\d*\.\d*\.\d*\]' |
     Select-Object -First 1 -ExpandProperty LineNumber
@@ -389,7 +391,7 @@ task ExportPublicFunctions -depends UpdateChangeLog -Action {
 task CleanOutputDir -depends ExportPublicFunctions {
     "`tOutput: $($PSBPreference.Build.ModuleOutDir)"
     Clear-PSBuildOutputFolder -Path $PSBPreference.Build.ModuleOutDir
-    $nl
+    $NewLine
 } -description 'Clears module output directory'
 
 task StageFiles -depends CleanOutputDir {
@@ -435,7 +437,7 @@ task DeleteMarkdownHelp -depends StageFiles -precondition $genMarkdownPreReqs {
     $MarkdownDir = [IO.Path]::Combine($PSBPreference.Docs.RootDir, $PSBPreference.Help.DefaultLocale)
     "`tDeleting folder: '$MarkdownDir'"
     Get-ChildItem -Path $MarkdownDir -Recurse | Remove-Item
-    $nl
+    $NewLine
 } -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
 
 task BuildMarkdownHelp -depends DeleteMarkdownHelp -precondition $genMarkdownPreReqs {
