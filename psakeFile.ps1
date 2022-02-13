@@ -131,7 +131,7 @@ properties {
     $BuildExclude = @('gitkeep', "$env:BHProjectName.psm1")
     $BuildOutDir = "$env:BHProjectPath\$BuildOutputFolderName"
     $TestOutputFile = 'out/testResults.xml'
-    $NextVersion = $null
+    $NextVersion = ''
     $NewLine = [System.Environment]::NewLine
 }
 
