@@ -350,7 +350,7 @@ TODO
 #>
     $ChangeLog = "$env:BHProjectPath\CHANGELOG.md"
     $NewVersion = (Test-ModuleManifest $env:BHPSModuleManifest).Version
-    $NewChanges = "## [$NewVersion] - $(Get-Date -format 'yyyy-MM-dd') - $CommitMessage"
+    $NewChanges = "## [$NewVersion] - $(Get-Date -format 'yyyy-MM-dd') - $CommitMessage$NewLine"
     "`tChange Log:  $ChangeLog"
     "`tNew Changes: $NewChanges"
     [string[]]$ChangeLogContents = Get-Content -Path $ChangeLog
