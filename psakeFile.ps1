@@ -349,7 +349,8 @@ TODO
         New/removed files
 #>
     $ChangeLog = "$env:BHProjectPath\CHANGELOG.md"
-    $NewChanges = "## [$NextVersion] - $(Get-Date -format 'yyyy-MM-dd') - $CommitMessage"
+    $NewVersion = (Test-ModuleManifest $env:BHPSModuleManifest).Version
+    $NewChanges = "## [$NewVersion] - $(Get-Date -format 'yyyy-MM-dd') - $CommitMessage"
     "`tChange Log:  $ChangeLog"
     "`tNew Changes: $NewChanges"
     [string[]]$ChangeLogContents = Get-Content -Path $ChangeLog

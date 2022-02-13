@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [] - 2022-02-12 - More psakefile fixes
 ## [] - 2022-02-13 - Debugging
 ## [] - 2022-02-13 - Updated UpdateChangeLog psake task
+## [1.0.115] - 2022-02-13 - Fixed UpdateChangeLog psake task
 ## [1.0.108] - 2022-02-12 - Fixed UpdatableHelp and Markdown generation
 ## [1.0.107] - 2022-02-12 - Added -WithModulePage to New-MarkdownHelp
 ## [1.0.106] - 2022-02-12 - Unsuppressed output from New-MarkdownHelp
