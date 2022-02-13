@@ -130,6 +130,7 @@ properties {
     $BuildOutDir = "$env:BHProjectPath\$BuildOutputFolderName"
     $TestOutputFile = 'out/testResults.xml'
     $NewLine = [System.Environment]::NewLine
+    $script:ModuleOutDir = $null
 }
 
 FormatTaskName {
@@ -171,7 +172,6 @@ task UpdateModuleVersion -depends InitializeBuildHelpers -Action {
 } -description 'Increment the module version and update the module manifest accordingly'
 
 task InitializePowershellBuild -depends UpdateModuleVersion {
-
 
     $outDir = [IO.Path]::Combine($env:BHProjectPath, $BuildOutputFolderName)
     $moduleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
@@ -295,13 +295,13 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
         })
 
     if ([IO.Path]::IsPathFullyQualified($BuildOutDir)) {
-        $PSBPreference.Build.ModuleOutDir = [IO.Path]::Combine(
+        $script:ModuleOutDir = [IO.Path]::Combine(
             $BuildOutDir,
             $moduleVersion,
             $env:BHProjectName
         )
     } else {
-        $PSBPreference.Build.ModuleOutDir = [IO.Path]::Combine(
+        $script:ModuleOutDir = [IO.Path]::Combine(
             $env:BHProjectPath,
             $BuildOutDir,
             $moduleVersion,
@@ -310,7 +310,7 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
     }
 
     $params = @{
-        BuildOutput = $PSBPreference.Build.ModuleOutDir
+        BuildOutput = $script:ModuleOutDir
     }
     Set-BuildEnvironment @params -Force
 
@@ -328,6 +328,7 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
 task RotateBuilds -depends InitializePowershellBuild {
     $BuildVersionsToRetain = 5
     Get-ChildItem -Directory -Path $BuildOutDir |
+    Sort-Object -Property Name
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
     ForEach-Object {
         "`tDeleting old build .\$((($_.FullName -split '\\') | Select-Object -Last 2) -join '\')"
@@ -389,8 +390,8 @@ task ExportPublicFunctions -depends UpdateChangeLog -Action {
 } -description 'Export all public functions in the module'
 
 task CleanOutputDir -depends ExportPublicFunctions {
-    "`tOutput: $($PSBPreference.Build.ModuleOutDir)"
-    Clear-PSBuildOutputFolder -Path $PSBPreference.Build.ModuleOutDir
+    "`tOutput: $script:ModuleOutDir"
+    Clear-PSBuildOutputFolder -Path $script:ModuleOutDir
     $NewLine
 } -description 'Clears module output directory'
 
@@ -398,7 +399,7 @@ task StageFiles -depends CleanOutputDir {
     $buildParams = @{
         Path               = $env:BHPSModulePath
         ModuleName         = $env:BHProjectName
-        DestinationPath    = $PSBPreference.Build.ModuleOutDir
+        DestinationPath    = $script:ModuleOutDir
         Exclude            = $PSBPreference.Build.Exclude
         Compile            = $PSBPreference.Build.CompileModule
         CompileDirectories = $PSBPreference.Build.CompileDirectories
@@ -442,7 +443,7 @@ task DeleteMarkdownHelp -depends StageFiles -precondition $genMarkdownPreReqs {
 
 task BuildMarkdownHelp -depends DeleteMarkdownHelp -precondition $genMarkdownPreReqs {
 
-    $moduleInfo = Import-Module "$($PSBPreference.Build.ModuleOutDir)/$env:BHProjectName.psd1" -Global -Force -PassThru
+    $moduleInfo = Import-Module "$script:ModuleOutDir/$env:BHProjectName.psd1" -Global -Force -PassThru
 
     try {
         if ($moduleInfo.ExportedCommands.Count -eq 0) {
@@ -485,7 +486,7 @@ $genHelpFilesPreReqs = {
 }
 
 task BuildMAMLHelp -depends BuildMarkdownHelp -precondition $genHelpFilesPreReqs {
-    Build-PSBuildMAMLHelp -Path $PSBPreference.Docs.RootDir -DestinationPath $PSBPreference.Build.ModuleOutDir
+    Build-PSBuildMAMLHelp -Path $PSBPreference.Docs.RootDir -DestinationPath $script:ModuleOutDir
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 
 $genUpdatableHelpPreReqs = {
@@ -519,7 +520,7 @@ task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $genUpdatableHelpPr
     # file in the metadata.
     foreach ($locale in $helpLocales) {
         $cabParams = @{
-            CabFilesFolder  = [IO.Path]::Combine($PSBPreference.Build.ModuleOutDir, $locale)
+            CabFilesFolder  = [IO.Path]::Combine($script:ModuleOutDir, $locale)
             LandingPagePath = [IO.Path]::Combine($PSBPreference.Docs.RootDir, $locale, "$env:BHProjectName.md")
             OutputFolder    = $PSBPreference.Help.UpdatableHelpOutDir
             Verbose         = $VerbosePreference
@@ -544,7 +545,7 @@ $analyzePreReqs = {
 
 task Lint -depends BuildUpdatableHelp -precondition $analyzePreReqs {
     $analyzeParams = @{
-        Path              = $PSBPreference.Build.ModuleOutDir
+        Path              = $script:ModuleOutDir
         SeverityThreshold = $PSBPreference.Test.ScriptAnalysis.FailBuildOnSeverityLevel
         SettingsPath      = $PSBPreference.Test.ScriptAnalysis.SettingsPath
     }
@@ -572,7 +573,7 @@ task UnitTests -depends Lint -precondition $pesterPreReqs {
     $pesterParams = @{
         Path                         = $PSBPreference.Test.RootDir
         ModuleName                   = $env:BHProjectName
-        ModuleManifest               = Join-Path $PSBPreference.Build.ModuleOutDir "$env:BHProjectName.psd1"
+        ModuleManifest               = Join-Path $script:ModuleOutDir "$env:BHProjectName.psd1"
         OutputPath                   = $PSBPreference.Test.OutputFile
         OutputFormat                 = $PSBPreference.Test.OutputFormat
         CodeCoverage                 = $PSBPreference.Test.CodeCoverage.Enabled
@@ -596,7 +597,7 @@ task Publish -depends SourceControl {
     Assert -conditionToCheck ($PSBPreference.Publish.PSRepositoryApiKey -or $PSBPreference.Publish.PSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$($PSBPreference.Publish.PSRepository)] with."
 
     $publishParams = @{
-        Path       = $PSBPreference.Build.ModuleOutDir
+        Path       = $script:ModuleOutDir
         Repository = $PSBPreference.Publish.PSRepository
         Verbose    = $VerbosePreference
     }
@@ -611,6 +612,13 @@ task Publish -depends SourceControl {
     # Publish to PSGallery
     Publish-Module @publishParams
 } -description 'Publish module to the defined PowerShell repository'
+
+task FinalTasks -depends Publish {
+
+    # Remove script-scoped variables to avoid their accidental re-use
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+
+}
 
 task ? -description 'Lists the available tasks' {
     'Available tasks:'

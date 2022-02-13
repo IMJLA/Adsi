@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.118] - 2022-02-13 - More PSBPreference replacement in psakefile
+
 ## [1.0.117] - 2022-02-13 - Trying to make use of psake properties
 
 ## [1.0.116] - 2022-02-13 - Added blank lines between versions in CHANGELOG.md per markdown linting
