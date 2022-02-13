@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.108] - 2022-02-12 - Fixed UpdatableHelp and Markdown generation
 ## [1.0.107] - 2022-02-12 - Added -WithModulePage to New-MarkdownHelp
 ## [1.0.106] - 2022-02-12 - Unsuppressed output from New-MarkdownHelp
 ## [1.0.105] - 2022-02-12 - More psakefile bug fixes
