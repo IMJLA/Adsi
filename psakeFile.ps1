@@ -1,9 +1,4 @@
-
 Remove-Variable -Name PSBPreference -Scope Script -Force -ErrorAction Ignore
-
-$outDir = [IO.Path]::Combine($env:BHProjectPath, $BuildOutputFolderName)
-$moduleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
-$NextVersion = ''
 
 Set-Variable -Name PSBPreference -Scope Script -Value ([ordered]@{
         General = @{
@@ -125,6 +120,8 @@ Set-Variable -Name PSBPreference -Scope Script -Value ([ordered]@{
     })
 
 properties {
+    $outDir = [IO.Path]::Combine($env:BHProjectPath, $BuildOutputFolderName)
+    $moduleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
     $BuildOutputFolderName = 'dist'
     $BuildCompileModule = $true
     $BuildCompileDirectories = @('classes', 'enums', 'filters', 'functions/private', 'functions/public')
@@ -297,16 +294,16 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
             }
         })
 
-    if ([IO.Path]::IsPathFullyQualified($PSBPreference.Build.OutDir)) {
+    if ([IO.Path]::IsPathFullyQualified($BuildOutDir)) {
         $PSBPreference.Build.ModuleOutDir = [IO.Path]::Combine(
-            $PSBPreference.Build.OutDir,
+            $BuildOutDir,
             $moduleVersion,
             $env:BHProjectName
         )
     } else {
         $PSBPreference.Build.ModuleOutDir = [IO.Path]::Combine(
             $env:BHProjectPath,
-            $PSBPreference.Build.OutDir,
+            $BuildOutDir,
             $moduleVersion,
             $env:BHProjectName
         )
@@ -330,7 +327,7 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
 
 task RotateBuilds -depends InitializePowershellBuild {
     $BuildVersionsToRetain = 5
-    Get-ChildItem -Directory -Path $PSBPreference.Build.OutDir |
+    Get-ChildItem -Directory -Path $BuildOutDir |
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
     ForEach-Object {
         "`tDeleting old build .\$((($_.FullName -split '\\') | Select-Object -Last 2) -join '\')"
