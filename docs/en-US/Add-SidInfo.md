@@ -8,7 +8,7 @@ schema: 2.0.0
 # Add-SidInfo
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Add some commonly-needed properties to a DirectoryEntry for easier access
 
 ## SYNTAX
 
@@ -18,21 +18,41 @@ Add-SidInfo [[-InputObject] <Object>] [[-DirectoryEntryCache] <Hashtable>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
+distinguishedName :
+Path              : WinNT://localhost/Administrator
 ```
 
-{{ Add example description here }}
+The output object's default format is not modified so with default formatting it appears identical to the original.
+Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
 
 ## PARAMETERS
 
+### -InputObject
+Expecting a \[System.DirectoryServices.DirectoryEntry\] from the LDAP or WinNT providers, or a \[PSCustomObject\] imitation from Get-DirectoryEntry.
+Must contain the objectSid property
+
+```yaml
+Type: Object
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -DirectoryEntryCache
-{{ Fill DirectoryEntryCache Description }}
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Uses a thread-safe hashtable by default
 
 ```yaml
 Type: Hashtable
@@ -40,29 +60,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: None
+Position: 2
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -InputObject
-{{ Fill InputObject Description }}
-
-```yaml
-Type: Object
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 0
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
 ### -TrustedDomainSidNameMap
-{{ Fill TrustedDomainSidNameMap Description }}
+Hashtable containing known domain SIDs as the keys and their names as the values
 
 ```yaml
 Type: Object
@@ -70,8 +75,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
-Default value: None
+Position: 3
+Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -81,11 +86,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Object
-
+### [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter.  Must contain the objectSid property.
 ## OUTPUTS
 
-### System.Object
+### [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. Whatever was input, but with three extra properties added now.
 ## NOTES
 
 ## RELATED LINKS

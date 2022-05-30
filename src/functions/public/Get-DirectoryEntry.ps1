@@ -4,16 +4,25 @@ function Get-DirectoryEntry {
         Use Active Directory Service Interfaces to retrieve an object from a directory
         .DESCRIPTION
         Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
+        .INPUTS
+        None. Pipeline input is not accepted.
+        .OUTPUTS
+        System.DirectoryServices.DirectoryEntry where possible
+        PSCustomObject for security principals with no directory entry
         .EXAMPLE
         Get-DirectoryEntry
-
         distinguishedName : {DC=ad,DC=contoso,DC=com}
         Path              : LDAP://DC=ad,DC=contoso,DC=com
 
-        As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+        As the current user on a domain-joined computer, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+        .EXAMPLE
+        Get-DirectoryEntry
+        distinguishedName :
+        Path              : WinNT://ComputerName
 
+        As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
-    [OutputType([PSObject[]])]
+    [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
     [CmdletBinding()]
     param (
 
@@ -33,7 +42,7 @@ function Get-DirectoryEntry {
         [string[]]$PropertiesToLoad,
 
         <#
-        A hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
         Uses a thread-safe hashtable by default
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
@@ -50,7 +59,7 @@ function Get-DirectoryEntry {
 
             '^WinNT\:\/\/[^\/]*\/CREATOR OWNER$' {
                 $SidByteAray = 'S-1-3-0' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'CREATOR OWNER'
                     Description     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
                     objectSid       = $SidByteAray
@@ -69,7 +78,7 @@ function Get-DirectoryEntry {
             }
             '^WinNT\:\/\/[^\/]*\/SYSTEM$' {
                 $SidByteAray = 'S-1-5-18' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'SYSTEM'
                     Description     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
                     objectSid       = $SidByteAray
@@ -88,7 +97,7 @@ function Get-DirectoryEntry {
             }
             '^WinNT\:\/\/[^\/]*\/INTERACTIVE$' {
                 $SidByteAray = 'S-1-5-4' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'INTERACTIVE'
                     Description     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
                     objectSid       = $SidByteAray
@@ -107,7 +116,7 @@ function Get-DirectoryEntry {
             }
             '^WinNT\:\/\/[^\/]*\/Authenticated Users$' {
                 $SidByteAray = 'S-1-5-11' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'Authenticated Users'
                     Description     = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
                     objectSid       = $SidByteAray
@@ -122,6 +131,25 @@ function Get-DirectoryEntry {
                     SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
                 }
                 $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+            }
+            '' {
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
+                $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
+                $DirectoryPath = "WinNT://$Workgroup/$(hostname)"
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+                if ($Credential) {
+                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
+                } else {
+                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
+                }
+
+                $SampleUser = $DirectoryEntry.PSBase.Children |
+                Where-Object -FilterScript { $_.schemaclassname -eq 'user' } |
+                Select-Object -First 1 |
+                Add-SidInfo
+
+                $DirectoryEntry | Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+
             }
             default {
 

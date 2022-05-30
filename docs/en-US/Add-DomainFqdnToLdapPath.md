@@ -8,7 +8,7 @@ schema: 2.0.0
 # Add-DomainFqdnToLdapPath
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
 
 ## SYNTAX
 
@@ -17,21 +17,25 @@ Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Uses RegEx to:  
+    Match the Domain Components from the Distinguished Name in the LDAP directory path  
+    Convert the Domain Components to an FQDN  
+    Insert them into the directory path as the server address
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com'
+LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com
 ```
 
-{{ Add example description here }}
+Add the domain FQDN to a single LDAP directory path
 
 ## PARAMETERS
 
 ### -DirectoryPath
-{{ Fill DirectoryPath Description }}
+Incomplete LDAP directory path containing a distinguishedName but lacking a server address
 
 ```yaml
 Type: String[]
@@ -39,7 +43,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -50,11 +54,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String[]
-
+### [System.String] DirectoryPath parameter
 ## OUTPUTS
 
-### System.Object
+### [System.String] Complete LDAP directory path including server address
 ## NOTES
 
 ## RELATED LINKS

@@ -1,10 +1,10 @@
 $ScriptName = 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1'
 $ScriptPath = "$($PSScriptRoot -replace 'tests','src')\$ScriptName"
 
-Describe "'$ScriptName' Function Tests" {
+Describe "function '$ScriptName'" {
     # TestCases are splatted to the script so we need hashtables
     $validPowerShellTestCase = @{Script = $ScriptPath }
-    It "Script '<Script>' is valid PowerShell" -TestCases $validPowerShellTestCase {
+    It "can be tokenized by the PowerShell parser without any errors" -TestCases $validPowerShellTestCase {
         param ($Script)
         $ScriptContents = Get-Content -LiteralPath $Script -ErrorAction Stop
         $Errors = $null
@@ -13,7 +13,7 @@ Describe "'$ScriptName' Function Tests" {
     }
 
     $noErrorsTestCase = @{ThisScriptPath = $ScriptPath }
-    It "Script file '$ScriptName' can be run without any errors" -TestCases $noErrorsTestCase {
+    It "runs without throwing errors" -TestCases $noErrorsTestCase {
         param ($ThisScriptPath)
         { . $ThisScriptPath } | Should -Not -Throw
     }

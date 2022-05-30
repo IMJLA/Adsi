@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-Fqdn
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Convert a domain distinguishedName name to its FQDN
 
 ## SYNTAX
 
@@ -17,21 +17,22 @@ ConvertTo-Fqdn [[-DistinguishedName] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Uses PowerShell's -replace operator to perform the conversion
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com'
+ad.contoso.com
 ```
 
-{{ Add example description here }}
+Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
 
 ## PARAMETERS
 
 ### -DistinguishedName
-{{ Fill DistinguishedName Description }}
+distinguishedName of the domain
 
 ```yaml
 Type: String[]
@@ -39,7 +40,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -50,11 +51,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String[]
-
+### [System.String] DistinguishedName parameter
 ## OUTPUTS
 
-### System.Object
+### [System.String] FQDN version of the distinguishedName
 ## NOTES
 
 ## RELATED LINKS

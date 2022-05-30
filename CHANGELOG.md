@@ -7,6 +7,78 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.129] - 2022-05-29 - Added comment-based help with example help for all functions up thru F
+
+## [1.0.128] - 2022-05-29 - Added example help where needed
+
+## [1.0.127] - 2022-05-29 - Added comment-based help and OutputType to all functions up through the Fs
+
+## [1.0.126] - 2022-05-22 - Fixed test failures for Add-SidInfo comment-based help
+
+## [1.0.125] - 2022-05-22 - Added comment-based help for Add-SidInfo
+
+## [1.0.124] - 2022-05-22 - Trying agin with plugins enabled
+
+## [1.0.123] - 2022-05-22 - Fixed line breaks in comment-based help for Add-DomainFqdnToLdapPath
+
+## [1.0.122] - 2022-05-22 - Updated RotateBuilds psake task to only retain 1 version
+
+## [1.0.121] - 2022-05-22 - hmm
+
+## [1.0.120] - 2022-05-22 - Using PS7 native format
+
+## [1.0.119] - 2022-05-22 - grr
+
+## [1.0.118] - 2022-05-22 - PlatyPS not living up to promises
+
+## [1.0.117] - 2022-05-22 - who knows at this point
+
+## [1.0.116] - 2022-05-22 - Fixed again
+
+## [1.0.115] - 2022-05-22 - Fixed
+
+## [1.0.114] - 2022-05-22 - PlatyPS claims to have fixed this
+
+## [1.0.113] - 2022-05-22 - Finally settled on balance between what is PS's fault vs. PlatyPS's fault
+
+## [1.0.112] - 2022-05-22 - PlatyPS is the enemy
+
+## [1.0.111] - 2022-05-22 - PlatyPS not working for me
+
+## [1.0.110] - 2022-05-22 - PlatyPS vs. Me round 2
+
+## [1.0.109] - 2022-05-22 - Let's see what happens
+
+## [1.0.108] - 2022-05-22 - Inconthievable
+
+## [1.0.107] - 2022-05-22 - Fixed comment-based help example for Add-DomainFqdnToDLdapPath
+
+## [1.0.106] - 2022-05-22 - testing
+
+## [1.0.105] - 2022-05-22 - no time for this
+
+## [1.0.104] - 2022-05-22 - Adding Remarks in comment-based help Examples for Add-DomainFqdnToLdapPath
+
+## [1.0.103] - 2022-05-22 - Troubleshooting Help tests
+
+## [1.0.102] - 2022-05-22 - Adjusted example for Add-DomainFqdnToLdapPath
+
+## [1.0.101] - 2022-05-22 - Updated comment-based help for Add-DomainFqdnToLdapPath
+
+## [1.0.100] - 2022-05-22 - Added comment-based help to Add-DomainFqdnToLdapPath
+
+## [1.0.99] - 2022-02-21 - Updated tests, updated manifest to remove wildcards
+
+## [1.0.123] - 2022-02-21 - Updated tests
+
+## [1.0.122] - 2022-02-20 - Bug fix in build rotation psake task
+
+## [1.0.121] - 2022-02-13 - Bug fix in psakefile
+
+## [1.0.120] - 2022-02-13 - More buildhelpers, less powershellbuild
+
+## [1.0.119] - 2022-02-13 - Geronimo
+
 ## [1.0.118] - 2022-02-13 - More PSBPreference replacement in psakefile
 
 ## [1.0.117] - 2022-02-13 - Trying to make use of psake properties

@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-HexStringRepresentation
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Convert a SID from byte array format to a string representation of its hexadecimal format
 
 ## SYNTAX
 
@@ -17,21 +17,21 @@ ConvertTo-HexStringRepresentation [[-SIDByteArray] <Byte[]>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Uses the custom format operator -f to format each byte as a string hex representation
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+ConvertTo-HexStringRepresentation -SIDByteArray $Bytes
 ```
 
-{{ Add example description here }}
+Convert the binary SID $Bytes to a hexadecimal string representation
 
 ## PARAMETERS
 
 ### -SIDByteArray
-{{ Fill SIDByteArray Description }}
+SID
 
 ```yaml
 Type: Byte[]
@@ -39,7 +39,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -47,11 +47,10 @@ Accept wildcard characters: False
 
 ## INPUTS
 
-### None
-
+### [System.Byte[]] SIDByteArray parameter
 ## OUTPUTS
 
-### System.Object
+### [System.String] SID as an array of strings representing the byte array's hexadecimal values
 ## NOTES
 
 ## RELATED LINKS

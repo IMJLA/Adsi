@@ -6,19 +6,22 @@
       <command:verb>Add</command:verb>
       <command:noun>DomainFqdnToLdapPath</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Uses RegEx to:
+Match the Domain Components from the Distinguished Name in the LDAP directory path
+Convert the Domain Components to an FQDN
+Insert them into the directory path as the server address</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Add-DomainFqdnToLdapPath</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>DirectoryPath</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
+            <maml:para>Incomplete LDAP directory path containing a distinguishedName but lacking a server address</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
@@ -30,10 +33,10 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
+          <maml:para>Incomplete LDAP directory path containing a distinguishedName but lacking a server address</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
@@ -46,7 +49,7 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.String[]</maml:name>
+          <maml:name>[System.String] DirectoryPath parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -56,7 +59,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.String] Complete LDAP directory path including server address</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -70,10 +73,11 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com'
+LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Add the domain FQDN to a single LDAP directory path</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -85,19 +89,19 @@
       <command:verb>Add</command:verb>
       <command:noun>SidInfo</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Add some commonly-needed properties to a DirectoryEntry for easier access</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Add-SidInfo</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>InputObject</maml:name>
           <maml:description>
-            <maml:para>{{ Fill InputObject Description }}</maml:para>
+            <maml:para>Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry. Must contain the objectSid property</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -106,49 +110,37 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>TrustedDomainSidNameMap</maml:name>
           <maml:description>
-            <maml:para>{{ Fill TrustedDomainSidNameMap Description }}</maml:para>
+            <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
             <maml:name>Object</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>InputObject</maml:name>
         <maml:description>
-          <maml:para>{{ Fill InputObject Description }}</maml:para>
+          <maml:para>Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry. Must contain the objectSid property</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -158,22 +150,34 @@
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>TrustedDomainSidNameMap</maml:name>
         <maml:description>
-          <maml:para>{{ Fill TrustedDomainSidNameMap Description }}</maml:para>
+          <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
           <maml:name>Object</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter.  Must contain the objectSid property.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -183,7 +187,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. Whatever was input, but with three extra properties added now.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -197,10 +201,12 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
+distinguishedName :
+Path              : WinNT://localhost/Administrator</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>The output object's default format is not modified so with default formatting it appears identical to the original. Upon closer inspection it now has SidString, Domain, and SamAccountName properties.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -212,23 +218,23 @@
       <command:verb>ConvertTo</command:verb>
       <command:noun>DistinguishedName</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Convert a domain NetBIOS name to its distinguishedName</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-DistinguishedName</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>Domain</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Domain Description }}</maml:para>
+            <maml:para>NetBIOS name of the domain</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -236,14 +242,14 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>Domain</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Domain Description }}</maml:para>
+          <maml:para>NetBIOS name of the domain</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -252,7 +258,7 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>[System.String] Domain parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -262,7 +268,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.String] distinguishedName of the domain</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -276,10 +282,11 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-DistinguishedName -Domain 'CONTOSO'
+DC=ad,DC=contoso,DC=com</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -291,19 +298,19 @@
       <command:verb>ConvertTo</command:verb>
       <command:noun>Fqdn</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Convert a domain distinguishedName name to its FQDN</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Uses PowerShell's -replace operator to perform the conversion</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-Fqdn</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>DistinguishedName</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DistinguishedName Description }}</maml:para>
+            <maml:para>distinguishedName of the domain</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
@@ -315,10 +322,10 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>DistinguishedName</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DistinguishedName Description }}</maml:para>
+          <maml:para>distinguishedName of the domain</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
@@ -331,7 +338,7 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.String[]</maml:name>
+          <maml:name>[System.String] DistinguishedName parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -341,7 +348,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.String] FQDN version of the distinguishedName</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -355,10 +362,11 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com'
+ad.contoso.com</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -370,19 +378,19 @@
       <command:verb>ConvertTo</command:verb>
       <command:noun>HexStringRepresentation</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Convert a SID from byte array format to a string representation of its hexadecimal format</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Uses the custom format operator -f to format each byte as a string hex representation</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-HexStringRepresentation</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SIDByteArray</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SIDByteArray Description }}</maml:para>
+            <maml:para>SID</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
           <dev:type>
@@ -394,10 +402,10 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SIDByteArray</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SIDByteArray Description }}</maml:para>
+          <maml:para>SID</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
         <dev:type>
@@ -410,7 +418,7 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>[System.Byte[]] SIDByteArray parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -420,7 +428,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.String] SID as an array of strings representing the byte array's hexadecimal values</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -434,10 +442,10 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-HexStringRepresentation -SIDByteArray $Bytes</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Convert the binary SID $Bytes to a hexadecimal string representation</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -449,19 +457,19 @@
       <command:verb>ConvertTo</command:verb>
       <command:noun>HexStringRepresentationForLDAPFilterString</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Uses the custom format operator -f to format each byte as a string hex representation</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-HexStringRepresentationForLDAPFilterString</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SIDByteArray</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SIDByteArray Description }}</maml:para>
+            <maml:para>SID</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
           <dev:type>
@@ -473,10 +481,10 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SIDByteArray</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SIDByteArray Description }}</maml:para>
+          <maml:para>SID</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
         <dev:type>
@@ -489,7 +497,7 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>[System.Byte[]] SIDByteArray parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -499,7 +507,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.String] SID as an array of strings representing the byte array's hexadecimal values</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -513,10 +521,10 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-HexStringRepresentationForLDAPFilterString -SIDByteArray $Bytes</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Convert the binary SID $Bytes to a hexadecimal string representation, formatted for use in an LDAP filter string</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -528,23 +536,23 @@
       <command:verb>ConvertTo</command:verb>
       <command:noun>SidByteArray</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Convert a SID from a string to binary format (byte array)</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Uses the GetBinaryForm method of the [System.Security.Principal.SecurityIdentifier] class</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-SidByteArray</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>SidString</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SidString Description }}</maml:para>
+            <maml:para>SID</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -552,14 +560,14 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>SidString</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SidString Description }}</maml:para>
+          <maml:para>SID</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -568,7 +576,7 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.String</maml:name>
+          <maml:name>[System.String] SidString parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -578,7 +586,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.Byte] SID a a byte array</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -592,10 +600,10 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-SidByteArray -SidString $SID</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Convert the SID string to a byte array</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -607,19 +615,19 @@
       <command:verb>Expand</command:verb>
       <command:noun>AdsiGroupMember</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Recursively retrieves group members and detailed information about them</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Expand-AdsiGroupMember</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>DirectoryEntry</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+            <maml:para>Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -628,49 +636,49 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
-            <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+            <maml:para>Properties of the group members to retrieve</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
             <maml:name>String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>TrustedDomainSidNameMap</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill TrustedDomainSidNameMap Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
-          <dev:type>
-            <maml:name>Object</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>@('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>TrustedDomainSidNameMap</maml:name>
+          <maml:description>
+            <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <dev:type>
+            <maml:name>Object</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>DirectoryEntry</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+          <maml:para>Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -679,47 +687,47 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
-          <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+          <maml:para>Properties of the group members to retrieve</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
           <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>@('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>TrustedDomainSidNameMap</maml:name>
         <maml:description>
-          <maml:para>{{ Fill TrustedDomainSidNameMap Description }}</maml:para>
+          <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
           <maml:name>Object</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -729,7 +737,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -743,10 +751,10 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Need to fix example and add notes</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -758,19 +766,19 @@
       <command:verb>Expand</command:verb>
       <command:noun>IdentityReference</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Recursively retrieves group members and detailed information about them Use caching to reduce duplicate directory queries</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Expand-IdentityReference</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>AccessControlEntry</maml:name>
           <maml:description>
-            <maml:para>{{ Fill AccessControlEntry Description }}</maml:para>
+            <maml:para>The NTFS AccessControlEntry object(s), grouped by their IdentityReference property TODO: Use System.Security.Principal.NTAccount instead</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object[]</command:parameterValue>
           <dev:type>
@@ -779,61 +787,61 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>GroupMember</maml:name>
           <maml:description>
-            <maml:para>{{ Fill GroupMember Description }}</maml:para>
+            <maml:para>Get group members</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
           <dev:type>
             <maml:name>Boolean</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>GroupMemberRecursion</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill GroupMemberRecursion Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
-          <dev:type>
-            <maml:name>Boolean</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>True</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>DirectoryEntryCache</maml:name>
+          <maml:name>GroupMemberRecursion</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Get group members recursively If true, implies $GroupMember = $true</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>Boolean</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>True</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>IdentityReferenceCache</maml:name>
+          <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill IdentityReferenceCache Description }}</maml:para>
+            <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+          <maml:name>IdentityReferenceCache</maml:name>
+          <maml:description>
+            <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>AccessControlEntry</maml:name>
         <maml:description>
-          <maml:para>{{ Fill AccessControlEntry Description }}</maml:para>
+          <maml:para>The NTFS AccessControlEntry object(s), grouped by their IdentityReference property TODO: Use System.Security.Principal.NTAccount instead</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object[]</command:parameterValue>
         <dev:type>
@@ -842,59 +850,59 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>GroupMember</maml:name>
         <maml:description>
-          <maml:para>{{ Fill GroupMember Description }}</maml:para>
+          <maml:para>Get group members</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
         <dev:type>
           <maml:name>Boolean</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>True</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>GroupMemberRecursion</maml:name>
         <maml:description>
-          <maml:para>{{ Fill GroupMemberRecursion Description }}</maml:para>
+          <maml:para>Get group members recursively If true, implies $GroupMember = $true</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
         <dev:type>
           <maml:name>Boolean</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>True</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>IdentityReferenceCache</maml:name>
+        <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
-          <maml:para>{{ Fill IdentityReferenceCache Description }}</maml:para>
+          <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <maml:name>IdentityReferenceCache</maml:name>
+        <maml:description>
+          <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.Object[]</maml:name>
+          <maml:name>[System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -904,7 +912,47 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.Object] The input object is returned with additional properties added:</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>DirectoryEntry</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>DomainDn</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>DomainNetBIOS</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>ObjectType</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Members (if the DirectoryEntry is a group).</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -918,10 +966,10 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -933,19 +981,19 @@
       <command:verb>Expand</command:verb>
       <command:noun>WinNTGroupMember</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Recursively retrieves group members and detailed information about them</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Expand-WinNTGroupMember</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>DirectoryEntry</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+            <maml:para>Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -954,25 +1002,25 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>DirectoryEntry</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+          <maml:para>Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -981,23 +1029,23 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+          <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1007,7 +1055,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1021,10 +1069,10 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Need to fix example and add notes</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1036,71 +1084,71 @@
       <command:verb>Find</command:verb>
       <command:noun>AdsiProvider</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Determine whether a directory server is an LDAP or a WinNT server</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Find-AdsiProvider</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>AdsiServer</maml:name>
           <maml:description>
-            <maml:para>{{ Fill AdsiServer Description }}</maml:para>
+            <maml:para>IP address or hostname of the directory server whose ADSI provider type to determine</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>KnownServers</maml:name>
           <maml:description>
-            <maml:para>{{ Fill KnownServers Description }}</maml:para>
+            <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>AdsiServer</maml:name>
         <maml:description>
-          <maml:para>{{ Fill AdsiServer Description }}</maml:para>
+          <maml:para>IP address or hostname of the directory server whose ADSI provider type to determine</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>KnownServers</maml:name>
         <maml:description>
-          <maml:para>{{ Fill KnownServers Description }}</maml:para>
+          <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>[System.String] AdsiServer parameter.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1110,7 +1158,31 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.String] Possible return values are:</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>LDAP</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>WinNT</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1124,10 +1196,17 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Find-AdsiProvider -AdsiServer localhost</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Find the ADSI provider of the local computer</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Find-AdsiProvider -AdsiServer 'ad.contoso.com'</dev:code>
+        <dev:remarks>
+          <maml:para>Find the ADSI provider of the AD domain 'ad.contoso.com'</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1519,7 +1598,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>A hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
@@ -1570,7 +1649,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
-          <maml:para>A hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
         <dev:type>
@@ -1580,11 +1659,28 @@
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Management.Automation.PSObject[]</maml:name>
+          <maml:name>System.DirectoryServices.DirectoryEntry where possible</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>PSCustomObject for security principals with no directory entry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1599,10 +1695,20 @@
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-DirectoryEntry</dev:code>
+        <dev:code>Get-DirectoryEntry
+distinguishedName : {DC=ad,DC=contoso,DC=com}
+Path              : LDAP://DC=ad,DC=contoso,DC=com</dev:code>
         <dev:remarks>
-          <maml:para>distinguishedName : {DC=ad,DC=contoso,DC=com} Path              : LDAP://DC=ad,DC=contoso,DC=com</maml:para>
-          <maml:para>As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain</maml:para>
+          <maml:para>As the current user on a domain-joined computer, bind to the current domain and retrieve the DirectoryEntry for the root of the domain</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-DirectoryEntry
+distinguishedName :
+Path              : WinNT://ComputerName</dev:code>
+        <dev:remarks>
+          <maml:para>As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

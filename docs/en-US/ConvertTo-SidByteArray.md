@@ -8,38 +8,38 @@ schema: 2.0.0
 # ConvertTo-SidByteArray
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Convert a SID from a string to binary format (byte array)
 
 ## SYNTAX
 
 ```
-ConvertTo-SidByteArray [[-SidString] <String>] [<CommonParameters>]
+ConvertTo-SidByteArray [[-SidString] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Uses the GetBinaryForm method of the \[System.Security.Principal.SecurityIdentifier\] class
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+ConvertTo-SidByteArray -SidString $SID
 ```
 
-{{ Add example description here }}
+Convert the SID string to a byte array
 
 ## PARAMETERS
 
 ### -SidString
-{{ Fill SidString Description }}
+SID
 
 ```yaml
-Type: String
+Type: String[]
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -50,11 +50,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String
-
+### [System.String] SidString parameter
 ## OUTPUTS
 
-### System.Object
+### [System.Byte] SID a a byte array
 ## NOTES
 
 ## RELATED LINKS

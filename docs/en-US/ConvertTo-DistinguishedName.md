@@ -8,50 +8,53 @@ schema: 2.0.0
 # ConvertTo-DistinguishedName
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Convert a domain NetBIOS name to its distinguishedName
 
 ## SYNTAX
 
 ```
-ConvertTo-DistinguishedName [[-Domain] <String>]
+ConvertTo-DistinguishedName [-Domain] <String[]> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+ConvertTo-DistinguishedName -Domain 'CONTOSO'
+DC=ad,DC=contoso,DC=com
 ```
 
-{{ Add example description here }}
+Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
 
 ## PARAMETERS
 
 ### -Domain
-{{ Fill Domain Description }}
+NetBIOS name of the domain
 
 ```yaml
-Type: String
+Type: String[]
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 0
+Required: True
+Position: 1
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
 ## INPUTS
 
-### None
-
+### [System.String] Domain parameter
 ## OUTPUTS
 
-### System.Object
+### [System.String] distinguishedName of the domain
 ## NOTES
 
 ## RELATED LINKS

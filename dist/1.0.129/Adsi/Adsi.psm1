@@ -1,20 +1,42 @@
 
 function Add-DomainFqdnToLdapPath {
+    <#
+        .SYNOPSIS
+        Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
+        .DESCRIPTION
+        Uses RegEx to:  
+            Match the Domain Components from the Distinguished Name in the LDAP directory path  
+            Convert the Domain Components to an FQDN  
+            Insert them into the directory path as the server address
+        .INPUTS
+        [System.String] DirectoryPath parameter
+        .OUTPUTS
+        [System.String] Complete LDAP directory path including server address
+        .EXAMPLE
+        Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com'
+        LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com
+
+        Add the domain FQDN to a single LDAP directory path
+    #>
+    [OutputType([System.String])]
     param (
+
+        # Incomplete LDAP directory path containing a distinguishedName but lacking a server address
         [Parameter(ValueFromPipeline)]
         [string[]]$DirectoryPath
+
     )
     begin {
+
         $PathRegEx = '(?<Path>LDAP:\/\/[^\/]*)'
         $DomainRegEx = '(?i)DC=\w{1,}?\b'
+
     }
     process {
 
         ForEach ($ThisPath in $DirectoryPath) {
 
             if ($ThisPath -match $PathRegEx) {
-
-                #$NewPath = $Matches.Path
 
                 if ($ThisPath -match $DomainRegEx) {
                     $DomainDN = $null
@@ -41,16 +63,38 @@ function Add-DomainFqdnToLdapPath {
     }
 }
 function Add-SidInfo {
+    <#
+        .SYNOPSIS
+        Add some commonly-needed properties to a DirectoryEntry for easier access
+        .DESCRIPTION
+        Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
+        .INPUTS
+        [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter.  Must contain the objectSid property.
+        .OUTPUTS
+        [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. Whatever was input, but with three extra properties added now.
+        .EXAMPLE
+        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
+        distinguishedName :
+        Path              : WinNT://localhost/Administrator
 
+        The output object's default format is not modified so with default formatting it appears identical to the original.
+        Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
+    #>
+    [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
     param (
 
-        # Expecting a DirectoryEntry from the LDAP or WinNT providers
+        # Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry.
         # Must contain the objectSid property
         [Parameter(ValueFromPipeline)]
         $InputObject,
 
+        <#
+        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
+        # Hashtable containing known domain SIDs as the keys and their names as the values
         $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
 
     )
@@ -60,7 +104,14 @@ function Add-SidInfo {
     process {
         ForEach ($Object in $InputObject) {
             if ($null -eq $Object) { continue }
-            elseif ($Object.objectSid.Value) {
+            elseif (
+                $null -ne $Object.objectSid.Value -and
+                # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
+                # So we need to filter out those instances here to avoid this error:
+                # The following exception occurred while retrieving the string representation for method "objectSid":
+                # "Object reference not set to an instance of an object."
+                $Object.objectSid.Value.GetType().FullName -ne 'System.Management.Automation.PSMethod'
+            ) {
                 [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid.Value, 0)
             } elseif ($Object.Properties['objectSid'].Value) {
                 [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.Properties['objectSid'].Value, 0)
@@ -75,11 +126,18 @@ function Add-SidInfo {
                 $SamAccountName = $Object.Properties['name']
             }
 
-            # The SID of the domain is the SID of the user minus the last block of numbers
-            $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
+            if ($Object.Domain.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
+                # This would only have come from Add-SidInfo in the first place
+                # This means it was added with Add-Member in Get-DirectoryEntry for the root of the computer's directory
+                [string]$SID = $Object.Domain.Sid
+                $DomainObject = $Object.Domain
+            } else {
+                # The SID of the domain is the SID of the user minus the last block of numbers
+                $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 
-            # Lookup other information about the domain using its SID as the key
-            $DomainObject = $TrustedDomainSidNameMap[$DomainSid]
+                # Lookup other information about the domain using its SID as the key
+                $DomainObject = $TrustedDomainSidNameMap[$DomainSid]
+            }
 
             #Write-Debug "$SamAccountName`t$SID"
 
@@ -97,17 +155,57 @@ function Add-SidInfo {
     }
 }
 function ConvertTo-DistinguishedName {
-    # https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
-    param ([string]$Domain)
-    $IADsNameTranslateComObject = New-Object -comObject "NameTranslate"
-    $IADsNameTranslateInterface = $IADsNameTranslateComObject.GetType()
-    $null = $IADsNameTranslateInterface.InvokeMember("Init", "InvokeMethod", $Null, $IADsNameTranslateComObject, (3, $Null))
-    $null = $IADsNameTranslateInterface.InvokeMember("Set", "InvokeMethod", $Null, $IADsNameTranslateComObject, (3, "$Domain\"))
-    $DNSDomain = $IADsNameTranslateInterface.InvokeMember("Get", "InvokeMethod", $Null, $IADsNameTranslateComObject, 1)
-    Write-Output $DNSDomain
+    <#
+        .SYNOPSIS
+        Convert a domain NetBIOS name to its distinguishedName
+        .DESCRIPTION
+        https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
+        .INPUTS
+        [System.String] Domain parameter
+        .OUTPUTS
+        [System.String] distinguishedName of the domain
+        .EXAMPLE
+        ConvertTo-DistinguishedName -Domain 'CONTOSO'
+        DC=ad,DC=contoso,DC=com
+
+        Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
+    #>
+    [OutputType([System.String])]
+    param (
+        # NetBIOS name of the domain
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string[]]$Domain
+    )
+    process {
+        ForEach ($ThisDomain in $Domain) {
+            $IADsNameTranslateComObject = New-Object -comObject "NameTranslate"
+            $IADsNameTranslateInterface = $IADsNameTranslateComObject.GetType()
+            $null = $IADsNameTranslateInterface.InvokeMember("Init", "InvokeMethod", $Null, $IADsNameTranslateComObject, (3, $Null))
+            $null = $IADsNameTranslateInterface.InvokeMember("Set", "InvokeMethod", $Null, $IADsNameTranslateComObject, (3, "$ThisDomain\"))
+            $DNSDomain = $IADsNameTranslateInterface.InvokeMember("Get", "InvokeMethod", $Null, $IADsNameTranslateComObject, 1)
+            Write-Output $DNSDomain
+        }
+    }
 }
 function ConvertTo-Fqdn {
+    <#
+        .SYNOPSIS
+        Convert a domain distinguishedName name to its FQDN
+        .DESCRIPTION
+        Uses PowerShell's -replace operator to perform the conversion
+        .INPUTS
+        [System.String] DistinguishedName parameter
+        .OUTPUTS
+        [System.String] FQDN version of the distinguishedName
+        .EXAMPLE
+        ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com'
+        ad.contoso.com
+
+        Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
+    #>
+    [OutputType([System.String])]
     param (
+        # distinguishedName of the domain
         [Parameter(ValueFromPipeline)]
         [string[]]$DistinguishedName
     )
@@ -118,16 +216,50 @@ function ConvertTo-Fqdn {
     }
 }
 function ConvertTo-HexStringRepresentation {
+    <#
+        .SYNOPSIS
+        Convert a SID from byte array format to a string representation of its hexadecimal format
+        .DESCRIPTION
+        Uses the custom format operator -f to format each byte as a string hex representation
+        .INPUTS
+        [System.Byte[]] SIDByteArray parameter
+        .OUTPUTS
+        [System.String] SID as an array of strings representing the byte array's hexadecimal values
+        .EXAMPLE
+        ConvertTo-HexStringRepresentation -SIDByteArray $Bytes
+
+        Convert the binary SID $Bytes to a hexadecimal string representation
+    #>
+    [OutputType([System.String[]])]
     param (
+        # SID
         [byte[]]$SIDByteArray
     )
-    $SIDByteArray |
+
+    $SIDHexString = $SIDByteArray |
     ForEach-Object {
         '{0:X}' -f $_
     }
+    Write-Output $SIDHexString
 }
 function ConvertTo-HexStringRepresentationForLDAPFilterString {
+    <#
+        .SYNOPSIS
+        Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
+        .DESCRIPTION
+        Uses the custom format operator -f to format each byte as a string hex representation
+        .INPUTS
+        [System.Byte[]] SIDByteArray parameter
+        .OUTPUTS
+        [System.String] SID as an array of strings representing the byte array's hexadecimal values
+        .EXAMPLE
+        ConvertTo-HexStringRepresentationForLDAPFilterString -SIDByteArray $Bytes
+
+        Convert the binary SID $Bytes to a hexadecimal string representation, formatted for use in an LDAP filter string
+    #>
+    [OutputType([System.String])]
     param (
+        # SID
         [byte[]]$SIDByteArray
     )
     $Hexes = $SIDByteArray |
@@ -144,29 +276,68 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
     "\$($Hexes -join '\')"
 }
 function ConvertTo-SidByteArray {
+    <#
+        .SYNOPSIS
+        Convert a SID from a string to binary format (byte array)
+        .DESCRIPTION
+        Uses the GetBinaryForm method of the [System.Security.Principal.SecurityIdentifier] class
+        .INPUTS
+        [System.String] SidString parameter
+        .OUTPUTS
+        [System.Byte] SID a a byte array
+        .EXAMPLE
+        ConvertTo-SidByteArray -SidString $SID
+
+        Convert the SID string to a byte array
+    #>
+    [OutputType([System.Byte[]])]
     param (
+        # SID
         [Parameter(ValueFromPipeline)]
-        [string]$SidString
+        [string[]]$SidString
     )
     process {
-        $SID = [System.Security.Principal.SecurityIdentifier]::new($SidString)
-        [byte[]]$Bytes = [byte[]]::new($SID.BinaryLength)
-        $SID.GetBinaryForm($Bytes, 0)
-        Write-Output $Bytes
+        ForEach ($ThisSID in $SidString) {
+            $SID = [System.Security.Principal.SecurityIdentifier]::new($ThisSID)
+            [byte[]]$Bytes = [byte[]]::new($SID.BinaryLength)
+            $SID.GetBinaryForm($Bytes, 0)
+            Write-Output $Bytes
+        }
     }
 }
 function Expand-AdsiGroupMember {
+    <#
+        .SYNOPSIS
+        Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
+        .DESCRIPTION
+        Recursively retrieves group members and detailed information about them
+        .INPUTS
+        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.
+        .OUTPUTS
+        [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
+        .EXAMPLE
+        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
 
+        Need to fix example and add notes
+    #>
+    [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
 
+        # Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
         [parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
+        # Properties of the group members to retrieve
         [string[]]$PropertiesToLoad = @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title'),
 
-        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache),
+        <#
+        Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
+        # Hashtable containing known domain SIDs as the keys and their names as the values
+        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
 
     )
 
@@ -180,7 +351,7 @@ function Expand-AdsiGroupMember {
 
             $i++
 
-            $status = ("$(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
+            #$status = ("$(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
             #Write-Debug "  $status"
 
             $Principal = $null
@@ -230,12 +401,32 @@ function Expand-AdsiGroupMember {
 
 }
 function Expand-IdentityReference {
+    <#
+        .SYNOPSIS
+        Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
+        .DESCRIPTION
+        Recursively retrieves group members and detailed information about them
+        Use caching to reduce duplicate directory queries
+        .INPUTS
+        [System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)
+        .OUTPUTS
+        [System.Object] The input object is returned with additional properties added:
+            DirectoryEntry
+            DomainDn
+            DomainNetBIOS
+            ObjectType
+            Members (if the DirectoryEntry is a group).
 
-    # Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
+        .EXAMPLE
+        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
 
+        Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
+    #>
+    [OutputType([System.Object])]
     param (
 
         # The NTFS AccessControlEntry object(s), grouped by their IdentityReference property
+        # TODO: Use System.Security.Principal.NTAccount instead
         [Parameter(ValueFromPipeline)]
         [System.Object[]]$AccessControlEntry,
 
@@ -253,7 +444,6 @@ function Expand-IdentityReference {
         [hashtable]$IdentityReferenceCache = ([hashtable]::Synchronized(@{}))
 
     )
-
 
     begin {
 
@@ -532,12 +722,31 @@ function Expand-IdentityReference {
     }
 }
 function Expand-WinNTGroupMember {
+    <#
+        .SYNOPSIS
+        Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
+        .DESCRIPTION
+        Recursively retrieves group members and detailed information about them
+        .INPUTS
+        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.
+        .OUTPUTS
+        [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
+        .EXAMPLE
+        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
 
+        Need to fix example and add notes
+    #>
+    [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
 
+        # Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
+        <#
+        Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
     )
@@ -566,31 +775,65 @@ function Expand-WinNTGroupMember {
     end {}
 }
 function Find-AdsiProvider {
-    param (
-        [string]$AdsiServer,
+    <#
+        .SYNOPSIS
+        Determine whether a directory server is an LDAP or a WinNT server
+        .DESCRIPTION
+        Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
+        .INPUTS
+        [System.String] AdsiServer parameter.
+        .OUTPUTS
+        [System.String] Possible return values are:
+            None
+            LDAP
+            WinNT
+        .EXAMPLE
+        Find-AdsiProvider -AdsiServer localhost
 
+        Find the ADSI provider of the local computer
+        .EXAMPLE
+        Find-AdsiProvider -AdsiServer 'ad.contoso.com'
+
+        Find the ADSI provider of the AD domain 'ad.contoso.com'
+    #>
+    [OutputType([System.String])]
+
+    param (
+
+        # IP address or hostname of the directory server whose ADSI provider type to determine
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string[]]$AdsiServer,
+
+        # Cache of known directory servers to reduce duplicate queries
         [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+
     )
-    $AdsiProvider = $null
-    if ($KnownServers[$AdsiServer]) {
-        $AdsiProvider = $KnownServers[$AdsiServer]
-    } else {
-        try {
-            $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$AdsiServer")
-            $AdsiProvider = 'LDAP'
-        } catch {}
-        if (!$AdsiProvider) {
-            try {
-                $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$AdsiServer")
-                $AdsiProvider = 'WinNT'
-            } catch {}
+    process {
+        ForEach ($ThisServer in $AdsiServer) {
+            $AdsiProvider = $null
+            if ($KnownServers[$ThisServer]) {
+                $AdsiProvider = $KnownServers[$ThisServer]
+            } else {
+                try {
+                    $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$ThisServer")
+                    $AdsiProvider = 'LDAP'
+                } catch { Write-Debug "$ThisServer is not an LDAP server" }
+                if (!$AdsiProvider) {
+                    try {
+                        $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$ThisServer")
+                        $AdsiProvider = 'WinNT'
+                    } catch {
+                        Write-Debug "$ThisServer is not a WinNT server"
+                    }
+                }
+                if (!$AdsiProvider) {
+                    $AdsiProvider = 'none'
+                }
+                $KnownServers[$ThisServer] = $AdsiProvider
+            }
+            Write-Output $AdsiProvider
         }
-        if (!$AdsiProvider) {
-            $AdsiProvider = 'none'
-        }
-        $KnownServers[$AdsiServer] = $AdsiProvider
     }
-    Write-Output $AdsiProvider
 }
 function Get-ADSIGroup {
 
@@ -710,16 +953,25 @@ function Get-DirectoryEntry {
         Use Active Directory Service Interfaces to retrieve an object from a directory
         .DESCRIPTION
         Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
+        .INPUTS
+        None. Pipeline input is not accepted.
+        .OUTPUTS
+        System.DirectoryServices.DirectoryEntry where possible
+        PSCustomObject for security principals with no directory entry
         .EXAMPLE
         Get-DirectoryEntry
-
         distinguishedName : {DC=ad,DC=contoso,DC=com}
         Path              : LDAP://DC=ad,DC=contoso,DC=com
 
-        As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+        As the current user on a domain-joined computer, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+        .EXAMPLE
+        Get-DirectoryEntry
+        distinguishedName :
+        Path              : WinNT://ComputerName
 
+        As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
-    [OutputType([PSObject[]])]
+    [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
     [CmdletBinding()]
     param (
 
@@ -739,7 +991,7 @@ function Get-DirectoryEntry {
         [string[]]$PropertiesToLoad,
 
         <#
-        A hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
         Uses a thread-safe hashtable by default
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
@@ -756,7 +1008,7 @@ function Get-DirectoryEntry {
 
             '^WinNT\:\/\/[^\/]*\/CREATOR OWNER$' {
                 $SidByteAray = 'S-1-3-0' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'CREATOR OWNER'
                     Description     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
                     objectSid       = $SidByteAray
@@ -775,7 +1027,7 @@ function Get-DirectoryEntry {
             }
             '^WinNT\:\/\/[^\/]*\/SYSTEM$' {
                 $SidByteAray = 'S-1-5-18' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'SYSTEM'
                     Description     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
                     objectSid       = $SidByteAray
@@ -794,7 +1046,7 @@ function Get-DirectoryEntry {
             }
             '^WinNT\:\/\/[^\/]*\/INTERACTIVE$' {
                 $SidByteAray = 'S-1-5-4' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'INTERACTIVE'
                     Description     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
                     objectSid       = $SidByteAray
@@ -813,7 +1065,7 @@ function Get-DirectoryEntry {
             }
             '^WinNT\:\/\/[^\/]*\/Authenticated Users$' {
                 $SidByteAray = 'S-1-5-11' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
+                $DirectoryEntry = [PSCustomObject]@{
                     Name            = 'Authenticated Users'
                     Description     = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
                     objectSid       = $SidByteAray
@@ -828,6 +1080,25 @@ function Get-DirectoryEntry {
                     SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
                 }
                 $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+            }
+            '' {
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
+                $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
+                $DirectoryPath = "WinNT://$Workgroup/$(hostname)"
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+                if ($Credential) {
+                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
+                } else {
+                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
+                }
+
+                $SampleUser = $DirectoryEntry.PSBase.Children |
+                Where-Object -FilterScript { $_.schemaclassname -eq 'user' } |
+                Select-Object -First 1 |
+                Add-SidInfo
+
+                $DirectoryEntry | Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+
             }
             default {
 
@@ -1294,6 +1565,43 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

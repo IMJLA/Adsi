@@ -1,15 +1,36 @@
 function Expand-AdsiGroupMember {
+    <#
+        .SYNOPSIS
+        Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
+        .DESCRIPTION
+        Recursively retrieves group members and detailed information about them
+        .INPUTS
+        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.
+        .OUTPUTS
+        [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
+        .EXAMPLE
+        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
 
+        Need to fix example and add notes
+    #>
+    [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
 
+        # Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
         [parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
+        # Properties of the group members to retrieve
         [string[]]$PropertiesToLoad = @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title'),
 
-        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache),
+        <#
+        Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
+        # Hashtable containing known domain SIDs as the keys and their names as the values
+        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
 
     )
 
@@ -23,7 +44,7 @@ function Expand-AdsiGroupMember {
 
             $i++
 
-            $status = ("$(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
+            #$status = ("$(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
             #Write-Debug "  $status"
 
             $Principal = $null

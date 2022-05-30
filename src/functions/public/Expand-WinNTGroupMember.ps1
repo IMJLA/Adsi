@@ -1,10 +1,29 @@
 function Expand-WinNTGroupMember {
+    <#
+        .SYNOPSIS
+        Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
+        .DESCRIPTION
+        Recursively retrieves group members and detailed information about them
+        .INPUTS
+        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.
+        .OUTPUTS
+        [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
+        .EXAMPLE
+        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
 
+        Need to fix example and add notes
+    #>
+    [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
 
+        # Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
+        <#
+        Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
     )

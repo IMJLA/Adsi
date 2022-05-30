@@ -1,10 +1,30 @@
 function Expand-IdentityReference {
+    <#
+        .SYNOPSIS
+        Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
+        .DESCRIPTION
+        Recursively retrieves group members and detailed information about them
+        Use caching to reduce duplicate directory queries
+        .INPUTS
+        [System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)
+        .OUTPUTS
+        [System.Object] The input object is returned with additional properties added:
+            DirectoryEntry
+            DomainDn
+            DomainNetBIOS
+            ObjectType
+            Members (if the DirectoryEntry is a group).
 
-    # Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
+        .EXAMPLE
+        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
 
+        Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
+    #>
+    [OutputType([System.Object])]
     param (
 
         # The NTFS AccessControlEntry object(s), grouped by their IdentityReference property
+        # TODO: Use System.Security.Principal.NTAccount instead
         [Parameter(ValueFromPipeline)]
         [System.Object[]]$AccessControlEntry,
 
@@ -22,7 +42,6 @@ function Expand-IdentityReference {
         [hashtable]$IdentityReferenceCache = ([hashtable]::Synchronized(@{}))
 
     )
-
 
     begin {
 

@@ -8,7 +8,7 @@ schema: 2.0.0
 # Expand-IdentityReference
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
 
 ## SYNTAX
 
@@ -19,21 +19,23 @@ Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [[-GroupMember] <Boo
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Recursively retrieves group members and detailed information about them
+Use caching to reduce duplicate directory queries
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
 ```
 
-{{ Add example description here }}
+Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
 
 ## PARAMETERS
 
 ### -AccessControlEntry
-{{ Fill AccessControlEntry Description }}
+The NTFS AccessControlEntry object(s), grouped by their IdentityReference property
+TODO: Use System.Security.Principal.NTAccount instead
 
 ```yaml
 Type: Object[]
@@ -41,44 +43,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -DirectoryEntryCache
-{{ Fill DirectoryEntryCache Description }}
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -GroupMember
-{{ Fill GroupMember Description }}
-
-```yaml
-Type: Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -GroupMemberRecursion
-{{ Fill GroupMemberRecursion Description }}
+Get group members
 
 ```yaml
 Type: Boolean
@@ -87,13 +59,29 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
+Default value: True
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -IdentityReferenceCache
-{{ Fill IdentityReferenceCache Description }}
+### -GroupMemberRecursion
+Get group members recursively
+If true, implies $GroupMember = $true
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: True
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DirectoryEntryCache
+Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
 
 ```yaml
 Type: Hashtable
@@ -102,7 +90,22 @@ Aliases:
 
 Required: False
 Position: 4
-Default value: None
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -IdentityReferenceCache
+Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
+
+```yaml
+Type: Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -112,11 +115,15 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Object[]
-
+### [System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)
 ## OUTPUTS
 
-### System.Object
+### [System.Object] The input object is returned with additional properties added:
+###     DirectoryEntry
+###     DomainDn
+###     DomainNetBIOS
+###     ObjectType
+###     Members (if the DirectoryEntry is a group).
 ## NOTES
 
 ## RELATED LINKS

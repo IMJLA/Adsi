@@ -25,7 +25,7 @@ BeforeDiscovery {
     ## To test, restart session.
 }
 
-Describe "Test help for <_.Name>" -ForEach $commands {
+Describe "help for <_.Name>" -ForEach $commands {
 
     BeforeDiscovery {
         function FilterOutCommonParams {
@@ -66,30 +66,30 @@ Describe "Test help for <_.Name>" -ForEach $commands {
     }
 
     # If help is not found, synopsis in auto-generated help is the syntax diagram
-    It 'Help is not auto-generated' {
+    It 'is not auto-generated' {
         $commandHelp.Synopsis | Should -Not -BeLike '*`[`<CommonParameters`>`]*'
     }
 
     # Should be a description for every function
-    It "Has description" {
+    It "has a description" {
         $commandHelp.Description | Should -Not -BeNullOrEmpty
     }
 
     # Should be at least one example
-    It "Has example code" {
+    It "has example code" {
         ($commandHelp.Examples.Example | Select-Object -First 1).Code | Should -Not -BeNullOrEmpty
     }
 
     # Should be at least one example description
-    It "Has example help" {
+    It "has example help" {
         ($commandHelp.Examples.Example.Remarks | Select-Object -First 1).Text | Should -Not -BeNullOrEmpty
     }
 
-    It "Help link <_> is valid" -ForEach $helpLinks {
+    It "has a valid link URL '<_>'" -ForEach $helpLinks {
         (Invoke-WebRequest -Uri $_ -UseBasicParsing).StatusCode | Should -Be '200'
     }
 
-    Context "Parameter <_.Name>" -Foreach $commandParameters {
+    Context "- Help for parameter '<_.Name>'" -Foreach $commandParameters {
 
         BeforeAll {
             $parameter = $_
@@ -99,26 +99,27 @@ Describe "Test help for <_.Name>" -ForEach $commands {
         }
 
         # Should be a description for every parameter
-        It "Has description" {
+        It "has a description" {
             $parameterHelp.Description.Text | Should -Not -BeNullOrEmpty
         }
 
         # Required value in Help should match IsMandatory property of parameter
-        It "Has correct [mandatory] value" {
+        It "has the correct [mandatory] value" {
             $codeMandatory = $_.IsMandatory.toString()
             $parameterHelp.Required | Should -Be $codeMandatory
         }
 
         # Parameter type in help should match code
-        It "Has correct parameter type" {
+        It "has the correct parameter type" {
             $parameterHelpType | Should -Be $parameter.ParameterType.Name
         }
+
     }
 
-    Context "Test <_> help parameter help for <commandName>" -Foreach $helpParameterNames {
+    Context "- Parameter '<_>' from the help" -Foreach $helpParameterNames {
 
         # Shouldn't find extra parameters in help.
-        It "finds help parameter in code: <_>" {
+        It "exists in the code: <_>" {
             $_ -in $parameterNames | Should -Be $true
         }
     }

@@ -8,45 +8,52 @@ schema: 2.0.0
 # Find-AdsiProvider
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Determine whether a directory server is an LDAP or a WinNT server
 
 ## SYNTAX
 
 ```
-Find-AdsiProvider [[-AdsiServer] <String>] [[-KnownServers] <Hashtable>]
+Find-AdsiProvider [-AdsiServer] <String[]> [[-KnownServers] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Find-AdsiProvider -AdsiServer localhost
 ```
 
-{{ Add example description here }}
+Find the ADSI provider of the local computer
+
+### EXAMPLE 2
+```
+Find-AdsiProvider -AdsiServer 'ad.contoso.com'
+```
+
+Find the ADSI provider of the AD domain 'ad.contoso.com'
 
 ## PARAMETERS
 
 ### -AdsiServer
-{{ Fill AdsiServer Description }}
+IP address or hostname of the directory server whose ADSI provider type to determine
 
 ```yaml
-Type: String
+Type: String[]
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 0
+Required: True
+Position: 1
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -KnownServers
-{{ Fill KnownServers Description }}
+Cache of known directory servers to reduce duplicate queries
 
 ```yaml
 Type: Hashtable
@@ -54,19 +61,24 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: None
+Position: 2
+Default value: [hashtable]::Synchronized(@{})
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
 ## INPUTS
 
-### None
-
+### [System.String] AdsiServer parameter.
 ## OUTPUTS
 
-### System.Object
+### [System.String] Possible return values are:
+###     None
+###     LDAP
+###     WinNT
 ## NOTES
 
 ## RELATED LINKS

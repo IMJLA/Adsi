@@ -19,7 +19,8 @@ BeforeAll {
 
     $script:manifest = $null
 }
-Describe "module manifest" {
+
+Describe "module manifest '$($env:BHProjectName).psd1'" {
 
     Context '- Validation' {
 
@@ -67,12 +68,15 @@ Describe 'Git tagging' -Skip {
         }
     }
 
-    It 'Is tagged with a valid version' {
-        $gitTagVersion               | Should -Not -BeNullOrEmpty
-        $gitTagVersion -as [Version] | Should -Not -BeNullOrEmpty
-    }
+    Context "- Git tag version '$gitTagVersion'" {
 
-    It 'Matches manifest version' {
-        $manifestData.Version -as [Version] | Should -Be ( $gitTagVersion -as [Version])
+        It 'is a valid version' {
+            $gitTagVersion               | Should -Not -BeNullOrEmpty
+            $gitTagVersion -as [Version] | Should -Not -BeNullOrEmpty
+        }
+
+        It 'matches the module manifest version' {
+            $manifestData.Version -as [Version] | Should -Be ( $gitTagVersion -as [Version])
+        }
     }
 }

@@ -25,12 +25,20 @@ Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
 ### EXAMPLE 1
 ```
 Get-DirectoryEntry
-```
-
 distinguishedName : {DC=ad,DC=contoso,DC=com}
 Path              : LDAP://DC=ad,DC=contoso,DC=com
+```
 
-As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+As the current user on a domain-joined computer, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+
+### EXAMPLE 2
+```
+Get-DirectoryEntry
+distinguishedName :
+Path              : WinNT://ComputerName
+```
+
+As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
 
 ## PARAMETERS
 
@@ -82,7 +90,7 @@ Accept wildcard characters: False
 ```
 
 ### -DirectoryEntryCache
-A hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
 Uses a thread-safe hashtable by default
 
 ```yaml
@@ -102,9 +110,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Management.Automation.PSObject[]
+### System.DirectoryServices.DirectoryEntry where possible
+### PSCustomObject for security principals with no directory entry
 ## NOTES
 
 ## RELATED LINKS

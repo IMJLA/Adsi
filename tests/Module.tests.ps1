@@ -15,10 +15,10 @@ Select-Object -First 1
 
 $ModuleName = $ModuleManifest.Name -split '\.' | Select-Object -SkipLast 1
 
-Describe "Functions in '$ModuleName'" {
+Describe "PowerShell files in module '$ModuleName'" {
     # TestCases are splatted to the script so we need hashtables
     $functionTestCases = $Scripts | ForEach-Object { @{Script = $_ } }
-    It "'<Script>' is valid PowerShell" -TestCases $functionTestCases {
+    It "'<Script>' can be tokenized by the PowerShell parser without any errors" -TestCases $functionTestCases {
         param ($Script)
         $Script.FullName | Should -Exist
 
@@ -29,7 +29,7 @@ Describe "Functions in '$ModuleName'" {
     }
 }
 
-Describe "Module '$ModuleName'" {
+Describe "module '$ModuleName'" {
     $moduleTestCase = @{ ThisModule = $ModuleFile.FullName }
     It "can be imported without any errors" -TestCases $moduleTestCase {
         param ($ThisModule)
