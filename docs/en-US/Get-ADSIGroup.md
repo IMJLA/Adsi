@@ -19,6 +19,7 @@ Get-ADSIGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesT
 
 ## DESCRIPTION
 Uses the ADSI components to search a directory for a group, then get its members
+Both the WinNT and LDAP providers are supported
 
 ## EXAMPLES
 
@@ -27,20 +28,21 @@ Uses the ADSI components to search a directory for a group, then get its members
 Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
 ```
 
-Find the ADSI provider of the local computer
+Get members of the local Administrators group
 
 ### EXAMPLE 2
 ```
 Get-ADSIGroup -GroupName Administrators
 ```
 
-On a domain-joined computer, this will get the the domain's Administrators group
-On a workgroup computer, this will get the local Administrators group
+On a domain-joined computer, this will get members of the domain's Administrators group
+On a workgroup computer, this will get members of the local Administrators group
 
 ## PARAMETERS
 
 ### -DirectoryPath
-{{ Fill DirectoryPath Description }}
+Path to the directory object to retrieve
+Defaults to the root of the current domain
 
 ```yaml
 Type: String
@@ -49,13 +51,13 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: (([adsisearcher]'').SearchRoot.Path)
+Default value: (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -GroupName
-{{ Fill GroupName Description }}
+Name (CN or Common Name) of the group to retrieve
 
 ```yaml
 Type: String
@@ -70,7 +72,22 @@ Accept wildcard characters: False
 ```
 
 ### -PropertiesToLoad
-{{ Fill PropertiesToLoad Description }}
+Properties of the group and its members to find in the directory
+
+       \[string\[\]\]$PropertiesToLoad = @(
+           'department',
+           'description',
+           'distinguishedName',
+           'grouptype',
+           'managedby',
+           'member',
+           'name',
+           'objectClass',
+           'objectSid',
+           'operatingSystem',
+           'samAccountName',
+           'title'
+       ),
 
 ```yaml
 Type: String[]
@@ -79,13 +96,14 @@ Aliases:
 
 Required: False
 Position: 3
-Default value: @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'department', 'title')
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DirectoryEntryCache
-{{ Fill DirectoryEntryCache Description }}
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Uses a thread-safe hashtable by default
 
 ```yaml
 Type: Hashtable
@@ -104,10 +122,7 @@ Accept wildcard characters: False
 ### None.
 ## OUTPUTS
 
-### [System.DirectoryServices.DirectoryEntry] Possible return values are:
-###     None
-###     LDAP
-###     WinNT
+### [System.DirectoryServices.DirectoryEntry] for each group memeber
 ## NOTES
 
 ## RELATED LINKS

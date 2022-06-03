@@ -9,7 +9,24 @@ function Get-ADSIGroupMember {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Group,
 
-        [string[]]$PropertiesToLoad = @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'department', 'title'),
+        # Properties of the group and its members to find in the directory
+        <#
+        [string[]]$PropertiesToLoad = @(
+            'department',
+            'description',
+            'distinguishedName',
+            'grouptype',
+            'managedby',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'operatingSystem',
+            'samAccountName',
+            'title'
+        ),
+        #>
+        [string[]]$PropertiesToLoad,
 
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 

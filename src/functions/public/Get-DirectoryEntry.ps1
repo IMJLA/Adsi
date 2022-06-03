@@ -28,9 +28,9 @@ function Get-DirectoryEntry {
 
         <#
         Path to the directory object to retrieve
-        Defaults to the root of the current domain (but don't use it for that, just do this instead: [System.DirectoryServices.DirectorySearcher]::new())
+        Defaults to the root of the current domain
         #>
-        [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]'').SearchRoot.Path),
+        [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
         Credentials to use to bind to the directory

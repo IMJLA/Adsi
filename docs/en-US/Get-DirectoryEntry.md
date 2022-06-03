@@ -44,7 +44,7 @@ As the current user on a workgroup computer, bind to the local system and retrie
 
 ### -DirectoryPath
 Path to the directory object to retrieve
-Defaults to the root of the current domain (but don't use it for that, just do this instead: \[System.DirectoryServices.DirectorySearcher\]::new())
+Defaults to the root of the current domain
 
 ```yaml
 Type: String
@@ -53,7 +53,7 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: (([System.DirectoryServices.DirectorySearcher]'').SearchRoot.Path)
+Default value: (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

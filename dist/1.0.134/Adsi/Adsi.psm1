@@ -841,53 +841,92 @@ function Get-ADSIGroup {
         Get the directory entries for a group and its members using ADSI
         .DESCRIPTION
         Uses the ADSI components to search a directory for a group, then get its members
+        Both the WinNT and LDAP providers are supported
         .INPUTS
         None.
         .OUTPUTS
-        [System.DirectoryServices.DirectoryEntry] Possible return values are:
-            None
-            LDAP
-            WinNT
+        [System.DirectoryServices.DirectoryEntry] for each group memeber
         .EXAMPLE
         Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
 
-        Find the ADSI provider of the local computer
+        Get members of the local Administrators group
         .EXAMPLE
         Get-ADSIGroup -GroupName Administrators
 
-        On a domain-joined computer, this will get the the domain's Administrators group
-        On a workgroup computer, this will get the local Administrators group
+        On a domain-joined computer, this will get members of the domain's Administrators group
+        On a workgroup computer, this will get members of the local Administrators group
     #>
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
     param (
 
-        [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
+        <#
+        Path to the directory object to retrieve
+        Defaults to the root of the current domain
+        #>
+        [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
+
+        # Name (CN or Common Name) of the group to retrieve
         [string]$GroupName,
-        [string[]]$PropertiesToLoad = @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'department', 'title'),
+
+        # Properties of the group and its members to find in the directory
+        <#
+        [string[]]$PropertiesToLoad = @(
+            'department',
+            'description',
+            'distinguishedName',
+            'grouptype',
+            'managedby',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'operatingSystem',
+            'samAccountName',
+            'title'
+        ),
+        #>
+        [string[]]$PropertiesToLoad,
+
+        <#
+        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
     )
 
-    $SearchParams = @{
-        PropertiesToLoad    = $PropertiesToLoad
-        DirectoryPath       = $DirectoryPath
+    $GroupParams = @{
         DirectoryEntryCache = $DirectoryEntryCache
+        DirectoryPath       = $DirectoryPath
+        PropertiesToLoad    = $PropertiesToLoad
     }
-    if ($DirectoryPath -match '^WinNT') {
-        $SearchParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
-        Get-DirectoryEntry @SearchParams |
-        Get-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache
-    } else {
+    $GroupMemberParams = @{
+        DirectoryEntryCache = $DirectoryEntryCache
+        PropertiesToLoad    = $PropertiesToLoad
+    }
 
-        if ($GroupName) {
-            $SearchParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
-        } else {
-            $SearchParams['Filter'] = "(objectClass=group)"
+    switch -Regex ($DirectoryPath) {
+        '^WinNT' {
+            $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
+            Get-DirectoryEntry @GroupParams |
+            Get-WinNTGroupMember @GroupMemberParams
         }
-
-        Search-Directory @SearchParams |
-        Get-ADSIGroupMember -DirectoryEntryCache $DirectoryEntryCache
+        '^$' {
+            # This is expected for a workgroup computer
+            $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
+            Get-DirectoryEntry @GroupParams |
+            Get-WinNTGroupMember @GroupMemberParams
+        }
+        default {
+            if ($GroupName) {
+                $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
+            } else {
+                $GroupParams['Filter'] = "(objectClass=group)"
+            }
+            Search-Directory @GroupParams |
+            Get-ADSIGroupMember @GroupMemberParams
+        }
     }
 
 }
@@ -902,7 +941,24 @@ function Get-ADSIGroupMember {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Group,
 
-        [string[]]$PropertiesToLoad = @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'department', 'title'),
+        # Properties of the group and its members to find in the directory
+        <#
+        [string[]]$PropertiesToLoad = @(
+            'department',
+            'description',
+            'distinguishedName',
+            'grouptype',
+            'managedby',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'operatingSystem',
+            'samAccountName',
+            'title'
+        ),
+        #>
+        [string[]]$PropertiesToLoad,
 
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
@@ -1005,9 +1061,9 @@ function Get-DirectoryEntry {
 
         <#
         Path to the directory object to retrieve
-        Defaults to the root of the current domain (but don't use it for that, just do this instead: [System.DirectoryServices.DirectorySearcher]::new())
+        Defaults to the root of the current domain
         #>
-        [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]'').SearchRoot.Path),
+        [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
         Credentials to use to bind to the directory
@@ -1241,7 +1297,23 @@ function Get-WinNTGroupMember {
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        # Properties of the group members to find in the directory
+        [string[]]$PropertiesToLoad = @(
+            'department',
+            'description',
+            'distinguishedName',
+            'grouptype',
+            'managedby',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'operatingSystem',
+            'samAccountName',
+            'title'
+        )
 
     )
     begin {
@@ -1256,7 +1328,10 @@ function Get-WinNTGroupMember {
             if ($null -ne $ThisDirEntry.Properties['groupType']) {
                 $DirectoryMembers = $ThisDirEntry.Invoke('Members')
                 ForEach ($DirectoryMember in $DirectoryMembers) {
-                    # Convert the COM Objects from the WinNT provider to proper [System.DirectoryServices.DirectoryEntry] objects from the LDAP provider
+                    # The WinNT provider returns COM objects
+                    # The LDAP provider returns [System.DirectoryServices.DirectoryEntry] objects
+                    # The DirectoryEntry objects are much easier to work with
+                    # So we will convert the COM objects into DirectoryEntry objects
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
                     if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
@@ -1273,12 +1348,19 @@ function Get-WinNTGroupMember {
                         }
                     }
 
+                    $MemberParams = @{
+                        DirectoryEntryCache = $DirectoryEntryCache
+                        DirectoryPath       = $DirectoryPath
+                        PropertiesToLoad    = $PropertiesToLoad
+                    }
                     if ($MemberDomainDn) {
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$MemberName' is a domain security principal"
-                        $MemberDirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath "LDAP://$MemberDomainDn" -Filter "(samaccountname=$MemberName)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid')
+                        $MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
+                        $MemberParams['Filter'] = "(samaccountname=$MemberName)"
+                        $MemberDirectoryEntry = Search-Directory @MemberParams
                     } else {
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' is a local security principal"
-                        $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid') -DirectoryEntryCache $DirectoryEntryCache
+                        $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
 
                     $MemberDirectoryEntry | Expand-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache
@@ -1612,6 +1694,10 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
+
+
+
+
 
 
 

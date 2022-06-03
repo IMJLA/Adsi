@@ -5,7 +5,23 @@ function Get-WinNTGroupMember {
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        # Properties of the group members to find in the directory
+        [string[]]$PropertiesToLoad = @(
+            'department',
+            'description',
+            'distinguishedName',
+            'grouptype',
+            'managedby',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'operatingSystem',
+            'samAccountName',
+            'title'
+        )
 
     )
     begin {
@@ -20,7 +36,10 @@ function Get-WinNTGroupMember {
             if ($null -ne $ThisDirEntry.Properties['groupType']) {
                 $DirectoryMembers = $ThisDirEntry.Invoke('Members')
                 ForEach ($DirectoryMember in $DirectoryMembers) {
-                    # Convert the COM Objects from the WinNT provider to proper [System.DirectoryServices.DirectoryEntry] objects from the LDAP provider
+                    # The WinNT provider returns COM objects
+                    # The LDAP provider returns [System.DirectoryServices.DirectoryEntry] objects
+                    # The DirectoryEntry objects are much easier to work with
+                    # So we will convert the COM objects into DirectoryEntry objects
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
                     if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
@@ -37,12 +56,19 @@ function Get-WinNTGroupMember {
                         }
                     }
 
+                    $MemberParams = @{
+                        DirectoryEntryCache = $DirectoryEntryCache
+                        DirectoryPath       = $DirectoryPath
+                        PropertiesToLoad    = $PropertiesToLoad
+                    }
                     if ($MemberDomainDn) {
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$MemberName' is a domain security principal"
-                        $MemberDirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath "LDAP://$MemberDomainDn" -Filter "(samaccountname=$MemberName)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid')
+                        $MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
+                        $MemberParams['Filter'] = "(samaccountname=$MemberName)"
+                        $MemberDirectoryEntry = Search-Directory @MemberParams
                     } else {
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' is a local security principal"
-                        $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid') -DirectoryEntryCache $DirectoryEntryCache
+                        $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
 
                     $MemberDirectoryEntry | Expand-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache

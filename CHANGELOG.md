@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.134] - 2022-06-03 - Worked around PlatyPS bug with multi-line arrays in default param values
+
+## [1.0.133] - 2022-06-03 - Wrapped param in parens to see if it bypasses PlatyPS bug
+
+## [1.0.132] - 2022-06-03 - Troubleshooting platyPS
+
+## [1.0.131] - 2022-06-03 - Implemented PropertiesToLoad across Get-ADSIGroup, Get-WinNTGroupMember, and Get-ADSIGroupMember.  Also added much splatting
+
 ## [1.0.130] - 2022-06-03 - Bug fixes in Get-ADSIGroup and Get-TrustedDomainSidNameMap
 
 ## [1.0.129] - 2022-05-29 - Added comment-based help with example help for all functions up thru F
