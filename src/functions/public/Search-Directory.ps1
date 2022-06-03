@@ -11,13 +11,23 @@ function Search-Directory {
 
     )
 
-    if ($Credential) {
-        #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath,$($Credential.UserName),$($Credential.GetNetworkCredential().password))
-        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -Credential $Credential -DirectoryEntryCache $DirectoryEntryCache
-    } else {
-        #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
-        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache
+    $DirectoryEntryParameters = @{
+        DirectoryEntryCache = $DirectoryEntryCache
     }
+
+    if ($Credential) {
+        $DirectoryEntryParameters['Credential'] = $Credential
+    }
+
+    if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {
+        $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
+        $DirectoryPath = "WinNT://$Workgroup/$(hostname)"
+    }
+    $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath
+
+    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath,$($Credential.UserName),$($Credential.GetNetworkCredential().password))
+    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
+    $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
 

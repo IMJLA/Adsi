@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-ADSIGroup
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Get the directory entries for a group and its members using ADSI
 
 ## SYNTAX
 
@@ -18,33 +18,26 @@ Get-ADSIGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesT
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Uses the ADSI components to search a directory for a group, then get its members
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
 ```
 
-{{ Add example description here }}
+Find the ADSI provider of the local computer
+
+### EXAMPLE 2
+```
+Get-ADSIGroup -GroupName Administrators
+```
+
+On a domain-joined computer, this will get the the domain's Administrators group
+On a workgroup computer, this will get the local Administrators group
 
 ## PARAMETERS
-
-### -DirectoryEntryCache
-{{ Fill DirectoryEntryCache Description }}
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### -DirectoryPath
 {{ Fill DirectoryPath Description }}
@@ -55,8 +48,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
-Default value: None
+Position: 1
+Default value: (([adsisearcher]'').SearchRoot.Path)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -70,7 +63,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -85,19 +78,36 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
-Default value: None
+Position: 3
+Default value: @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'department', 'title')
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DirectoryEntryCache
+{{ Fill DirectoryEntryCache Description }}
+
+```yaml
+Type: Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ## INPUTS
 
-### None
-
+### None.
 ## OUTPUTS
 
-### System.Object
+### [System.DirectoryServices.DirectoryEntry] Possible return values are:
+###     None
+###     LDAP
+###     WinNT
 ## NOTES
 
 ## RELATED LINKS

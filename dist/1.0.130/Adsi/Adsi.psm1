@@ -65,7 +65,7 @@ function Add-DomainFqdnToLdapPath {
 function Add-SidInfo {
     <#
         .SYNOPSIS
-        Add some commonly-needed properties to a DirectoryEntry for easier access
+        Add some useful properties to a DirectoryEntry object for easier access
         .DESCRIPTION
         Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
         .INPUTS
@@ -836,6 +836,29 @@ function Find-AdsiProvider {
     }
 }
 function Get-ADSIGroup {
+    <#
+        .SYNOPSIS
+        Get the directory entries for a group and its members using ADSI
+        .DESCRIPTION
+        Uses the ADSI components to search a directory for a group, then get its members
+        .INPUTS
+        None.
+        .OUTPUTS
+        [System.DirectoryServices.DirectoryEntry] Possible return values are:
+            None
+            LDAP
+            WinNT
+        .EXAMPLE
+        Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
+
+        Find the ADSI provider of the local computer
+        .EXAMPLE
+        Get-ADSIGroup -GroupName Administrators
+
+        On a domain-joined computer, this will get the the domain's Administrators group
+        On a workgroup computer, this will get the local Administrators group
+    #>
+    [OutputType([System.DirectoryServices.DirectoryEntry])]
 
     param (
 
@@ -851,16 +874,21 @@ function Get-ADSIGroup {
         DirectoryPath       = $DirectoryPath
         DirectoryEntryCache = $DirectoryEntryCache
     }
-
-
-    if ($GroupName) {
-        $SearchParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
+    if ($DirectoryPath -match '^WinNT') {
+        $SearchParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
+        Get-DirectoryEntry @SearchParams |
+        Get-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache
     } else {
-        $SearchParams['Filter'] = "(objectClass=group)"
-    }
 
-    Search-Directory @SearchParams |
-    Get-ADSIGroupMember -DirectoryEntryCache $DirectoryEntryCache
+        if ($GroupName) {
+            $SearchParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
+        } else {
+            $SearchParams['Filter'] = "(objectClass=group)"
+        }
+
+        Search-Directory @SearchParams |
+        Get-ADSIGroupMember -DirectoryEntryCache $DirectoryEntryCache
+    }
 
 }
 function Get-ADSIGroupMember {
@@ -971,7 +999,7 @@ function Get-DirectoryEntry {
 
         As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
-    [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
+    [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
     [CmdletBinding()]
     param (
 
@@ -1081,7 +1109,7 @@ function Get-DirectoryEntry {
                 }
                 $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
             }
-            '' {
+            '^$' {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
                 $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
                 $DirectoryPath = "WinNT://$Workgroup/$(hostname)"
@@ -1147,8 +1175,12 @@ function Get-TrustedDomainSidNameMap {
     )
 
     $Map = @{}
-
-    $nltestresults = & nltest /domain_trusts
+    
+    # Previously I had this as the line below, but it did not capture all output streams so on a workgroup computer I saw:
+    # Enumerating domain trusts failed: Status = 1722 0x6ba RPC_S_SERVER_UNAVAILABLE
+    # I never figured out what output stream it was but instead just redirected all streams to the variable. Now it comes up null even when I expect that error but whatever.
+    # Redirect the error stream to null
+    $nltestresults = & nltest /domain_trusts 2> $null
     $NlTestRegEx = '[\d]*: .*'
     $TrustRelationships = $nltestresults -match $NlTestRegEx
 
@@ -1206,48 +1238,53 @@ function Get-WinNTGroupMember {
 
     param (
 
+        [Parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
     )
+    begin {
+        #TODO: Default should know at least any trusted domains
+        $KnownDomains = Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios
 
-    #TODO: Default should know at least any trusted domains
-    $KnownDomains = Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios
+    }
+    process {
+        ForEach ($ThisDirEntry in $DirectoryEntry) {
+            $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
+            # Retrieve the members of local groups
+            if ($null -ne $ThisDirEntry.Properties['groupType']) {
+                $DirectoryMembers = $ThisDirEntry.Invoke('Members')
+                ForEach ($DirectoryMember in $DirectoryMembers) {
+                    # Convert the COM Objects from the WinNT provider to proper [System.DirectoryServices.DirectoryEntry] objects from the LDAP provider
+                    $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
+                    $MemberDomainDn = $null
+                    if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
+                        $MemberName = $Matches.Acct
+                        $MemberDomainNetbios = $Matches.Domain
 
-    $SourceDomain = $DirectoryEntry.Path | Split-Path -Parent | Split-Path -Leaf
-
-    # Retrieve the members of local groups
-    if ($null -ne $DirectoryEntry.Properties['groupType']) {
-        $DirectoryMembers = $DirectoryEntry.Invoke('Members')
-        ForEach ($DirectoryMember in $DirectoryMembers) {
-            # Convert the COM Objects from the WinNT provider to proper [System.DirectoryServices.DirectoryEntry] objects from the LDAP provider
-            $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
-            $MemberDomainDn = $null
-            if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
-                $MemberName = $Matches.Acct
-                $MemberDomainNetbios = $Matches.Domain
-
-                if ($KnownDomains[$MemberDomainNetbios] -and $MemberDomainNetbios -ne $SourceDomain) {
-                    $MemberDomainDn = $KnownDomains[$MemberDomainNetbios].DistinguishedName
-                }
-                if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
-                    if ($Matches.Middle -eq ($DirectoryEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
-                        $MemberDomainDn = $null
+                        if ($KnownDomains[$MemberDomainNetbios] -and $MemberDomainNetbios -ne $SourceDomain) {
+                            $MemberDomainDn = $KnownDomains[$MemberDomainNetbios].DistinguishedName
+                        }
+                        if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
+                            if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
+                                $MemberDomainDn = $null
+                            }
+                        }
                     }
+
+                    if ($MemberDomainDn) {
+                        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$MemberName' is a domain security principal"
+                        $MemberDirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath "LDAP://$MemberDomainDn" -Filter "(samaccountname=$MemberName)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid')
+                    } else {
+                        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' is a local security principal"
+                        $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid') -DirectoryEntryCache $DirectoryEntryCache
+                    }
+
+                    $MemberDirectoryEntry | Expand-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache
+
                 }
             }
-
-            if ($MemberDomainDn) {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$MemberName' is a domain security principal"
-                $MemberDirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath "LDAP://$MemberDomainDn" -Filter "(samaccountname=$MemberName)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid')
-            } else {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' is a local security principal"
-                $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title', 'samAccountName', 'objectSid') -DirectoryEntryCache $DirectoryEntryCache
-            }
-
-            $MemberDirectoryEntry | Expand-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache
-
         }
     }
 
@@ -1479,13 +1516,23 @@ function Search-Directory {
 
     )
 
-    if ($Credential) {
-        #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath,$($Credential.UserName),$($Credential.GetNetworkCredential().password))
-        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -Credential $Credential -DirectoryEntryCache $DirectoryEntryCache
-    } else {
-        #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
-        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache
+    $DirectoryEntryParameters = @{
+        DirectoryEntryCache = $DirectoryEntryCache
     }
+
+    if ($Credential) {
+        $DirectoryEntryParameters['Credential'] = $Credential
+    }
+
+    if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {
+        $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
+        $DirectoryPath = "WinNT://$Workgroup/$(hostname)"
+    }
+    $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath
+
+    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath,$($Credential.UserName),$($Credential.GetNetworkCredential().password))
+    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
+    $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
 
@@ -1565,6 +1612,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
+
 
 
 

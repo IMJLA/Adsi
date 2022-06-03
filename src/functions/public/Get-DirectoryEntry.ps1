@@ -22,7 +22,7 @@ function Get-DirectoryEntry {
 
         As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
-    [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
+    [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
     [CmdletBinding()]
     param (
 
@@ -132,7 +132,7 @@ function Get-DirectoryEntry {
                 }
                 $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
             }
-            '' {
+            '^$' {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
                 $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
                 $DirectoryPath = "WinNT://$Workgroup/$(hostname)"

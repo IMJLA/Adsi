@@ -89,7 +89,7 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
       <command:verb>Add</command:verb>
       <command:noun>SidInfo</command:noun>
       <maml:description>
-        <maml:para>Add some commonly-needed properties to a DirectoryEntry for easier access</maml:para>
+        <maml:para>Add some useful properties to a DirectoryEntry object for easier access</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
@@ -1218,16 +1218,16 @@ ad.contoso.com</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>ADSIGroup</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Get the directory entries for a group and its members using ADSI</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Uses the ADSI components to search a directory for a group, then get its members</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ADSIGroup</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryPath</maml:name>
           <maml:description>
             <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
@@ -1237,9 +1237,9 @@ ad.contoso.com</dev:code>
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>GroupName</maml:name>
           <maml:description>
             <maml:para>{{ Fill GroupName Description }}</maml:para>
@@ -1251,7 +1251,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
             <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
@@ -1261,9 +1261,9 @@ ad.contoso.com</dev:code>
             <maml:name>String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>@('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'department', 'title')</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
             <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
@@ -1273,24 +1273,12 @@ ad.contoso.com</dev:code>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
           <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
@@ -1300,9 +1288,9 @@ ad.contoso.com</dev:code>
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>GroupName</maml:name>
         <maml:description>
           <maml:para>{{ Fill GroupName Description }}</maml:para>
@@ -1314,7 +1302,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
           <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
@@ -1324,13 +1312,25 @@ ad.contoso.com</dev:code>
           <maml:name>String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>@('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'department', 'title')</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1340,7 +1340,31 @@ ad.contoso.com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] Possible return values are:</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>LDAP</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>WinNT</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1354,10 +1378,17 @@ ad.contoso.com</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Find the ADSI provider of the local computer</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-ADSIGroup -GroupName Administrators</dev:code>
+        <dev:remarks>
+          <maml:para>On a domain-joined computer, this will get the the domain's Administrators group On a workgroup computer, this will get the local Administrators group</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1831,7 +1862,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-WinNTGroupMember</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
           <maml:name>DirectoryEntry</maml:name>
           <maml:description>
             <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
@@ -1858,7 +1889,7 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
         <maml:name>DirectoryEntry</maml:name>
         <maml:description>
           <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
@@ -1886,7 +1917,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>System.Object</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>

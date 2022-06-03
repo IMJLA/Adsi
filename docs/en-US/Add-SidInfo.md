@@ -8,7 +8,7 @@ schema: 2.0.0
 # Add-SidInfo
 
 ## SYNOPSIS
-Add some commonly-needed properties to a DirectoryEntry for easier access
+Add some useful properties to a DirectoryEntry object for easier access
 
 ## SYNTAX
 

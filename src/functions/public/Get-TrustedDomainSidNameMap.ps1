@@ -9,8 +9,12 @@ function Get-TrustedDomainSidNameMap {
     )
 
     $Map = @{}
-
-    $nltestresults = & nltest /domain_trusts
+    
+    # Previously I had this as the line below, but it did not capture all output streams so on a workgroup computer I saw:
+    # Enumerating domain trusts failed: Status = 1722 0x6ba RPC_S_SERVER_UNAVAILABLE
+    # I never figured out what output stream it was but instead just redirected all streams to the variable. Now it comes up null even when I expect that error but whatever.
+    # Redirect the error stream to null
+    $nltestresults = & nltest /domain_trusts 2> $null
     $NlTestRegEx = '[\d]*: .*'
     $TrustRelationships = $nltestresults -match $NlTestRegEx
 
