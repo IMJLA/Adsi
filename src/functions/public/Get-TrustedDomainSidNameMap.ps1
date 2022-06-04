@@ -1,18 +1,39 @@
 function Get-TrustedDomainSidNameMap {
+    <#
+        .SYNOPSIS
+        Returns a dictionary of trusted domains by the current computer
+        .DESCRIPTION
+        Works only on domain-joined systems
+        Use nltest to get the domain trust relationships for the domain of the current computer
+        Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID
+        For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used
+        For each trusted domain the value contains the details retrieved with ADSI
+        .INPUTS
+        None
+        .OUTPUTS
+        [System.Collections.Hashtable] The current domain trust relationships
 
+        .EXAMPLE
+        Get-TrustedDomainSidNameMap
+
+        Get the trusted domains of the current computer
+    #>
+    [OutputType([System.Collections.Hashtable])]
     param (
 
+        # Key the dictionary by the domain NetBIOS names instead of SIDs
         [Switch]$KeyByNetbios,
 
+        <#
+        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
     )
 
     $Map = @{}
-    
-    # Previously I had this as the line below, but it did not capture all output streams so on a workgroup computer I saw:
-    # Enumerating domain trusts failed: Status = 1722 0x6ba RPC_S_SERVER_UNAVAILABLE
-    # I never figured out what output stream it was but instead just redirected all streams to the variable. Now it comes up null even when I expect that error but whatever.
+
     # Redirect the error stream to null
     $nltestresults = & nltest /domain_trusts 2> $null
     $NlTestRegEx = '[\d]*: .*'

@@ -8,7 +8,7 @@ schema: 2.0.0
 # Invoke-ComObject
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Invoke a member method of a ComObject
 
 ## SYNTAX
 
@@ -17,54 +17,29 @@ Invoke-ComObject [-ComObject] <Object> [-Property] <String> [[-Value] <Object>] 
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Use the InvokeMember method to invoke the InvokeMethod or GetProperty or SetProperty methods
+By default, invokes the GetProperty method for the specified Property
+If the Value parameter is specified, invokes the SetProperty method for the specified Property
+If the Method switch is specified, invokes the InvokeMethod method
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+$ComObject = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators').Invoke('Members') | Select -First 1
+Invoke-ComObject -ComObject $ComObject -Property AdsPath
 ```
 
-{{ Add example description here }}
+Get the first member of the local Administrators group on the current computer
+Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property
 
 ## PARAMETERS
 
 ### -ComObject
-{{ Fill ComObject Description }}
+The ComObject whose member method to invoke
 
 ```yaml
 Type: Object
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 0
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Method
-{{ Fill Method Description }}
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Property
-{{ Fill Property Description }}
-
-```yaml
-Type: String
 Parameter Sets: (All)
 Aliases:
 
@@ -75,8 +50,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Property
+The property to use with the invoked method
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Value
-{{ Fill Value Description }}
+The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method
 
 ```yaml
 Type: Object
@@ -84,8 +74,23 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 3
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Method
+Use the InvokeMethod method of the ComObject
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -95,11 +100,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### [__ComObject]
 ## OUTPUTS
 
-### System.Object
+### The output of the invoked method is returned directly
 ## NOTES
 
 ## RELATED LINKS

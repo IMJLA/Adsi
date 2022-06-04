@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-TrustedDomainSidNameMap
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Returns a dictionary of trusted domains by the current computer
 
 ## SYNTAX
 
@@ -17,36 +17,25 @@ Get-TrustedDomainSidNameMap [-KeyByNetbios] [[-DirectoryEntryCache] <Hashtable>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Works only on domain-joined systems
+Use nltest to get the domain trust relationships for the domain of the current computer
+Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID
+For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used
+For each trusted domain the value contains the details retrieved with ADSI
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Get-TrustedDomainSidNameMap
 ```
 
-{{ Add example description here }}
+Get the trusted domains of the current computer
 
 ## PARAMETERS
 
-### -DirectoryEntryCache
-{{ Fill DirectoryEntryCache Description }}
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 0
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -KeyByNetbios
-{{ Fill KeyByNetbios Description }}
+Key the dictionary by the domain NetBIOS names instead of SIDs
 
 ```yaml
 Type: SwitchParameter
@@ -55,7 +44,23 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DirectoryEntryCache
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Uses a thread-safe hashtable by default
+
+```yaml
+Type: Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -63,10 +68,9 @@ Accept wildcard characters: False
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
-### System.Object
+### [System.Collections.Hashtable] The current domain trust relationships
 ## NOTES
 
 ## RELATED LINKS

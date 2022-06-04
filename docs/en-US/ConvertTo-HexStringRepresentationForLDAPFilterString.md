@@ -31,7 +31,7 @@ Convert the binary SID $Bytes to a hexadecimal string representation, formatted 
 ## PARAMETERS
 
 ### -SIDByteArray
-SID
+SID to convert to a hex string
 
 ```yaml
 Type: Byte[]

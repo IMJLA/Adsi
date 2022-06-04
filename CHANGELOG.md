@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.136] - 2022-06-03 - Minor performance improvements and comment-based help on all functions up through the I's.  The I's have it!
+
+## [1.0.135] - 2022-06-03 - reproducing bug in platyps
+
 ## [1.0.134] - 2022-06-03 - Worked around PlatyPS bug with multi-line arrays in default param values
 
 ## [1.0.133] - 2022-06-03 - Wrapped param in parens to see if it bypasses PlatyPS bug

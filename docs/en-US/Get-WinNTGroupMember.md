@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-WinNTGroupMember
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Get members of a group from the WinNT provider
 
 ## SYNTAX
 
@@ -18,21 +18,22 @@ Get-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-DirectoryEntryCache] <Hasht
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Get members of a group from the WinNT provider
+Convert them from COM objects into usable DirectoryEntry objects
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember
 ```
 
-{{ Add example description here }}
+Get members of the local Administrators group
 
 ## PARAMETERS
 
 ### -DirectoryEntry
-{{ Fill DirectoryEntry Description }}
+DirectoryEntry \[System.DirectoryServices.DirectoryEntry\] of the WinNT group whose members to get
 
 ```yaml
 Type: Object
@@ -40,14 +41,15 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -DirectoryEntryCache
-{{ Fill DirectoryEntryCache Description }}
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Uses a thread-safe hashtable by default
 
 ```yaml
 Type: Hashtable
@@ -55,14 +57,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: None
+Position: 2
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -PropertiesToLoad
-{{ Fill PropertiesToLoad Description }}
+Properties of the group members to find in the directory
 
 ```yaml
 Type: String[]
@@ -70,7 +72,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -81,11 +83,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Object
-
+### [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter
 ## OUTPUTS
 
-### System.Object
+### [System.DirectoryServices.DirectoryEntry] for each group member
 ## NOTES
 
 ## RELATED LINKS

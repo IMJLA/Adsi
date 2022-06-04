@@ -31,7 +31,7 @@ Convert the SID string to a byte array
 ## PARAMETERS
 
 ### -SidString
-SID
+SID to convert to binary
 
 ```yaml
 Type: String[]

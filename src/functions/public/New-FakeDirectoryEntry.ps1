@@ -6,9 +6,9 @@ function New-FakeDirectoryEntry {
         Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
         .EXAMPLE
         ----------  EXAMPLE 1  ----------
-        As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
+        New-FakeDirectoryEntry
 
-        Get-DirectoryEntry
+        This is not a real example yet
     #>
     [OutputType([PSObject[]])]
     [CmdletBinding()]

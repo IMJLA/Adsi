@@ -15,7 +15,7 @@ function ConvertTo-SidByteArray {
     #>
     [OutputType([System.Byte[]])]
     param (
-        # SID
+        # SID to convert to binary
         [Parameter(ValueFromPipeline)]
         [string[]]$SidString
     )

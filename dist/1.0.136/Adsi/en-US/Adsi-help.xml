@@ -469,7 +469,7 @@ ad.contoso.com</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SIDByteArray</maml:name>
           <maml:description>
-            <maml:para>SID</maml:para>
+            <maml:para>SID to convert to a hex string</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
           <dev:type>
@@ -484,7 +484,7 @@ ad.contoso.com</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SIDByteArray</maml:name>
         <maml:description>
-          <maml:para>SID</maml:para>
+          <maml:para>SID to convert to a hex string</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
         <dev:type>
@@ -548,7 +548,7 @@ ad.contoso.com</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>SidString</maml:name>
           <maml:description>
-            <maml:para>SID</maml:para>
+            <maml:para>SID to convert to binary</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
@@ -563,7 +563,7 @@ ad.contoso.com</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>SidString</maml:name>
         <maml:description>
-          <maml:para>SID</maml:para>
+          <maml:para>SID to convert to binary</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
@@ -1378,19 +1378,19 @@ ad.contoso.com</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>ADSIGroupMember</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Get members of a group from the LDAP provider</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Use ADSI to get members of a group from the LDAP provider Return the group's DirectoryEntry plus a FullMembers property containing the member DirectoryEntries</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ADSIGroupMember</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>Group</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Group Description }}</maml:para>
+            <maml:para>Directory entry of the LDAP group whose members to get</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -1399,10 +1399,10 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
-            <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+            <maml:para>Properties of the group members to find in the directory</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
@@ -1411,37 +1411,25 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>Group</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Group Description }}</maml:para>
+          <maml:para>Directory entry of the LDAP group whose members to get</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -1450,10 +1438,10 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
-          <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+          <maml:para>Properties of the group members to find in the directory</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
@@ -1462,11 +1450,23 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1476,7 +1476,7 @@ ad.contoso.com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] plus a FullMembers property</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1490,10 +1490,10 @@ ad.contoso.com</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-ADSIGroupMember</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Get members of the domain Administrators group</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1505,11 +1505,11 @@ ad.contoso.com</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>CurrentDomain</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Use ADSI to get the current domain</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Works only on domain-joined systems</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1530,7 +1530,7 @@ ad.contoso.com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] The current domain</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1544,10 +1544,10 @@ ad.contoso.com</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-CurrentDomain</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Get the domain of the current computer</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1729,31 +1729,31 @@ Path              : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>TrustedDomainSidNameMap</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Returns a dictionary of trusted domains by the current computer</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Works only on domain-joined systems Use nltest to get the domain trust relationships for the domain of the current computer Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used For each trusted domain the value contains the details retrieved with ADSI</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-TrustedDomainSidNameMap</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>KeyByNetbios</maml:name>
           <maml:description>
-            <maml:para>{{ Fill KeyByNetbios Description }}</maml:para>
+            <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -1764,22 +1764,10 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>KeyByNetbios</maml:name>
         <maml:description>
-          <maml:para>{{ Fill KeyByNetbios Description }}</maml:para>
+          <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -1787,6 +1775,18 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -1802,7 +1802,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.Collections.Hashtable] The current domain trust relationships</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1816,10 +1816,10 @@ Path              : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-TrustedDomainSidNameMap</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Get the trusted domains of the current computer</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1831,19 +1831,19 @@ Path              : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>WinNTGroupMember</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Get members of a group from the WinNT provider</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Get members of a group from the WinNT provider Convert them from COM objects into usable DirectoryEntry objects</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-WinNTGroupMember</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>DirectoryEntry</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+            <maml:para>DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -1852,22 +1852,22 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
-            <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+            <maml:para>Properties of the group members to find in the directory</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
@@ -1879,10 +1879,10 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>DirectoryEntry</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+          <maml:para>DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -1891,22 +1891,22 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
-          <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+          <maml:para>Properties of the group members to find in the directory</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
@@ -1919,7 +1919,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1929,7 +1929,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] for each group member</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1943,10 +1943,10 @@ Path              : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Get members of the local Administrators group</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1958,19 +1958,19 @@ Path              : WinNT://ComputerName</dev:code>
       <command:verb>Invoke</command:verb>
       <command:noun>ComObject</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Invoke a member method of a ComObject</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Use the InvokeMember method to invoke the InvokeMethod or GetProperty or SetProperty methods By default, invokes the GetProperty method for the specified Property If the Value parameter is specified, invokes the SetProperty method for the specified Property If the Method switch is specified, invokes the InvokeMethod method</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Invoke-ComObject</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>ComObject</maml:name>
           <maml:description>
-            <maml:para>{{ Fill ComObject Description }}</maml:para>
+            <maml:para>The ComObject whose member method to invoke</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -1979,10 +1979,10 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Property</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Property Description }}</maml:para>
+            <maml:para>The property to use with the invoked method</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
@@ -1991,10 +1991,10 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>Value</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Value Description }}</maml:para>
+            <maml:para>The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
           <dev:type>
@@ -2006,7 +2006,7 @@ Path              : WinNT://ComputerName</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>Method</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Method Description }}</maml:para>
+            <maml:para>Use the InvokeMethod method of the ComObject</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -2017,10 +2017,34 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>ComObject</maml:name>
         <maml:description>
-          <maml:para>{{ Fill ComObject Description }}</maml:para>
+          <maml:para>The ComObject whose member method to invoke</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <dev:type>
+          <maml:name>Object</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>Property</maml:name>
+        <maml:description>
+          <maml:para>The property to use with the invoked method</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>Value</maml:name>
+        <maml:description>
+          <maml:para>The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -2032,7 +2056,7 @@ Path              : WinNT://ComputerName</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>Method</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Method Description }}</maml:para>
+          <maml:para>Use the InvokeMethod method of the ComObject</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -2041,35 +2065,11 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>Property</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill Property Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>Value</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill Value Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
-        <dev:type>
-          <maml:name>Object</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>[__ComObject]</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2079,7 +2079,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>The output of the invoked method is returned directly</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2093,10 +2093,11 @@ Path              : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$ComObject = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators').Invoke('Members') | Select -First 1
+Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Get the first member of the local Administrators group on the current computer Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2237,9 +2238,9 @@ Path              : WinNT://ComputerName</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>----------  EXAMPLE 1  ----------
-As the current user, bind to the current domain and retrieve the DirectoryEntry for the root of the domain</dev:code>
+New-FakeDirectoryEntry</dev:code>
         <dev:remarks>
-          <maml:para>Get-DirectoryEntry</maml:para>
+          <maml:para>This is not a real example yet</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

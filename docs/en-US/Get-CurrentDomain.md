@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-CurrentDomain
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Use ADSI to get the current domain
 
 ## SYNTAX
 
@@ -17,26 +17,25 @@ Get-CurrentDomain
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Works only on domain-joined systems
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Get-CurrentDomain
 ```
 
-{{ Add example description here }}
+Get the domain of the current computer
 
 ## PARAMETERS
 
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
-### System.Object
+### [System.DirectoryServices.DirectoryEntry] The current domain
 ## NOTES
 
 ## RELATED LINKS
