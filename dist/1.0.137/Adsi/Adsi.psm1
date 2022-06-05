@@ -801,7 +801,7 @@ function Find-AdsiProvider {
     param (
 
         # IP address or hostname of the directory server whose ADSI provider type to determine
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(ValueFromPipeline)]
         [string[]]$AdsiServer,
 
         # Cache of known directory servers to reduce duplicate queries
@@ -1106,80 +1106,17 @@ function Get-DirectoryEntry {
         #>
         switch -regex ($DirectoryPath) {
 
-            '^WinNT\:\/\/[^\/]*\/CREATOR OWNER$' {
-                $SidByteAray = 'S-1-3-0' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'CREATOR OWNER'
-                    Description     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'CREATOR OWNER'
-                        Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'User'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
+            '^WinNT:\/\/.*\/CREATOR OWNER$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
-            '^WinNT\:\/\/[^\/]*\/SYSTEM$' {
-                $SidByteAray = 'S-1-5-18' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'SYSTEM'
-                    Description     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'SYSTEM'
-                        Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'User'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
+            '^WinNT:\/\/.*\/SYSTEM$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
-            '^WinNT\:\/\/[^\/]*\/INTERACTIVE$' {
-                $SidByteAray = 'S-1-5-4' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'INTERACTIVE'
-                    Description     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'INTERACTIVE'
-                        Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'Group'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
+            '^WinNT:\/\/.*\/INTERACTIVE$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
-            '^WinNT\:\/\/[^\/]*\/Authenticated Users$' {
-                $SidByteAray = 'S-1-5-11' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'Authenticated Users'
-                    Description     = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'Authenticated Users'
-                        Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'Group'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+            '^WinNT:\/\/.*\/Authenticated Users$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^$' {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
@@ -1496,178 +1433,211 @@ function New-FakeDirectoryEntry {
         .SYNOPSIS
         Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
         .DESCRIPTION
-        Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
+        The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+        We will create dummy objects instead of performing the query
+        .INPUTS
+        None.
+        .OUTPUTS
+        [System.Management.Automation.PSCustomObject]
         .EXAMPLE
         ----------  EXAMPLE 1  ----------
-        New-FakeDirectoryEntry
+        New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
 
-        This is not a real example yet
+        Create a fake DirectoryEntry to represent the CREATOR OWNER special security principal
     #>
-    [OutputType([PSObject[]])]
-    [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSCustomObject])]
     param (
 
         <#
         Path to the directory object to retrieve
         Defaults to the root of the current domain (but don't use it for that, just do this instead: [System.DirectoryServices.DirectorySearcher]::new())
         #>
-        [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]'').SearchRoot.Path),
-
-        <#
-        Credentials to use to bind to the directory
-        Defaults to the credentials of the current user
-        #>
-        [pscredential]$Credential,
-
-        # Properties of the target object to retrieve
-        [string[]]$PropertiesToLoad,
-
-        <#
-        A hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-        Uses a thread-safe hashtable by default
-        #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
+        [string]$DirectoryPath
 
     )
 
     $DirectoryEntry = $null
-    if ($null -eq $DirectoryEntryCache[$DirectoryPath]) {
-        <#
-        The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-        We will create own dummy objects instead of performing the query
-        #>
-        switch -regex ($DirectoryPath) {
-
-            '^WinNT\:\/\/[^\/]*\/CREATOR OWNER$' {
-                $SidByteAray = 'S-1-3-0' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
-                    Name            = 'CREATOR OWNER'
-                    Description     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'CREATOR OWNER'
-                        Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'User'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
-            }
-            '^WinNT\:\/\/[^\/]*\/SYSTEM$' {
-                $SidByteAray = 'S-1-5-18' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
-                    Name            = 'SYSTEM'
-                    Description     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'SYSTEM'
-                        Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'User'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
-            }
-            '^WinNT\:\/\/[^\/]*\/INTERACTIVE$' {
-                $SidByteAray = 'S-1-5-4' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
-                    Name            = 'INTERACTIVE'
-                    Description     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'INTERACTIVE'
-                        Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'Group'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
-            }
-            '^WinNT\:\/\/[^\/]*\/Authenticated Users$' {
-                $SidByteAray = 'S-1-5-11' | ConvertTo-SidByteArray
-                $DirectoryEntry = [pscustomobject]@{
-                    Name            = 'Authenticated Users'
-                    Description     = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'Authenticated Users'
-                        Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'Group'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-            }
-            default {
-
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
-                if ($Credential) {
-                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
-                } else {
-                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
-                }
-
-            }
-
-        }
-
-        $DirectoryEntryCache[$DirectoryPath] = $DirectoryEntry
-    } else {
-        #Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`tDirectoryEntryCache hit for '$DirectoryPath'"
-        $DirectoryEntry = $DirectoryEntryCache[$DirectoryPath]
+    $Properties = @{
+        Name        = ($DirectoryPath -split '\/') | Select-Object -Last 1
+        Parent      = $DirectoryPath | Split-Path -Parent
+        Path        = $DirectoryPath
+        SchemaEntry = [System.DirectoryServices.DirectoryEntry]
     }
 
-    try {
-        if ($PropertiesToLoad) {
-            # If the $DirectoryPath was invalid, this line will return an error
-            $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
+    switch -regex ($DirectoryPath) {
+
+        'CREATOR OWNER$' {
+            $Properties['objectSid'] = 'S-1-3-0' | ConvertTo-SidByteArray
+            $Properties['Description'] = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
+            $Properties['Properties'] = @{
+                Name        = $Properties['Name']
+                Description = $Description
+                objectSid   = $SidByteAray
+            }
+            $Properties['SchemaClassName'] = 'User'
         }
-
-        Write-Output $DirectoryEntry
-    } catch {
-        Write-Warning "$(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t'$DirectoryPath' could not be retrieved."
-
-        # Ensure that the error message appears on 1 line
-        # Use .Trim() to remove leading and trailing whitespace
-        # Use -replace to remove an errant line break in the following specific error I encountered: The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
-        Write-Warning "$(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t'$($_.Exception.Message.Trim() -replace '\s"',' "')"
+        'SYSTEM$' {
+            $Properties['objectSid'] = 'S-1-5-18' | ConvertTo-SidByteArray
+            $Properties['Description'] = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
+            $Properties['Properties'] = @{
+                Name        = $Properties['Name']
+                Description = $Description
+                objectSid   = $SidByteAray
+            }
+            $Properties['SchemaClassName'] = 'User'
+        }
+        'INTERACTIVE$' {
+            $Properties['objectSid'] = 'S-1-5-4' | ConvertTo-SidByteArray
+            $Properties['Description'] = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
+            $Properties['Properties'] = @{
+                Name        = $Properties['Name']
+                Description = $Description
+                objectSid   = $SidByteAray
+            }
+            $Properties['SchemaClassName'] = 'Group'
+        }
+        'Authenticated Users$' {
+            $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
+            $Properties['Description'] = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
+            $Properties['Properties'] = @{
+                Name        = $Properties['Name']
+                Description = $Description
+                objectSid   = $SidByteAray
+            }
+            $Properties['SchemaClassName'] = 'Group'
+        }
     }
+
+    $DirectoryEntry = [pscustomobject]::new($Properties)
+    $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+    return $DirectoryEntry
 
 }
 function Resolve-IdentityReference {
-    param (
-        [psobject[]]$AccessControlEntry,
+    <#
+        .SYNOPSIS
+        Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists
+        .DESCRIPTION
+        Replace generic defaults like 'NT AUTHORITY' and 'BUILTIN' with the applicable computer name
 
+        .INPUTS
+        [System.Security.AccessControl.DirectorySecurity]$AccessControlEntry
+        .OUTPUTS
+        [System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties
+        .EXAMPLE
+        ----------  EXAMPLE 1  ----------
+        (Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test
+
+        Get-Acl does not support long paths (>256 characters)
+        That was why I originally used the .Net Framework method
+        ----------  EXAMPLE 2  ----------
+        (Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') |
+        Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru |
+        Resolve-IdentityReference
+
+        This uses the .Net Framework (or legacy .Net Core up to 2.2)
+        Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
+        ----------  EXAMPLE 3  ----------
+        $FolderPath = 'C:\Test'
+        if ($FolderPath.Length -gt 255) {
+            $FolderPath = "\\?\$FolderPath"
+        }
+        [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+        $Sections = [System.Security.AccessControl.AccessControlSections]::Access
+        $FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
+        $IncludeExplicitRules = $true
+        $IncludeInheritedRules = $true
+        $AccountType = [System.Security.Principal.NTAccount]
+        $AccountType = [System.Security.Principal.SecurityIdentifier]
+        $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
+        Resolve-IdentityReference -LiteralPath $FolderPath
+
+        This uses .Net Core
+        ----------  EXAMPLE 4  ----------
+        [System.Security.AccessControl.FileSecurity]::new(
+            (Get-Item 'C:\Test'),
+            'Access'
+        ).GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier]) |
+        Resolve-IdentityReference 'C:\Test'
+
+        This uses .Net Core
+        ----------  EXAMPLE 5  ----------
+        [System.Security.AccessControl.FileSecurity]::new(
+            (Get-Item 'C:\Test'),
+            'Access'
+        ).GetAccessRules($true,$true,[System.Security.Principal.NTAccount]) |
+        Resolve-IdentityReference 'C:\Test'
+
+        This uses .Net Core
+    #>
+    param (
+
+        # Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter
+        # This will be used to determine local vs. remote computer, and then WinNT vs. LDAP
+        [Parameter(Position = 0)]
+        [string]$LiteralPath,
+
+        # AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve
+        [Parameter(ValueFromPipeline)]
+        [System.Security.AccessControl.FileSystemAccessRule[]]$AccessControlEntry,
+
+        # Dictionary to cache known servers to avoid redundant lookups
+        # Defaults to an empty thread-safe hashtable
         [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+
     )
-    begin {}
+    begin {
+        if ($LiteralPath -match '[A-Za-z]\:\\') {
+            # For local file paths, the "server" is the local computer
+            $ThisServer = hostname
+            $CimSession = New-CimSession
+        } else {
+            # Otherwise it must be a UNC path, so the server is the first non-empty string between backwhacks (\)
+            $ThisServer = $LiteralPath -split '\\' | Where-Object { $_ -ne '' } | Select-Object -First 1
+            $CimSession = New-CimSession -ComputerName $ThisServer
+        }
+        $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
+    }
     process {
         ForEach ($ThisACE in $AccessControlEntry) {
-            $ThisServer = $null
-            $AdsiProvider = $null
-            $ThisServer = $ThisACE.Path -split '\\' | Where-Object { $_ -ne '' } | Select-Object -First 1
-            $ResolvedIdentityReference = $ThisACE.IdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
+            if ($ThisACE.IdentityReference -match '^S-1-') {
+                # The IdentityReference is a SID
+                $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($ThisACE.IdentityReference)
 
-            $ThisServer = $ResolvedIdentityReference -split '\\' | Where-Object { $_ -ne '' } | Select-Object -First 1
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
+                # This .Net method makes it impossible to redirect the error stream directly
+                # Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+                # I don't understand exactly why
+                $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+                $SIDString = $ThisACE.IdentityReference
+            } else {
+                # The IdentityReference is an NTAccount
+                $UnresolvedIdentityReference = $ThisACE.IdentityReference
+
+                # Resolve NTAccount to SID
+                $NTAccount = [System.Security.Principal.NTAccount]::new($ThisServer, $ThisACE.IdentityReference)
+                $SIDString = $null
+                $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+                if (!($SIDString)) {
+                    # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
+                    $WellKnownSIDs = Get-CimInstance -ClassName Win32_SystemAccount -CimSession $CimSession
+                    $SIDString = ($WellKnownSIDs |
+                        Where-Object -FilterScript { $UnresolvedIdentityReference -like "*\$($_.Name)" }).SID
+                    if (!($SIDString)) {
+                        # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
+                        # But they have real DirectoryEntry objects
+                        $DirectoryPath = "$AdsiServer`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
+                        $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
+                            Add-SidInfo).SidString
+                    }
+                }
+            }
             $ThisACE | Add-Member -PassThru -Force -NotePropertyMembers @{
-                ResolvedIdentityReference = $ResolvedIdentityReference
                 AdsiProvider              = $AdsiProvider
+                AdsiServer                = $ThisServer
+                Path                      = $LiteralPath
+                IdentityReferenceSID      = $SIDString
+                IdentityReferenceName     = $UnresolvedIdentityReference
+                IdentityReferenceResolved = $UnresolvedIdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
             }
         }
     }
@@ -1732,11 +1702,15 @@ function Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b {
         Short synopsis of the function
         .DESCRIPTION
         Long description of the function
+        .INPUTS
+        [PSObject] InputObject parameter
+        .OUTPUTS
+        [PSObject]
         .EXAMPLE
         ----------  EXAMPLE 1  ----------
-        This is a demo example with no parameters. It may not even be valid.
-
         Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b
+
+        This demo example with no parameters will return nothing
     #>
     [OutputType([PSObject[]])]
     [CmdletBinding()]
@@ -1782,6 +1756,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
+
 
 
 

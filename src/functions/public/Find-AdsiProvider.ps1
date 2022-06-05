@@ -25,7 +25,7 @@ function Find-AdsiProvider {
     param (
 
         # IP address or hostname of the directory server whose ADSI provider type to determine
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(ValueFromPipeline)]
         [string[]]$AdsiServer,
 
         # Cache of known directory servers to reduce duplicate queries

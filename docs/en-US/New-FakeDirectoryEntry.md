@@ -13,22 +13,22 @@ Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security
 ## SYNTAX
 
 ```
-New-FakeDirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>]
- [[-PropertiesToLoad] <String[]>] [[-DirectoryEntryCache] <Hashtable>] [<CommonParameters>]
+New-FakeDirectoryEntry [[-DirectoryPath] <String>]
 ```
 
 ## DESCRIPTION
-Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
+The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+We will create dummy objects instead of performing the query
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
 ----------  EXAMPLE 1  ----------
-New-FakeDirectoryEntry
+New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
 ```
 
-This is not a real example yet
+Create a fake DirectoryEntry to represent the CREATOR OWNER special security principal
 
 ## PARAMETERS
 
@@ -43,66 +43,17 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: (([System.DirectoryServices.DirectorySearcher]'').SearchRoot.Path)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Credential
-Credentials to use to bind to the directory
-Defaults to the credentials of the current user
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
-
-### -PropertiesToLoad
-Properties of the target object to retrieve
-
-```yaml
-Type: String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DirectoryEntryCache
-A hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-Uses a thread-safe hashtable by default
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
+### None.
 ## OUTPUTS
 
-### System.Management.Automation.PSObject[]
+### [System.Management.Automation.PSCustomObject]
 ## NOTES
 
 ## RELATED LINKS

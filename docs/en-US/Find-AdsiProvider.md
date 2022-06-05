@@ -13,7 +13,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 ## SYNTAX
 
 ```
-Find-AdsiProvider [-AdsiServer] <String[]> [[-KnownServers] <Hashtable>] [<CommonParameters>]
+Find-AdsiProvider [[-AdsiServer] <String[]>] [[-KnownServers] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,7 +45,7 @@ Type: String[]
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)

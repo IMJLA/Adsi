@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.137] - 2022-06-05 - Updated Resolve-IdentityReference
+
 ## [1.0.136] - 2022-06-03 - Minor performance improvements and comment-based help on all functions up through the I's.  The I's have it!
 
 ## [1.0.135] - 2022-06-03 - reproducing bug in platyps

@@ -4,11 +4,15 @@ function Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b {
         Short synopsis of the function
         .DESCRIPTION
         Long description of the function
+        .INPUTS
+        [PSObject] InputObject parameter
+        .OUTPUTS
+        [PSObject]
         .EXAMPLE
         ----------  EXAMPLE 1  ----------
-        This is a demo example with no parameters. It may not even be valid.
-
         Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b
+
+        This demo example with no parameters will return nothing
     #>
     [OutputType([PSObject[]])]
     [CmdletBinding()]

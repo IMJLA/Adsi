@@ -1093,7 +1093,7 @@ ad.contoso.com</dev:code>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Find-AdsiProvider</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>AdsiServer</maml:name>
           <maml:description>
             <maml:para>IP address or hostname of the directory server whose ADSI provider type to determine</maml:para>
@@ -1120,7 +1120,7 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>AdsiServer</maml:name>
         <maml:description>
           <maml:para>IP address or hostname of the directory server whose ADSI provider type to determine</maml:para>
@@ -2113,7 +2113,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Retrieve a directory entry using either the WinNT or LDAP provider for ADSI</maml:para>
+      <maml:para>The WinNT provider only throws an error if you try to retrieve certain accounts/identities We will create dummy objects instead of performing the query</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2128,43 +2128,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]'').SearchRoot.Path)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>Credential</maml:name>
-          <maml:description>
-            <maml:para>Credentials to use to bind to the directory Defaults to the credentials of the current user</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
-          <dev:type>
-            <maml:name>PSCredential</maml:name>
-            <maml:uri />
-          </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>PropertiesToLoad</maml:name>
-          <maml:description>
-            <maml:para>Properties of the target object to retrieve</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
-          <dev:type>
-            <maml:name>String[]</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>DirectoryEntryCache</maml:name>
-          <maml:description>
-            <maml:para>A hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -2179,50 +2143,23 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]'').SearchRoot.Path)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>Credential</maml:name>
-        <maml:description>
-          <maml:para>Credentials to use to bind to the directory Defaults to the credentials of the current user</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
-        <dev:type>
-          <maml:name>PSCredential</maml:name>
-          <maml:uri />
-        </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>PropertiesToLoad</maml:name>
-        <maml:description>
-          <maml:para>Properties of the target object to retrieve</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
-        <dev:type>
-          <maml:name>String[]</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>A hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Management.Automation.PSObject[]</maml:name>
+          <maml:name>[System.Management.Automation.PSCustomObject]</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2238,9 +2175,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>----------  EXAMPLE 1  ----------
-New-FakeDirectoryEntry</dev:code>
+New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'</dev:code>
         <dev:remarks>
-          <maml:para>This is not a real example yet</maml:para>
+          <maml:para>Create a fake DirectoryEntry to represent the CREATOR OWNER special security principal</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2252,71 +2189,95 @@ New-FakeDirectoryEntry</dev:code>
       <command:verb>Resolve</command:verb>
       <command:noun>IdentityReference</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Replace generic defaults like 'NT AUTHORITY' and 'BUILTIN' with the applicable computer name</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Resolve-IdentityReference</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
-          <maml:name>AccessControlEntry</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>LiteralPath</maml:name>
           <maml:description>
-            <maml:para>{{ Fill AccessControlEntry Description }}</maml:para>
+            <maml:para>Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter This will be used to determine local vs. remote computer, and then WinNT vs. LDAP</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">PSObject[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
-            <maml:name>PSObject[]</maml:name>
+            <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
+          <maml:name>AccessControlEntry</maml:name>
+          <maml:description>
+            <maml:para>AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">FileSystemAccessRule[]</command:parameterValue>
+          <dev:type>
+            <maml:name>FileSystemAccessRule[]</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>KnownServers</maml:name>
           <maml:description>
-            <maml:para>{{ Fill KnownServers Description }}</maml:para>
+            <maml:para>Dictionary to cache known servers to avoid redundant lookups Defaults to an empty thread-safe hashtable</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
-        <maml:name>AccessControlEntry</maml:name>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>LiteralPath</maml:name>
         <maml:description>
-          <maml:para>{{ Fill AccessControlEntry Description }}</maml:para>
+          <maml:para>Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter This will be used to determine local vs. remote computer, and then WinNT vs. LDAP</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">PSObject[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
-          <maml:name>PSObject[]</maml:name>
+          <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
+        <maml:name>AccessControlEntry</maml:name>
+        <maml:description>
+          <maml:para>AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">FileSystemAccessRule[]</command:parameterValue>
+        <dev:type>
+          <maml:name>FileSystemAccessRule[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>KnownServers</maml:name>
         <maml:description>
-          <maml:para>{{ Fill KnownServers Description }}</maml:para>
+          <maml:para>Dictionary to cache known servers to avoid redundant lookups Defaults to an empty thread-safe hashtable</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>[System.Security.AccessControl.DirectorySecurity]$AccessControlEntry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2326,7 +2287,7 @@ New-FakeDirectoryEntry</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2340,10 +2301,15 @@ New-FakeDirectoryEntry</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>----------  EXAMPLE 1  ----------
+(Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Get-Acl does not support long paths (&gt;256 characters) That was why I originally used the .Net Framework method ----------  EXAMPLE 2  ---------- (Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') | Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru | Resolve-IdentityReference</maml:para>
+          <maml:para>This uses the .Net Framework (or legacy .Net Core up to 2.2) Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class ----------  EXAMPLE 3  ---------- $FolderPath = 'C:\Test' if ($FolderPath.Length -gt 255) {     $FolderPath = "\\?\$FolderPath" } [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath $Sections = [System.Security.AccessControl.AccessControlSections]::Access $FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections) $IncludeExplicitRules = $true $IncludeInheritedRules = $true $AccountType = [System.Security.Principal.NTAccount] $AccountType = [System.Security.Principal.SecurityIdentifier] $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) | Resolve-IdentityReference -LiteralPath $FolderPath</maml:para>
+          <maml:para>This uses .Net Core ----------  EXAMPLE 4  ---------- [System.Security.AccessControl.FileSecurity]::new(     (Get-Item 'C:\Test'),     'Access' ).GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier]) | Resolve-IdentityReference 'C:\Test'</maml:para>
+          <maml:para>This uses .Net Core ----------  EXAMPLE 5  ---------- [System.Security.AccessControl.FileSecurity]::new(     (Get-Item 'C:\Test'),     'Access' ).GetAccessRules($true,$true,[System.Security.Principal.NTAccount]) | Resolve-IdentityReference 'C:\Test'</maml:para>
+          <maml:para>This uses .Net Core</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2615,11 +2581,20 @@ New-FakeDirectoryEntry</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>[PSObject] InputObject parameter</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Management.Automation.PSObject[]</maml:name>
+          <maml:name>[PSObject]</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2635,9 +2610,9 @@ New-FakeDirectoryEntry</dev:code>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>----------  EXAMPLE 1  ----------
-This is a demo example with no parameters. It may not even be valid.</dev:code>
+Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b</dev:code>
         <dev:remarks>
-          <maml:para>Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b</maml:para>
+          <maml:para>This demo example with no parameters will return nothing</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

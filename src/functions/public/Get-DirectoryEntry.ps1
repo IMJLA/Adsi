@@ -57,80 +57,17 @@ function Get-DirectoryEntry {
         #>
         switch -regex ($DirectoryPath) {
 
-            '^WinNT\:\/\/[^\/]*\/CREATOR OWNER$' {
-                $SidByteAray = 'S-1-3-0' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'CREATOR OWNER'
-                    Description     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'CREATOR OWNER'
-                        Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'User'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
+            '^WinNT:\/\/.*\/CREATOR OWNER$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
-            '^WinNT\:\/\/[^\/]*\/SYSTEM$' {
-                $SidByteAray = 'S-1-5-18' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'SYSTEM'
-                    Description     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'SYSTEM'
-                        Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'User'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
+            '^WinNT:\/\/.*\/SYSTEM$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
-            '^WinNT\:\/\/[^\/]*\/INTERACTIVE$' {
-                $SidByteAray = 'S-1-5-4' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'INTERACTIVE'
-                    Description     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'INTERACTIVE'
-                        Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'Group'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
+            '^WinNT:\/\/.*\/INTERACTIVE$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
-            '^WinNT\:\/\/[^\/]*\/Authenticated Users$' {
-                $SidByteAray = 'S-1-5-11' | ConvertTo-SidByteArray
-                $DirectoryEntry = [PSCustomObject]@{
-                    Name            = 'Authenticated Users'
-                    Description     = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-                    objectSid       = $SidByteAray
-                    Parent          = $DirectoryPath | Split-Path -Parent
-                    Path            = $DirectoryPath
-                    Properties      = @{
-                        Name        = 'Authenticated Users'
-                        Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-                        objectSid   = $SidByteAray
-                    }
-                    SchemaClassName = 'Group'
-                    SchemaEntry     = [System.DirectoryServices.DirectoryEntry]
-                }
-                $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+            '^WinNT:\/\/.*\/Authenticated Users$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^$' {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."

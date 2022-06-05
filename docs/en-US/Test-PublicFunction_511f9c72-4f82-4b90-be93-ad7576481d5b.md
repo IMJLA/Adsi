@@ -24,10 +24,10 @@ Long description of the function
 ### EXAMPLE 1
 ```
 ----------  EXAMPLE 1  ----------
-This is a demo example with no parameters. It may not even be valid.
+Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b
 ```
 
-Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b
+This demo example with no parameters will return nothing
 
 ## PARAMETERS
 
@@ -51,9 +51,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### [PSObject] InputObject parameter
 ## OUTPUTS
 
-### System.Management.Automation.PSObject[]
+### [PSObject]
 ## NOTES
 
 ## RELATED LINKS
