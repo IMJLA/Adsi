@@ -10,19 +10,18 @@ function Resolve-IdentityReference {
         .OUTPUTS
         [System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties
         .EXAMPLE
-        ----------  EXAMPLE 1  ----------
         (Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test
 
         Get-Acl does not support long paths (>256 characters)
         That was why I originally used the .Net Framework method
-        ----------  EXAMPLE 2  ----------
+        .EXAMPLE
         (Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') |
         Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru |
         Resolve-IdentityReference
 
         This uses the .Net Framework (or legacy .Net Core up to 2.2)
         Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
-        ----------  EXAMPLE 3  ----------
+        .EXAMPLE
         $FolderPath = 'C:\Test'
         if ($FolderPath.Length -gt 255) {
             $FolderPath = "\\?\$FolderPath"
@@ -38,7 +37,7 @@ function Resolve-IdentityReference {
         Resolve-IdentityReference -LiteralPath $FolderPath
 
         This uses .Net Core
-        ----------  EXAMPLE 4  ----------
+        .EXAMPLE
         [System.Security.AccessControl.FileSecurity]::new(
             (Get-Item 'C:\Test'),
             'Access'
@@ -46,7 +45,7 @@ function Resolve-IdentityReference {
         Resolve-IdentityReference 'C:\Test'
 
         This uses .Net Core
-        ----------  EXAMPLE 5  ----------
+        .EXAMPLE
         [System.Security.AccessControl.FileSecurity]::new(
             (Get-Item 'C:\Test'),
             'Access'

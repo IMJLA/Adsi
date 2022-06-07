@@ -2302,13 +2302,58 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>----------  EXAMPLE 1  ----------
-(Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test</dev:code>
+        <dev:code>(Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test</dev:code>
         <dev:remarks>
-          <maml:para>Get-Acl does not support long paths (&gt;256 characters) That was why I originally used the .Net Framework method ----------  EXAMPLE 2  ---------- (Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') | Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru | Resolve-IdentityReference</maml:para>
-          <maml:para>This uses the .Net Framework (or legacy .Net Core up to 2.2) Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class ----------  EXAMPLE 3  ---------- $FolderPath = 'C:\Test' if ($FolderPath.Length -gt 255) {     $FolderPath = "\\?\$FolderPath" } [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath $Sections = [System.Security.AccessControl.AccessControlSections]::Access $FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections) $IncludeExplicitRules = $true $IncludeInheritedRules = $true $AccountType = [System.Security.Principal.NTAccount] $AccountType = [System.Security.Principal.SecurityIdentifier] $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) | Resolve-IdentityReference -LiteralPath $FolderPath</maml:para>
-          <maml:para>This uses .Net Core ----------  EXAMPLE 4  ---------- [System.Security.AccessControl.FileSecurity]::new(     (Get-Item 'C:\Test'),     'Access' ).GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier]) | Resolve-IdentityReference 'C:\Test'</maml:para>
-          <maml:para>This uses .Net Core ----------  EXAMPLE 5  ---------- [System.Security.AccessControl.FileSecurity]::new(     (Get-Item 'C:\Test'),     'Access' ).GetAccessRules($true,$true,[System.Security.Principal.NTAccount]) | Resolve-IdentityReference 'C:\Test'</maml:para>
+          <maml:para>Get-Acl does not support long paths (&gt;256 characters) That was why I originally used the .Net Framework method</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>(Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') |
+Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru |
+Resolve-IdentityReference</dev:code>
+        <dev:remarks>
+          <maml:para>This uses the .Net Framework (or legacy .Net Core up to 2.2) Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>$FolderPath = 'C:\Test'
+if ($FolderPath.Length -gt 255) {
+    $FolderPath = "\\?\$FolderPath"
+}
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+$Sections = [System.Security.AccessControl.AccessControlSections]::Access
+$FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
+$IncludeExplicitRules = $true
+$IncludeInheritedRules = $true
+$AccountType = [System.Security.Principal.NTAccount]
+$AccountType = [System.Security.Principal.SecurityIdentifier]
+$FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
+Resolve-IdentityReference -LiteralPath $FolderPath</dev:code>
+        <dev:remarks>
+          <maml:para>This uses .Net Core</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <dev:code>[System.Security.AccessControl.FileSecurity]::new(
+    (Get-Item 'C:\Test'),
+    'Access'
+).GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier]) |
+Resolve-IdentityReference 'C:\Test'</dev:code>
+        <dev:remarks>
+          <maml:para>This uses .Net Core</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
+        <dev:code>[System.Security.AccessControl.FileSecurity]::new(
+    (Get-Item 'C:\Test'),
+    'Access'
+).GetAccessRules($true,$true,[System.Security.Principal.NTAccount]) |
+Resolve-IdentityReference 'C:\Test'</dev:code>
+        <dev:remarks>
           <maml:para>This uses .Net Core</maml:para>
         </dev:remarks>
       </command:example>
@@ -2321,55 +2366,55 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
       <command:verb>Search</command:verb>
       <command:noun>Directory</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Use Active Directory Service Interfaces to search an LDAP directory</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Retrieve directory entries using either the WinNT or LDAP provider for ADSI</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Search-Directory</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryPath</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
+            <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>Filter</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill Filter Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-          <dev:type>
-            <maml:name>String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>Filter</maml:name>
+          <maml:description>
+            <maml:para>Filter for the LDAP search</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>PageSize</maml:name>
           <maml:description>
-            <maml:para>{{ Fill PageSize Description }}</maml:para>
+            <maml:para>Number of records per page of results</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
           <dev:type>
             <maml:name>Int32</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>1000</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
-            <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+            <maml:para>Additional properties to return</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
           <dev:type>
@@ -2378,10 +2423,10 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>Credential</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Credential Description }}</maml:para>
+            <maml:para>Credentials to use</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
           <dev:type>
@@ -2390,97 +2435,73 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>SearchScope</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SearchScope Description }}</maml:para>
+            <maml:para>Scope of the search</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>Subtree</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
+            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>Credential</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill Credential Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
-        <dev:type>
-          <maml:name>PSCredential</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DirectoryEntryCache Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
+          <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>Filter</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill Filter Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>Filter</maml:name>
+        <maml:description>
+          <maml:para>Filter for the LDAP search</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PageSize</maml:name>
         <maml:description>
-          <maml:para>{{ Fill PageSize Description }}</maml:para>
+          <maml:para>Number of records per page of results</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
         <dev:type>
           <maml:name>Int32</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>1000</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
-          <maml:para>{{ Fill PropertiesToLoad Description }}</maml:para>
+          <maml:para>Additional properties to return</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
         <dev:type>
@@ -2490,22 +2511,46 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <maml:name>Credential</maml:name>
+        <maml:description>
+          <maml:para>Credentials to use</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
+        <dev:type>
+          <maml:name>PSCredential</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>SearchScope</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SearchScope Description }}</maml:para>
+          <maml:para>Scope of the search</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>Subtree</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2515,7 +2560,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry]</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2529,10 +2574,10 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Search-Directory -Filter ''</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

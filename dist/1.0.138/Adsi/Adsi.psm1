@@ -1525,19 +1525,18 @@ function Resolve-IdentityReference {
         .OUTPUTS
         [System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties
         .EXAMPLE
-        ----------  EXAMPLE 1  ----------
         (Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test
 
         Get-Acl does not support long paths (>256 characters)
         That was why I originally used the .Net Framework method
-        ----------  EXAMPLE 2  ----------
+        .EXAMPLE
         (Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') |
         Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru |
         Resolve-IdentityReference
 
         This uses the .Net Framework (or legacy .Net Core up to 2.2)
         Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
-        ----------  EXAMPLE 3  ----------
+        .EXAMPLE
         $FolderPath = 'C:\Test'
         if ($FolderPath.Length -gt 255) {
             $FolderPath = "\\?\$FolderPath"
@@ -1553,7 +1552,7 @@ function Resolve-IdentityReference {
         Resolve-IdentityReference -LiteralPath $FolderPath
 
         This uses .Net Core
-        ----------  EXAMPLE 4  ----------
+        .EXAMPLE
         [System.Security.AccessControl.FileSecurity]::new(
             (Get-Item 'C:\Test'),
             'Access'
@@ -1561,7 +1560,7 @@ function Resolve-IdentityReference {
         Resolve-IdentityReference 'C:\Test'
 
         This uses .Net Core
-        ----------  EXAMPLE 5  ----------
+        .EXAMPLE
         [System.Security.AccessControl.FileSecurity]::new(
             (Get-Item 'C:\Test'),
             'Access'
@@ -1644,14 +1643,47 @@ function Resolve-IdentityReference {
     end {}
 }
 function Search-Directory {
+    <#
+        .SYNOPSIS
+        Use Active Directory Service Interfaces to search an LDAP directory
+        .DESCRIPTION
+        Retrieve directory entries using either the WinNT or LDAP provider for ADSI
+        .INPUTS
+        None. Pipeline input is not accepted.
+        .OUTPUTS
+        [System.DirectoryServices.DirectoryEntry]
+        .EXAMPLE
+        Search-Directory -Filter ''
+
+        As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
+    #>
     param (
 
+        <#
+        Path to the directory object to retrieve
+        Defaults to the root of the current domain
+        #>
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
+
+        # Filter for the LDAP search
         [string]$Filter,
+
+        # Number of records per page of results
         [int]$PageSize = 1000,
+
+        # Additional properties to return
         [string[]]$PropertiesToLoad,
+
+        # Credentials to use
         [pscredential]$Credential,
+
+        # Scope of the search
         [string]$SearchScope = 'subtree',
+
+        <#
+        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+        Uses a thread-safe hashtable by default
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
 
     )
@@ -1756,6 +1788,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory','Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b')
+
 
 
 

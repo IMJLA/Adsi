@@ -24,49 +24,60 @@ Replace generic defaults like 'NT AUTHORITY' and 'BUILTIN' with the applicable c
 
 ### EXAMPLE 1
 ```
-----------  EXAMPLE 1  ----------
 (Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test
 ```
 
 Get-Acl does not support long paths (\>256 characters)
 That was why I originally used the .Net Framework method
-----------  EXAMPLE 2  ----------
+
+### EXAMPLE 2
+```
 (Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') |
 Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru |
 Resolve-IdentityReference
+```
 
 This uses the .Net Framework (or legacy .Net Core up to 2.2)
 Those versions of .Net had a GetAccessControl method on the \[System.IO.DirectoryInfo\] class
-----------  EXAMPLE 3  ----------
+
+### EXAMPLE 3
+```
 $FolderPath = 'C:\Test'
 if ($FolderPath.Length -gt 255) {
-    $FolderPath = "\\\\?\$FolderPath"
+    $FolderPath = "\\?\$FolderPath"
 }
-\[System.IO.DirectoryInfo\]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
-$Sections = \[System.Security.AccessControl.AccessControlSections\]::Access
-$FileSecurity = \[System.Security.AccessControl.FileSecurity\]::new($DirectoryInfo,$Sections)
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+$Sections = [System.Security.AccessControl.AccessControlSections]::Access
+$FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
 $IncludeExplicitRules = $true
 $IncludeInheritedRules = $true
-$AccountType = \[System.Security.Principal.NTAccount\]
-$AccountType = \[System.Security.Principal.SecurityIdentifier\]
+$AccountType = [System.Security.Principal.NTAccount]
+$AccountType = [System.Security.Principal.SecurityIdentifier]
 $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
 Resolve-IdentityReference -LiteralPath $FolderPath
+```
 
 This uses .Net Core
-----------  EXAMPLE 4  ----------
-\[System.Security.AccessControl.FileSecurity\]::new(
+
+### EXAMPLE 4
+```
+[System.Security.AccessControl.FileSecurity]::new(
     (Get-Item 'C:\Test'),
     'Access'
-).GetAccessRules($true,$true,\[System.Security.Principal.SecurityIdentifier\]) |
+).GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier]) |
 Resolve-IdentityReference 'C:\Test'
+```
 
 This uses .Net Core
-----------  EXAMPLE 5  ----------
-\[System.Security.AccessControl.FileSecurity\]::new(
+
+### EXAMPLE 5
+```
+[System.Security.AccessControl.FileSecurity]::new(
     (Get-Item 'C:\Test'),
     'Access'
-).GetAccessRules($true,$true,\[System.Security.Principal.NTAccount\]) |
+).GetAccessRules($true,$true,[System.Security.Principal.NTAccount]) |
 Resolve-IdentityReference 'C:\Test'
+```
 
 This uses .Net Core
 
