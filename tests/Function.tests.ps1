@@ -1,4 +1,4 @@
-$Scripts = Get-ChildItem -Path "$env:BHBuildOutput\src" -Include *.ps1 -Recurse
+$Scripts = Get-ChildItem -Path "$PSScriptRoot\src\functions" -Include *.ps1 -Recurse
 
 #$ScriptName = 'Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.ps1'
 #$ScriptPath = "$($PSScriptRoot -replace 'tests','src')\$ScriptName"
