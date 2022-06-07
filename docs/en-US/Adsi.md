@@ -74,6 +74,3 @@ Locale: en-US
 ### [Search-Directory](Search-Directory.md)
 {{ Fill in the Description }}
 
-### [Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b](Test-PublicFunction_511f9c72-4f82-4b90-be93-ad7576481d5b.md)
-{{ Fill in the Description }}
-

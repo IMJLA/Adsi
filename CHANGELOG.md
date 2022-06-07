@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.139] - 2022-06-06 - Removed Test-PublicFunction
+
 ## [1.0.138] - 2022-06-06 - Commented Search-Directory
 
 ## [1.0.137] - 2022-06-05 - Updated Resolve-IdentityReference
