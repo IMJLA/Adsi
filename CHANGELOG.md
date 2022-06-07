@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.140] - 2022-06-06 - Removed tests for Test-PublicFunction, added basic standardized function tests
+
 ## [1.0.139] - 2022-06-06 - Removed Test-PublicFunction
 
 ## [1.0.138] - 2022-06-06 - Commented Search-Directory
