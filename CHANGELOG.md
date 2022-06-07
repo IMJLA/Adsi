@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.143] - 2022-06-06 - Now I really fixed it
+
 ## [1.0.142] - 2022-06-06 - trying again
 
 ## [1.0.141] - 2022-06-06 - fixed Function.tests.ps1
