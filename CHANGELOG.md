@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.145] - 2022-06-16 - Trying to regenerate docs
+
 ## [1.0.144] - 2022-06-16 - Replace README
 
 ## [1.0.143] - 2022-06-06 - Now I really fixed it
