@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.163] - 2022-06-17 - Suspect problem in build environment, trying build again
+
 ## [1.0.162] - 2022-06-17 - Forgot to uncomment Set-Content in FixMarkdownHelp
 
 ## [1.0.161] - 2022-06-17 - Fixed RegEx in FixMarkdownHelp psake task
