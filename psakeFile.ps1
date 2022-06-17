@@ -330,6 +330,11 @@ task FixMarkdownHelp -depends BuildMarkdownHelp {
     $RegEx = "\#\#\ Description.+\#\#"
     $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine##"
     $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
+    
+    Write-Host "`t'$ModuleHelp' -replace '$RegEx',
+`t'$NewString'"
+    
+    
     <#
     #-Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {

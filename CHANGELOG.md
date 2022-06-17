@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.158] - 2022-06-16 - Fixed bug in build process
+
 ## [1.0.157] - 2022-06-16 - Fixed bug in build process
 
 ## [1.0.156] - 2022-06-16 - Fixed bug in build process
