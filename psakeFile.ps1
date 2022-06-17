@@ -280,39 +280,51 @@ task DeleteMarkdownHelp -depends BuildModule -precondition $genMarkdownPreReqs {
 } -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
 
 task BuildMarkdownHelp -depends DeleteMarkdownHelp -precondition $genMarkdownPreReqs {
-
-    $moduleInfo = Import-Module "$env:BHBuildOutput/$env:BHProjectName.psd1" -Global -Force -PassThru
-
+    $ManifestPath = [IO.Path]::Combine($env:BHBuildOutput, "$env:BHProjectName.psd1")
+    $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
+    $manifestInfo = Test-ModuleManifest -Path $ManifestPath
+    if ($moduleInfo.ExportedCommands.Count -eq 0) {
+        Write-Warning 'No commands have been exported. Skipping markdown generation.'
+        return
+    }
+    if (-not (Test-Path -LiteralPath $DocsRootDir)) {
+        New-Item -Path $DocsRootDir -ItemType Directory > $null
+    }
     try {
-        if ($moduleInfo.ExportedCommands.Count -eq 0) {
-            Write-Warning 'No commands have been exported. Skipping markdown generation.'
-            return
-        }
-
-        if (-not (Test-Path -LiteralPath $DocsRootDir)) {
-            New-Item -Path $DocsRootDir -ItemType Directory > $null
-        }
-
         if (Get-ChildItem -LiteralPath $DocsRootDir -Filter *.md -Recurse) {
             Get-ChildItem -LiteralPath $DocsRootDir -Directory | ForEach-Object {
                 Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
             }
         }
 
-        # ErrorAction set to SilentlyContinue so this command will not overwrite an existing MD file.
         $newMDParams = @{
-            Module         = $env:BHProjectName
-            Locale         = $HelpDefaultLocale
-            OutputFolder   = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
-            ErrorAction    = 'SilentlyContinue'
-            Verbose        = $VerbosePreference
-            WithModulePage = $true
+            AlphabeticParamsOrder = $true
+            Locale                = $HelpDefaultLocale
+            # ErrorAction set to SilentlyContinue so this command will not overwrite an existing MD file.
+            ErrorAction           = 'SilentlyContinue'
+            HelpVersion           = $moduleInfo.Version
+            Module                = $env:BHProjectName
+            # PlatyPS should pull the module GUID from the module manifest but does not
+            # PlatyPS has a ModuleGuid parameter but it is unsupported with the -Module ParameterSet
+            # ModuleGuid          = $manifestInfo.Guid
+            # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
+            # OnlineVersionUrl = $GitHubPagesLinkForThisModule
+            OutputFolder          = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
+            UseFullTypeName       = $true
+            Verbose               = $VerbosePreference
+            WithModulePage        = $true
         }
         New-MarkdownHelp @newMDParams
     } finally {
         Remove-Module $env:BHProjectName -Force
     }
-} -description 'Generates PlatyPS markdown files from module help'
+} -description 'Generate markdown files from the module help'
+
+task FixMarkDownHelp {
+    #Fix the Module Page () things PlatyPS does not do):
+    #-Update the module description
+    #-Update the description of each function (use its synopsis for brevity)
+}
 
 $genHelpFilesPreReqs = {
     $result = $true

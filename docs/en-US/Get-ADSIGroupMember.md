@@ -32,11 +32,27 @@ Get members of the domain Administrators group
 
 ## PARAMETERS
 
+### -DirectoryEntryCache
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Uses a thread-safe hashtable by default
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Group
 Directory entry of the LDAP group whose members to get
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 
@@ -51,29 +67,13 @@ Accept wildcard characters: False
 Properties of the group members to find in the directory
 
 ```yaml
-Type: String[]
+Type: System.String[]
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 2
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DirectoryEntryCache
-Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-Uses a thread-safe hashtable by default
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

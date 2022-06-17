@@ -34,7 +34,7 @@ Need to fix example and add notes
 Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 
@@ -50,7 +50,7 @@ Hashtable containing cached directory entries so they don't need to be retrieved
 Uses a thread-safe hashtable by default
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 

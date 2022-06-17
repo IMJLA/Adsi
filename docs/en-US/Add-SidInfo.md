@@ -34,28 +34,12 @@ Upon closer inspection it now has SidString, Domain, and SamAccountName properti
 
 ## PARAMETERS
 
-### -InputObject
-Expecting a \[System.DirectoryServices.DirectoryEntry\] from the LDAP or WinNT providers, or a \[PSCustomObject\] imitation from Get-DirectoryEntry.
-Must contain the objectSid property
-
-```yaml
-Type: Object
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
 ### -DirectoryEntryCache
 Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
 Uses a thread-safe hashtable by default
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
@@ -66,11 +50,27 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -InputObject
+Expecting a \[System.DirectoryServices.DirectoryEntry\] from the LDAP or WinNT providers, or a \[PSCustomObject\] imitation from Get-DirectoryEntry.
+Must contain the objectSid property
+
+```yaml
+Type: System.Object
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -TrustedDomainSidNameMap
 Hashtable containing known domain SIDs as the keys and their names as the values
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 

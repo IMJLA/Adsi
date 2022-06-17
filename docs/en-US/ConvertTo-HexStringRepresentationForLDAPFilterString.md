@@ -34,7 +34,7 @@ Convert the binary SID $Bytes to a hexadecimal string representation, formatted 
 SID to convert to a hex string
 
 ```yaml
-Type: Byte[]
+Type: System.Byte[]
 Parameter Sets: (All)
 Aliases:
 

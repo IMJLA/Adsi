@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.150] - 2022-06-16 - Updated parameters for New-MarkDownHelp in psakeFile.ps1
+
+## [1.0.149] - 2022-06-16 - Updated parameters for New-MarkDownHelp in psakeFile.ps1
+
+## [1.0.148] - 2022-06-16 - Updated parameters for New-MarkDownHelp in psakeFile.ps1
+
+## [1.0.147] - 2022-06-16 - Updated parameters for New-MarkDownHelp in psakeFile.ps1
+
+## [1.0.146] - 2022-06-16 - Updated parameters for New-MarkDownHelp in psakeFile.ps1
+
 ## [1.0.145] - 2022-06-16 - Trying to regenerate docs
 
 ## [1.0.144] - 2022-06-16 - Replace README

@@ -35,7 +35,7 @@ Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN forma
 distinguishedName of the domain
 
 ```yaml
-Type: String[]
+Type: System.String[]
 Parameter Sets: (All)
 Aliases:
 

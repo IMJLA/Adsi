@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: {{ Please enter version of help manually (X.X.X.X) format }}
+Help Version: 1.0.150
 Locale: en-US
 ---
 

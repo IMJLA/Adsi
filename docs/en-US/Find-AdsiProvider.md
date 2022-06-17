@@ -41,7 +41,7 @@ Find the ADSI provider of the AD domain 'ad.contoso.com'
 IP address or hostname of the directory server whose ADSI provider type to determine
 
 ```yaml
-Type: String[]
+Type: System.String[]
 Parameter Sets: (All)
 Aliases:
 
@@ -56,7 +56,7 @@ Accept wildcard characters: False
 Cache of known directory servers to reduce duplicate queries
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 

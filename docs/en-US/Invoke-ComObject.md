@@ -39,7 +39,7 @@ Then use Invoke-ComObject to invoke the GetProperty method and return the value 
 The ComObject whose member method to invoke
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 
@@ -50,11 +50,26 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Method
+Use the InvokeMethod method of the ComObject
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Property
 The property to use with the invoked method
 
 ```yaml
-Type: String
+Type: System.String
 Parameter Sets: (All)
 Aliases:
 
@@ -69,28 +84,13 @@ Accept wildcard characters: False
 The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 3
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Method
-Use the InvokeMethod method of the ComObject
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

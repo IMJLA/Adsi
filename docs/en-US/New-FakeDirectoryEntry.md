@@ -37,7 +37,7 @@ Path to the directory object to retrieve
 Defaults to the root of the current domain (but don't use it for that, just do this instead: \[System.DirectoryServices.DirectorySearcher\]::new())
 
 ```yaml
-Type: String
+Type: System.String
 Parameter Sets: (All)
 Aliases:
 

@@ -38,7 +38,7 @@ Add the domain FQDN to a single LDAP directory path
 Incomplete LDAP directory path containing a distinguishedName but lacking a server address
 
 ```yaml
-Type: String[]
+Type: System.String[]
 Parameter Sets: (All)
 Aliases:
 

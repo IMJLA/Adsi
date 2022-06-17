@@ -35,7 +35,7 @@ Need to fix example and add notes
 Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 
@@ -46,27 +46,12 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -PropertiesToLoad
-Properties of the group members to retrieve
-
-```yaml
-Type: String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -DirectoryEntryCache
 Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
 Uses a thread-safe hashtable by default
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
@@ -77,11 +62,26 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -PropertiesToLoad
+Properties of the group members to retrieve
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -TrustedDomainSidNameMap
 Hashtable containing known domain SIDs as the keys and their names as the values
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 

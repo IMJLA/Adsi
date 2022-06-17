@@ -23,9 +23,9 @@ Insert them into the directory path as the server address</maml:para>
           <maml:description>
             <maml:para>Incomplete LDAP directory path containing a distinguishedName but lacking a server address</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -38,9 +38,9 @@ Insert them into the directory path as the server address</maml:para>
         <maml:description>
           <maml:para>Incomplete LDAP directory path containing a distinguishedName but lacking a server address</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -103,9 +103,9 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           <maml:description>
             <maml:para>Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry. Must contain the objectSid property</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -115,9 +115,9 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -127,9 +127,9 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
@@ -137,38 +137,38 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
-        <maml:name>InputObject</maml:name>
-        <maml:description>
-          <maml:para>Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry. Must contain the objectSid property</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
-        <dev:type>
-          <maml:name>Object</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+        <maml:name>InputObject</maml:name>
+        <maml:description>
+          <maml:para>Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry. Must contain the objectSid property</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Object</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>TrustedDomainSidNameMap</maml:name>
         <maml:description>
           <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>Object</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
@@ -232,9 +232,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:description>
             <maml:para>NetBIOS name of the domain</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -247,9 +247,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
         <maml:description>
           <maml:para>NetBIOS name of the domain</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -312,9 +312,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <maml:description>
             <maml:para>distinguishedName of the domain</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -327,9 +327,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <maml:description>
           <maml:para>distinguishedName of the domain</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -392,9 +392,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>SID</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
           <dev:type>
-            <maml:name>Byte[]</maml:name>
+            <maml:name>System.Byte[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -407,9 +407,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>SID</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
         <dev:type>
-          <maml:name>Byte[]</maml:name>
+          <maml:name>System.Byte[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -471,9 +471,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>SID to convert to a hex string</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
           <dev:type>
-            <maml:name>Byte[]</maml:name>
+            <maml:name>System.Byte[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -486,9 +486,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>SID to convert to a hex string</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Byte[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
         <dev:type>
-          <maml:name>Byte[]</maml:name>
+          <maml:name>System.Byte[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -550,9 +550,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>SID to convert to binary</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -565,9 +565,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>SID to convert to binary</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -629,9 +629,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -641,9 +641,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Properties of the group members to retrieve</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>@('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')</dev:defaultValue>
@@ -653,9 +653,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -665,9 +665,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
@@ -680,45 +680,45 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>Object</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>PropertiesToLoad</maml:name>
-        <maml:description>
-          <maml:para>Properties of the group members to retrieve</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
-        <dev:type>
-          <maml:name>String[]</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>@('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>PropertiesToLoad</maml:name>
+        <maml:description>
+          <maml:para>Properties of the group members to retrieve</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>@('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>TrustedDomainSidNameMap</maml:name>
         <maml:description>
           <maml:para>Hashtable containing known domain SIDs as the keys and their names as the values</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>Object</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)</dev:defaultValue>
@@ -780,9 +780,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>The NTFS AccessControlEntry object(s), grouped by their IdentityReference property TODO: Use System.Security.Principal.NTAccount instead</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object[]</command:parameterValue>
           <dev:type>
-            <maml:name>Object[]</maml:name>
+            <maml:name>System.Object[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -792,9 +792,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Get group members</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Boolean</command:parameterValue>
           <dev:type>
-            <maml:name>Boolean</maml:name>
+            <maml:name>System.Boolean</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>True</dev:defaultValue>
@@ -804,9 +804,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Get group members recursively If true, implies $GroupMember = $true</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Boolean</command:parameterValue>
           <dev:type>
-            <maml:name>Boolean</maml:name>
+            <maml:name>System.Boolean</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>True</dev:defaultValue>
@@ -816,9 +816,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -828,9 +828,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -843,21 +843,33 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>The NTFS AccessControlEntry object(s), grouped by their IdentityReference property TODO: Use System.Security.Principal.NTAccount instead</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object[]</command:parameterValue>
         <dev:type>
-          <maml:name>Object[]</maml:name>
+          <maml:name>System.Object[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>GroupMember</maml:name>
         <maml:description>
           <maml:para>Get group members</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Boolean</command:parameterValue>
         <dev:type>
-          <maml:name>Boolean</maml:name>
+          <maml:name>System.Boolean</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>True</dev:defaultValue>
@@ -867,33 +879,21 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Get group members recursively If true, implies $GroupMember = $true</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Boolean</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Boolean</command:parameterValue>
         <dev:type>
-          <maml:name>Boolean</maml:name>
+          <maml:name>System.Boolean</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>True</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>IdentityReferenceCache</maml:name>
         <maml:description>
           <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -995,9 +995,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1007,9 +1007,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1022,9 +1022,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>Object</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -1034,9 +1034,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1098,9 +1098,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>IP address or hostname of the directory server whose ADSI provider type to determine</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1110,9 +1110,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
@@ -1125,9 +1125,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>IP address or hostname of the directory server whose ADSI provider type to determine</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -1137,9 +1137,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
@@ -1232,9 +1232,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
@@ -1244,9 +1244,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Name (CN or Common Name) of the group to retrieve</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1257,9 +1257,9 @@ ad.contoso.com</dev:code>
             <maml:para>Properties of the group and its members to find in the directory</maml:para>
             <maml:para>       [string[]]$PropertiesToLoad = @(            'department',            'description',            'distinguishedName',            'grouptype',            'managedby',            'member',            'name',            'objectClass',            'objectSid',            'operatingSystem',            'samAccountName',            'title'        ),</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1269,9 +1269,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1279,14 +1279,26 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
           <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
@@ -1296,9 +1308,9 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Name (CN or Common Name) of the group to retrieve</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -1309,24 +1321,12 @@ ad.contoso.com</dev:code>
           <maml:para>Properties of the group and its members to find in the directory</maml:para>
           <maml:para>       [string[]]$PropertiesToLoad = @(            'department',            'description',            'distinguishedName',            'grouptype',            'managedby',            'member',            'name',            'objectClass',            'objectSid',            'operatingSystem',            'samAccountName',            'title'        ),</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -1392,9 +1392,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Directory entry of the LDAP group whose members to get</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1404,9 +1404,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Properties of the group members to find in the directory</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1416,9 +1416,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1426,14 +1426,26 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>Group</maml:name>
         <maml:description>
           <maml:para>Directory entry of the LDAP group whose members to get</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>Object</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -1443,24 +1455,12 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Properties of the group members to find in the directory</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -1573,9 +1573,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
@@ -1585,9 +1585,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Credentials to use to bind to the directory Defaults to the credentials of the current user</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSCredential</command:parameterValue>
           <dev:type>
-            <maml:name>PSCredential</maml:name>
+            <maml:name>System.Management.Automation.PSCredential</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1597,9 +1597,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Properties of the target object to retrieve</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1609,9 +1609,9 @@ ad.contoso.com</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1619,38 +1619,14 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>DirectoryPath</maml:name>
-        <maml:description>
-          <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
-      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Credential</maml:name>
         <maml:description>
           <maml:para>Credentials to use to bind to the directory Defaults to the credentials of the current user</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSCredential</command:parameterValue>
         <dev:type>
-          <maml:name>PSCredential</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>PropertiesToLoad</maml:name>
-        <maml:description>
-          <maml:para>Properties of the target object to retrieve</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
-        <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.Management.Automation.PSCredential</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -1660,12 +1636,36 @@ ad.contoso.com</dev:code>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>DirectoryPath</maml:name>
+        <maml:description>
+          <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>PropertiesToLoad</maml:name>
+        <maml:description>
+          <maml:para>Properties of the target object to retrieve</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -1743,9 +1743,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1756,7 +1756,7 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
           </maml:description>
           <dev:type>
-            <maml:name>SwitchParameter</maml:name>
+            <maml:name>System.Management.Automation.SwitchParameter</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>False</dev:defaultValue>
@@ -1764,29 +1764,29 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>KeyByNetbios</maml:name>
-        <maml:description>
-          <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-        <dev:type>
-          <maml:name>SwitchParameter</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>False</dev:defaultValue>
-      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>KeyByNetbios</maml:name>
+        <maml:description>
+          <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Management.Automation.SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -1845,9 +1845,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:description>
             <maml:para>DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1857,9 +1857,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1869,9 +1869,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:description>
             <maml:para>Properties of the group members to find in the directory</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1884,9 +1884,9 @@ Path              : WinNT://ComputerName</dev:code>
         <maml:description>
           <maml:para>DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>Object</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -1896,9 +1896,9 @@ Path              : WinNT://ComputerName</dev:code>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -1908,9 +1908,9 @@ Path              : WinNT://ComputerName</dev:code>
         <maml:description>
           <maml:para>Properties of the group members to find in the directory</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -1972,9 +1972,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:description>
             <maml:para>The ComObject whose member method to invoke</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1984,9 +1984,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:description>
             <maml:para>The property to use with the invoked method</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -1996,9 +1996,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:description>
             <maml:para>The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>Object</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2009,7 +2009,7 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:para>Use the InvokeMethod method of the ComObject</maml:para>
           </maml:description>
           <dev:type>
-            <maml:name>SwitchParameter</maml:name>
+            <maml:name>System.Management.Automation.SwitchParameter</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>False</dev:defaultValue>
@@ -2022,33 +2022,9 @@ Path              : WinNT://ComputerName</dev:code>
         <maml:description>
           <maml:para>The ComObject whose member method to invoke</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>Object</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>Property</maml:name>
-        <maml:description>
-          <maml:para>The property to use with the invoked method</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>Value</maml:name>
-        <maml:description>
-          <maml:para>The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
-        <dev:type>
-          <maml:name>Object</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -2058,12 +2034,36 @@ Path              : WinNT://ComputerName</dev:code>
         <maml:description>
           <maml:para>Use the InvokeMethod method of the ComObject</maml:para>
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.SwitchParameter</command:parameterValue>
         <dev:type>
-          <maml:name>SwitchParameter</maml:name>
+          <maml:name>System.Management.Automation.SwitchParameter</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>Property</maml:name>
+        <maml:description>
+          <maml:para>The property to use with the invoked method</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>Value</maml:name>
+        <maml:description>
+          <maml:para>The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Object</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -2123,9 +2123,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:description>
             <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain (but don't use it for that, just do this instead: [System.DirectoryServices.DirectorySearcher]::new())</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2138,9 +2138,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <maml:description>
           <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain (but don't use it for that, just do this instead: [System.DirectoryServices.DirectorySearcher]::new())</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -2203,9 +2203,9 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           <maml:description>
             <maml:para>Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter This will be used to determine local vs. remote computer, and then WinNT vs. LDAP</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2215,9 +2215,9 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           <maml:description>
             <maml:para>AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">FileSystemAccessRule[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Security.AccessControl.FileSystemAccessRule[]</command:parameterValue>
           <dev:type>
-            <maml:name>FileSystemAccessRule[]</maml:name>
+            <maml:name>System.Security.AccessControl.FileSystemAccessRule[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2227,9 +2227,9 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           <maml:description>
             <maml:para>Dictionary to cache known servers to avoid redundant lookups Defaults to an empty thread-safe hashtable</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
@@ -2237,26 +2237,14 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>LiteralPath</maml:name>
-        <maml:description>
-          <maml:para>Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter This will be used to determine local vs. remote computer, and then WinNT vs. LDAP</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
         <maml:name>AccessControlEntry</maml:name>
         <maml:description>
           <maml:para>AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">FileSystemAccessRule[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Security.AccessControl.FileSystemAccessRule[]</command:parameterValue>
         <dev:type>
-          <maml:name>FileSystemAccessRule[]</maml:name>
+          <maml:name>System.Security.AccessControl.FileSystemAccessRule[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -2266,12 +2254,24 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
         <maml:description>
           <maml:para>Dictionary to cache known servers to avoid redundant lookups Defaults to an empty thread-safe hashtable</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
-          <maml:name>Hashtable</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>LiteralPath</maml:name>
+        <maml:description>
+          <maml:para>Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter This will be used to determine local vs. remote computer, and then WinNT vs. LDAP</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -2380,9 +2380,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
           <maml:description>
             <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
@@ -2392,9 +2392,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
           <maml:description>
             <maml:para>Filter for the LDAP search</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2404,9 +2404,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
           <maml:description>
             <maml:para>Number of records per page of results</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Int32</command:parameterValue>
           <dev:type>
-            <maml:name>Int32</maml:name>
+            <maml:name>System.Int32</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>1000</dev:defaultValue>
@@ -2416,9 +2416,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
           <maml:description>
             <maml:para>Additional properties to return</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
-            <maml:name>String[]</maml:name>
+            <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2428,9 +2428,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
           <maml:description>
             <maml:para>Credentials to use</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSCredential</command:parameterValue>
           <dev:type>
-            <maml:name>PSCredential</maml:name>
+            <maml:name>System.Management.Automation.PSCredential</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2440,9 +2440,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
           <maml:description>
             <maml:para>Scope of the search</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>String</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>Subtree</dev:defaultValue>
@@ -2452,9 +2452,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
-            <maml:name>Hashtable</maml:name>
+            <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
@@ -2462,14 +2462,38 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <maml:name>Credential</maml:name>
+        <maml:description>
+          <maml:para>Credentials to use</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSCredential</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Management.Automation.PSCredential</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
           <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
@@ -2479,9 +2503,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
         <maml:description>
           <maml:para>Filter for the LDAP search</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -2491,9 +2515,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
         <maml:description>
           <maml:para>Number of records per page of results</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Int32</command:parameterValue>
         <dev:type>
-          <maml:name>Int32</maml:name>
+          <maml:name>System.Int32</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>1000</dev:defaultValue>
@@ -2503,21 +2527,9 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
         <maml:description>
           <maml:para>Additional properties to return</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
-          <maml:name>String[]</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>Credential</maml:name>
-        <maml:description>
-          <maml:para>Credentials to use</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
-        <dev:type>
-          <maml:name>PSCredential</maml:name>
+          <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -2527,24 +2539,12 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
         <maml:description>
           <maml:para>Scope of the search</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
-          <maml:name>String</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>Subtree</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>

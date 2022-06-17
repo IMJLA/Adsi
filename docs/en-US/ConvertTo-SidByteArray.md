@@ -34,7 +34,7 @@ Convert the SID string to a byte array
 SID to convert to binary
 
 ```yaml
-Type: String[]
+Type: System.String[]
 Parameter Sets: (All)
 Aliases:
 

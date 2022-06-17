@@ -34,33 +34,33 @@ Get the trusted domains of the current computer
 
 ## PARAMETERS
 
-### -KeyByNetbios
-Key the dictionary by the domain NetBIOS names instead of SIDs
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -DirectoryEntryCache
 Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
 Uses a thread-safe hashtable by default
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 1
 Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -KeyByNetbios
+Key the dictionary by the domain NetBIOS names instead of SIDs
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

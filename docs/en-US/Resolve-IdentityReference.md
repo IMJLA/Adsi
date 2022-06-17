@@ -83,29 +83,11 @@ This uses .Net Core
 
 ## PARAMETERS
 
-### -LiteralPath
-Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter
-This will be used to determine local vs.
-remote computer, and then WinNT vs.
-LDAP
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -AccessControlEntry
 AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve
 
 ```yaml
-Type: FileSystemAccessRule[]
+Type: System.Security.AccessControl.FileSystemAccessRule[]
 Parameter Sets: (All)
 Aliases:
 
@@ -121,13 +103,31 @@ Dictionary to cache known servers to avoid redundant lookups
 Defaults to an empty thread-safe hashtable
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
 Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -LiteralPath
+Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter
+This will be used to determine local vs.
+remote computer, and then WinNT vs.
+LDAP
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -36,7 +36,7 @@ Get members of the local Administrators group
 DirectoryEntry \[System.DirectoryServices.DirectoryEntry\] of the WinNT group whose members to get
 
 ```yaml
-Type: Object
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 
@@ -52,7 +52,7 @@ Hashtable containing cached directory entries so they don't have to be retrieved
 Uses a thread-safe hashtable by default
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
@@ -67,7 +67,7 @@ Accept wildcard characters: False
 Properties of the group members to find in the directory
 
 ```yaml
-Type: String[]
+Type: System.String[]
 Parameter Sets: (All)
 Aliases:
 

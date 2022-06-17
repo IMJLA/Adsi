@@ -38,7 +38,7 @@ The NTFS AccessControlEntry object(s), grouped by their IdentityReference proper
 TODO: Use System.Security.Principal.NTAccount instead
 
 ```yaml
-Type: Object[]
+Type: System.Object[]
 Parameter Sets: (All)
 Aliases:
 
@@ -49,11 +49,26 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### -DirectoryEntryCache
+Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -GroupMember
 Get group members
 
 ```yaml
-Type: Boolean
+Type: System.Boolean
 Parameter Sets: (All)
 Aliases:
 
@@ -69,7 +84,7 @@ Get group members recursively
 If true, implies $GroupMember = $true
 
 ```yaml
-Type: Boolean
+Type: System.Boolean
 Parameter Sets: (All)
 Aliases:
 
@@ -80,26 +95,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DirectoryEntryCache
-Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -IdentityReferenceCache
 Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 

@@ -42,28 +42,12 @@ As the current user on a workgroup computer, bind to the local system and retrie
 
 ## PARAMETERS
 
-### -DirectoryPath
-Path to the directory object to retrieve
-Defaults to the root of the current domain
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Credential
 Credentials to use to bind to the directory
 Defaults to the credentials of the current user
 
 ```yaml
-Type: PSCredential
+Type: System.Management.Automation.PSCredential
 Parameter Sets: (All)
 Aliases:
 
@@ -74,33 +58,49 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PropertiesToLoad
-Properties of the target object to retrieve
-
-```yaml
-Type: String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -DirectoryEntryCache
 Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
 Uses a thread-safe hashtable by default
 
 ```yaml
-Type: Hashtable
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DirectoryPath
+Path to the directory object to retrieve
+Defaults to the root of the current domain
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PropertiesToLoad
+Properties of the target object to retrieve
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

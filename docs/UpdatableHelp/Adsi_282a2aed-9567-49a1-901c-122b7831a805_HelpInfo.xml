@@ -4,7 +4,7 @@
   <SupportedUICultures>
     <UICulture>
       <UICultureName>en-US</UICultureName>
-      <UICultureVersion>{{ Please enter version of help manually (X.X.X.X) format }}</UICultureVersion>
+      <UICultureVersion>1.0.150</UICultureVersion>
     </UICulture>
   </SupportedUICultures>
 </HelpInfo>
