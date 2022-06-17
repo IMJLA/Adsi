@@ -341,7 +341,7 @@ task FixMarkdownHelp -depends BuildMarkdownHelp {
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
     }
 
-    #$ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
+    $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
     Remove-Module $env:BHProjectName -Force
 }
 
