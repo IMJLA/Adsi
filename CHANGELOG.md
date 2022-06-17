@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.160] - 2022-06-16 - test
+
 ## [1.0.159] - 2022-06-16 - Fixed regex in FixMardownHelp psake task
 
 ## [1.0.158] - 2022-06-16 - Fixed bug in build process
