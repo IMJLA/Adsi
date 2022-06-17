@@ -12,7 +12,7 @@
     RootModule        = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion     = '1.0.150'
+    ModuleVersion     = '1.0.151'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -30,7 +30,7 @@
     Copyright         = '(c) Jeremy La Camera. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'Use Active Directory Service Interfaces to query directories'
+    Description       = 'Use Active Directory Service Interfaces to query LDAP and WinNT directories'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''

@@ -265,8 +265,8 @@ task BuildModule -depends CleanOutputDir {
 
 $genMarkdownPreReqs = {
     $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
-        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
+    if (-not (Get-Module PlatyPS -ListAvailable)) {
+        Write-Warning "PlatyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
         $result = $false
     }
     $result
@@ -304,9 +304,6 @@ task BuildMarkdownHelp -depends DeleteMarkdownHelp -precondition $genMarkdownPre
             ErrorAction           = 'SilentlyContinue'
             HelpVersion           = $moduleInfo.Version
             Module                = $env:BHProjectName
-            # PlatyPS should pull the module GUID from the module manifest but does not
-            # PlatyPS has a ModuleGuid parameter but it is unsupported with the -Module ParameterSet
-            # ModuleGuid          = $manifestInfo.Guid
             # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
             # OnlineVersionUrl = $GitHubPagesLinkForThisModule
             OutputFolder          = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
@@ -321,9 +318,29 @@ task BuildMarkdownHelp -depends DeleteMarkdownHelp -precondition $genMarkdownPre
 } -description 'Generate markdown files from the module help'
 
 task FixMarkDownHelp {
+    $ManifestPath = [IO.Path]::Combine($env:BHBuildOutput, "$env:BHProjectName.psd1")
+    $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
+    $manifestInfo = Test-ModuleManifest -Path $ManifestPath
+
     #Fix the Module Page () things PlatyPS does not do):
+    [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile
+
     #-Update the module description
+    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, 'Adsi.md')
+    $RegEx = "\#\#\ Description.+\#\#"
+    $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine##"
+    $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
+
     #-Update the description of each function (use its synopsis for brevity)
+    ForEach ($ThisFunction in $ManifestInfo.ExportedCommands) {
+        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
+        $RegEx = "\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\).+\#\#\#"
+        $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine###"
+        $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
+    }
+
+    $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile
+    Remove-Module $env:BHProjectName -Force
 }
 
 $genHelpFilesPreReqs = {
