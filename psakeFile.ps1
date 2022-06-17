@@ -279,7 +279,7 @@ task DeleteMarkdownHelp -depends BuildModule -precondition $genMarkdownPreReqs {
     $NewLine
 } -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
 
-task BuildMarkdownHelp -depends DeleteMarkdownHelp -precondition $genMarkdownPreReqs {
+task BuildMarkdownHelp -depends DeleteMarkdownHelp {
     $ManifestPath = [IO.Path]::Combine($env:BHBuildOutput, "$env:BHProjectName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
@@ -317,29 +317,29 @@ task BuildMarkdownHelp -depends DeleteMarkdownHelp -precondition $genMarkdownPre
     }
 } -description 'Generate markdown files from the module help'
 
-task FixMarkDownHelp {
+task FixMarkdownHelp -depends BuildMarkdownHelp {
     $ManifestPath = [IO.Path]::Combine($env:BHBuildOutput, "$env:BHProjectName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
 
     #Fix the Module Page () things PlatyPS does not do):
-    [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile
+    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, 'Adsi.md')
+    [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
     #-Update the module description
-    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, 'Adsi.md')
     $RegEx = "\#\#\ Description.+\#\#"
     $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine##"
     $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
-
+    <#
     #-Update the description of each function (use its synopsis for brevity)
-    ForEach ($ThisFunction in $ManifestInfo.ExportedCommands) {
+    ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
         $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\).+\#\#\#"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine###"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
     }
-
-    $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile
+#>
+    $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
     Remove-Module $env:BHProjectName -Force
 }
 
@@ -352,7 +352,7 @@ $genHelpFilesPreReqs = {
     $result
 }
 
-task BuildMAMLHelp -depends BuildMarkdownHelp -precondition $genHelpFilesPreReqs {
+task BuildMAMLHelp -depends FixMarkdownHelp -precondition $genHelpFilesPreReqs {
     Build-PSBuildMAMLHelp -Path $DocsRootDir -DestinationPath $env:BHBuildOutput
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 

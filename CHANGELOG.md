@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.157] - 2022-06-16 - Fixed bug in build process
+
+## [1.0.156] - 2022-06-16 - Fixed bug in build process
+
+## [1.0.155] - 2022-06-16 - Fixed the loop through the keys in the ExportedCommands dictionary in FixMarkdownHelp psake task
+
+## [1.0.154] - 2022-06-16 - Trying utf8 encoding for the output of FixMarkdownHelp
+
+## [1.0.153] - 2022-06-16 - Fixed sequence of events in FixMarkdownHelp psake build task
+
+## [1.0.152] - 2022-06-16 - Implemented FixMarkdownHelp psake task
+
 ## [1.0.151] - 2022-06-16 - Added FixMarkDownHelp psake task
 
 ## [1.0.150] - 2022-06-16 - Updated parameters for New-MarkDownHelp in psakeFile.ps1
