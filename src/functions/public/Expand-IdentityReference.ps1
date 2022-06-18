@@ -6,7 +6,7 @@ function Expand-IdentityReference {
         Recursively retrieves group members and detailed information about them
         Use caching to reduce duplicate directory queries
         .INPUTS
-        [System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)
+        [System.Object]$AccessControlEntry
         .OUTPUTS
         [System.Object] The input object is returned with additional properties added:
             DirectoryEntry

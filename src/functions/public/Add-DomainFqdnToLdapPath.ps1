@@ -8,7 +8,7 @@ function Add-DomainFqdnToLdapPath {
             Convert the Domain Components to an FQDN  
             Insert them into the directory path as the server address
         .INPUTS
-        [System.String] DirectoryPath parameter
+        [System.String]$DirectoryPath
         .OUTPUTS
         [System.String] Complete LDAP directory path including server address
         .EXAMPLE

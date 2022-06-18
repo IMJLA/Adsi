@@ -8,7 +8,7 @@ schema: 2.0.0
 # Invoke-ComObject
 
 ## SYNOPSIS
-Invoke a member method of a ComObject
+Invoke a member method of a ComObject \[__ComObject\]
 
 ## SYNTAX
 
@@ -100,7 +100,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [__ComObject]
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
 ### The output of the invoked method is returned directly

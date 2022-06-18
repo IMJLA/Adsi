@@ -54,7 +54,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String] DirectoryPath parameter
+### [System.String]$DirectoryPath
 ## OUTPUTS
 
 ### [System.String] Complete LDAP directory path including server address

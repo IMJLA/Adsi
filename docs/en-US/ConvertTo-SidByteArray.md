@@ -50,7 +50,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String] SidString parameter
+### [System.String]$SidString
 ## OUTPUTS
 
 ### [System.Byte] SID a a byte array

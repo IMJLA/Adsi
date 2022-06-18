@@ -83,7 +83,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter
+### [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
 ## OUTPUTS
 
 ### [System.DirectoryServices.DirectoryEntry] for each group member

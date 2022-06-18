@@ -5,7 +5,7 @@ function Find-AdsiProvider {
         .DESCRIPTION
         Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
         .INPUTS
-        [System.String] AdsiServer parameter.
+        [System.String]$AdsiServer
         .OUTPUTS
         [System.String] Possible return values are:
             None

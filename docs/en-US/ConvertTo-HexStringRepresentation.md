@@ -47,7 +47,7 @@ Accept wildcard characters: False
 
 ## INPUTS
 
-### [System.Byte[]] SIDByteArray parameter
+### [System.Byte[]]$SIDByteArray
 ## OUTPUTS
 
 ### [System.String] SID as an array of strings representing the byte array's hexadecimal values

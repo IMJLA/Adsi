@@ -3,8 +3,6 @@ BuildHelpers\Set-BuildEnvironment -Force
 
 properties {
 
-    $NewLine = [System.Environment]::NewLine
-
     # Version of the module manifest in the src directory before the build is run and the version is updated
     $SourceModuleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
 
@@ -84,6 +82,8 @@ properties {
     # Credential to authenticate to PowerShell repository with
     $PublishPSRepositoryCredential = $null
 
+    $NewLine = [System.Environment]::NewLine
+
 }
 
 FormatTaskName {
@@ -97,7 +97,6 @@ task Default -depends Publish
 #Task Init -FromModule PowerShellBuild -minimumVersion 0.6.1
 
 task InitializeEnvironmentVariables {
-
 
     # Should I be running Git before this? I haven't run Git yet, so BuildHelpers finds the previous commit msg and I have to use the line below to update it
     $env:BHCommitMessage = $CommitMessage

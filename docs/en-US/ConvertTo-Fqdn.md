@@ -51,7 +51,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String] DistinguishedName parameter
+### [System.String]$DistinguishedName
 ## OUTPUTS
 
 ### [System.String] FQDN version of the distinguishedName

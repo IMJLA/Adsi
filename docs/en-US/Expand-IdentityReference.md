@@ -115,7 +115,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)
+### [System.Object]$AccessControlEntry
 ## OUTPUTS
 
 ### [System.Object] The input object is returned with additional properties added:

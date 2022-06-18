@@ -5,7 +5,7 @@ function ConvertTo-HexStringRepresentation {
         .DESCRIPTION
         Uses the custom format operator -f to format each byte as a string hex representation
         .INPUTS
-        [System.Byte[]] SIDByteArray parameter
+        [System.Byte[]]$SIDByteArray
         .OUTPUTS
         [System.String] SID as an array of strings representing the byte array's hexadecimal values
         .EXAMPLE

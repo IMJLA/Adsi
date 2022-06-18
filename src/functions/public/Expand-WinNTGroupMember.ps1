@@ -5,7 +5,7 @@ function Expand-WinNTGroupMember {
         .DESCRIPTION
         Recursively retrieves group members and detailed information about them
         .INPUTS
-        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
         .EXAMPLE

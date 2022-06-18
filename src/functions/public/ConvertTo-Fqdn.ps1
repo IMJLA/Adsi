@@ -5,7 +5,7 @@ function ConvertTo-Fqdn {
         .DESCRIPTION
         Uses PowerShell's -replace operator to perform the conversion
         .INPUTS
-        [System.String] DistinguishedName parameter
+        [System.String]$DistinguishedName
         .OUTPUTS
         [System.String] FQDN version of the distinguishedName
         .EXAMPLE

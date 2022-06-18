@@ -5,7 +5,7 @@ function ConvertTo-DistinguishedName {
         .DESCRIPTION
         https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
         .INPUTS
-        [System.String] Domain parameter
+        [System.String]$Domain
         .OUTPUTS
         [System.String] distinguishedName of the domain
         .EXAMPLE

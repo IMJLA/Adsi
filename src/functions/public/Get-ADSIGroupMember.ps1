@@ -6,7 +6,7 @@ function Get-ADSIGroupMember {
         Use ADSI to get members of a group from the LDAP provider
         Return the group's DirectoryEntry plus a FullMembers property containing the member DirectoryEntries
         .INPUTS
-        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] plus a FullMembers property
         .EXAMPLE

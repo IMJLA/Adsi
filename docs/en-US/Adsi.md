@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 1.0.165
+Help Version: 1.0.166
 Locale: en-US
 ---
 
@@ -63,7 +63,7 @@ Returns a dictionary of trusted domains by the current computer
 Get members of a group from the WinNT provider
 
 ### [Invoke-ComObject](Invoke-ComObject.md)
-Invoke a member method of a ComObject
+Invoke a member method of a ComObject [__ComObject]
 
 ### [New-FakeDirectoryEntry](New-FakeDirectoryEntry.md)
 Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory

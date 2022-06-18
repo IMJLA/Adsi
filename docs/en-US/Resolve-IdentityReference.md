@@ -18,7 +18,7 @@ Resolve-IdentityReference [[-LiteralPath] <String>] [-AccessControlEntry <FileSy
 ```
 
 ## DESCRIPTION
-Replace generic defaults like 'NT AUTHORITY' and 'BUILTIN' with the applicable computer name
+Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
 
 ## EXAMPLES
 

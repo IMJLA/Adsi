@@ -67,7 +67,7 @@ Accept wildcard characters: False
 
 ## INPUTS
 
-### None
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
 ### [System.Collections.Hashtable] The current domain trust relationships

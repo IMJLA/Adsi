@@ -72,7 +72,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String] AdsiServer parameter.
+### [System.String]$AdsiServer
 ## OUTPUTS
 
 ### [System.String] Possible return values are:

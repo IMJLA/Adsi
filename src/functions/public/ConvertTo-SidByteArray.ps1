@@ -5,7 +5,7 @@ function ConvertTo-SidByteArray {
         .DESCRIPTION
         Uses the GetBinaryForm method of the [System.Security.Principal.SecurityIdentifier] class
         .INPUTS
-        [System.String] SidString parameter
+        [System.String]$SidString
         .OUTPUTS
         [System.Byte] SID a a byte array
         .EXAMPLE

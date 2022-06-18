@@ -51,7 +51,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String] Domain parameter
+### [System.String]$Domain
 ## OUTPUTS
 
 ### [System.String] distinguishedName of the domain

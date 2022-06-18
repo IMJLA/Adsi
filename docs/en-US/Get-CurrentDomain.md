@@ -32,7 +32,7 @@ Get the domain of the current computer
 
 ## INPUTS
 
-### None
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
 ### [System.DirectoryServices.DirectoryEntry] The current domain

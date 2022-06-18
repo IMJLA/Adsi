@@ -1,14 +1,14 @@
 function Invoke-ComObject {
     <#
         .SYNOPSIS
-        Invoke a member method of a ComObject
+        Invoke a member method of a ComObject [__ComObject]
         .DESCRIPTION
         Use the InvokeMember method to invoke the InvokeMethod or GetProperty or SetProperty methods
         By default, invokes the GetProperty method for the specified Property
         If the Value parameter is specified, invokes the SetProperty method for the specified Property
         If the Method switch is specified, invokes the InvokeMethod method
         .INPUTS
-        [__ComObject]
+        None. Pipeline input is not accepted.
         .OUTPUTS
         The output of the invoked method is returned directly
         .EXAMPLE

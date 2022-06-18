@@ -5,7 +5,7 @@ function Get-CurrentDomain {
         .DESCRIPTION
         Works only on domain-joined systems
         .INPUTS
-        None
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] The current domain
 

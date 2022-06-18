@@ -6,7 +6,7 @@ function Get-WinNTGroupMember {
         Get members of a group from the WinNT provider
         Convert them from COM objects into usable DirectoryEntry objects
         .INPUTS
-        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] for each group member
         .EXAMPLE

@@ -9,7 +9,7 @@ function Get-TrustedDomainSidNameMap {
         For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used
         For each trusted domain the value contains the details retrieved with ADSI
         .INPUTS
-        None
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.Collections.Hashtable] The current domain trust relationships
 

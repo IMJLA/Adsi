@@ -119,7 +119,7 @@ Accept wildcard characters: False
 
 ## INPUTS
 
-### None.
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
 ### [System.DirectoryServices.DirectoryEntry] for each group memeber

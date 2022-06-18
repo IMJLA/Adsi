@@ -3,8 +3,7 @@ function Resolve-IdentityReference {
         .SYNOPSIS
         Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists
         .DESCRIPTION
-        Replace generic defaults like 'NT AUTHORITY' and 'BUILTIN' with the applicable computer name
-
+        Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
         .INPUTS
         [System.Security.AccessControl.DirectorySecurity]$AccessControlEntry
         .OUTPUTS

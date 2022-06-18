@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.166] - 2022-06-18 - Updated inputs in help docs for most functions
+
 ## [1.0.165] - 2022-06-17 - Typo corrected
 
 ## [1.0.164] - 2022-06-17 - last regex fix for fixmarkdownhelp I promise

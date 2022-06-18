@@ -6,7 +6,7 @@ function New-FakeDirectoryEntry {
         The WinNT provider only throws an error if you try to retrieve certain accounts/identities
         We will create dummy objects instead of performing the query
         .INPUTS
-        None.
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.Management.Automation.PSCustomObject]
         .EXAMPLE

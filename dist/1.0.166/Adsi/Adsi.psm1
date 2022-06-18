@@ -9,7 +9,7 @@ function Add-DomainFqdnToLdapPath {
             Convert the Domain Components to an FQDN  
             Insert them into the directory path as the server address
         .INPUTS
-        [System.String] DirectoryPath parameter
+        [System.String]$DirectoryPath
         .OUTPUTS
         [System.String] Complete LDAP directory path including server address
         .EXAMPLE
@@ -161,7 +161,7 @@ function ConvertTo-DistinguishedName {
         .DESCRIPTION
         https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
         .INPUTS
-        [System.String] Domain parameter
+        [System.String]$Domain
         .OUTPUTS
         [System.String] distinguishedName of the domain
         .EXAMPLE
@@ -194,7 +194,7 @@ function ConvertTo-Fqdn {
         .DESCRIPTION
         Uses PowerShell's -replace operator to perform the conversion
         .INPUTS
-        [System.String] DistinguishedName parameter
+        [System.String]$DistinguishedName
         .OUTPUTS
         [System.String] FQDN version of the distinguishedName
         .EXAMPLE
@@ -222,7 +222,7 @@ function ConvertTo-HexStringRepresentation {
         .DESCRIPTION
         Uses the custom format operator -f to format each byte as a string hex representation
         .INPUTS
-        [System.Byte[]] SIDByteArray parameter
+        [System.Byte[]]$SIDByteArray
         .OUTPUTS
         [System.String] SID as an array of strings representing the byte array's hexadecimal values
         .EXAMPLE
@@ -249,7 +249,7 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
         .DESCRIPTION
         Uses the custom format operator -f to format each byte as a string hex representation
         .INPUTS
-        [System.Byte[]] SIDByteArray parameter
+        [System.Byte[]]$SIDByteArray
         .OUTPUTS
         [System.String] SID as an array of strings representing the byte array's hexadecimal values
         .EXAMPLE
@@ -282,7 +282,7 @@ function ConvertTo-SidByteArray {
         .DESCRIPTION
         Uses the GetBinaryForm method of the [System.Security.Principal.SecurityIdentifier] class
         .INPUTS
-        [System.String] SidString parameter
+        [System.String]$SidString
         .OUTPUTS
         [System.Byte] SID a a byte array
         .EXAMPLE
@@ -312,7 +312,7 @@ function Expand-AdsiGroupMember {
         .DESCRIPTION
         Recursively retrieves group members and detailed information about them
         .INPUTS
-        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
         .EXAMPLE
@@ -408,7 +408,7 @@ function Expand-IdentityReference {
         Recursively retrieves group members and detailed information about them
         Use caching to reduce duplicate directory queries
         .INPUTS
-        [System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)
+        [System.Object]$AccessControlEntry
         .OUTPUTS
         [System.Object] The input object is returned with additional properties added:
             DirectoryEntry
@@ -728,7 +728,7 @@ function Expand-WinNTGroupMember {
         .DESCRIPTION
         Recursively retrieves group members and detailed information about them
         .INPUTS
-        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
         .EXAMPLE
@@ -781,7 +781,7 @@ function Find-AdsiProvider {
         .DESCRIPTION
         Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
         .INPUTS
-        [System.String] AdsiServer parameter.
+        [System.String]$AdsiServer
         .OUTPUTS
         [System.String] Possible return values are:
             None
@@ -843,7 +843,7 @@ function Get-ADSIGroup {
         Uses the ADSI components to search a directory for a group, then get its members
         Both the WinNT and LDAP providers are supported
         .INPUTS
-        None.
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] for each group memeber
         .EXAMPLE
@@ -938,7 +938,7 @@ function Get-ADSIGroupMember {
         Use ADSI to get members of a group from the LDAP provider
         Return the group's DirectoryEntry plus a FullMembers property containing the member DirectoryEntries
         .INPUTS
-        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] plus a FullMembers property
         .EXAMPLE
@@ -1033,7 +1033,7 @@ function Get-CurrentDomain {
         .DESCRIPTION
         Works only on domain-joined systems
         .INPUTS
-        None
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] The current domain
 
@@ -1184,7 +1184,7 @@ function Get-TrustedDomainSidNameMap {
         For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used
         For each trusted domain the value contains the details retrieved with ADSI
         .INPUTS
-        None
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.Collections.Hashtable] The current domain trust relationships
 
@@ -1272,7 +1272,7 @@ function Get-WinNTGroupMember {
         Get members of a group from the WinNT provider
         Convert them from COM objects into usable DirectoryEntry objects
         .INPUTS
-        [System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] for each group member
         .EXAMPLE
@@ -1373,14 +1373,14 @@ function Get-WinNTGroupMember {
 function Invoke-ComObject {
     <#
         .SYNOPSIS
-        Invoke a member method of a ComObject
+        Invoke a member method of a ComObject [__ComObject]
         .DESCRIPTION
         Use the InvokeMember method to invoke the InvokeMethod or GetProperty or SetProperty methods
         By default, invokes the GetProperty method for the specified Property
         If the Value parameter is specified, invokes the SetProperty method for the specified Property
         If the Method switch is specified, invokes the InvokeMethod method
         .INPUTS
-        [__ComObject]
+        None. Pipeline input is not accepted.
         .OUTPUTS
         The output of the invoked method is returned directly
         .EXAMPLE
@@ -1436,7 +1436,7 @@ function New-FakeDirectoryEntry {
         The WinNT provider only throws an error if you try to retrieve certain accounts/identities
         We will create dummy objects instead of performing the query
         .INPUTS
-        None.
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.Management.Automation.PSCustomObject]
         .EXAMPLE
@@ -1518,8 +1518,7 @@ function Resolve-IdentityReference {
         .SYNOPSIS
         Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists
         .DESCRIPTION
-        Replace generic defaults like 'NT AUTHORITY' and 'BUILTIN' with the applicable computer name
-
+        Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
         .INPUTS
         [System.Security.AccessControl.DirectorySecurity]$AccessControlEntry
         .OUTPUTS
@@ -1750,6 +1749,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

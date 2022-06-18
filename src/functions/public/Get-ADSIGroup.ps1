@@ -6,7 +6,7 @@ function Get-ADSIGroup {
         Uses the ADSI components to search a directory for a group, then get its members
         Both the WinNT and LDAP providers are supported
         .INPUTS
-        None.
+        None. Pipeline input is not accepted.
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] for each group memeber
         .EXAMPLE

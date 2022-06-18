@@ -49,7 +49,7 @@ Insert them into the directory path as the server address</maml:para>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.String] DirectoryPath parameter</maml:name>
+          <maml:name>[System.String]$DirectoryPath</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -258,7 +258,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.String] Domain parameter</maml:name>
+          <maml:name>[System.String]$Domain</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -338,7 +338,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.String] DistinguishedName parameter</maml:name>
+          <maml:name>[System.String]$DistinguishedName</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -418,7 +418,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.Byte[]] SIDByteArray parameter</maml:name>
+          <maml:name>[System.Byte[]]$SIDByteArray</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -497,7 +497,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.Byte[]] SIDByteArray parameter</maml:name>
+          <maml:name>[System.Byte[]]$SIDByteArray</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -576,7 +576,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.String] SidString parameter</maml:name>
+          <maml:name>[System.String]$SidString</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -727,7 +727,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry]$DirectoryEntry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -902,7 +902,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.Object] AccessControlEntry parameter # TODO: Use System.Security.Principal.NTAccount instead (returned in Get-ACL output)</maml:name>
+          <maml:name>[System.Object]$AccessControlEntry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1045,7 +1045,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter.</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry]$DirectoryEntry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1148,7 +1148,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.String] AdsiServer parameter.</maml:name>
+          <maml:name>[System.String]$AdsiServer</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1332,7 +1332,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None.</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1466,7 +1466,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry]$DirectoryEntry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1520,7 +1520,7 @@ ad.contoso.com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1792,7 +1792,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1919,7 +1919,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.DirectoryServices.DirectoryEntry] DirectoryEntry parameter</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry]$DirectoryEntry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1958,7 +1958,7 @@ Path              : WinNT://ComputerName</dev:code>
       <command:verb>Invoke</command:verb>
       <command:noun>ComObject</command:noun>
       <maml:description>
-        <maml:para>Invoke a member method of a ComObject</maml:para>
+        <maml:para>Invoke a member method of a ComObject [__ComObject]</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
@@ -2069,7 +2069,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[__ComObject]</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2149,7 +2149,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None.</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2193,7 +2193,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Replace generic defaults like 'NT AUTHORITY' and 'BUILTIN' with the applicable computer name</maml:para>
+      <maml:para>Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
