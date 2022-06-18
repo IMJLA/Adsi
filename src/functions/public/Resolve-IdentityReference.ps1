@@ -4,22 +4,51 @@ function Resolve-IdentityReference {
         Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists
         .DESCRIPTION
         Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
+        Resolve SID to NT account name and vise-versa
+        Resolve well-known SIDs
         .INPUTS
         [System.Security.AccessControl.DirectorySecurity]$AccessControlEntry
         .OUTPUTS
         [System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties
         .EXAMPLE
-        (Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test
+        $FolderPath = 'C:\Test'
+        (Get-Acl $FolderPath).Access | Resolve-IdentityReference $FolderPath
 
+        Use Get-Acl as the source of the access list
+        This works in either Windows Powershell or in Powershell
         Get-Acl does not support long paths (>256 characters)
         That was why I originally used the .Net Framework method
         .EXAMPLE
-        (Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') |
-        Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru |
-        Resolve-IdentityReference
+        $FolderPath = 'C:\Test'
+        if ($FolderPath.Length -gt 255) {
+            $FolderPath = "\\?\$FolderPath"
+        }
+        [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+        [System.Security.AccessControl.DirectorySecurity]$DirectorySecurity = $DirectoryInfo.GetAccessControl('Access')
+        [System.Security.AccessControl.AuthorizationRuleCollection]$AuthRules = $DirectorySecurity.Access
+        $AuthRules | Resolve-IdentityReference -LiteralPath $FolderPath
 
-        This uses the .Net Framework (or legacy .Net Core up to 2.2)
+        Use the .Net Framework (or legacy .Net Core up to 2.2) as the source of the access list
+        Only works in Windows PowerShell
         Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
+        This method is missing in modern versions of .Net Core
+        .EXAMPLE
+        $FolderPath = 'C:\Test'
+        if ($FolderPath.Length -gt 255) {
+            $FolderPath = "\\?\$FolderPath"
+        }
+        [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+        $Sections = [System.Security.AccessControl.AccessControlSections]::Access
+        $FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
+        $IncludeExplicitRules = $true
+        $IncludeInheritedRules = $true
+        $AccountType = [System.Security.Principal.SecurityIdentifier]
+        $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
+        Resolve-IdentityReference -LiteralPath $FolderPath
+
+        This uses .Net Core as the source of the access list
+        It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class
+        The targetType parameter of the method is used to specify that the accounts in the ACL are returned as SIDs
         .EXAMPLE
         $FolderPath = 'C:\Test'
         if ($FolderPath.Length -gt 255) {
@@ -31,27 +60,18 @@ function Resolve-IdentityReference {
         $IncludeExplicitRules = $true
         $IncludeInheritedRules = $true
         $AccountType = [System.Security.Principal.NTAccount]
-        $AccountType = [System.Security.Principal.SecurityIdentifier]
         $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
         Resolve-IdentityReference -LiteralPath $FolderPath
 
-        This uses .Net Core
-        .EXAMPLE
-        [System.Security.AccessControl.FileSecurity]::new(
-            (Get-Item 'C:\Test'),
-            'Access'
-        ).GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier]) |
-        Resolve-IdentityReference 'C:\Test'
-
-        This uses .Net Core
-        .EXAMPLE
-        [System.Security.AccessControl.FileSecurity]::new(
-            (Get-Item 'C:\Test'),
-            'Access'
-        ).GetAccessRules($true,$true,[System.Security.Principal.NTAccount]) |
-        Resolve-IdentityReference 'C:\Test'
-
-        This uses .Net Core
+        This uses .Net Core as the source of the access list
+        It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class
+        The targetType parameter of the method is used to specify that the accounts in the ACL are returned as NT account names (DOMAIN\User)
+        .NOTES
+        Dependencies:
+            Get-DirectoryEntry
+            Add-SidInfo
+            Get-TrustedDomainSidNameMap
+            Find-AdsiProvider
     #>
     param (
 
@@ -60,9 +80,10 @@ function Resolve-IdentityReference {
         [Parameter(Position = 0)]
         [string]$LiteralPath,
 
-        # AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve
+        # Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
+        # Accepts FileSystemAccessRule objects from Get-Acl or otherwise
         [Parameter(ValueFromPipeline)]
-        [System.Security.AccessControl.FileSystemAccessRule[]]$AccessControlEntry,
+        [System.Security.AccessControl.FileSystemAccessRule[]]$FileSystemAccessRule,
 
         # Dictionary to cache known servers to avoid redundant lookups
         # Defaults to an empty thread-safe hashtable
@@ -82,7 +103,7 @@ function Resolve-IdentityReference {
         $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
     }
     process {
-        ForEach ($ThisACE in $AccessControlEntry) {
+        ForEach ($ThisACE in $FileSystemAccessRule) {
             if ($ThisACE.IdentityReference -match '^S-1-') {
                 # The IdentityReference is a SID
                 $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($ThisACE.IdentityReference)
@@ -108,7 +129,7 @@ function Resolve-IdentityReference {
                     if (!($SIDString)) {
                         # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
                         # But they have real DirectoryEntry objects
-                        $DirectoryPath = "$AdsiServer`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
+                        $DirectoryPath = "$AdsiProvider`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
                         $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
                             Add-SidInfo).SidString
                     }

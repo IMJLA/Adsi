@@ -2193,7 +2193,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name</maml:para>
+      <maml:para>Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name Resolve SID to NT account name and vise-versa Resolve well-known SIDs</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2211,9 +2211,9 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
-          <maml:name>AccessControlEntry</maml:name>
+          <maml:name>FileSystemAccessRule</maml:name>
           <maml:description>
-            <maml:para>AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve</maml:para>
+            <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts FileSystemAccessRule objects from Get-Acl or otherwise</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Security.AccessControl.FileSystemAccessRule[]</command:parameterValue>
           <dev:type>
@@ -2238,9 +2238,9 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     </command:syntax>
     <command:parameters>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
-        <maml:name>AccessControlEntry</maml:name>
+        <maml:name>FileSystemAccessRule</maml:name>
         <maml:description>
-          <maml:para>AccessControlEntries from an NTFS Access List whose IdentityReferences to resolve</maml:para>
+          <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts FileSystemAccessRule objects from Get-Acl or otherwise</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Security.AccessControl.FileSystemAccessRule[]</command:parameterValue>
         <dev:type>
@@ -2296,24 +2296,30 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
-        <maml:para></maml:para>
+        <maml:para>Dependencies:     Get-DirectoryEntry     Add-SidInfo     Get-TrustedDomainSidNameMap     Find-AdsiProvider</maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>(Get-Acl C:\Test).Access | Resolve-IdentityReference C:\Test</dev:code>
+        <dev:code>$FolderPath = 'C:\Test'
+(Get-Acl $FolderPath).Access | Resolve-IdentityReference $FolderPath</dev:code>
         <dev:remarks>
-          <maml:para>Get-Acl does not support long paths (&gt;256 characters) That was why I originally used the .Net Framework method</maml:para>
+          <maml:para>Use Get-Acl as the source of the access list This works in either Windows Powershell or in Powershell Get-Acl does not support long paths (&gt;256 characters) That was why I originally used the .Net Framework method</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>(Get-Item -LiteralPath 'C:\Test').GetAccessControl('Access') |
-Add-Member -NotePropertyMembers @{Path = 'C:\Item'} -Force -PassThru |
-Resolve-IdentityReference</dev:code>
+        <dev:code>$FolderPath = 'C:\Test'
+if ($FolderPath.Length -gt 255) {
+    $FolderPath = "\\?\$FolderPath"
+}
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+[System.Security.AccessControl.DirectorySecurity]$DirectorySecurity = $DirectoryInfo.GetAccessControl('Access')
+[System.Security.AccessControl.AuthorizationRuleCollection]$AuthRules = $DirectorySecurity.Access
+$AuthRules | Resolve-IdentityReference -LiteralPath $FolderPath</dev:code>
         <dev:remarks>
-          <maml:para>This uses the .Net Framework (or legacy .Net Core up to 2.2) Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class</maml:para>
+          <maml:para>Use the .Net Framework (or legacy .Net Core up to 2.2) as the source of the access list Only works in Windows PowerShell Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class This method is missing in modern versions of .Net Core</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
@@ -2327,34 +2333,29 @@ $Sections = [System.Security.AccessControl.AccessControlSections]::Access
 $FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
 $IncludeExplicitRules = $true
 $IncludeInheritedRules = $true
-$AccountType = [System.Security.Principal.NTAccount]
 $AccountType = [System.Security.Principal.SecurityIdentifier]
 $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
 Resolve-IdentityReference -LiteralPath $FolderPath</dev:code>
         <dev:remarks>
-          <maml:para>This uses .Net Core</maml:para>
+          <maml:para>This uses .Net Core as the source of the access list It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class The targetType parameter of the method is used to specify that the accounts in the ACL are returned as SIDs</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
-        <dev:code>[System.Security.AccessControl.FileSecurity]::new(
-    (Get-Item 'C:\Test'),
-    'Access'
-).GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier]) |
-Resolve-IdentityReference 'C:\Test'</dev:code>
+        <dev:code>$FolderPath = 'C:\Test'
+if ($FolderPath.Length -gt 255) {
+    $FolderPath = "\\?\$FolderPath"
+}
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+$Sections = [System.Security.AccessControl.AccessControlSections]::Access
+$FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
+$IncludeExplicitRules = $true
+$IncludeInheritedRules = $true
+$AccountType = [System.Security.Principal.NTAccount]
+$FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
+Resolve-IdentityReference -LiteralPath $FolderPath</dev:code>
         <dev:remarks>
-          <maml:para>This uses .Net Core</maml:para>
-        </dev:remarks>
-      </command:example>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
-        <dev:code>[System.Security.AccessControl.FileSecurity]::new(
-    (Get-Item 'C:\Test'),
-    'Access'
-).GetAccessRules($true,$true,[System.Security.Principal.NTAccount]) |
-Resolve-IdentityReference 'C:\Test'</dev:code>
-        <dev:remarks>
-          <maml:para>This uses .Net Core</maml:para>
+          <maml:para>This uses .Net Core as the source of the access list It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class The targetType parameter of the method is used to specify that the accounts in the ACL are returned as NT account names (DOMAIN\User)</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

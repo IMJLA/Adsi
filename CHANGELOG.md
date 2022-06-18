@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.169] - 2022-06-18 - Bug fixes in Resolve-IdentityReference
+
+## [1.0.168] - 2022-06-18 - VS Code lies
+
 ## [1.0.167] - 2022-06-18 - Removed Write-Output to improve performance at large scale
 
 ## [1.0.166] - 2022-06-18 - Updated inputs in help docs for most functions

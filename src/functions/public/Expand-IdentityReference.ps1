@@ -143,30 +143,9 @@ function Expand-IdentityReference {
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
                     } else {
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
-                        <#
-                        #Write-Host ($ThisIdentity | Fl * | out-string) -ForegroundColor Red
-                        $Domains = $ThisIdentityGroup.Path | ForEach-Object {($_ -split '\\')[2]}
-                        $ThisIdentity = ForEach ($domainNetbiosString in $Domains) {
-                            $DomainDN = "dc=$domainNetbiosString"
-                            switch ($StartingIdentityName) {
-                                'NT AUTHORITY\SYSTEM' {
-                                    $StartingIdentityName = "$domainNetbiosString\SYSTEM"
-                                }
-                                default {
-                                }
-                            }
-                            [pscustomobject]@{
-                                Count = $ThisIdentity.Count
-                                Name = $StartingIdentityName
-                                Group = $ThisIdentityGroup | Where-Object -FilterScript {($_.Path -split '\\')[2] -eq $domainNetbiosString}
-                                DomainNetBios = $domainNetbiosString
-                            }
-                        }#>
-
                     }
 
                     if ($null -eq $name) { $name = $StartingIdentityName }
-
 
                     if ($name -match 'S-\d+-\d+-\d+-\d+-\d+\-\d+\-\d+') {
                         if ($Domains.Count -gt 1) {
@@ -236,11 +215,6 @@ function Expand-IdentityReference {
                 $ObjectType = $null
                 if ($null -ne $DirectoryEntry) {
                     $ThisIdentity | Add-Member -Name 'DirectoryEntry' -Value $DirectoryEntry -MemberType NoteProperty -Force
-
-                    # Not needed after changes but not yet ready to let go in case I need it again for troubleshooting after I mess it up the same way again
-                    #if ($DirectoryEntry.Properties.GetType().FullName -eq 'System.DirectoryServices.ResultPropertyCollection') {
-                    #$ThisIdentity | Add-Member -Force -NotePropertyMembers $DirectoryEntry.Properties -ErrorAction SilentlyContinue
-                    #}
 
                     if (
                         $DirectoryEntry.Properties['objectClass'] -contains 'group' -or
