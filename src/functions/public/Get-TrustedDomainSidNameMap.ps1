@@ -86,6 +86,6 @@ function Get-TrustedDomainSidNameMap {
         Sid     = $DomainSid
     }
 
-    Write-Output $Map
+    return $Map
 
 }

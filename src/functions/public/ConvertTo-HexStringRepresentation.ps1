@@ -23,5 +23,5 @@ function ConvertTo-HexStringRepresentation {
     ForEach-Object {
         '{0:X}' -f $_
     }
-    Write-Output $SIDHexString
+    return $SIDHexString
 }

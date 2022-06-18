@@ -17,5 +17,5 @@ function Get-CurrentDomain {
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     $Obj = [adsi]::new()
     $Obj.RefreshCache({ 'objectSid' })
-    Write-Output $Obj
+    return $Obj
 }

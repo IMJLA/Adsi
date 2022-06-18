@@ -19,7 +19,8 @@ Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <
 ```
 
 ## DESCRIPTION
-Retrieve directory entries using either the WinNT or LDAP provider for ADSI
+Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
+Provides a wrapper around the \[System.DirectoryServices.DirectorySearcher\] class
 
 ## EXAMPLES
 

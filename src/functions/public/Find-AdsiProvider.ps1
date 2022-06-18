@@ -55,7 +55,7 @@ function Find-AdsiProvider {
                 }
                 $KnownServers[$ThisServer] = $AdsiProvider
             }
-            Write-Output $AdsiProvider
+            $AdsiProvider
         }
     }
 }

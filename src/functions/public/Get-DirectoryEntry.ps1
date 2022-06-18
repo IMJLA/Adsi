@@ -7,8 +7,8 @@ function Get-DirectoryEntry {
         .INPUTS
         None. Pipeline input is not accepted.
         .OUTPUTS
-        System.DirectoryServices.DirectoryEntry where possible
-        PSCustomObject for security principals with no directory entry
+        [System.DirectoryServices.DirectoryEntry] where possible
+        [PSCustomObject] for security principals with no directory entry
         .EXAMPLE
         Get-DirectoryEntry
         distinguishedName : {DC=ad,DC=contoso,DC=com}
@@ -51,12 +51,11 @@ function Get-DirectoryEntry {
 
     $DirectoryEntry = $null
     if ($null -eq $DirectoryEntryCache[$DirectoryPath]) {
-        <#
-        The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-        We will create own dummy objects instead of performing the query
-        #>
         switch -regex ($DirectoryPath) {
-
+            <#
+            The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+            We will create own dummy objects instead of performing the query
+            #>
             '^WinNT:\/\/.*\/CREATOR OWNER$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
@@ -69,6 +68,7 @@ function Get-DirectoryEntry {
             '^WinNT:\/\/.*\/Authenticated Users$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
+            # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
             '^$' {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
                 $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
@@ -88,6 +88,7 @@ function Get-DirectoryEntry {
                 $DirectoryEntry | Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
             }
+            # Otherwise the DirectoryPath is an LDAP path
             default {
 
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
@@ -113,7 +114,7 @@ function Get-DirectoryEntry {
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
         }
 
-        Write-Output $DirectoryEntry
+        return $DirectoryEntry
     } catch {
         Write-Warning "$(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t'$DirectoryPath' could not be retrieved."
 

@@ -3,7 +3,8 @@ function Search-Directory {
         .SYNOPSIS
         Use Active Directory Service Interfaces to search an LDAP directory
         .DESCRIPTION
-        Retrieve directory entries using either the WinNT or LDAP provider for ADSI
+        Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
+        Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
         .INPUTS
         None. Pipeline input is not accepted.
         .OUTPUTS
@@ -58,8 +59,6 @@ function Search-Directory {
     }
     $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath
 
-    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath,$($Credential.UserName),$($Credential.GetNetworkCredential().password))
-    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
     $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
@@ -76,11 +75,13 @@ function Search-Directory {
     }
 
     $SearchResultCollection = $DirectorySearcher.FindAll()
+    # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
+    # Error: Cannot access a disposed object.
     #$null = $DirectorySearcher.Dispose()
     #$null = $DirectoryEntry.Dispose()
     $Output = [System.DirectoryServices.SearchResult[]]::new($SearchResultCollection.Count)
     $SearchResultCollection.CopyTo($Output, 0)
     #$null = $SearchResultCollection.Dispose()
-    Write-Output $Output
+    return $Output
 
 }

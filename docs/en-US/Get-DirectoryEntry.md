@@ -113,8 +113,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.DirectoryServices.DirectoryEntry where possible
-### PSCustomObject for security principals with no directory entry
+### [System.DirectoryServices.DirectoryEntry] where possible
+### [PSCustomObject] for security principals with no directory entry
 ## NOTES
 
 ## RELATED LINKS

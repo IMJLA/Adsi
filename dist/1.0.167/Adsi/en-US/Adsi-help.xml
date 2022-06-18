@@ -1681,7 +1681,7 @@ ad.contoso.com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.DirectoryServices.DirectoryEntry where possible</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] where possible</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1689,7 +1689,7 @@ ad.contoso.com</dev:code>
       </command:returnValue>
       <command:returnValue>
         <dev:type>
-          <maml:name>PSCustomObject for security principals with no directory entry</maml:name>
+          <maml:name>[PSCustomObject] for security principals with no directory entry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2370,7 +2370,7 @@ Resolve-IdentityReference 'C:\Test'</dev:code>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Retrieve directory entries using either the WinNT or LDAP provider for ADSI</maml:para>
+      <maml:para>Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching) Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>

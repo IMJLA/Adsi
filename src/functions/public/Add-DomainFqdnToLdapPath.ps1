@@ -57,7 +57,7 @@ function Add-DomainFqdnToLdapPath {
                 $FQDNPath = $ThisPath
             }
 
-            Write-Output $FQDNPath
+            $FQDNPath
         }
     }
 }

@@ -309,7 +309,7 @@ function Expand-IdentityReference {
                 $ThisIdentity = $IdentityReferenceCache[$ThisIdentity.Name]
             }
 
-            Write-Output $ThisIdentity
+            $ThisIdentity
 
         }
 

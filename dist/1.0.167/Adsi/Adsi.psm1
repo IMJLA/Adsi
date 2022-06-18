@@ -58,7 +58,7 @@ function Add-DomainFqdnToLdapPath {
                 $FQDNPath = $ThisPath
             }
 
-            Write-Output $FQDNPath
+            $FQDNPath
         }
     }
 }
@@ -182,8 +182,7 @@ function ConvertTo-DistinguishedName {
             $IADsNameTranslateInterface = $IADsNameTranslateComObject.GetType()
             $null = $IADsNameTranslateInterface.InvokeMember("Init", "InvokeMethod", $Null, $IADsNameTranslateComObject, (3, $Null))
             $null = $IADsNameTranslateInterface.InvokeMember("Set", "InvokeMethod", $Null, $IADsNameTranslateComObject, (3, "$ThisDomain\"))
-            $DNSDomain = $IADsNameTranslateInterface.InvokeMember("Get", "InvokeMethod", $Null, $IADsNameTranslateComObject, 1)
-            Write-Output $DNSDomain
+            $IADsNameTranslateInterface.InvokeMember("Get", "InvokeMethod", $Null, $IADsNameTranslateComObject, 1)
         }
     }
 }
@@ -240,7 +239,7 @@ function ConvertTo-HexStringRepresentation {
     ForEach-Object {
         '{0:X}' -f $_
     }
-    Write-Output $SIDHexString
+    return $SIDHexString
 }
 function ConvertTo-HexStringRepresentationForLDAPFilterString {
     <#
@@ -301,7 +300,7 @@ function ConvertTo-SidByteArray {
             $SID = [System.Security.Principal.SecurityIdentifier]::new($ThisSID)
             [byte[]]$Bytes = [byte[]]::new($SID.BinaryLength)
             $SID.GetBinaryForm($Bytes, 0)
-            Write-Output $Bytes
+            $Bytes
         }
     }
 }
@@ -711,7 +710,7 @@ function Expand-IdentityReference {
                 $ThisIdentity = $IdentityReferenceCache[$ThisIdentity.Name]
             }
 
-            Write-Output $ThisIdentity
+            $ThisIdentity
 
         }
 
@@ -831,7 +830,7 @@ function Find-AdsiProvider {
                 }
                 $KnownServers[$ThisServer] = $AdsiProvider
             }
-            Write-Output $AdsiProvider
+            $AdsiProvider
         }
     }
 }
@@ -1045,7 +1044,7 @@ function Get-CurrentDomain {
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     $Obj = [adsi]::new()
     $Obj.RefreshCache({ 'objectSid' })
-    Write-Output $Obj
+    return $Obj
 }
 function Get-DirectoryEntry {
     <#
@@ -1056,8 +1055,8 @@ function Get-DirectoryEntry {
         .INPUTS
         None. Pipeline input is not accepted.
         .OUTPUTS
-        System.DirectoryServices.DirectoryEntry where possible
-        PSCustomObject for security principals with no directory entry
+        [System.DirectoryServices.DirectoryEntry] where possible
+        [PSCustomObject] for security principals with no directory entry
         .EXAMPLE
         Get-DirectoryEntry
         distinguishedName : {DC=ad,DC=contoso,DC=com}
@@ -1100,12 +1099,11 @@ function Get-DirectoryEntry {
 
     $DirectoryEntry = $null
     if ($null -eq $DirectoryEntryCache[$DirectoryPath]) {
-        <#
-        The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-        We will create own dummy objects instead of performing the query
-        #>
         switch -regex ($DirectoryPath) {
-
+            <#
+            The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+            We will create own dummy objects instead of performing the query
+            #>
             '^WinNT:\/\/.*\/CREATOR OWNER$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
@@ -1118,6 +1116,7 @@ function Get-DirectoryEntry {
             '^WinNT:\/\/.*\/Authenticated Users$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
+            # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
             '^$' {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
                 $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
@@ -1137,6 +1136,7 @@ function Get-DirectoryEntry {
                 $DirectoryEntry | Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
             }
+            # Otherwise the DirectoryPath is an LDAP path
             default {
 
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
@@ -1162,7 +1162,7 @@ function Get-DirectoryEntry {
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
         }
 
-        Write-Output $DirectoryEntry
+        return $DirectoryEntry
     } catch {
         Write-Warning "$(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t'$DirectoryPath' could not be retrieved."
 
@@ -1261,7 +1261,7 @@ function Get-TrustedDomainSidNameMap {
         Sid     = $DomainSid
     }
 
-    Write-Output $Map
+    return $Map
 
 }
 function Get-WinNTGroupMember {
@@ -1646,7 +1646,8 @@ function Search-Directory {
         .SYNOPSIS
         Use Active Directory Service Interfaces to search an LDAP directory
         .DESCRIPTION
-        Retrieve directory entries using either the WinNT or LDAP provider for ADSI
+        Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
+        Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
         .INPUTS
         None. Pipeline input is not accepted.
         .OUTPUTS
@@ -1701,8 +1702,6 @@ function Search-Directory {
     }
     $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath
 
-    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath,$($Credential.UserName),$($Credential.GetNetworkCredential().password))
-    #$DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
     $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
@@ -1719,12 +1718,14 @@ function Search-Directory {
     }
 
     $SearchResultCollection = $DirectorySearcher.FindAll()
+    # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
+    # Error: Cannot access a disposed object.
     #$null = $DirectorySearcher.Dispose()
     #$null = $DirectoryEntry.Dispose()
     $Output = [System.DirectoryServices.SearchResult[]]::new($SearchResultCollection.Count)
     $SearchResultCollection.CopyTo($Output, 0)
     #$null = $SearchResultCollection.Dispose()
-    Write-Output $Output
+    return $Output
 
 }
 <#$ScriptFiles = Get-ChildItem -Path "$PSScriptRoot\*.ps1" -Recurse
@@ -1749,6 +1750,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
