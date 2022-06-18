@@ -327,8 +327,8 @@ task FixMarkdownHelp -depends BuildMarkdownHelp {
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
     #-Update the module description
-    $RegEx = "(?ms)\#\#\ Description\s*[^\r\n]*\s*\#\#"
-    $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine##"
+    $RegEx = "(?ms)\#\#\ Description\s*[^\r\n]*\s*"
+    $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine"
     $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
     Write-Host "`t'`$ModuleHelp' -replace '$RegEx', '$NewString'"
@@ -336,8 +336,8 @@ task FixMarkdownHelp -depends BuildMarkdownHelp {
     #-Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
         $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
-        $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*\#\#\#"
-        $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine###"
+        $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
+        $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
     }
 

@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 1.0.163
+Help Version: 1.0.165
 Locale: en-US
 ---
 
@@ -72,6 +72,6 @@ Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security
 Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists
 
 ### [Search-Directory](Search-Directory.md)
-{{ Fill in the Description }}
+Use Active Directory Service Interfaces to search an LDAP directory
 
 
