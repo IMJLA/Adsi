@@ -235,13 +235,13 @@ function Expand-IdentityReference {
                         } else {
 
                             # Retrieve the members of groups from the WinNT provider
-                            Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryEntry.Path) must be a WinNT group?"
+                            Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryEntry.Path) must be a WinNT user or group"
                             $Members = Get-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache -DirectoryEntry $DirectoryEntry -KnownDomains $KnownDomains
 
                         }
 
                         if ($Members) {
-                            
+
                             $Members |
                             ForEach-Object {
 
