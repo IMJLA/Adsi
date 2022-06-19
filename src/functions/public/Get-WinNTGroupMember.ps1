@@ -34,9 +34,6 @@ function Get-WinNTGroupMember {
         $KnownDomains = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios)
 
     )
-    begin {
-        Write-Debug "HOST:   $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`tBegin block entered"
-    }
     process {
         ForEach ($ThisDirEntry in $DirectoryEntry) {
             $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf

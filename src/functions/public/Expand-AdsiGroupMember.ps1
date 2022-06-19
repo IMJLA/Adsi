@@ -59,27 +59,33 @@ function Expand-AdsiGroupMember {
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
                     $Domain = $TrustedDomainSidNameMap[$DomainSid]
 
-                    $Success = $true
+                    #$Success = $true
+                    #try {
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -DirectoryEntryCache $DirectoryEntryCache
+                    #} catch {
+                    #    $Success = $false
+                    #    $Principal = $Entry
+                    #    Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
+                    #}
+
+                    #if ($Success -eq $true) {
+
                     try {
-                        $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -DirectoryEntryCache $DirectoryEntryCache
+                        $null = $Principal.RefreshCache($PropertiesToLoad)
                     } catch {
-                        $Success = $false
+                        #$Success = $false
                         $Principal = $Entry
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
                     }
 
-                    if ($Success -eq $true) {
-
-                        $null = $Principal.RefreshCache($PropertiesToLoad)
-
-                        # Recursively enumerate group members
-                        if ($Principal.properties['objectClass'].Value -contains 'group') {
-                            Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
-                            $Principal = ($Principal | Get-ADSIGroupMember -DirectoryEntryCache $DirectoryEntryCache).FullMembers | Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap
-
-                        }
+                    # Recursively enumerate group members
+                    if ($Principal.properties['objectClass'].Value -contains 'group') {
+                        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
+                        $Principal = ($Principal | Get-ADSIGroupMember -DirectoryEntryCache $DirectoryEntryCache).FullMembers | Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap
 
                     }
+
+                    #}
 
                 }
 
