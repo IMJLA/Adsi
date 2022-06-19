@@ -1570,11 +1570,10 @@ function Resolve-IdentityReference {
         [string]$LiteralPath,
 
         # Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
-        # Accepts PsNtfsAccessRule objects from the PsNtfs module
-        # Accepts FileSystemAccessRule objects from Get-Acl or otherwise
+        # Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise
+        # Accepts [PSCustomObject] objects with similar properties
         [Parameter(ValueFromPipeline)]
         $FileSystemAccessRule,
-        #[PsNtfs.PsNtfsAccessRule[]]$FileSystemAccessRule,
         #[System.Security.AccessControl.FileSystemAccessRule[]]$FileSystemAccessRule,
 
         # Dictionary to cache known servers to avoid redundant lookups
@@ -1748,6 +1747,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

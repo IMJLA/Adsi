@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.173] - 2022-06-19 - Removed usage of custom classes in favor of PSCustomObject
+
 ## [1.0.172] - 2022-06-19 - Removed explicit dependency on PsNtfs module
 
 ## [1.0.171] - 2022-06-19 - Trying again but I think prereqs are messed up
