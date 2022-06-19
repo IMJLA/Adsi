@@ -104,6 +104,7 @@ function Resolve-IdentityReference {
                 Where-Object -FilterScript { $_ -ne '' } |
                 Select-Object -First 1
                 $ThisServer = $ThisServer -replace '\?', $(hostname)
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
                 $CimSession = New-CimSession -ComputerName $ThisServer
             }
             $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
