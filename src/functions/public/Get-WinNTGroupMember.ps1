@@ -100,6 +100,8 @@ function Get-WinNTGroupMember {
                     $MemberDirectoryEntry | Expand-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache
 
                 }
+            } else {
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$($ThisDirEntry.Path)' is not a group"
             }
         }
     }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.187] - 2022-06-19 - Added another debug message to Get-WinNTGroupMember
+
 ## [1.0.186] - 2022-06-19 - Added debug message to Get-WinNTGroupMember
 
 ## [1.0.185] - 2022-06-19 - Added another debug message to Expand-IdentityReference
