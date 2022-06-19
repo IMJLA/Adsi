@@ -17,7 +17,7 @@ Get-CurrentDomain
 ```
 
 ## DESCRIPTION
-Works only on domain-joined systems
+Works only on domain-joined systems, otherwise returns nothing
 
 ## EXAMPLES
 

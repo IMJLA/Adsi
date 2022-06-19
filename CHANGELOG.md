@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.192] - 2022-06-19 - Added error handling for all RefreshCache method calls
+
 ## [1.0.191] - 2022-06-19 - Improved error handling in Expand-AdsiGroupMember
 
 ## [1.0.190] - 2022-06-19 - Bug fix in Get-TrustedDomainSidNameMap with the KeyByNetBios switch

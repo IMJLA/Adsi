@@ -3,7 +3,7 @@ function Get-CurrentDomain {
         .SYNOPSIS
         Use ADSI to get the current domain
         .DESCRIPTION
-        Works only on domain-joined systems
+        Works only on domain-joined systems, otherwise returns nothing
         .INPUTS
         None. Pipeline input is not accepted.
         .OUTPUTS
@@ -16,6 +16,6 @@ function Get-CurrentDomain {
     #>
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     $Obj = [adsi]::new()
-    $Obj.RefreshCache({ 'objectSid' })
+    try { $null = $Obj.RefreshCache('objectSid') } catch { return }
     return $Obj
 }

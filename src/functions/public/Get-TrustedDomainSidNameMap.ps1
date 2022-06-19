@@ -49,7 +49,7 @@ function Get-TrustedDomainSidNameMap {
 
         $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache
         try {
-            $DomainDirectoryEntry.RefreshCache('objectSid')
+            $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
             Write-Warning "$(Get-Date -Format s)`t$(hostname)`tGet-TrustedDomainSidNameMap`tLDAP Domain: '$DomainDnsName' - $($_.Exception.Message)"
             continue

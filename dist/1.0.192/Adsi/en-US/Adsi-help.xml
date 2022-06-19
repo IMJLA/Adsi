@@ -1595,7 +1595,7 @@ ad.contoso.com</dev:code>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Works only on domain-joined systems</maml:para>
+      <maml:para>Works only on domain-joined systems, otherwise returns nothing</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
