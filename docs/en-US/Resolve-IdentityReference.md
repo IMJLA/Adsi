@@ -153,7 +153,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### [System.Security.AccessControl.DirectorySecurity]$AccessControlEntry
 ## OUTPUTS
 
-### [System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties
+### [System.Security.AccessControl.DirectorySecurity] Original object plus IdentityReferenceResolved and AdsiProvider properties
 ## NOTES
 Dependencies:
     Get-DirectoryEntry

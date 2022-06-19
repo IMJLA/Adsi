@@ -9,7 +9,7 @@ function Resolve-IdentityReference {
         .INPUTS
         [System.Security.AccessControl.DirectorySecurity]$AccessControlEntry
         .OUTPUTS
-        [System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties
+        [System.Security.AccessControl.DirectorySecurity] Original object plus IdentityReferenceResolved and AdsiProvider properties
         .EXAMPLE
         $FolderPath = 'C:\Test'
         (Get-Acl $FolderPath).Access | Resolve-IdentityReference $FolderPath
@@ -102,12 +102,13 @@ function Resolve-IdentityReference {
                 $ThisServer = $ThisACE.Path -split '\\' |
                 Where-Object -FilterScript { $_ -ne '' } |
                 Select-Object -First 1
-                $ThisServer = $ThisServer -replace '\?', $(hostname)
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
+                $ThisServer = $ThisServer -replace '\?', (hostname)
             }
-            if ($ThisServer -eq $(hostname)) {
+            if ($ThisServer -eq (hostname)) {
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession"
                 $CimSession = New-CimSession
             } else {
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
                 $CimSession = New-CimSession -ComputerName $ThisServer
             }
             $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers

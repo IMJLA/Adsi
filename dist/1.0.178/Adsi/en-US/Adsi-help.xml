@@ -2287,7 +2287,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[System.Security.AccessControl.DirectorySecurity] Original object plus ResolvedIdentityReference and AdsiProvider properties</maml:name>
+          <maml:name>[System.Security.AccessControl.DirectorySecurity] Original object plus IdentityReferenceResolved and AdsiProvider properties</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
