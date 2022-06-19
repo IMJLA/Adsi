@@ -40,7 +40,7 @@ function Get-WinNTGroupMember {
         ForEach ($ThisDirEntry in $DirectoryEntry) {
             $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
             # Retrieve the members of local groups
-            if ($null -ne $ThisDirEntry.Properties['groupType']) {
+            if ($null -ne $ThisDirEntry.Properties['groupType'] -or $ThisDirEntry.schemaclassname -eq 'Group') {
                 # Assembly: System.DirectoryServices.dll
                 # Namespace: System.DirectoryServices
                 # DirectoryEntry.Invoke(String, Object[]) Method
