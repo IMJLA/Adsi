@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.175] - 2022-06-19 - Removed unnecessary begin block from Resolve-IdentityReference
+
 ## [1.0.174] - 2022-06-19 - Updated Resolve-IdentityReference to use the Path property on Input objects, also removed Add-Member for performance reasons
 
 ## [1.0.173] - 2022-06-19 - Removed usage of custom classes in favor of PSCustomObject

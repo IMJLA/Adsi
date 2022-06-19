@@ -92,8 +92,6 @@ function Resolve-IdentityReference {
         [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
 
     )
-    begin {
-    }
     process {
         ForEach ($ThisACE in $FileSystemAccessRule) {
             if ($ThisACE.Path -match '[A-Za-z]\:\\' -or $null -eq $ThisACE.Path) {
