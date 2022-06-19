@@ -1570,7 +1570,7 @@ function Resolve-IdentityReference {
         [string]$LiteralPath,
 
         # Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
-        # Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise
+        # Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise, but you need to add a Path property with the path to the file/folder
         # Accepts [PSCustomObject] objects with similar properties
         [Parameter(ValueFromPipeline)]
         $FileSystemAccessRule,
@@ -1582,19 +1582,22 @@ function Resolve-IdentityReference {
 
     )
     begin {
-        if ($LiteralPath -match '[A-Za-z]\:\\') {
-            # For local file paths, the "server" is the local computer
-            $ThisServer = hostname
-            $CimSession = New-CimSession
-        } else {
-            # Otherwise it must be a UNC path, so the server is the first non-empty string between backwhacks (\)
-            $ThisServer = $LiteralPath -split '\\' | Where-Object { $_ -ne '' } | Select-Object -First 1
-            $CimSession = New-CimSession -ComputerName $ThisServer
-        }
-        $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
     }
     process {
         ForEach ($ThisACE in $FileSystemAccessRule) {
+            if ($ThisACE.Path -match '[A-Za-z]\:\\' -or $null -eq $ThisACE.Path) {
+                # For local file paths, the "server" is the local computer.  Assume the same for null paths.
+                $ThisServer = hostname
+                $CimSession = New-CimSession
+            } else {
+                # Otherwise it must be a UNC path, so the server is the first non-empty string between backwhacks (\)
+                $ThisServer = $ThisACE.Path -split '\\' |
+                Where-Object -FilterScript { $_ -ne '' } |
+                Select-Object -First 1
+                $ThisServer = $ThisServer -replace '\?', $(hostname)
+                $CimSession = New-CimSession -ComputerName $ThisServer
+            }
+            $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
             if ($ThisACE.IdentityReference -match '^S-1-') {
                 # The IdentityReference is a SID
                 $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($ThisACE.IdentityReference)
@@ -1626,13 +1629,20 @@ function Resolve-IdentityReference {
                     }
                 }
             }
-            $ThisACE | Add-Member -PassThru -Force -NotePropertyMembers @{
-                AdsiProvider              = $AdsiProvider
-                AdsiServer                = $ThisServer
-                Path                      = $LiteralPath
-                IdentityReferenceSID      = $SIDString
-                IdentityReferenceName     = $UnresolvedIdentityReference
-                IdentityReferenceResolved = $UnresolvedIdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
+            [pscustomobject]@{
+                Path                        = $ThisACE.Path
+                PathAreAccessRulesProtected = $ThisACE.PathAreAccessRulesProtected
+                FileSystemRights            = $ThisACE.FileSystemRights
+                AccessControlType           = $ThisACE.AccessControlType
+                IdentityReference           = $ThisACE.IdentityReference
+                IsInherited                 = $ThisACE.IsInherited
+                InheritanceFlags            = $ThisACE.InheritanceFlags
+                PropagationFlags            = $ThisACE.PropagationFlags
+                AdsiProvider                = $AdsiProvider
+                AdsiServer                  = $ThisServer
+                IdentityReferenceSID        = $SIDString
+                IdentityReferenceName       = $UnresolvedIdentityReference
+                IdentityReferenceResolved   = $UnresolvedIdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
             }
         }
     }
@@ -1747,6 +1757,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

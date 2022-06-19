@@ -96,7 +96,7 @@ The targetType parameter of the method is used to specify that the accounts in t
 
 ### -FileSystemAccessRule
 Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
-Accepts \[System.Security.AccessControl.FileSystemAccessRule\] objects from Get-Acl or otherwise
+Accepts \[System.Security.AccessControl.FileSystemAccessRule\] objects from Get-Acl or otherwise, but you need to add a Path property with the path to the file/folder
 Accepts \[PSCustomObject\] objects with similar properties
 
 ```yaml

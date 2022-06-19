@@ -2213,7 +2213,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
           <maml:name>FileSystemAccessRule</maml:name>
           <maml:description>
-            <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise Accepts [PSCustomObject] objects with similar properties</maml:para>
+            <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise, but you need to add a Path property with the path to the file/folder Accepts [PSCustomObject] objects with similar properties</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
@@ -2240,7 +2240,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
         <maml:name>FileSystemAccessRule</maml:name>
         <maml:description>
-          <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise Accepts [PSCustomObject] objects with similar properties</maml:para>
+          <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise, but you need to add a Path property with the path to the file/folder Accepts [PSCustomObject] objects with similar properties</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
