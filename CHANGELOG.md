@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.181] - 2022-06-19 - Added debugging to Expand-IdentityReference
+
 ## [1.0.180] - 2022-06-19 - Troubleshooting and probably breaking Get-WinNTGroupMember
 
 ## [1.0.179] - 2022-06-19 - Moved Get-WellKnownSid functionality into dedicated function
