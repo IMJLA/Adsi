@@ -5,7 +5,7 @@ function Find-AdsiProvider {
         .DESCRIPTION
         Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
         .INPUTS
-        [System.String]$AdsiServer
+        [System.String] AdsiServer parameter.
         .OUTPUTS
         [System.String] Possible return values are:
             None
@@ -26,36 +26,28 @@ function Find-AdsiProvider {
 
         # IP address or hostname of the directory server whose ADSI provider type to determine
         [Parameter(ValueFromPipeline)]
-        [string[]]$AdsiServer,
-
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+        [string[]]$AdsiServer
 
     )
     process {
         ForEach ($ThisServer in $AdsiServer) {
             $AdsiProvider = $null
-            if ($KnownServers[$ThisServer]) {
-                $AdsiProvider = $KnownServers[$ThisServer]
-            } else {
+            try {
+                $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$ThisServer")
+                $AdsiProvider = 'LDAP'
+            } catch { Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t$ThisServer is not an LDAP server" }
+            if (!$AdsiProvider) {
                 try {
-                    $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$ThisServer")
-                    $AdsiProvider = 'LDAP'
-                } catch { Write-Debug "$ThisServer is not an LDAP server" }
-                if (!$AdsiProvider) {
-                    try {
-                        $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$ThisServer")
-                        $AdsiProvider = 'WinNT'
-                    } catch {
-                        Write-Debug "$ThisServer is not a WinNT server"
-                    }
+                    $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$ThisServer")
+                    $AdsiProvider = 'WinNT'
+                } catch {
+                    Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t$ThisServer is not a WinNT server"
                 }
-                if (!$AdsiProvider) {
-                    $AdsiProvider = 'none'
-                }
-                $KnownServers[$ThisServer] = $AdsiProvider
             }
-            $AdsiProvider
+            if (!$AdsiProvider) {
+                $AdsiProvider = 'none'
+            }
         }
+        $AdsiProvider
     }
 }

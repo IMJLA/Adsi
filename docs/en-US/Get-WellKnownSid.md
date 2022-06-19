@@ -5,40 +5,33 @@ online version:
 schema: 2.0.0
 ---
 
-# Find-AdsiProvider
+# Get-WellKnownSid
 
 ## SYNOPSIS
-Determine whether a directory server is an LDAP or a WinNT server
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ```
-Find-AdsiProvider [[-AdsiServer] <String[]>] [<CommonParameters>]
+Get-WellKnownSid [[-AdsiServer] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
-```
-Find-AdsiProvider -AdsiServer localhost
-```
-
-Find the ADSI provider of the local computer
-
-### EXAMPLE 2
-```
-Find-AdsiProvider -AdsiServer 'ad.contoso.com'
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
 
-Find the ADSI provider of the AD domain 'ad.contoso.com'
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -AdsiServer
-IP address or hostname of the directory server whose ADSI provider type to determine
+{{ Fill AdsiServer Description }}
 
 ```yaml
 Type: System.String[]
@@ -46,7 +39,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -57,13 +50,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String] AdsiServer parameter.
+### System.String[]
+
 ## OUTPUTS
 
-### [System.String] Possible return values are:
-###     None
-###     LDAP
-###     WinNT
+### System.Object
 ## NOTES
 
 ## RELATED LINKS

@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 1.0.178
+Help Version: 1.0.179
 Locale: en-US
 ---
 
@@ -50,6 +50,9 @@ Get the directory entries for a group and its members using ADSI
 ### [Get-ADSIGroupMember](Get-ADSIGroupMember.md)
 Get members of a group from the LDAP provider
 
+### [Get-AdsiServer](Get-AdsiServer.md)
+Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
+
 ### [Get-CurrentDomain](Get-CurrentDomain.md)
 Use ADSI to get the current domain
 
@@ -58,6 +61,11 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-TrustedDomainSidNameMap](Get-TrustedDomainSidNameMap.md)
 Returns a dictionary of trusted domains by the current computer
+
+### [Get-WellKnownSid](Get-WellKnownSid.md)
+
+Get-WellKnownSid [[-AdsiServer] <string[]>] [<CommonParameters>]
+
 
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)
 Get members of a group from the WinNT provider

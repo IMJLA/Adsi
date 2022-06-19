@@ -104,14 +104,7 @@ function Resolve-IdentityReference {
                 Select-Object -First 1
                 $ThisServer = $ThisServer -replace '\?', (hostname)
             }
-            if ($ThisServer -eq (hostname)) {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession"
-                $CimSession = New-CimSession
-            } else {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
-                $CimSession = New-CimSession -ComputerName $ThisServer
-            }
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
+            $AdsiServer = Get-AdsiServer -AdsiServer $ThisServer -KnownServers $KnownServers
             if ($ThisACE.IdentityReference -match '^S-1-') {
                 # The IdentityReference is a SID
                 $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($ThisACE.IdentityReference)
@@ -131,13 +124,16 @@ function Resolve-IdentityReference {
                 $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
                 if (!($SIDString)) {
                     # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
-                    $WellKnownSIDs = Get-CimInstance -ClassName Win32_SystemAccount -CimSession $CimSession
-                    $SIDString = ($WellKnownSIDs |
-                        Where-Object -FilterScript { $UnresolvedIdentityReference -like "*\$($_.Name)" }).SID
+                    $SIDString = ($AdsiServer.WellKnownSIDs |
+                        Where-Object -FilterScript {
+                            $UnresolvedIdentityReference -like "*\$($_.Name)"
+                        }
+                    ).SID
+
                     if (!($SIDString)) {
                         # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
                         # But they have real DirectoryEntry objects
-                        $DirectoryPath = "$AdsiProvider`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
+                        $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
                         $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
                             Add-SidInfo).SidString
                     }
@@ -152,7 +148,7 @@ function Resolve-IdentityReference {
                 IsInherited                 = $ThisACE.IsInherited
                 InheritanceFlags            = $ThisACE.InheritanceFlags
                 PropagationFlags            = $ThisACE.PropagationFlags
-                AdsiProvider                = $AdsiProvider
+                AdsiProvider                = $AdsiServer.AdsiProvider
                 AdsiServer                  = $ThisServer
                 IdentityReferenceSID        = $SIDString
                 IdentityReferenceName       = $UnresolvedIdentityReference

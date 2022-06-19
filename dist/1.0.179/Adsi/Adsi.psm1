@@ -754,7 +754,7 @@ function Find-AdsiProvider {
         .DESCRIPTION
         Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
         .INPUTS
-        [System.String]$AdsiServer
+        [System.String] AdsiServer parameter.
         .OUTPUTS
         [System.String] Possible return values are:
             None
@@ -775,37 +775,29 @@ function Find-AdsiProvider {
 
         # IP address or hostname of the directory server whose ADSI provider type to determine
         [Parameter(ValueFromPipeline)]
-        [string[]]$AdsiServer,
-
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+        [string[]]$AdsiServer
 
     )
     process {
         ForEach ($ThisServer in $AdsiServer) {
             $AdsiProvider = $null
-            if ($KnownServers[$ThisServer]) {
-                $AdsiProvider = $KnownServers[$ThisServer]
-            } else {
+            try {
+                $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$ThisServer")
+                $AdsiProvider = 'LDAP'
+            } catch { Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t$ThisServer is not an LDAP server" }
+            if (!$AdsiProvider) {
                 try {
-                    $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$ThisServer")
-                    $AdsiProvider = 'LDAP'
-                } catch { Write-Debug "$ThisServer is not an LDAP server" }
-                if (!$AdsiProvider) {
-                    try {
-                        $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$ThisServer")
-                        $AdsiProvider = 'WinNT'
-                    } catch {
-                        Write-Debug "$ThisServer is not a WinNT server"
-                    }
+                    $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$ThisServer")
+                    $AdsiProvider = 'WinNT'
+                } catch {
+                    Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t$ThisServer is not a WinNT server"
                 }
-                if (!$AdsiProvider) {
-                    $AdsiProvider = 'none'
-                }
-                $KnownServers[$ThisServer] = $AdsiProvider
             }
-            $AdsiProvider
+            if (!$AdsiProvider) {
+                $AdsiProvider = 'none'
+            }
         }
+        $AdsiProvider
     }
 }
 function Get-ADSIGroup {
@@ -998,6 +990,52 @@ function Get-ADSIGroupMember {
         }
     }
     end {}
+}
+function Get-AdsiServer {
+    <#
+        .SYNOPSIS
+        Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
+        .DESCRIPTION
+        Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
+        Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
+        .INPUTS
+        [System.String]$AdsiServer
+        .OUTPUTS
+        [PSCustomObject] with AdsiProvider and WellKnownSIDs properties
+        .EXAMPLE
+        Get-AdsiServer -AdsiServer localhost
+
+        Find the ADSI provider of the local computer
+        .EXAMPLE
+        Get-AdsiServer -AdsiServer 'ad.contoso.com'
+
+        Find the ADSI provider of the AD domain 'ad.contoso.com'
+    #>
+    [OutputType([System.String])]
+
+    param (
+
+        # IP address or hostname of the directory server whose ADSI provider type to determine
+        [Parameter(ValueFromPipeline)]
+        [string[]]$AdsiServer,
+
+        # Cache of known directory servers to reduce duplicate queries
+        [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+
+    )
+    process {
+        ForEach ($ThisServer in $AdsiServer) {
+            if (!($KnownServers[$ThisServer])) {
+                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
+                $WellKnownSIDs = Get-WellKnownSid -AdsiServer $ThisServer
+                $KnownServers[$ThisServer] = [pscustomobject]@{
+                    AdsiProvider  = $AdsiProvider
+                    WellKnownSIDs = $WellKnownSIDs
+                }
+            }
+            $KnownServers[$ThisServer]
+        }
+    }
 }
 function Get-CurrentDomain {
     <#
@@ -1237,6 +1275,25 @@ function Get-TrustedDomainSidNameMap {
 
     return $Map
 
+}
+function Get-WellKnownSid {
+    param (
+        [Parameter(ValueFromPipeline)]
+        [string[]]$AdsiServer
+    )
+    process {
+        ForEach ($ThisServer in $AdsiServer) {
+            if ($ThisServer -eq (hostname) -or $ThisServer -eq 'localhost' -or $ThisServer -eq '127.0.0.1') {
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession"
+                $CimSession = New-CimSession
+            } else {
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
+                $CimSession = New-CimSession -ComputerName $ThisServer
+            }
+            Get-CimInstance -ClassName Win32_SystemAccount -CimSession $CimSession
+            Remove-CimSession -CimSession $CimSession
+        }
+    }
 }
 function Get-WinNTGroupMember {
     <#
@@ -1593,14 +1650,7 @@ function Resolve-IdentityReference {
                 Select-Object -First 1
                 $ThisServer = $ThisServer -replace '\?', (hostname)
             }
-            if ($ThisServer -eq (hostname)) {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession"
-                $CimSession = New-CimSession
-            } else {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
-                $CimSession = New-CimSession -ComputerName $ThisServer
-            }
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
+            $AdsiServer = Get-AdsiServer -AdsiServer $ThisServer -KnownServers $KnownServers
             if ($ThisACE.IdentityReference -match '^S-1-') {
                 # The IdentityReference is a SID
                 $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($ThisACE.IdentityReference)
@@ -1620,13 +1670,16 @@ function Resolve-IdentityReference {
                 $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
                 if (!($SIDString)) {
                     # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
-                    $WellKnownSIDs = Get-CimInstance -ClassName Win32_SystemAccount -CimSession $CimSession
-                    $SIDString = ($WellKnownSIDs |
-                        Where-Object -FilterScript { $UnresolvedIdentityReference -like "*\$($_.Name)" }).SID
+                    $SIDString = ($AdsiServer.WellKnownSIDs |
+                        Where-Object -FilterScript {
+                            $UnresolvedIdentityReference -like "*\$($_.Name)"
+                        }
+                    ).SID
+
                     if (!($SIDString)) {
                         # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
                         # But they have real DirectoryEntry objects
-                        $DirectoryPath = "$AdsiProvider`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
+                        $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
                         $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
                             Add-SidInfo).SidString
                     }
@@ -1641,7 +1694,7 @@ function Resolve-IdentityReference {
                 IsInherited                 = $ThisACE.IsInherited
                 InheritanceFlags            = $ThisACE.InheritanceFlags
                 PropagationFlags            = $ThisACE.PropagationFlags
-                AdsiProvider                = $AdsiProvider
+                AdsiProvider                = $AdsiServer.AdsiProvider
                 AdsiServer                  = $ThisServer
                 IdentityReferenceSID        = $SIDString
                 IdentityReferenceName       = $UnresolvedIdentityReference
@@ -1757,9 +1810,10 @@ $PublicScriptFiles = $ScriptFiles | Where-Object -FilterScript {
     ($_.PSParentPath | Split-Path -Leaf) -eq 'public'
 }
 $publicFunctions = $PublicScriptFiles.BaseName
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
