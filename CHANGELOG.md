@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.184] - 2022-06-19 - Added handling for another type of WinNT result (INTERACTIVE and Authenticated Users) where we get a hashtable with an objectSID key
+
 ## [1.0.183] - 2022-06-19 - Added handling for INTERACTIVE and Authenticated Users in Expand-WinNTGroupMember
 
 ## [1.0.182] - 2022-06-19 - Breaking Expand-WinNTGroupMember
