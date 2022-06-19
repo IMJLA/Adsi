@@ -241,6 +241,7 @@ function Expand-IdentityReference {
                         }
 
                         if ($Members) {
+                            
                             $Members |
                             ForEach-Object {
 
@@ -264,16 +265,19 @@ function Expand-IdentityReference {
                             }
                         }
 
+                        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members"
+
                         $ThisIdentity |
                         Add-Member -Name 'Members' -Value $Members -MemberType NoteProperty -Force
                     }
                 } else {
                     Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) could not be matched to a DirectoryEntry"
                 }
-                $ThisIdentity | Add-Member -Name "DomainDn" -Type NoteProperty -Value $DomainDn -Force
-                $ThisIdentity | Add-Member -Name "DomainNetbios" -Type NoteProperty -Value $DomainNetBiosString -Force
-                $ThisIdentity | Add-Member -Name "ObjectType" -Type NoteProperty -Value $ObjectType -Force
-
+                $ThisIdentity | Add-Member -Force -NotePropertyMembers @{
+                    DomainDn      = $DomainDn
+                    DomainNetbios = $DomainNetBiosString
+                    ObjectType    = $ObjectType
+                }
                 $IdentityReferenceCache[$StartingIdentityName] = $ThisIdentity
 
             }
