@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.177] - 2022-06-19 - Fixed CIM session creation in Resolve-IdentityReference
+
 ## [1.0.176] - 2022-06-19 - Added debug output to Resolve-IdentityReference
 
 ## [1.0.175] - 2022-06-19 - Removed unnecessary begin block from Resolve-IdentityReference

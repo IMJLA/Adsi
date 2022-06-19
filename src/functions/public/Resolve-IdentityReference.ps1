@@ -97,7 +97,6 @@ function Resolve-IdentityReference {
             if ($ThisACE.Path -match '[A-Za-z]\:\\' -or $null -eq $ThisACE.Path) {
                 # For local file paths, the "server" is the local computer.  Assume the same for null paths.
                 $ThisServer = hostname
-                $CimSession = New-CimSession
             } else {
                 # Otherwise it must be a UNC path, so the server is the first non-empty string between backwhacks (\)
                 $ThisServer = $ThisACE.Path -split '\\' |
@@ -105,6 +104,10 @@ function Resolve-IdentityReference {
                 Select-Object -First 1
                 $ThisServer = $ThisServer -replace '\?', $(hostname)
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
+            }
+            if ($ThisServer -eq $(hostname)) {
+                $CimSession = New-CimSession
+            } else {
                 $CimSession = New-CimSession -ComputerName $ThisServer
             }
             $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer -KnownServers $KnownServers
