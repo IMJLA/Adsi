@@ -28,14 +28,14 @@ function Get-WinNTGroupMember {
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
         # Properties of the group members to find in the directory
-        [string[]]$PropertiesToLoad
+        [string[]]$PropertiesToLoad,
+
+        # Hashtable of domain DNs
+        $KnownDomains = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios)
 
     )
     begin {
-
-        $KnownDomains = Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios
         Write-Debug "HOST:   $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`tBegin block entered"
-
     }
     process {
         ForEach ($ThisDirEntry in $DirectoryEntry) {

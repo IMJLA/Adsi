@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.190] - 2022-06-19 - Bug fix in Get-TrustedDomainSidNameMap with the KeyByNetBios switch
+
 ## [1.0.189] - 2022-06-19 - Troubleshooting missing debug messages from Get-WinNTGroupMember
 
 ## [1.0.188] - 2022-06-19 - Troubleshooting missing debug messages from Get-WinNTGroupMember

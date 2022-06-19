@@ -2041,6 +2041,18 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>KnownDomains</maml:name>
+          <maml:description>
+            <maml:para>Hashtable of domain DNs</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Object</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios)</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -2067,6 +2079,18 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>KnownDomains</maml:name>
+        <maml:description>
+          <maml:para>Hashtable of domain DNs</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Object</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
