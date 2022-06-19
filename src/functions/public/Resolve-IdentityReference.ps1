@@ -81,9 +81,12 @@ function Resolve-IdentityReference {
         [string]$LiteralPath,
 
         # Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
+        # Accepts PsNtfsAccessRule objects from the PsNtfs module
         # Accepts FileSystemAccessRule objects from Get-Acl or otherwise
         [Parameter(ValueFromPipeline)]
-        [System.Security.AccessControl.FileSystemAccessRule[]]$FileSystemAccessRule,
+        $FileSystemAccessRule,
+        #[PsNtfs.PsNtfsAccessRule[]]$FileSystemAccessRule,
+        #[System.Security.AccessControl.FileSystemAccessRule[]]$FileSystemAccessRule,
 
         # Dictionary to cache known servers to avoid redundant lookups
         # Defaults to an empty thread-safe hashtable

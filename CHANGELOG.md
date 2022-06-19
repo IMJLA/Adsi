@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.172] - 2022-06-19 - Removed explicit dependency on PsNtfs module
+
+## [1.0.171] - 2022-06-19 - Trying again but I think prereqs are messed up
+
+## [1.0.170] - 2022-06-19 - Changed Input type for Resolve-IdentityReference
+
 ## [1.0.169] - 2022-06-18 - Bug fixes in Resolve-IdentityReference
 
 ## [1.0.168] - 2022-06-18 - VS Code lies

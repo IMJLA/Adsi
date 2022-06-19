@@ -417,7 +417,7 @@ function Expand-IdentityReference {
             Members (if the DirectoryEntry is a group).
 
         .EXAMPLE
-        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
+        Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object
 
         Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
     #>
@@ -1570,9 +1570,12 @@ function Resolve-IdentityReference {
         [string]$LiteralPath,
 
         # Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
+        # Accepts PsNtfsAccessRule objects from the PsNtfs module
         # Accepts FileSystemAccessRule objects from Get-Acl or otherwise
         [Parameter(ValueFromPipeline)]
-        [System.Security.AccessControl.FileSystemAccessRule[]]$FileSystemAccessRule,
+        $FileSystemAccessRule,
+        #[PsNtfs.PsNtfsAccessRule[]]$FileSystemAccessRule,
+        #[System.Security.AccessControl.FileSystemAccessRule[]]$FileSystemAccessRule,
 
         # Dictionary to cache known servers to avoid redundant lookups
         # Defaults to an empty thread-safe hashtable
@@ -1745,6 +1748,9 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
+
+
 
 
 

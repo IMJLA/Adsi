@@ -13,7 +13,7 @@ Add more detail to IdentityReferences from Access Control Entries in NTFS Discre
 ## SYNTAX
 
 ```
-Resolve-IdentityReference [[-LiteralPath] <String>] [-FileSystemAccessRule <FileSystemAccessRule[]>]
+Resolve-IdentityReference [[-LiteralPath] <String>] [-FileSystemAccessRule <Object>]
  [-KnownServers <Hashtable>] [<CommonParameters>]
 ```
 
@@ -96,10 +96,11 @@ The targetType parameter of the method is used to specify that the accounts in t
 
 ### -FileSystemAccessRule
 Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
+Accepts PsNtfsAccessRule objects from the PsNtfs module
 Accepts FileSystemAccessRule objects from Get-Acl or otherwise
 
 ```yaml
-Type: System.Security.AccessControl.FileSystemAccessRule[]
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 

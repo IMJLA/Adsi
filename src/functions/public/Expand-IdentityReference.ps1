@@ -16,7 +16,7 @@ function Expand-IdentityReference {
             Members (if the DirectoryEntry is a group).
 
         .EXAMPLE
-        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
+        Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object
 
         Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
     #>

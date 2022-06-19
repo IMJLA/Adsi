@@ -967,7 +967,7 @@ ad.contoso.com</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember</dev:code>
+        <dev:code>Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object</dev:code>
         <dev:remarks>
           <maml:para>Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them</maml:para>
         </dev:remarks>
@@ -2213,11 +2213,11 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
           <maml:name>FileSystemAccessRule</maml:name>
           <maml:description>
-            <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts FileSystemAccessRule objects from Get-Acl or otherwise</maml:para>
+            <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts PsNtfsAccessRule objects from the PsNtfs module Accepts FileSystemAccessRule objects from Get-Acl or otherwise</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Security.AccessControl.FileSystemAccessRule[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
-            <maml:name>System.Security.AccessControl.FileSystemAccessRule[]</maml:name>
+            <maml:name>System.Object</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -2240,11 +2240,11 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
         <maml:name>FileSystemAccessRule</maml:name>
         <maml:description>
-          <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts FileSystemAccessRule objects from Get-Acl or otherwise</maml:para>
+          <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts PsNtfsAccessRule objects from the PsNtfs module Accepts FileSystemAccessRule objects from Get-Acl or otherwise</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Security.AccessControl.FileSystemAccessRule[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
-          <maml:name>System.Security.AccessControl.FileSystemAccessRule[]</maml:name>
+          <maml:name>System.Object</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>

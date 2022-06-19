@@ -322,7 +322,7 @@ task FixMarkdownHelp -depends BuildMarkdownHelp {
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
 
     #Fix the Module Page () things PlatyPS does not do):
-    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, 'Adsi.md')
+    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$env:BHProjectName.md")
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
     #-Update the module description

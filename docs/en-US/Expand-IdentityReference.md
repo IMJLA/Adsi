@@ -26,7 +26,7 @@ Use caching to reduce duplicate directory queries
 
 ### EXAMPLE 1
 ```
-[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
+Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object
 ```
 
 Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
