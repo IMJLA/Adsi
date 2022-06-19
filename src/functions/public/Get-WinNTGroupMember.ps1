@@ -34,7 +34,7 @@ function Get-WinNTGroupMember {
     begin {
 
         $KnownDomains = Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios
-        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`tBegin block entered"
+        Write-Debug "HOST:   $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`tBegin block entered"
 
     }
     process {
