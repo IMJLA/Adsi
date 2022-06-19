@@ -35,15 +35,19 @@ function Expand-WinNTGroupMember {
                 Write-Warning "'$ThisEntry' has no properties"
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t$($ThisEntry.Path) is a group"
-
-                    (Get-ADSIGroup -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $ThisEntry.Path).FullMembers |
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t$($ThisEntry.Path) is an ADSI group"
+                (Get-ADSIGroup -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $ThisEntry.Path).FullMembers |
                 Add-SidInfo -DirectoryEntryCache $DirectoryEntryCache
 
             } else {
 
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t'$($ThisEntry.Path) is an account"
-                $ThisEntry | Add-SidInfo -DirectoryEntryCache $DirectoryEntryCache
+                if ($ThisEntry.SchemaClassName -contains 'group') {
+                    Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t'$($ThisEntry.Path) is a WinNT group"
+                    Get-WinNTGroupMember -DirectoryEntry $ThisEntry -DirectoryEntryCache $DirectoryEntryCache
+                } else {
+                    Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t'$($ThisEntry.Path) is a user account"
+                    $ThisEntry | Add-SidInfo -DirectoryEntryCache $DirectoryEntryCache
+                }
 
             }
 
