@@ -40,7 +40,7 @@ function Get-WinNTGroupMember {
         ForEach ($ThisDirEntry in $DirectoryEntry) {
             $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
             # Retrieve the members of local groups
-            if ($null -ne $ThisDirEntry.Properties['groupType'] -or $ThisDirEntry.schemaclassname -eq 'Group') {
+            if ($null -ne $ThisDirEntry.Properties['groupType'] -or $ThisDirEntry.schemaclassname -contains 'Group') {
                 # Assembly: System.DirectoryServices.dll
                 # Namespace: System.DirectoryServices
                 # DirectoryEntry.Invoke(String, Object[]) Method
@@ -61,6 +61,7 @@ function Get-WinNTGroupMember {
                 # Maybe that could be a feature in the future
                 # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
                 $DirectoryMembers = $ThisDirEntry.Invoke('Members')
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members"
                 ForEach ($DirectoryMember in $DirectoryMembers) {
                     # The IADsGroup::Members method returns ComObjects
                     # But proper .Net objects are much easier to work with
