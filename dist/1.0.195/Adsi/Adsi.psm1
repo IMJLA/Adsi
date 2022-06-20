@@ -103,6 +103,7 @@ function Add-SidInfo {
 
     process {
         ForEach ($Object in $InputObject) {
+            $SID = $null
             if ($null -eq $Object) { continue }
             elseif (
                 $null -ne $Object.objectSid.Value -and
@@ -128,12 +129,18 @@ function Add-SidInfo {
                 $SamAccountName = $Object.Properties['name']
             }
 
-            if ($Object.Domain.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
+            $DomainObject = $null
+            if ($Object.Domain.Sid) {
+                #if ($Object.Domain.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
                 # This would only have come from Add-SidInfo in the first place
                 # This means it was added with Add-Member in Get-DirectoryEntry for the root of the computer's directory
-                [string]$SID = $Object.Domain.Sid
+                if ($null -eq $SID) {
+                    [string]$SID = $Object.Domain.Sid
+                }
                 $DomainObject = $Object.Domain
-            } else {
+                #}
+            }
+            if (!($DomainObject)) {
                 # The SID of the domain is the SID of the user minus the last block of numbers
                 $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 
@@ -1856,6 +1863,7 @@ $publicFunctions = $PublicScriptFiles.BaseName
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
