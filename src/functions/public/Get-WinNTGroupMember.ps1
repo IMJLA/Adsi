@@ -58,7 +58,7 @@ function Get-WinNTGroupMember {
                 # Recursion through nested groups can be handled outside of Get-WinNTGroupMember for now
                 # Maybe that could be a feature in the future
                 # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
-                $DirectoryMembers = $ThisDirEntry.Invoke('Members')
+                $DirectoryMembers = & { $ThisDirEntry.Invoke('Members') } 2>$null
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members"
                 ForEach ($DirectoryMember in $DirectoryMembers) {
                     # The IADsGroup::Members method returns ComObjects
