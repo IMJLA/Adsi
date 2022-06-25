@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.196] - 2022-06-25 - added debug outout to Find-AdsiProvider
+
 ## [1.0.195] - 2022-06-19 - Bug fixing in Add-SidInfo
 
 ## [1.0.194] - 2022-06-19 - Suppressed errors on the Invoke method in Get-WinNTGroupMember

@@ -32,13 +32,17 @@ function Find-AdsiProvider {
     process {
         ForEach ($ThisServer in $AdsiServer) {
             $AdsiProvider = $null
+            $AdsiPath = "LDAP://$ThisServer"
+            Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
             try {
-                $null = [System.DirectoryServices.DirectoryEntry]::Exists("LDAP://$ThisServer")
+                $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                 $AdsiProvider = 'LDAP'
             } catch { Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t$ThisServer is not an LDAP server" }
             if (!$AdsiProvider) {
+                $AdsiPath = "WinNT://$ThisServer"
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
                 try {
-                    $null = [System.DirectoryServices.DirectoryEntry]::Exists("WinNT://$ThisServer")
+                    $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                     $AdsiProvider = 'WinNT'
                 } catch {
                     Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t$ThisServer is not a WinNT server"

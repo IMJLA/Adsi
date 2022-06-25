@@ -85,7 +85,6 @@ function Resolve-IdentityReference {
         # Accepts [PSCustomObject] objects with similar properties
         [Parameter(ValueFromPipeline)]
         $FileSystemAccessRule,
-        #[System.Security.AccessControl.FileSystemAccessRule[]]$FileSystemAccessRule,
 
         # Dictionary to cache known servers to avoid redundant lookups
         # Defaults to an empty thread-safe hashtable
