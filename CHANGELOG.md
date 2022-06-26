@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.197] - 2022-06-26 - Added ConvertTo-DecStringRepresentation
+
 ## [1.0.196] - 2022-06-25 - added debug outout to Find-AdsiProvider
 
 ## [1.0.195] - 2022-06-19 - Bug fixing in Add-SidInfo

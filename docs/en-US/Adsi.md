@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 1.0.196
+Help Version: 1.0.197
 Locale: en-US
 ---
 
@@ -16,6 +16,9 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 
 ### [Add-SidInfo](Add-SidInfo.md)
 Add some useful properties to a DirectoryEntry object for easier access
+
+### [ConvertTo-DecStringRepresentation](ConvertTo-DecStringRepresentation.md)
+Convert a byte array to a string representation of its decimal format
 
 ### [ConvertTo-DistinguishedName](ConvertTo-DistinguishedName.md)
 Convert a domain NetBIOS name to its distinguishedName
