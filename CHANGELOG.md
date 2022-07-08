@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.199] - 2022-07-08 - Added ConvertFrom-PropertyValueCollectionToString
+
 ## [1.0.198] - 2022-07-08 - added missing single quotes in debug messages of Expand-WinNTGroupMember
 
 ## [1.0.197] - 2022-06-26 - Added ConvertTo-DecStringRepresentation
