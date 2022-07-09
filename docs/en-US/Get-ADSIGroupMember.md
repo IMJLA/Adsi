@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-ADSIGroupMember
+# Get-AdsiGroupMember
 
 ## SYNOPSIS
 Get members of a group from the LDAP provider
@@ -13,7 +13,7 @@ Get members of a group from the LDAP provider
 ## SYNTAX
 
 ```
-Get-ADSIGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-DirectoryEntryCache] <Hashtable>]
+Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-DirectoryEntryCache] <Hashtable>]
  [<CommonParameters>]
 ```
 
@@ -25,7 +25,7 @@ Return the group's DirectoryEntry plus a FullMembers property containing the mem
 
 ### EXAMPLE 1
 ```
-[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-ADSIGroupMember
+[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember
 ```
 
 Get members of the domain Administrators group

@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-ADSIGroup
+# Get-AdsiGroup
 
 ## SYNOPSIS
 Get the directory entries for a group and its members using ADSI
@@ -13,7 +13,7 @@ Get the directory entries for a group and its members using ADSI
 ## SYNTAX
 
 ```
-Get-ADSIGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesToLoad] <String[]>]
+Get-AdsiGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesToLoad] <String[]>]
  [[-DirectoryEntryCache] <Hashtable>]
 ```
 
@@ -25,14 +25,14 @@ Both the WinNT and LDAP providers are supported
 
 ### EXAMPLE 1
 ```
-Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
+Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
 ```
 
 Get members of the local Administrators group
 
 ### EXAMPLE 2
 ```
-Get-ADSIGroup -GroupName Administrators
+Get-AdsiGroup -GroupName Administrators
 ```
 
 On a domain-joined computer, this will get members of the domain's Administrators group

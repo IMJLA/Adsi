@@ -1328,9 +1328,9 @@ ad.contoso.com</dev:code>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
-      <command:name>Get-ADSIGroup</command:name>
+      <command:name>Get-AdsiGroup</command:name>
       <command:verb>Get</command:verb>
-      <command:noun>ADSIGroup</command:noun>
+      <command:noun>AdsiGroup</command:noun>
       <maml:description>
         <maml:para>Get the directory entries for a group and its members using ADSI</maml:para>
       </maml:description>
@@ -1340,7 +1340,7 @@ ad.contoso.com</dev:code>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
-        <maml:name>Get-ADSIGroup</maml:name>
+        <maml:name>Get-AdsiGroup</maml:name>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryPath</maml:name>
           <maml:description>
@@ -1471,14 +1471,14 @@ ad.contoso.com</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators</dev:code>
+        <dev:code>Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators</dev:code>
         <dev:remarks>
           <maml:para>Get members of the local Administrators group</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>Get-ADSIGroup -GroupName Administrators</dev:code>
+        <dev:code>Get-AdsiGroup -GroupName Administrators</dev:code>
         <dev:remarks>
           <maml:para>On a domain-joined computer, this will get members of the domain's Administrators group On a workgroup computer, this will get members of the local Administrators group</maml:para>
         </dev:remarks>
@@ -1488,9 +1488,9 @@ ad.contoso.com</dev:code>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
-      <command:name>Get-ADSIGroupMember</command:name>
+      <command:name>Get-AdsiGroupMember</command:name>
       <command:verb>Get</command:verb>
-      <command:noun>ADSIGroupMember</command:noun>
+      <command:noun>AdsiGroupMember</command:noun>
       <maml:description>
         <maml:para>Get members of a group from the LDAP provider</maml:para>
       </maml:description>
@@ -1500,7 +1500,7 @@ ad.contoso.com</dev:code>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
-        <maml:name>Get-ADSIGroupMember</maml:name>
+        <maml:name>Get-AdsiGroupMember</maml:name>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>Group</maml:name>
           <maml:description>
@@ -1605,7 +1605,7 @@ ad.contoso.com</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-ADSIGroupMember</dev:code>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember</dev:code>
         <dev:remarks>
           <maml:para>Get members of the domain Administrators group</maml:para>
         </dev:remarks>

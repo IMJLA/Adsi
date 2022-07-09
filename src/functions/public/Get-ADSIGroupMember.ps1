@@ -1,4 +1,4 @@
-function Get-ADSIGroupMember {
+function Get-AdsiGroupMember {
     <#
         .SYNOPSIS
         Get members of a group from the LDAP provider
@@ -10,7 +10,7 @@ function Get-ADSIGroupMember {
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] plus a FullMembers property
         .EXAMPLE
-        [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-ADSIGroupMember
+        [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember
 
         Get members of the domain Administrators group
     #>

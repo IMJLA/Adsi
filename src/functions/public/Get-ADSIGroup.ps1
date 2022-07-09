@@ -1,4 +1,4 @@
-function Get-ADSIGroup {
+function Get-AdsiGroup {
     <#
         .SYNOPSIS
         Get the directory entries for a group and its members using ADSI
@@ -10,11 +10,11 @@ function Get-ADSIGroup {
         .OUTPUTS
         [System.DirectoryServices.DirectoryEntry] for each group memeber
         .EXAMPLE
-        Get-ADSIGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
+        Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
 
         Get members of the local Administrators group
         .EXAMPLE
-        Get-ADSIGroup -GroupName Administrators
+        Get-AdsiGroup -GroupName Administrators
 
         On a domain-joined computer, this will get members of the domain's Administrators group
         On a workgroup computer, this will get members of the local Administrators group
@@ -88,7 +88,7 @@ function Get-ADSIGroup {
                 $GroupParams['Filter'] = "(objectClass=group)"
             }
             Search-Directory @GroupParams |
-            Get-ADSIGroupMember @GroupMemberParams
+            Get-AdsiGroupMember @GroupMemberParams
         }
     }
 

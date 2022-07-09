@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.202] - 2022-07-08 - Applied consistent capitalization for ADSI in Cmdlet names (use Adsi for readability)
+
 ## [1.0.201] - 2022-07-08 - Removed useless GroupMemberRecursion parameter
 
 ## [1.0.200] - 2022-07-08 - Efficiency improvement in Expand-IdentityReference
