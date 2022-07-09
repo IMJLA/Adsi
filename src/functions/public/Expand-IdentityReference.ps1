@@ -28,8 +28,8 @@ function Expand-IdentityReference {
         [Parameter(ValueFromPipeline)]
         [System.Object[]]$AccessControlEntry,
 
-        # Get group members
-        [bool]$GroupMember = $true,
+        # Do not get group members
+        [switch]$NoGroupMembers,
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
@@ -221,7 +221,7 @@ function Expand-IdentityReference {
                         $ObjectType = 'User'
                     }
 
-                    if ($GroupMember) {
+                    if ($NoGroupMembers -eq $false) {
 
                         if ($DirectoryEntry.Properties['objectClass'] -contains 'group') {
 

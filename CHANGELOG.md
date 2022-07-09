@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.204] - 2022-07-09 - Changed GroupMember boolean parameter on Expand-IdentityReference to a NoGroupMembers switch parameter
+
 ## [1.0.203] - 2022-07-08 - New version to publish to PSGallery
 
 ## [1.0.202] - 2022-07-08 - Applied consistent capitalization for ADSI in Cmdlet names (use Adsi for readability)

@@ -13,7 +13,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ## SYNTAX
 
 ```
-Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [[-GroupMember] <Boolean>]
+Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [-NoGroupMembers]
  [[-DirectoryEntryCache] <Hashtable>] [[-IdentityReferenceCache] <Hashtable>] [<CommonParameters>]
 ```
 
@@ -57,23 +57,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
-Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -GroupMember
-Get group members
-
-```yaml
-Type: System.Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
 Position: 2
-Default value: True
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -87,8 +72,23 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -NoGroupMembers
+Do not get group members
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
