@@ -230,7 +230,8 @@ function Expand-IdentityReference {
                         if ($DirectoryEntry.Properties['objectClass'] -contains 'group') {
 
                             # Retrieve the members of groups from the LDAP provider
-                            $Members = (Get-ADSIGroup -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $DirectoryEntry.Path).FullMembers
+                            #$Members = (Get-ADSIGroup -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $DirectoryEntry.Path).FullMembers
+                            $Members = Get-AdsiGroupMember -Group $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache
 
                         } else {
 
