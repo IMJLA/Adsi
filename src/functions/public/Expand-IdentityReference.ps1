@@ -31,10 +31,6 @@ function Expand-IdentityReference {
         # Get group members
         [bool]$GroupMember = $true,
 
-        # Get group members recursively
-        # If true, implies $GroupMember = $true
-        [bool]$GroupMemberRecursion = $true,
-
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 

@@ -962,18 +962,6 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>True</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>GroupMemberRecursion</maml:name>
-          <maml:description>
-            <maml:para>Get group members recursively If true, implies $GroupMember = $true</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Boolean</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Boolean</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>True</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
             <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
@@ -985,7 +973,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>IdentityReferenceCache</maml:name>
           <maml:description>
             <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
@@ -1012,7 +1000,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
           <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
@@ -1036,19 +1024,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>True</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>GroupMemberRecursion</maml:name>
-        <maml:description>
-          <maml:para>Get group members recursively If true, implies $GroupMember = $true</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Boolean</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Boolean</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>True</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>IdentityReferenceCache</maml:name>
         <maml:description>
           <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>

@@ -14,8 +14,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ```
 Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [[-GroupMember] <Boolean>]
- [[-GroupMemberRecursion] <Boolean>] [[-DirectoryEntryCache] <Hashtable>]
- [[-IdentityReferenceCache] <Hashtable>] [<CommonParameters>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-IdentityReferenceCache] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -58,7 +57,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -79,22 +78,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -GroupMemberRecursion
-Get group members recursively
-If true, implies $GroupMember = $true
-
-```yaml
-Type: System.Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: True
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -IdentityReferenceCache
 Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
 
@@ -104,7 +87,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
