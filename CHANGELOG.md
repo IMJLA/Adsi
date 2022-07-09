@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.203] - 2022-07-08 - New version to publish to PSGallery
+
 ## [1.0.202] - 2022-07-08 - Applied consistent capitalization for ADSI in Cmdlet names (use Adsi for readability)
 
 ## [1.0.201] - 2022-07-08 - Removed useless GroupMemberRecursion parameter
