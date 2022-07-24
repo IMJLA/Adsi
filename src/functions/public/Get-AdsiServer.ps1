@@ -34,7 +34,7 @@ function Get-AdsiServer {
         ForEach ($ThisServer in $AdsiServer) {
             if (!($KnownServers[$ThisServer])) {
                 $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
-                $WellKnownSIDs = Get-WellKnownSid -AdsiServer $ThisServer
+                $WellKnownSIDs = Get-WellKnownSid -CimServerName $ThisServer
                 $KnownServers[$ThisServer] = [pscustomobject]@{
                     AdsiProvider  = $AdsiProvider
                     WellKnownSIDs = $WellKnownSIDs

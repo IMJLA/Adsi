@@ -25,10 +25,13 @@ Use caching to reduce duplicate directory queries
 
 ### EXAMPLE 1
 ```
-Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object
+(Get-Acl).Access |
+Resolve-IdentityReference |
+Group-Object -Property IdentityReferenceResolved |
+Expand-IdentityReference
 ```
 
-Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
+Incomplete example but it shows the chain of functions to generate the expected input for this
 
 ## PARAMETERS
 

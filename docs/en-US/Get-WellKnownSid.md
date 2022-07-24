@@ -8,30 +8,37 @@ schema: 2.0.0
 # Get-WellKnownSid
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Use CIM to get well-known SIDs
 
 ## SYNTAX
 
 ```
-Get-WellKnownSid [[-AdsiServer] <String[]>] [<CommonParameters>]
+Get-WellKnownSid [[-CimServerName] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_SystemAccount class
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Get-WellKnownSid
 ```
 
-{{ Add example description here }}
+Get the well-known SIDs on the current computer
+
+### EXAMPLE 2
+```
+Get-WellKnownSid -CimServerName 'server123'
+```
+
+Get the well-known SIDs on the remote computer 'server123'
 
 ## PARAMETERS
 
-### -AdsiServer
-{{ Fill AdsiServer Description }}
+### -CimServerName
+{{ Fill CimServerName Description }}
 
 ```yaml
 Type: System.String[]
@@ -39,7 +46,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -50,11 +57,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String[]
-
+### [System.String]$CimServerName
 ## OUTPUTS
 
-### System.Object
+### [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_SystemAccount class in the root/cimv2 namespace
 ## NOTES
 
 ## RELATED LINKS

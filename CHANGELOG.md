@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0] - 2022-07-24 - Major breaking changes, functions removed, parameters modified.  Especially Resolve-IdentityReference and Expand-IdentityReference had significant changes.  Added Resolve-ACE and Expand-IdentityReference.
+
 ## [1.0.204] - 2022-07-09 - Changed GroupMember boolean parameter on Expand-IdentityReference to a NoGroupMembers switch parameter
 
 ## [1.0.203] - 2022-07-08 - New version to publish to PSGallery

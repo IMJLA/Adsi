@@ -16,9 +16,12 @@ function Expand-IdentityReference {
             Members (if the DirectoryEntry is a group).
 
         .EXAMPLE
-        Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object
+        (Get-Acl).Access |
+        Resolve-IdentityReference |
+        Group-Object -Property IdentityReferenceResolved |
+        Expand-IdentityReference
 
-        Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
+        Incomplete example but it shows the chain of functions to generate the expected input for this
     #>
     [OutputType([System.Object])]
     param (
@@ -49,7 +52,6 @@ function Expand-IdentityReference {
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
 
-        $LocalDomains = @('NT AUTHORITY', 'BUILTIN', "$(hostname)")
         $KnownDomains = @{}
         $i = 0
 
@@ -158,7 +160,8 @@ function Expand-IdentityReference {
                                 $ThisIdentity = [pscustomobject]@{
                                     Count = $(($ThisIdentityGroup | Measure-Object).Count)
                                     Name  = "$domainNetbiosString\" + $DirectoryEntry.Name
-                                    Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.Path -split '\\')[2] -eq $domainNetbiosString }
+                                    Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $domainNetbiosString }
+                                    #####Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.Path -split '\\')[2] -eq $domainNetbiosString }
                                 }
 
                             }

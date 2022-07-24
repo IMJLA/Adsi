@@ -486,9 +486,12 @@ function Expand-IdentityReference {
             Members (if the DirectoryEntry is a group).
 
         .EXAMPLE
-        Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object
+        (Get-Acl).Access |
+        Resolve-IdentityReference |
+        Group-Object -Property IdentityReferenceResolved |
+        Expand-IdentityReference
 
-        Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them
+        Incomplete example but it shows the chain of functions to generate the expected input for this
     #>
     [OutputType([System.Object])]
     param (
@@ -519,7 +522,6 @@ function Expand-IdentityReference {
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
 
-        $LocalDomains = @('NT AUTHORITY', 'BUILTIN', "$(hostname)")
         $KnownDomains = @{}
         $i = 0
 
@@ -628,7 +630,8 @@ function Expand-IdentityReference {
                                 $ThisIdentity = [pscustomobject]@{
                                     Count = $(($ThisIdentityGroup | Measure-Object).Count)
                                     Name  = "$domainNetbiosString\" + $DirectoryEntry.Name
-                                    Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.Path -split '\\')[2] -eq $domainNetbiosString }
+                                    Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $domainNetbiosString }
+                                    #####Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.Path -split '\\')[2] -eq $domainNetbiosString }
                                 }
 
                             }
@@ -886,6 +889,41 @@ function Find-AdsiProvider {
         $AdsiProvider
     }
 }
+function Find-ServerNameInPath {
+    <#
+        .SYNOPSIS
+        Parse a literal path to find its server
+        .DESCRIPTION
+        Currently only supports local file paths or UNC paths
+        .INPUTS
+        None. Pipeline input is not accepted.
+        .OUTPUTS
+        [System.String] representing the name of the server that was extracted from the path
+        .EXAMPLE
+        Find-ServerNameInPath -LiteralPath 'C:\Test'
+
+        Return the hostname of the local computer because a local filepath was used
+        .EXAMPLE
+        Find-ServerNameInPath -LiteralPath '\\server123\Test\'
+
+        Return server123 because a UNC path for a folder shared on server123 was used
+    #>
+    [OutputType([System.String])]
+    param (
+        [string]$LiteralPath
+    )
+    if ($LiteralPath -match '[A-Za-z]\:\\' -or $null -eq $LiteralPath -or '' -eq $LiteralPath) {
+        # For local file paths, the "server" is the local computer.  Assume the same for null paths.
+        hostname
+    } else {
+        # Otherwise it must be a UNC path, so the server is the first non-empty string between backwhacks (\)
+        $ThisServer = $LiteralPath -split '\\' |
+        Where-Object -FilterScript { $_ -ne '' } |
+        Select-Object -First 1
+
+        $ThisServer -replace '\?', (hostname)
+    }
+}
 function Get-AdsiGroup {
     <#
         .SYNOPSIS
@@ -1113,7 +1151,7 @@ function Get-AdsiServer {
         ForEach ($ThisServer in $AdsiServer) {
             if (!($KnownServers[$ThisServer])) {
                 $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
-                $WellKnownSIDs = Get-WellKnownSid -AdsiServer $ThisServer
+                $WellKnownSIDs = Get-WellKnownSid -CimServerName $ThisServer
                 $KnownServers[$ThisServer] = [pscustomobject]@{
                     AdsiProvider  = $AdsiProvider
                     WellKnownSIDs = $WellKnownSIDs
@@ -1381,17 +1419,36 @@ function Get-TrustedDomainSidNameMap {
 
 }
 function Get-WellKnownSid {
+    <#
+        .SYNOPSIS
+        Use CIM to get well-known SIDs
+        .DESCRIPTION
+        Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_SystemAccount class
+        .INPUTS
+        [System.String]$CimServerName
+        .OUTPUTS
+        [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_SystemAccount class in the root/cimv2 namespace
+        .EXAMPLE
+        Get-WellKnownSid
+
+        Get the well-known SIDs on the current computer
+        .EXAMPLE
+        Get-WellKnownSid -CimServerName 'server123'
+
+        Get the well-known SIDs on the remote computer 'server123'
+    #>
+    [OutputType([Microsoft.Management.Infrastructure.CimInstance])]
     param (
         [Parameter(ValueFromPipeline)]
-        [string[]]$AdsiServer
+        [string[]]$CimServerName
     )
     process {
-        ForEach ($ThisServer in $AdsiServer) {
+        ForEach ($ThisServer in $CimServerName) {
             if ($ThisServer -eq (hostname) -or $ThisServer -eq 'localhost' -or $ThisServer -eq '127.0.0.1') {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession"
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tNew-CimSession"
                 $CimSession = New-CimSession
             } else {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tNew-CimSession -ComputerName '$ThisServer'"
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tNew-CimSession -ComputerName '$ThisServer'"
                 $CimSession = New-CimSession -ComputerName $ThisServer
             }
             Get-CimInstance -ClassName Win32_SystemAccount -CimSession $CimSession
@@ -1649,164 +1706,218 @@ function New-FakeDirectoryEntry {
     return $DirectoryEntry
 
 }
-function Resolve-IdentityReference {
+
+function Resolve-Ace {
     <#
         .SYNOPSIS
-        Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists
+        Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
         .DESCRIPTION
-        Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
+        Based on the IdentityReference proprety of each Access Control Entry:
         Resolve SID to NT account name and vise-versa
         Resolve well-known SIDs
+        Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
+        Add these properties (IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved) to the object and return it
         .INPUTS
-        [System.Security.AccessControl.DirectorySecurity]$AccessControlEntry
+        [System.Security.AccessControl.AuthorizationRuleCollection]$InputObject
         .OUTPUTS
-        [System.Security.AccessControl.DirectorySecurity] Original object plus IdentityReferenceResolved and AdsiProvider properties
+        [PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved, and AdsiProvider properties
         .EXAMPLE
-        $FolderPath = 'C:\Test'
-        (Get-Acl $FolderPath).Access | Resolve-IdentityReference $FolderPath
+        Get-Acl |
+        Expand-Acl |
+        Resolve-Ace
 
-        Use Get-Acl as the source of the access list
+        Use Get-Acl from the Microsoft.PowerShell.Security module as the source of the access list
         This works in either Windows Powershell or in Powershell
         Get-Acl does not support long paths (>256 characters)
         That was why I originally used the .Net Framework method
         .EXAMPLE
-        $FolderPath = 'C:\Test'
-        if ($FolderPath.Length -gt 255) {
-            $FolderPath = "\\?\$FolderPath"
-        }
+        [System.String]$FolderPath = 'C:\Test'
         [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
-        [System.Security.AccessControl.DirectorySecurity]$DirectorySecurity = $DirectoryInfo.GetAccessControl('Access')
-        [System.Security.AccessControl.AuthorizationRuleCollection]$AuthRules = $DirectorySecurity.Access
-        $AuthRules | Resolve-IdentityReference -LiteralPath $FolderPath
-
-        Use the .Net Framework (or legacy .Net Core up to 2.2) as the source of the access list
-        Only works in Windows PowerShell
-        Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
-        This method is missing in modern versions of .Net Core
-        .EXAMPLE
-        $FolderPath = 'C:\Test'
-        if ($FolderPath.Length -gt 255) {
-            $FolderPath = "\\?\$FolderPath"
-        }
-        [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
-        $Sections = [System.Security.AccessControl.AccessControlSections]::Access
+        $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
         $FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
         $IncludeExplicitRules = $true
         $IncludeInheritedRules = $true
         $AccountType = [System.Security.Principal.SecurityIdentifier]
         $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
-        Resolve-IdentityReference -LiteralPath $FolderPath
+        Resolve-Ace
 
         This uses .Net Core as the source of the access list
         It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class
         The targetType parameter of the method is used to specify that the accounts in the ACL are returned as SIDs
         .EXAMPLE
-        $FolderPath = 'C:\Test'
-        if ($FolderPath.Length -gt 255) {
-            $FolderPath = "\\?\$FolderPath"
-        }
+        [System.String]$FolderPath = 'C:\Test'
         [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
-        $Sections = [System.Security.AccessControl.AccessControlSections]::Access
-        $FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
+        $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor
+        [System.Security.AccessControl.AccessControlSections]::Owner -bor
+        [System.Security.AccessControl.AccessControlSections]::Group
+        $DirectorySecurity = [System.Security.AccessControl.DirectorySecurity]::new($DirectoryInfo,$Sections)
         $IncludeExplicitRules = $true
         $IncludeInheritedRules = $true
         $AccountType = [System.Security.Principal.NTAccount]
         $FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
-        Resolve-IdentityReference -LiteralPath $FolderPath
+        Resolve-Ace
 
         This uses .Net Core as the source of the access list
         It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class
         The targetType parameter of the method is used to specify that the accounts in the ACL are returned as NT account names (DOMAIN\User)
+        .EXAMPLE
+        [System.String]$FolderPath = 'C:\Test'
+        [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+        [System.Security.AccessControl.DirectorySecurity]$DirectorySecurity = $DirectoryInfo.GetAccessControl('Access')
+        [System.Security.AccessControl.AuthorizationRuleCollection]$AuthRules = $DirectorySecurity.Access
+        $AuthRules | Resolve-Ace
+
+        Use the .Net Framework (or legacy .Net Core up to 2.2) as the source of the access list
+        Only works in Windows PowerShell
+        Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
+        This method is removed in modern versions of .Net Core
+        
+        .EXAMPLE
+        [System.String]$FolderPath = 'C:\Test'
+        [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+        $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
+        $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($DirectoryInfo,$Sections)
+        
+        The [System.IO.FileSystemAclExtensions] class is a Windows-specific implementation
+        It provides no known benefit over the cross-platform equivalent [System.Security.AccessControl.FileSecurity]
+        
         .NOTES
         Dependencies:
             Get-DirectoryEntry
             Add-SidInfo
             Get-TrustedDomainSidNameMap
             Find-AdsiProvider
+
+        if ($FolderPath.Length -gt 255) {
+            $FolderPath = "\\?\$FolderPath"
+        }
     #>
+    [OutputType([PSCustomObject])]
     param (
 
-        # Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter
-        # This will be used to determine local vs. remote computer, and then WinNT vs. LDAP
-        [Parameter(Position = 0)]
-        [string]$LiteralPath,
-
-        # Access Control Entry from an NTFS Access List whose IdentityReferences to resolve
-        # Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise, but you need to add a Path property with the path to the file/folder
-        # Accepts [PSCustomObject] objects with similar properties
-        [Parameter(ValueFromPipeline)]
-        $FileSystemAccessRule,
+        # Authorization Rule Collection of Access Control Entries from Discretionary Access Control Lists
+        [Parameter(
+            ValueFromPipeline
+        )]
+        [PSObject[]]$InputObject,
 
         # Dictionary to cache known servers to avoid redundant lookups
         # Defaults to an empty thread-safe hashtable
         [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
 
     )
+
     process {
-        ForEach ($ThisACE in $FileSystemAccessRule) {
-            if ($ThisACE.Path -match '[A-Za-z]\:\\' -or $null -eq $ThisACE.Path) {
-                # For local file paths, the "server" is the local computer.  Assume the same for null paths.
-                $ThisServer = hostname
+
+        $ACEPropertyNames = (Get-Member -InputObject $InputObject[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        ForEach ($ThisACE in $InputObject) {
+
+            # Remove the PsProvider prefix from the path string
+            if (-not [string]::IsNullOrEmpty($ThisACE.SourceAccessList.Path)) {
+                $LiteralPath = $ThisACE.SourceAccessList.Path -replace [regex]::escape("$($ThisACE.SourceAccessList.PsProvider)::"), ''
             } else {
-                # Otherwise it must be a UNC path, so the server is the first non-empty string between backwhacks (\)
-                $ThisServer = $ThisACE.Path -split '\\' |
-                Where-Object -FilterScript { $_ -ne '' } |
-                Select-Object -First 1
-                $ThisServer = $ThisServer -replace '\?', (hostname)
+                $LiteralPath = $LiteralPath -replace [regex]::escape("$($ThisACE.SourceAccessList.PsProvider)::"), ''
             }
+
+            $ThisServer = Find-ServerNameInPath -LiteralPath $LiteralPath
             $AdsiServer = Get-AdsiServer -AdsiServer $ThisServer -KnownServers $KnownServers
-            if ($ThisACE.IdentityReference -match '^S-1-') {
-                # The IdentityReference is a SID
-                $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($ThisACE.IdentityReference)
+            $ResolvedIdentityReference = Resolve-IdentityReference -IdentityReference $ThisACE.IdentityReference -ServerName $ThisServer -AdsiServer $AdsiServer
 
-                # This .Net method makes it impossible to redirect the error stream directly
-                # Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-                # I don't understand exactly why
-                $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
-                $SIDString = $ThisACE.IdentityReference
-            } else {
-                # The IdentityReference is an NTAccount
-                $UnresolvedIdentityReference = $ThisACE.IdentityReference
-
-                # Resolve NTAccount to SID
-                $NTAccount = [System.Security.Principal.NTAccount]::new($ThisServer, $ThisACE.IdentityReference)
-                $SIDString = $null
-                $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
-                if (!($SIDString)) {
-                    # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
-                    $SIDString = ($AdsiServer.WellKnownSIDs |
-                        Where-Object -FilterScript {
-                            $UnresolvedIdentityReference -like "*\$($_.Name)"
-                        }
-                    ).SID
-
-                    if (!($SIDString)) {
-                        # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
-                        # But they have real DirectoryEntry objects
-                        $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ThisServer/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
-                        $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
-                            Add-SidInfo).SidString
-                    }
-                }
+            $ObjectProperties = @{
+                AdsiProvider              = $AdsiServer.AdsiProvider
+                AdsiServer                = $ThisServer
+                IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
+                IdentityReferenceName     = $ResolvedIdentityReference.UnresolvedIdentityReference
+                IdentityReferenceResolved = $ResolvedIdentityReference.UnresolvedIdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
+                #Path                        = $LiteralPath
+                #PathProvider                = $PsProvider
+                #PathAreAccessRulesProtected = $ThisACE.SourceAccessList.AreAccessRulesProtected
             }
-            [pscustomobject]@{
-                Path                        = $ThisACE.Path
-                PathAreAccessRulesProtected = $ThisACE.PathAreAccessRulesProtected
-                FileSystemRights            = $ThisACE.FileSystemRights
-                AccessControlType           = $ThisACE.AccessControlType
-                IdentityReference           = $ThisACE.IdentityReference
-                IsInherited                 = $ThisACE.IsInherited
-                InheritanceFlags            = $ThisACE.InheritanceFlags
-                PropagationFlags            = $ThisACE.PropagationFlags
-                AdsiProvider                = $AdsiServer.AdsiProvider
-                AdsiServer                  = $ThisServer
-                IdentityReferenceSID        = $SIDString
-                IdentityReferenceName       = $UnresolvedIdentityReference
-                IdentityReferenceResolved   = $UnresolvedIdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
+            ForEach ($ThisProperty in $ACEPropertyNames) {
+                $ObjectProperties[$ThisProperty] = $ThisACE.$ThisProperty
+            }
+            [PSCustomObject]$ObjectProperties
+
+        }
+
+    }
+
+}
+function Resolve-IdentityReference {
+    <#
+        .SYNOPSIS
+        Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
+        .DESCRIPTION
+        Based on the IdentityReference proprety of each Access Control Entry:
+        Resolve SID to NT account name and vise-versa
+        Resolve well-known SIDs
+        Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
+        .INPUTS
+        None. Pipeline input is not accepted.
+        .OUTPUTS
+        [PSCustomObject] with UnresolvedIdentityReference and SIDString properties (each strings)
+        .EXAMPLE
+        Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -ServerName 'localhost' -AdsiServer (Get-AdsiServer 'localhost')
+
+        Get information about the local Administrator account
+    #>
+    [OutputType([PSCustomObject])]
+    param (
+        # IdentityReference from an Access Control Entry
+        # Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)
+        [string]$IdentityReference,
+
+        # Name of the directory server to use to resolve the IdentityReference
+        [string]$ServerName,
+
+        # Object from Get-AdsiServer representing the directory server and its attributes
+        [PSObject]$AdsiServer
+    )
+
+    if ($IdentityReference -match '^S-1-') {
+        # The IdentityReference is a SID
+        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference')"
+        $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
+
+        # This .Net method makes it impossible to redirect the error stream directly
+        # Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+        # I don't understand exactly why
+        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+        $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+        $SIDString = $IdentityReference
+    } else {
+        # The IdentityReference is an NTAccount
+        $UnresolvedIdentityReference = $IdentityReference
+
+        # Resolve NTAccount to SID
+        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference')"
+        $NTAccount = [System.Security.Principal.NTAccount]::new($ServerName, $IdentityReference)
+        $SIDString = $null
+        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference').Translate([System.Security.Principal.SecurityIdentifier])"
+        $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+        if (!($SIDString)) {
+            # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
+            $SIDString = ($AdsiServer.WellKnownSIDs |
+                Where-Object -FilterScript {
+                    $UnresolvedIdentityReference -like "*\$($_.Name)"
+                }
+            ).SID
+
+            if (!($SIDString)) {
+                # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
+                # But they have real DirectoryEntry objects
+                $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerName/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
+                $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
+                    Add-SidInfo).SidString
             }
         }
     }
-    end {}
+
+    [PSCustomObject]@{
+        UnresolvedIdentityReference = $UnresolvedIdentityReference
+        SIDString                   = $SIDString
+    }
+
 }
 function Search-Directory {
     <#
@@ -1914,9 +2025,10 @@ $PublicScriptFiles = $ScriptFiles | Where-Object -FilterScript {
     ($_.PSParentPath | Split-Path -Leaf) -eq 'public'
 }
 $publicFunctions = $PublicScriptFiles.BaseName
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-ServerNameInPath','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-ServerNameInPath','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

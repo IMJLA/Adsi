@@ -1104,9 +1104,12 @@ ad.contoso.com</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Looks like it expects FileSystemAccessRule objects that have been grouped into GroupInfo objects using Group-Object</dev:code>
+        <dev:code>(Get-Acl).Access |
+Resolve-IdentityReference |
+Group-Object -Property IdentityReferenceResolved |
+Expand-IdentityReference</dev:code>
         <dev:remarks>
-          <maml:para>Retrieve the local Administrators group from the WinNT provider, get the members of the group, and expand them</maml:para>
+          <maml:para>Incomplete example but it shows the chain of functions to generate the expected input for this</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1320,6 +1323,92 @@ ad.contoso.com</dev:code>
         <dev:code>Find-AdsiProvider -AdsiServer 'ad.contoso.com'</dev:code>
         <dev:remarks>
           <maml:para>Find the ADSI provider of the AD domain 'ad.contoso.com'</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Find-ServerNameInPath</command:name>
+      <command:verb>Find</command:verb>
+      <command:noun>ServerNameInPath</command:noun>
+      <maml:description>
+        <maml:para>Parse a literal path to find its server</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Currently only supports local file paths or UNC paths</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Find-ServerNameInPath</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>LiteralPath</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill LiteralPath Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>LiteralPath</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill LiteralPath Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>[System.String] representing the name of the server that was extracted from the path</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Find-ServerNameInPath -LiteralPath 'C:\Test'</dev:code>
+        <dev:remarks>
+          <maml:para>Return the hostname of the local computer because a local filepath was used</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Find-ServerNameInPath -LiteralPath '\\server123\Test\'</dev:code>
+        <dev:remarks>
+          <maml:para>Return server123 because a UNC path for a folder shared on server123 was used</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2054,19 +2143,19 @@ Path              : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>WellKnownSid</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Use CIM to get well-known SIDs</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_SystemAccount class</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-WellKnownSid</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
-          <maml:name>AdsiServer</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+          <maml:name>CimServerName</maml:name>
           <maml:description>
-            <maml:para>{{ Fill AdsiServer Description }}</maml:para>
+            <maml:para>{{ Fill CimServerName Description }}</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
@@ -2078,10 +2167,10 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
-        <maml:name>AdsiServer</maml:name>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+        <maml:name>CimServerName</maml:name>
         <maml:description>
-          <maml:para>{{ Fill AdsiServer Description }}</maml:para>
+          <maml:para>{{ Fill CimServerName Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
@@ -2094,7 +2183,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>System.String[]</maml:name>
+          <maml:name>[System.String]$CimServerName</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2104,7 +2193,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>[Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_SystemAccount class in the root/cimv2 namespace</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2118,10 +2207,17 @@ Path              : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-WellKnownSid</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Get the well-known SIDs on the current computer</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-WellKnownSid -CimServerName 'server123'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the well-known SIDs on the remote computer 'server123'</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2511,44 +2607,32 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
-      <command:name>Resolve-IdentityReference</command:name>
+      <command:name>Resolve-Ace</command:name>
       <command:verb>Resolve</command:verb>
-      <command:noun>IdentityReference</command:noun>
+      <command:noun>Ace</command:noun>
       <maml:description>
-        <maml:para>Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists</maml:para>
+        <maml:para>Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name Resolve SID to NT account name and vise-versa Resolve well-known SIDs</maml:para>
+      <maml:para>Based on the IdentityReference proprety of each Access Control Entry: Resolve SID to NT account name and vise-versa Resolve well-known SIDs Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name Add these properties (IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved) to the object and return it</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
-        <maml:name>Resolve-IdentityReference</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>LiteralPath</maml:name>
+        <maml:name>Resolve-Ace</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+          <maml:name>InputObject</maml:name>
           <maml:description>
-            <maml:para>Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter This will be used to determine local vs. remote computer, and then WinNT vs. LDAP</maml:para>
+            <maml:para>Authorization Rule Collection of Access Control Entries from Discretionary Access Control Lists</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject[]</command:parameterValue>
           <dev:type>
-            <maml:name>System.String</maml:name>
+            <maml:name>System.Management.Automation.PSObject[]</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
-          <maml:name>FileSystemAccessRule</maml:name>
-          <maml:description>
-            <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise, but you need to add a Path property with the path to the file/folder Accepts [PSCustomObject] objects with similar properties</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Object</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>KnownServers</maml:name>
           <maml:description>
             <maml:para>Dictionary to cache known servers to avoid redundant lookups Defaults to an empty thread-safe hashtable</maml:para>
@@ -2563,19 +2647,19 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
-        <maml:name>FileSystemAccessRule</maml:name>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+        <maml:name>InputObject</maml:name>
         <maml:description>
-          <maml:para>Access Control Entry from an NTFS Access List whose IdentityReferences to resolve Accepts [System.Security.AccessControl.FileSystemAccessRule] objects from Get-Acl or otherwise, but you need to add a Path property with the path to the file/folder Accepts [PSCustomObject] objects with similar properties</maml:para>
+          <maml:para>Authorization Rule Collection of Access Control Entries from Discretionary Access Control Lists</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject[]</command:parameterValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.Management.Automation.PSObject[]</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>KnownServers</maml:name>
         <maml:description>
           <maml:para>Dictionary to cache known servers to avoid redundant lookups Defaults to an empty thread-safe hashtable</maml:para>
@@ -2587,10 +2671,181 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
         </dev:type>
         <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>LiteralPath</maml:name>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>[System.Security.AccessControl.AuthorizationRuleCollection]$InputObject</maml:name>
+        </dev:type>
         <maml:description>
-          <maml:para>Path to the file or folder associated with the Access Control Entries passed to the AccessControlEntry parameter This will be used to determine local vs. remote computer, and then WinNT vs. LDAP</maml:para>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>[PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved, and AdsiProvider properties</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para>Dependencies:     Get-DirectoryEntry     Add-SidInfo     Get-TrustedDomainSidNameMap     Find-AdsiProvider</maml:para>
+        <maml:para>if ($FolderPath.Length -gt 255) {     $FolderPath = "\\?\$FolderPath" }</maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-Acl |
+Expand-Acl |
+Resolve-Ace</dev:code>
+        <dev:remarks>
+          <maml:para>Use Get-Acl from the Microsoft.PowerShell.Security module as the source of the access list This works in either Windows Powershell or in Powershell Get-Acl does not support long paths (&gt;256 characters) That was why I originally used the .Net Framework method</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>[System.String]$FolderPath = 'C:\Test'
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+$Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
+$FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
+$IncludeExplicitRules = $true
+$IncludeInheritedRules = $true
+$AccountType = [System.Security.Principal.SecurityIdentifier]
+$FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
+Resolve-Ace</dev:code>
+        <dev:remarks>
+          <maml:para>This uses .Net Core as the source of the access list It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class The targetType parameter of the method is used to specify that the accounts in the ACL are returned as SIDs</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <dev:code>[System.String]$FolderPath = 'C:\Test'
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+$Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor
+[System.Security.AccessControl.AccessControlSections]::Owner -bor
+[System.Security.AccessControl.AccessControlSections]::Group
+$DirectorySecurity = [System.Security.AccessControl.DirectorySecurity]::new($DirectoryInfo,$Sections)
+$IncludeExplicitRules = $true
+$IncludeInheritedRules = $true
+$AccountType = [System.Security.Principal.NTAccount]
+$FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
+Resolve-Ace</dev:code>
+        <dev:remarks>
+          <maml:para>This uses .Net Core as the source of the access list It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class The targetType parameter of the method is used to specify that the accounts in the ACL are returned as NT account names (DOMAIN\User)</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <dev:code>[System.String]$FolderPath = 'C:\Test'
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+[System.Security.AccessControl.DirectorySecurity]$DirectorySecurity = $DirectoryInfo.GetAccessControl('Access')
+[System.Security.AccessControl.AuthorizationRuleCollection]$AuthRules = $DirectorySecurity.Access
+$AuthRules | Resolve-Ace</dev:code>
+        <dev:remarks>
+          <maml:para>Use the .Net Framework (or legacy .Net Core up to 2.2) as the source of the access list Only works in Windows PowerShell Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class This method is removed in modern versions of .Net Core</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
+        <dev:code>[System.String]$FolderPath = 'C:\Test'
+[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
+$Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
+$FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($DirectoryInfo,$Sections)</dev:code>
+        <dev:remarks>
+          <maml:para>The [System.IO.FileSystemAclExtensions] class is a Windows-specific implementation It provides no known benefit over the cross-platform equivalent [System.Security.AccessControl.FileSecurity]</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Resolve-IdentityReference</command:name>
+      <command:verb>Resolve</command:verb>
+      <command:noun>IdentityReference</command:noun>
+      <maml:description>
+        <maml:para>Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Based on the IdentityReference proprety of each Access Control Entry: Resolve SID to NT account name and vise-versa Resolve well-known SIDs Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Resolve-IdentityReference</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>IdentityReference</maml:name>
+          <maml:description>
+            <maml:para>IdentityReference from an Access Control Entry Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>ServerName</maml:name>
+          <maml:description>
+            <maml:para>Name of the directory server to use to resolve the IdentityReference</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>AdsiServer</maml:name>
+          <maml:description>
+            <maml:para>Object from Get-AdsiServer representing the directory server and its attributes</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Management.Automation.PSObject</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>AdsiServer</maml:name>
+        <maml:description>
+          <maml:para>Object from Get-AdsiServer representing the directory server and its attributes</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Management.Automation.PSObject</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>IdentityReference</maml:name>
+        <maml:description>
+          <maml:para>IdentityReference from an Access Control Entry Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>ServerName</maml:name>
+        <maml:description>
+          <maml:para>Name of the directory server to use to resolve the IdentityReference</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -2603,7 +2858,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.Security.AccessControl.DirectorySecurity]$AccessControlEntry</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2613,7 +2868,7 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[System.Security.AccessControl.DirectorySecurity] Original object plus IdentityReferenceResolved and AdsiProvider properties</maml:name>
+          <maml:name>[PSCustomObject] with UnresolvedIdentityReference and SIDString properties (each strings)</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2622,66 +2877,15 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Dependencies:     Get-DirectoryEntry     Add-SidInfo     Get-TrustedDomainSidNameMap     Find-AdsiProvider</maml:para>
+        <maml:para></maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>$FolderPath = 'C:\Test'
-(Get-Acl $FolderPath).Access | Resolve-IdentityReference $FolderPath</dev:code>
+        <dev:code>Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -ServerName 'localhost' -AdsiServer (Get-AdsiServer 'localhost')</dev:code>
         <dev:remarks>
-          <maml:para>Use Get-Acl as the source of the access list This works in either Windows Powershell or in Powershell Get-Acl does not support long paths (&gt;256 characters) That was why I originally used the .Net Framework method</maml:para>
-        </dev:remarks>
-      </command:example>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>$FolderPath = 'C:\Test'
-if ($FolderPath.Length -gt 255) {
-    $FolderPath = "\\?\$FolderPath"
-}
-[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
-[System.Security.AccessControl.DirectorySecurity]$DirectorySecurity = $DirectoryInfo.GetAccessControl('Access')
-[System.Security.AccessControl.AuthorizationRuleCollection]$AuthRules = $DirectorySecurity.Access
-$AuthRules | Resolve-IdentityReference -LiteralPath $FolderPath</dev:code>
-        <dev:remarks>
-          <maml:para>Use the .Net Framework (or legacy .Net Core up to 2.2) as the source of the access list Only works in Windows PowerShell Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class This method is missing in modern versions of .Net Core</maml:para>
-        </dev:remarks>
-      </command:example>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
-        <dev:code>$FolderPath = 'C:\Test'
-if ($FolderPath.Length -gt 255) {
-    $FolderPath = "\\?\$FolderPath"
-}
-[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
-$Sections = [System.Security.AccessControl.AccessControlSections]::Access
-$FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
-$IncludeExplicitRules = $true
-$IncludeInheritedRules = $true
-$AccountType = [System.Security.Principal.SecurityIdentifier]
-$FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
-Resolve-IdentityReference -LiteralPath $FolderPath</dev:code>
-        <dev:remarks>
-          <maml:para>This uses .Net Core as the source of the access list It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class The targetType parameter of the method is used to specify that the accounts in the ACL are returned as SIDs</maml:para>
-        </dev:remarks>
-      </command:example>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
-        <dev:code>$FolderPath = 'C:\Test'
-if ($FolderPath.Length -gt 255) {
-    $FolderPath = "\\?\$FolderPath"
-}
-[System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
-$Sections = [System.Security.AccessControl.AccessControlSections]::Access
-$FileSecurity = [System.Security.AccessControl.FileSecurity]::new($DirectoryInfo,$Sections)
-$IncludeExplicitRules = $true
-$IncludeInheritedRules = $true
-$AccountType = [System.Security.Principal.NTAccount]
-$FileSecurity.GetAccessRules($IncludeExplicitRules,$IncludeInheritedRules,$AccountType) |
-Resolve-IdentityReference -LiteralPath $FolderPath</dev:code>
-        <dev:remarks>
-          <maml:para>This uses .Net Core as the source of the access list It uses the GetAccessRules method on the [System.Security.AccessControl.FileSecurity] class The targetType parameter of the method is used to specify that the accounts in the ACL are returned as NT account names (DOMAIN\User)</maml:para>
+          <maml:para>Get information about the local Administrator account</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

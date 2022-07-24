@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 1.0.204
+Help Version: 2.0.0
 Locale: en-US
 ---
 
@@ -50,6 +50,9 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 ### [Find-AdsiProvider](Find-AdsiProvider.md)
 Determine whether a directory server is an LDAP or a WinNT server
 
+### [Find-ServerNameInPath](Find-ServerNameInPath.md)
+Parse a literal path to find its server
+
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI
 
@@ -69,9 +72,7 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 Returns a dictionary of trusted domains by the current computer
 
 ### [Get-WellKnownSid](Get-WellKnownSid.md)
-
-Get-WellKnownSid [[-AdsiServer] <string[]>] [<CommonParameters>]
-
+Use CIM to get well-known SIDs
 
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)
 Get members of a group from the WinNT provider
@@ -82,8 +83,11 @@ Invoke a member method of a ComObject [__ComObject]
 ### [New-FakeDirectoryEntry](New-FakeDirectoryEntry.md)
 Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
 
+### [Resolve-Ace](Resolve-Ace.md)
+Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
+
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)
-Add more detail to IdentityReferences from Access Control Entries in NTFS Discretionary Access Lists
+Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
 
 ### [Search-Directory](Search-Directory.md)
 Use Active Directory Service Interfaces to search an LDAP directory
