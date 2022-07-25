@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.3] - 2022-07-25 - Changed TrustedInstaller to a User instead of a group in New-FakeDirectoryEntry
+
 ## [2.0.2] - 2022-07-24 - Efficiency improvements for Resolve-IdentityReference
 
 ## [2.0.1] - 2022-07-24 - Added TrustedInstaller to Get-DirectoryEntry as a system account to be mocked using New-FakeDirectoryEntry

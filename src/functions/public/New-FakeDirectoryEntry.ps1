@@ -76,6 +76,16 @@ function New-FakeDirectoryEntry {
             }
             $Properties['SchemaClassName'] = 'Group'
         }
+        'TrustedInstaller$' {
+            $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
+            $Properties['Description'] = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
+            $Properties['Properties'] = @{
+                Name        = $Properties['Name']
+                Description = $Description
+                objectSid   = $SidByteAray
+            }
+            $Properties['SchemaClassName'] = 'User'
+        }
     }
 
     $DirectoryEntry = [pscustomobject]::new($Properties)
