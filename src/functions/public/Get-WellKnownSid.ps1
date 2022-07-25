@@ -3,11 +3,11 @@ function Get-WellKnownSid {
         .SYNOPSIS
         Use CIM to get well-known SIDs
         .DESCRIPTION
-        Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_SystemAccount class
+        Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class
         .INPUTS
         [System.String]$CimServerName
         .OUTPUTS
-        [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_SystemAccount class in the root/cimv2 namespace
+        [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace
         .EXAMPLE
         Get-WellKnownSid
 
@@ -31,7 +31,12 @@ function Get-WellKnownSid {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tNew-CimSession -ComputerName '$ThisServer'"
                 $CimSession = New-CimSession -ComputerName $ThisServer
             }
-            Get-CimInstance -ClassName Win32_SystemAccount -CimSession $CimSession
+            $Results = @{}
+            Get-CimInstance -ClassName Win32_Account -CimSession $CimSession |
+            ForEach-Object {
+                $Results[$_.Name] = $_
+            }
+            $Results
             Remove-CimSession -CimSession $CimSession
         }
     }

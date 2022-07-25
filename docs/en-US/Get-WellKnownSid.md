@@ -17,7 +17,7 @@ Get-WellKnownSid [[-CimServerName] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_SystemAccount class
+Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class
 
 ## EXAMPLES
 
@@ -60,7 +60,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### [System.String]$CimServerName
 ## OUTPUTS
 
-### [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_SystemAccount class in the root/cimv2 namespace
+### [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace
 ## NOTES
 
 ## RELATED LINKS

@@ -29,41 +29,58 @@ function Resolve-IdentityReference {
         [PSObject]$AdsiServer
     )
 
-    if ($IdentityReference -match '^S-1-') {
+    $ThisHostName = hostname
+
+    if ($IdentityReference -like 'S-1-*') {
         # The IdentityReference is a SID
-        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference')"
+        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference')"
         $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 
         # This .Net method makes it impossible to redirect the error stream directly
         # Wrapping it in a scriptblock (which is then executed with &) fixes the problem
         # I don't understand exactly why
-        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
         $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
         $SIDString = $IdentityReference
     } else {
         # The IdentityReference is an NTAccount
         $UnresolvedIdentityReference = $IdentityReference
-
         # Resolve NTAccount to SID
-        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference')"
-        $NTAccount = [System.Security.Principal.NTAccount]::new($ServerName, $IdentityReference)
-        $SIDString = $null
-        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference').Translate([System.Security.Principal.SecurityIdentifier])"
-        $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+        $Name = ($UnresolvedIdentityReference -split '\\')[1]
+        # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
+        $SIDString = $AdsiServer.WellKnownSIDs[$Name].SID
         if (!($SIDString)) {
-            # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
-            $SIDString = ($AdsiServer.WellKnownSIDs |
-                Where-Object -FilterScript {
-                    $UnresolvedIdentityReference -like "*\$($_.Name)"
-                }
-            ).SID
+            Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference')"
+            $NTAccount = [System.Security.Principal.NTAccount]::new($ServerName, $IdentityReference)
+            Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference').Translate([System.Security.Principal.SecurityIdentifier])"
+            $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
 
             if (!($SIDString)) {
                 # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
-                # But they have real DirectoryEntry objects
-                $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerName/$(($UnresolvedIdentityReference -split '\\') | Select-Object -Last 1)"
-                $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
-                    Add-SidInfo).SidString
+
+
+                if ($UnresolvedIdentityReference -like "NT SERVICE\*") {
+                    # Some of them are services (yes services can have SIDs)
+                    if ($ServerName -eq $ThisHostName) {
+                        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tsc.exe showsid $Name"
+                        [string[]]$ScResult = & sc.exe showsid $Name
+                    } else {
+                        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tInvoke-Command -ComputerName $ServerName -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $Name"
+                        [string[]]$ScResult = Invoke-Command -ComputerName $ServerName -ScriptBlock { & sc.exe showsid $args[0] } -ArgumentList $Name
+                    }
+                    $ScResultProps = @{}
+                    $ScResult |
+                    ForEach-Object {
+                        $Prop, $Value = ($_ -split ':').Trim()
+                        $ScResultProps[$Prop] = $Value
+                    }
+                    $SIDString = $ScResultProps['SERVICE SID']
+                } else {
+                    # Otherwise they may have real DirectoryEntry objects
+                    $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerName/$Name"
+                    $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
+                        Add-SidInfo).SidString
+                }
             }
         }
     }

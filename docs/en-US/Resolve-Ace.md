@@ -39,6 +39,12 @@ That was why I originally used the .Net Framework method
 
 ### EXAMPLE 2
 ```
+Get-FolderAce -LiteralPath C:\Test -IncludeInherited |
+Resolve-Ace
+```
+
+### EXAMPLE 3
+```
 [System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
 $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
@@ -54,7 +60,7 @@ This uses .Net Core as the source of the access list
 It uses the GetAccessRules method on the \[System.Security.AccessControl.FileSecurity\] class
 The targetType parameter of the method is used to specify that the accounts in the ACL are returned as SIDs
 
-### EXAMPLE 3
+### EXAMPLE 4
 ```
 [System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
@@ -73,7 +79,7 @@ This uses .Net Core as the source of the access list
 It uses the GetAccessRules method on the \[System.Security.AccessControl.FileSecurity\] class
 The targetType parameter of the method is used to specify that the accounts in the ACL are returned as NT account names (DOMAIN\User)
 
-### EXAMPLE 4
+### EXAMPLE 5
 ```
 [System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
@@ -87,7 +93,7 @@ Only works in Windows PowerShell
 Those versions of .Net had a GetAccessControl method on the \[System.IO.DirectoryInfo\] class
 This method is removed in modern versions of .Net Core
 
-### EXAMPLE 5
+### EXAMPLE 6
 ```
 [System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath

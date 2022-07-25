@@ -2147,7 +2147,7 @@ Path              : WinNT://ComputerName</dev:code>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_SystemAccount class</maml:para>
+      <maml:para>Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2193,7 +2193,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_SystemAccount class in the root/cimv2 namespace</maml:name>
+          <maml:name>[Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2710,6 +2710,14 @@ Resolve-Ace</dev:code>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-FolderAce -LiteralPath C:\Test -IncludeInherited |
+Resolve-Ace</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
         <dev:code>[System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
 $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
@@ -2724,7 +2732,7 @@ Resolve-Ace</dev:code>
         </dev:remarks>
       </command:example>
       <command:example>
-        <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
+        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
         <dev:code>[System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
 $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor
@@ -2741,7 +2749,7 @@ Resolve-Ace</dev:code>
         </dev:remarks>
       </command:example>
       <command:example>
-        <maml:title>-------------------------- EXAMPLE 4 --------------------------</maml:title>
+        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
         <dev:code>[System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
 [System.Security.AccessControl.DirectorySecurity]$DirectorySecurity = $DirectoryInfo.GetAccessControl('Access')
@@ -2752,7 +2760,7 @@ $AuthRules | Resolve-Ace</dev:code>
         </dev:remarks>
       </command:example>
       <command:example>
-        <maml:title>-------------------------- EXAMPLE 5 --------------------------</maml:title>
+        <maml:title>-------------------------- EXAMPLE 6 --------------------------</maml:title>
         <dev:code>[System.String]$FolderPath = 'C:\Test'
 [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
 $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner

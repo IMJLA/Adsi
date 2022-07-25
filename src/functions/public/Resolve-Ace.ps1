@@ -23,6 +23,9 @@ function Resolve-Ace {
         Get-Acl does not support long paths (>256 characters)
         That was why I originally used the .Net Framework method
         .EXAMPLE
+        Get-FolderAce -LiteralPath C:\Test -IncludeInherited |
+        Resolve-Ace
+        .EXAMPLE
         [System.String]$FolderPath = 'C:\Test'
         [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
         $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
@@ -114,13 +117,17 @@ function Resolve-Ace {
             $ThisServer = Find-ServerNameInPath -LiteralPath $LiteralPath
             $AdsiServer = Get-AdsiServer -AdsiServer $ThisServer -KnownServers $KnownServers
             $ResolvedIdentityReference = Resolve-IdentityReference -IdentityReference $ThisACE.IdentityReference -ServerName $ThisServer -AdsiServer $AdsiServer
+            $FullyResolved = $ResolvedIdentityReference.UnresolvedIdentityReference -replace
+            'NT AUTHORITY', $ThisServer -replace
+            'NT SERVICE', $ThisServer -replace
+            'BUILTIN', $ThisServer
 
             $ObjectProperties = @{
                 AdsiProvider              = $AdsiServer.AdsiProvider
                 AdsiServer                = $ThisServer
                 IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
                 IdentityReferenceName     = $ResolvedIdentityReference.UnresolvedIdentityReference
-                IdentityReferenceResolved = $ResolvedIdentityReference.UnresolvedIdentityReference -replace 'NT AUTHORITY', $ThisServer -replace 'BUILTIN', $ThisServer
+                IdentityReferenceResolved = $FullyResolved
                 #Path                        = $LiteralPath
                 #PathProvider                = $PsProvider
                 #PathAreAccessRulesProtected = $ThisACE.SourceAccessList.AreAccessRulesProtected

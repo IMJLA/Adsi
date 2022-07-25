@@ -86,7 +86,10 @@ function Expand-IdentityReference {
                 $domainNetbiosString = $split[0]
                 $name = $split[1]
 
-                if ($null -ne $name -and ($ThisIdentity.Group.AdsiProvider | Select-Object -First 1) -eq 'LDAP') {
+                if (
+                    $null -ne $name -and
+                    ($ThisIdentity.Group.AdsiProvider | Select-Object -First 1) -eq 'LDAP'
+                ) {
                     Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) is a domain security principal"
 
                     # Add this domain to our list of known domains
