@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.5] - 2022-07-25 - Updated source psm1 file
+
 ## [2.0.4] - 2022-07-25 - testing psakefile changes
 
 ## [2.0.3] - 2022-07-25 - Changed TrustedInstaller to a User instead of a group in New-FakeDirectoryEntry
