@@ -260,9 +260,15 @@ task BuildModule -depends CleanOutputDir {
             $buildParams.$_ = $PSBPreference.Build.$_
         }
     }
+    
+    Write-Host ($PSBPreference.Build.CompileFooter) -ForegroundColor Cyan
 
     Build-PSBuildModule @buildParams
 } -description 'Build a PowerShell script module based on the source directory'
+
+task CleanupBuiltModule {
+    
+}
 
 $genMarkdownPreReqs = {
     $result = $true
