@@ -563,7 +563,10 @@ function Expand-IdentityReference {
                     Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) is a domain security principal"
 
                     # Add this domain to our list of known domains
-                    if (!($KnownDomains[$domainNetbiosString])) {
+                    if (
+                        -not $KnownDomains[$domainNetbiosString] -and
+                        -not [string]::IsNullOrEmpty($domainNetbiosString)
+                    ) {
                         $KnownDomains[$domainNetbiosString] = ConvertTo-DistinguishedName -Domain $domainNetbiosString
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tCache miss for domain $($domainNetbiosString).  Adding its Distinguished Name to dictionary of known domains for future lookup"
                     }
@@ -1363,6 +1366,8 @@ function Get-TrustedDomainSidNameMap {
         if ($TrustRelationship -match $RegEx) {
             $DomainDnsName = $Matches.dns
             $DomainNetbios = $Matches.netbios
+        } else {
+            continue
         }
 
         $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache
@@ -2059,5 +2064,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-ServerNameInPath','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
+
 
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.7] - 2022-07-30 - Added error prevention to Get-TrustedDomainSidNameMap and Expand-IdentityReference
+
+## [2.0.6] - 2022-07-30 - Added some error prevention in Get-TrustedDomainSidNameMap
+
 ## [2.0.5] - 2022-07-25 - Updated source psm1 file
 
 ## [2.0.4] - 2022-07-25 - testing psakefile changes

@@ -93,7 +93,10 @@ function Expand-IdentityReference {
                     Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) is a domain security principal"
 
                     # Add this domain to our list of known domains
-                    if (!($KnownDomains[$domainNetbiosString])) {
+                    if (
+                        -not $KnownDomains[$domainNetbiosString] -and
+                        -not [string]::IsNullOrEmpty($domainNetbiosString)
+                    ) {
                         $KnownDomains[$domainNetbiosString] = ConvertTo-DistinguishedName -Domain $domainNetbiosString
                         Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tCache miss for domain $($domainNetbiosString).  Adding its Distinguished Name to dictionary of known domains for future lookup"
                     }

@@ -45,6 +45,8 @@ function Get-TrustedDomainSidNameMap {
         if ($TrustRelationship -match $RegEx) {
             $DomainDnsName = $Matches.dns
             $DomainNetbios = $Matches.netbios
+        } else {
+            continue
         }
 
         $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache
