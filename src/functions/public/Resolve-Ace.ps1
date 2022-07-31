@@ -66,16 +66,16 @@ function Resolve-Ace {
         Only works in Windows PowerShell
         Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
         This method is removed in modern versions of .Net Core
-        
+
         .EXAMPLE
         [System.String]$FolderPath = 'C:\Test'
         [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
         $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
         $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($DirectoryInfo,$Sections)
-        
+
         The [System.IO.FileSystemAclExtensions] class is a Windows-specific implementation
         It provides no known benefit over the cross-platform equivalent [System.Security.AccessControl.FileSecurity]
-        
+
         .NOTES
         Dependencies:
             Get-DirectoryEntry
@@ -128,9 +128,6 @@ function Resolve-Ace {
                 IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
                 IdentityReferenceName     = $ResolvedIdentityReference.UnresolvedIdentityReference
                 IdentityReferenceResolved = $FullyResolved
-                #Path                        = $LiteralPath
-                #PathProvider                = $PsProvider
-                #PathAreAccessRulesProtected = $ThisACE.SourceAccessList.AreAccessRulesProtected
             }
             ForEach ($ThisProperty in $ACEPropertyNames) {
                 $ObjectProperties[$ThisProperty] = $ThisACE.$ThisProperty

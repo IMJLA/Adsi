@@ -895,41 +895,6 @@ function Find-AdsiProvider {
         $AdsiProvider
     }
 }
-function Find-ServerNameInPath {
-    <#
-        .SYNOPSIS
-        Parse a literal path to find its server
-        .DESCRIPTION
-        Currently only supports local file paths or UNC paths
-        .INPUTS
-        None. Pipeline input is not accepted.
-        .OUTPUTS
-        [System.String] representing the name of the server that was extracted from the path
-        .EXAMPLE
-        Find-ServerNameInPath -LiteralPath 'C:\Test'
-
-        Return the hostname of the local computer because a local filepath was used
-        .EXAMPLE
-        Find-ServerNameInPath -LiteralPath '\\server123\Test\'
-
-        Return server123 because a UNC path for a folder shared on server123 was used
-    #>
-    [OutputType([System.String])]
-    param (
-        [string]$LiteralPath
-    )
-    if ($LiteralPath -match '[A-Za-z]\:\\' -or $null -eq $LiteralPath -or '' -eq $LiteralPath) {
-        # For local file paths, the "server" is the local computer.  Assume the same for null paths.
-        hostname
-    } else {
-        # Otherwise it must be a UNC path, so the server is the first non-empty string between backwhacks (\)
-        $ThisServer = $LiteralPath -split '\\' |
-        Where-Object -FilterScript { $_ -ne '' } |
-        Select-Object -First 1
-
-        $ThisServer -replace '\?', (hostname)
-    }
-}
 function Get-AdsiGroup {
     <#
         .SYNOPSIS
@@ -1800,16 +1765,16 @@ function Resolve-Ace {
         Only works in Windows PowerShell
         Those versions of .Net had a GetAccessControl method on the [System.IO.DirectoryInfo] class
         This method is removed in modern versions of .Net Core
-        
+
         .EXAMPLE
         [System.String]$FolderPath = 'C:\Test'
         [System.IO.DirectoryInfo]$DirectoryInfo = Get-Item -LiteralPath $FolderPath
         $Sections = [System.Security.AccessControl.AccessControlSections]::Access -bor [System.Security.AccessControl.AccessControlSections]::Owner
         $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($DirectoryInfo,$Sections)
-        
+
         The [System.IO.FileSystemAclExtensions] class is a Windows-specific implementation
         It provides no known benefit over the cross-platform equivalent [System.Security.AccessControl.FileSecurity]
-        
+
         .NOTES
         Dependencies:
             Get-DirectoryEntry
@@ -1862,9 +1827,6 @@ function Resolve-Ace {
                 IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
                 IdentityReferenceName     = $ResolvedIdentityReference.UnresolvedIdentityReference
                 IdentityReferenceResolved = $FullyResolved
-                #Path                        = $LiteralPath
-                #PathProvider                = $PsProvider
-                #PathAreAccessRulesProtected = $ThisACE.SourceAccessList.AreAccessRulesProtected
             }
             ForEach ($ThisProperty in $ACEPropertyNames) {
                 $ObjectProperties[$ThisProperty] = $ThisACE.$ThisProperty
@@ -2063,7 +2025,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-ServerNameInPath','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

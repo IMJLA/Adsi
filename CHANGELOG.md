@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.0] - 2022-07-31 - Removed Find-ServerNameInPath because it belongs in the PsNtfs module (it parses file paths).
+
 ## [2.0.7] - 2022-07-30 - Added error prevention to Get-TrustedDomainSidNameMap and Expand-IdentityReference
 
 ## [2.0.6] - 2022-07-30 - Added some error prevention in Get-TrustedDomainSidNameMap

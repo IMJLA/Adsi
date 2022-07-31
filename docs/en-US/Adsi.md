@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 2.0.7
+Help Version: 3.0.0
 Locale: en-US
 ---
 
@@ -51,7 +51,7 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 Determine whether a directory server is an LDAP or a WinNT server
 
 ### [Find-ServerNameInPath](Find-ServerNameInPath.md)
-Parse a literal path to find its server
+{{ Fill in the Description }}
 
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI
