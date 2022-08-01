@@ -214,6 +214,85 @@ Path              : WinNT://localhost/Administrator</dev:code>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
+      <command:name>ConvertFrom-DirectoryEntry</command:name>
+      <command:verb>ConvertFrom</command:verb>
+      <command:noun>DirectoryEntry</command:noun>
+      <maml:description>
+        <maml:para>Convert a DirectoryEntry to a PSCustomObject</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects) This obfuscates the troublesome PropertyCollection and PropertyValueCollection and Hashtable aspects of working with ADSI</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>ConvertFrom-DirectoryEntry</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+          <maml:name>DirectoryEntry</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.DirectoryServices.DirectoryEntry[]</command:parameterValue>
+          <dev:type>
+            <maml:name>System.DirectoryServices.DirectoryEntry[]</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+        <maml:name>DirectoryEntry</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.DirectoryServices.DirectoryEntry[]</command:parameterValue>
+        <dev:type>
+          <maml:name>System.DirectoryServices.DirectoryEntry[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes />
+    <command:returnValues />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
+        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <dev:remarks>
+          <maml:para>{{ Add example description here }}</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>TODO: There is a faster way than Select-Object, just need to dig into the default formatting of DirectoryEntry to see how to get those properties</command:name>
+      <command:verb>TODO: There is a faster way than Select</command:verb>
+      <command:noun>Object, just need to dig into the default formatting of DirectoryEntry to see how to get those properties</command:noun>
+      <maml:description />
+    </command:details>
+    <maml:description />
+    <command:syntax />
+    <command:parameters />
+    <command:inputTypes />
+    <command:returnValues />
+    <maml:alertSet>
+      <maml:alert />
+    </maml:alertSet>
+    <command:examples />
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
       <command:name>ConvertFrom-PropertyValueCollectionToString</command:name>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>PropertyValueCollectionToString</command:noun>
@@ -1323,92 +1402,6 @@ Expand-IdentityReference</dev:code>
         <dev:code>Find-AdsiProvider -AdsiServer 'ad.contoso.com'</dev:code>
         <dev:remarks>
           <maml:para>Find the ADSI provider of the AD domain 'ad.contoso.com'</maml:para>
-        </dev:remarks>
-      </command:example>
-    </command:examples>
-    <command:relatedLinks />
-  </command:command>
-  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
-    <command:details>
-      <command:name>Find-ServerNameInPath</command:name>
-      <command:verb>Find</command:verb>
-      <command:noun>ServerNameInPath</command:noun>
-      <maml:description>
-        <maml:para>Parse a literal path to find its server</maml:para>
-      </maml:description>
-    </command:details>
-    <maml:description>
-      <maml:para>Currently only supports local file paths or UNC paths</maml:para>
-    </maml:description>
-    <command:syntax>
-      <command:syntaxItem>
-        <maml:name>Find-ServerNameInPath</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>LiteralPath</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill LiteralPath Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-      </command:syntaxItem>
-    </command:syntax>
-    <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>LiteralPath</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill LiteralPath Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-    </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>None. Pipeline input is not accepted.</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>[System.String] representing the name of the server that was extracted from the path</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
-    <maml:alertSet>
-      <maml:alert>
-        <maml:para></maml:para>
-      </maml:alert>
-    </maml:alertSet>
-    <command:examples>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Find-ServerNameInPath -LiteralPath 'C:\Test'</dev:code>
-        <dev:remarks>
-          <maml:para>Return the hostname of the local computer because a local filepath was used</maml:para>
-        </dev:remarks>
-      </command:example>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>Find-ServerNameInPath -LiteralPath '\\server123\Test\'</dev:code>
-        <dev:remarks>
-          <maml:para>Return server123 because a UNC path for a folder shared on server123 was used</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

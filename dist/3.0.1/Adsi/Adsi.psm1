@@ -163,6 +163,42 @@ function Add-SidInfo {
 
     }
 }
+function ConvertFrom-DirectoryEntry {
+    <#
+    .SYNOPSIS
+    Convert a DirectoryEntry to a PSCustomObject
+    .DESCRIPTION
+    Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
+    This obfuscates the troublesome PropertyCollection and PropertyValueCollection and Hashtable aspects of working with ADSI
+    .NOTES
+    # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of DirectoryEntry to see how to get those properties
+    #>
+
+    param (
+        [Parameter(
+            Position = 0,
+            ValueFromPipeline
+        )]
+        [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
+    )
+
+    process {
+        ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
+            $ObjectWithProperties = $ThisDirectoryEntry |
+            Select-Object -Property *
+
+            $ObjectNoteProperties = $ObjectWithProperties |
+            Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
+
+            $ThisObject = @{}
+            ForEach ($ThisObjProperty in $ObjectNoteProperties) {
+                $ThisObject = ConvertFrom-SecurityPrincipalProperty -SecurityPrincipal $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+            }
+
+            [PSCustomObject]$ThisObject
+        }
+    }
+}
 function ConvertFrom-PropertyValueCollectionToString {
     <#
         .SYNOPSIS
@@ -2025,7 +2061,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
