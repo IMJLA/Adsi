@@ -27,7 +27,7 @@ function ConvertFrom-DirectoryEntry {
 
             $ThisObject = @{}
             ForEach ($ThisObjProperty in $ObjectNoteProperties) {
-                $ThisObject = ConvertFrom-SecurityPrincipalProperty -SecurityPrincipal $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+                $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
             }
 
             [PSCustomObject]$ThisObject

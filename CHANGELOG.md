@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.2] - 2022-07-31 - Bug fix in ConvertFrom-DirectoryEntry
+
 ## [3.0.1] - 2022-07-31 - Added ConvertFrom-DirectoryEntry
 
 ## [3.0.0] - 2022-07-31 - Removed Find-ServerNameInPath because it belongs in the PsNtfs module (it parses file paths).
