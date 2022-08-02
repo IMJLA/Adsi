@@ -98,7 +98,18 @@ function Resolve-Ace {
 
         # Dictionary to cache known servers to avoid redundant lookups
         # Defaults to an empty thread-safe hashtable
-        [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+        [hashtable]$KnownServers = [hashtable]::Synchronized(@{}),
+
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{}))
 
     )
 
@@ -116,7 +127,7 @@ function Resolve-Ace {
 
             $ThisServer = Find-ServerNameInPath -LiteralPath $LiteralPath
             $AdsiServer = Get-AdsiServer -AdsiServer $ThisServer -KnownServers $KnownServers
-            $ResolvedIdentityReference = Resolve-IdentityReference -IdentityReference $ThisACE.IdentityReference -ServerName $ThisServer -AdsiServer $AdsiServer
+            $ResolvedIdentityReference = Resolve-IdentityReference -IdentityReference $ThisACE.IdentityReference -ServerName $ThisServer -AdsiServer $AdsiServer -Win32AccountsBySID $Win32AccountsBySID -Win32AccountsByCaption $Win32AccountsByCaption -DirectoryEntryCache $DirectoryEntryCache
             $FullyResolved = $ResolvedIdentityReference.UnresolvedIdentityReference -replace
             'NT AUTHORITY', $ThisServer -replace
             'NT SERVICE', $ThisServer -replace

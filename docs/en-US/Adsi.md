@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.2
+Help Version: 3.0.3
 Locale: en-US
 ---
 
@@ -16,6 +16,11 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 
 ### [Add-SidInfo](Add-SidInfo.md)
 Add some useful properties to a DirectoryEntry object for easier access
+
+### [Add-Win32AccountToCache](Add-Win32AccountToCache.md)
+
+Add-Win32AccountToCache [[-SidCache] <hashtable>] [[-CaptionCache] <hashtable>] [[-AdsiServerCache] <hashtable>]
+
 
 ### [ConvertFrom-DirectoryEntry](ConvertFrom-DirectoryEntry.md)
 Convert a DirectoryEntry to a PSCustomObject
@@ -52,6 +57,9 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ### [Find-AdsiProvider](Find-AdsiProvider.md)
 Determine whether a directory server is an LDAP or a WinNT server
+
+### [Find-ServerNameInPath](Find-ServerNameInPath.md)
+{{ Fill in the Description }}
 
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI

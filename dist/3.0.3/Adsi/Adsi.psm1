@@ -163,6 +163,24 @@ function Add-SidInfo {
 
     }
 }
+function Add-Win32AccountToCache {
+    param (
+        [hashtable]$SidCache,
+
+        [hashtable]$CaptionCache,
+
+        [hashtable]$AdsiServerCache
+    )
+
+    ForEach ($ThisKey in $AdsiServerCache.Keys) {
+        $AdsiServer = $AdsiServerCache[$ThisKey]
+        ForEach ($ThisSubkey in $AdsiServer.WellKnownSIDs.Keys) {
+            $ThisValue = $AdsiServer.WellKnownSIDs[$ThisSubkey]
+            $Win32AccountsBySID["$($ThisValue.Domain)\$($ThisValue.SID)"] = $ThisValue
+            $Win32AccountsByCaption["$($ThisValue.Domain)\$($ThisValue.Caption)"] = $ThisValue
+        }
+    }
+}
 function ConvertFrom-DirectoryEntry {
     <#
     .SYNOPSIS
@@ -1456,11 +1474,13 @@ function Get-WellKnownSid {
     )
     process {
         ForEach ($ThisServer in $CimServerName) {
-            if ($ThisServer -eq (hostname) -or $ThisServer -eq 'localhost' -or $ThisServer -eq '127.0.0.1') {
+            if ($ThisServer -eq (hostname) -or $ThisServer -eq 'localhost' -or $ThisServer -eq '127.0.0.1' -or [string]::IsNullOrEmpty($ThisServer)) {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tNew-CimSession"
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account"
                 $CimSession = New-CimSession
             } else {
                 Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tNew-CimSession -ComputerName '$ThisServer'"
+                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -ComputerName '$ThisServer'"
                 $CimSession = New-CimSession -ComputerName $ThisServer
             }
             $Results = @{}
@@ -1833,7 +1853,18 @@ function Resolve-Ace {
 
         # Dictionary to cache known servers to avoid redundant lookups
         # Defaults to an empty thread-safe hashtable
-        [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+        [hashtable]$KnownServers = [hashtable]::Synchronized(@{}),
+
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{}))
 
     )
 
@@ -1851,7 +1882,7 @@ function Resolve-Ace {
 
             $ThisServer = Find-ServerNameInPath -LiteralPath $LiteralPath
             $AdsiServer = Get-AdsiServer -AdsiServer $ThisServer -KnownServers $KnownServers
-            $ResolvedIdentityReference = Resolve-IdentityReference -IdentityReference $ThisACE.IdentityReference -ServerName $ThisServer -AdsiServer $AdsiServer
+            $ResolvedIdentityReference = Resolve-IdentityReference -IdentityReference $ThisACE.IdentityReference -ServerName $ThisServer -AdsiServer $AdsiServer -Win32AccountsBySID $Win32AccountsBySID -Win32AccountsByCaption $Win32AccountsByCaption -DirectoryEntryCache $DirectoryEntryCache
             $FullyResolved = $ResolvedIdentityReference.UnresolvedIdentityReference -replace
             'NT AUTHORITY', $ThisServer -replace
             'NT SERVICE', $ThisServer -replace
@@ -1902,67 +1933,176 @@ function Resolve-IdentityReference {
         [string]$ServerName,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-        [PSObject]$AdsiServer
+        [PSObject]$AdsiServer,
+
+        [hashtable]$KnownDomains = [hashtable]::Synchronized(@{}),
+
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{}))
     )
 
     $ThisHostName = hostname
 
-    if ($IdentityReference -like 'S-1-*') {
-        # The IdentityReference is a SID
-        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference')"
-        $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
+    $CacheResult = $Win32AccountsBySID["$ServerName\$IdentityReference"]
+    if ($CacheResult) {
+        #IdentityReference is a SID, and has been cached from this server
+        return [PSCustomObject]@{
+            SIDString                   = $CacheResult.SID
+            UnresolvedIdentityReference = $CacheResult.Caption # This is actually resolved but good enough for now maybe? Can parse SID to get the unresolved format
+        }
+    }
+    $CacheResult = $Win32AccountsByCaption["$ServerName\$IdentityReference"]
+    if ($CacheResult) {
+        # IdentityReference is an NT Account Name, and has been cached from this server
+        return [PSCustomObject]@{
+            SIDString                   = $CacheResult.SID
+            UnresolvedIdentityReference = $IdentityReference
+        }
+    }
 
-        # This .Net method makes it impossible to redirect the error stream directly
-        # Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-        # I don't understand exactly why
-        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
-        $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
-        $SIDString = $IdentityReference
-    } else {
-        # The IdentityReference is an NTAccount
-        $UnresolvedIdentityReference = $IdentityReference
-        # Resolve NTAccount to SID
-        $Name = ($UnresolvedIdentityReference -split '\\')[1]
-        # Well-Known SIDs cannot be translated with the Translate method so instead we will use CIM
-        $SIDString = $AdsiServer.WellKnownSIDs[$Name].SID
-        if (!($SIDString)) {
-            Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference')"
-            $NTAccount = [System.Security.Principal.NTAccount]::new($ServerName, $IdentityReference)
-            Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$IdentityReference').Translate([System.Security.Principal.SecurityIdentifier])"
-            $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+    switch -Wildcard ($IdentityReference) {
+        "S-1-*" {
+            # IdentityReference is a SID
 
-            if (!($SIDString)) {
-                # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the Translate method
+            # Constricted a SecurityIdentifier object based on the SID
+            Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference')"
+            $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 
+            # Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
+            # This .Net method makes it impossible to redirect the error stream directly
+            # Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+            # I don't understand exactly why
+            # Anyway UnresolvedIdentityReference will be null if the SID cannot be translated
+            Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+            $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+            $Win32AccountsBySID["$ServerName\$IdentityReference"] = [PSCustomObject]@{
+                SID     = $IdentityReference
+                Caption = "$ServerName\$UnresolvedIdentityReference"
+                Domain  = $ServerName
+            }
+            return [PSCustomObject]@{
+                SIDString                   = $IdentityReference
+                UnresolvedIdentityReference = $UnresolvedIdentityReference
+            }
 
-                if ($UnresolvedIdentityReference -like "NT SERVICE\*") {
-                    # Some of them are services (yes services can have SIDs)
-                    if ($ServerName -eq $ThisHostName) {
-                        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tsc.exe showsid $Name"
-                        [string[]]$ScResult = & sc.exe showsid $Name
-                    } else {
-                        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tInvoke-Command -ComputerName $ServerName -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $Name"
-                        [string[]]$ScResult = Invoke-Command -ComputerName $ServerName -ScriptBlock { & sc.exe showsid $args[0] } -ArgumentList $Name
-                    }
-                    $ScResultProps = @{}
-                    $ScResult |
-                    ForEach-Object {
-                        $Prop, $Value = ($_ -split ':').Trim()
-                        $ScResultProps[$Prop] = $Value
-                    }
-                    $SIDString = $ScResultProps['SERVICE SID']
-                } else {
-                    # Otherwise they may have real DirectoryEntry objects
-                    $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerName/$Name"
-                    $SIDString = (Get-DirectoryEntry -DirectoryPath $DirectoryPath |
-                        Add-SidInfo).SidString
-                }
+        }
+        "NT SERVICE\*" {
+
+            $split = $IdentityReference.Split('\')
+            $domainNetbiosString = $split[0]
+            $Name = $split[1]
+
+            # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
+            if ($ServerName -eq $ThisHostName) {
+                Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tsc.exe showsid $Name"
+                [string[]]$ScResult = & sc.exe showsid $Name
+            } else {
+                Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tInvoke-Command -ComputerName $ServerName -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $Name"
+                [string[]]$ScResult = Invoke-Command -ComputerName $ServerName -ScriptBlock { & sc.exe showsid $args[0] } -ArgumentList $Name
+            }
+            $ScResultProps = @{}
+
+            $ScResult |
+            ForEach-Object {
+                $Prop, $Value = ($_ -split ':').Trim()
+                $ScResultProps[$Prop] = $Value
+            }
+
+            $SIDString = $ScResultProps['SERVICE SID']
+
+            $Win32AccountsByCaption["$ServerName\$IdentityReference"] = [PSCustomObject]@{
+                SID     = $SIDString
+                Caption = "$ServerName\$IdentityReference"
+                Domain  = $ServerName
+            }
+
+            return [PSCustomObject]@{
+                SIDString                   = $SIDString
+                UnresolvedIdentityReference = $IdentityReference
+            }
+        }
+        "BUILTIN\*" {
+            # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
+            # But they may have real DirectoryEntry objects
+            # Try to find the DirectoryEntry object locally on the server
+            $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerName/$Name"
+            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache
+            $SIDString = (Add-SidInfo -InputObject $DirectoryEntry).SidString
+
+            $Win32AccountsByCaption["$ServerName\$IdentityReference"] = [PSCustomObject]@{
+                SID     = $SIDString
+                Caption = "$ServerName\$IdentityReference"
+                Domain  = $ServerName
+            }
+
+            return [PSCustomObject]@{
+                UnresolvedIdentityReference = $IdentityReference
+                SIDString                   = $SIDString
             }
         }
     }
 
-    [PSCustomObject]@{
-        UnresolvedIdentityReference = $UnresolvedIdentityReference
+    # The IdentityReference is an NTAccount
+    # Resolve NTAccount to SID
+    # Start by determining the domain
+    $split = $IdentityReference.Split('\')
+    $domainNetbiosString = $split[0]
+    $Name = $split[1]
+
+    # Well-Known SIDs cannot be translated with the Translate method so instead we will have used CIM to collect information on well-known SIDs
+    $SIDString = $AdsiServer.WellKnownSIDs[$Name].SID
+    if (-not $SIDString) {
+        if (
+            -not $KnownDomains[$domainNetbiosString] -and
+            -not [string]::IsNullOrEmpty($domainNetbiosString)
+        ) {
+            $KnownDomains[$domainNetbiosString] = ConvertTo-DistinguishedName -Domain $domainNetbiosString
+            Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`tCache miss for domain $($domainNetbiosString).  Adding its Distinguished Name to dictionary of known domains for future lookup"
+        }
+
+        $DomainDn = $KnownDomains[$domainNetbiosString]
+        $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDn
+
+        # Try to resolve the account locally against the server it came from (which may or may not be the correct ADSI server for the account)
+        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$Name')"
+        $NTAccount = [System.Security.Principal.NTAccount]::new($ServerName, $Name)
+        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerName','$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+        $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+
+        if (-not $SIDString) {
+            # Try to resolve the account against the domain indicated in its NT Account Name
+            # Add this domain to our list of known domains
+
+            try {
+                $SearchPath = "LDAP://$DomainDn" | Add-DomainFqdnToLdapPath
+                $DirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $SearchPath -Filter "(samaccountname=$Name)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')
+                $SIDString = (Add-SidInfo -InputObject $DirectoryEntry).SidString
+            } catch {
+                Write-Warning "$(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t$($StartingIdentityName) could not be resolved against its directory"
+                Write-Warning "$(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t$($_.Exception.Message)"
+            }
+
+            if (-not $SIDString) {
+
+                # Try to find the DirectoryEntry object directly on the server
+                $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerName/$Name"
+                $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache
+                $SIDString = (Add-SidInfo -InputObject $DirectoryEntry).SidString
+
+            }
+        }
+    }
+
+    return [PSCustomObject]@{
+        UnresolvedIdentityReference = $IdentityReference
         SIDString                   = $SIDString
     }
 
@@ -2014,6 +2154,8 @@ function Search-Directory {
 
     )
 
+    $ThisHostName = HOSTNAME.EXE
+
     $DirectoryEntryParameters = @{
         DirectoryEntryCache = $DirectoryEntryCache
     }
@@ -2030,6 +2172,7 @@ function Search-Directory {
 
     $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
+    Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t[System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath)'))"
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
 
     if ($Filter) {
@@ -2043,6 +2186,7 @@ function Search-Directory {
         $null = $DirectorySearcher.PropertiesToLoad.Add($Property)
     }
 
+    Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t[System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath)')).FindAll()"
     $SearchResultCollection = $DirectorySearcher.FindAll()
     # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
     # Error: Cannot access a disposed object.
@@ -2061,7 +2205,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','Add-Win32AccountToCache','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

@@ -13,7 +13,8 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ## SYNTAX
 
 ```
-Resolve-Ace [[-InputObject] <PSObject[]>] [[-KnownServers] <Hashtable>] [<CommonParameters>]
+Resolve-Ace [[-InputObject] <PSObject[]>] [[-KnownServers] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
+ [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -106,6 +107,23 @@ It provides no known benefit over the cross-platform equivalent \[System.Securit
 
 ## PARAMETERS
 
+### -DirectoryEntryCache
+Dictionary to cache directory entries to avoid redundant lookups
+
+Defaults to an empty thread-safe hashtable
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -InputObject
 Authorization Rule Collection of Access Control Entries from Discretionary Access Control Lists
 
@@ -133,6 +151,36 @@ Aliases:
 Required: False
 Position: 2
 Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsByCaption
+{{ Fill Win32AccountsByCaption Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsBySID
+{{ Fill Win32AccountsBySID Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

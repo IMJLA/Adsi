@@ -45,6 +45,8 @@ function Search-Directory {
 
     )
 
+    $ThisHostName = HOSTNAME.EXE
+
     $DirectoryEntryParameters = @{
         DirectoryEntryCache = $DirectoryEntryCache
     }
@@ -61,6 +63,7 @@ function Search-Directory {
 
     $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
+    Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t[System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath)'))"
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
 
     if ($Filter) {
@@ -74,6 +77,7 @@ function Search-Directory {
         $null = $DirectorySearcher.PropertiesToLoad.Add($Property)
     }
 
+    Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t[System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath)')).FindAll()"
     $SearchResultCollection = $DirectorySearcher.FindAll()
     # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
     # Error: Cannot access a disposed object.

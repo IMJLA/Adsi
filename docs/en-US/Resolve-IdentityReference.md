@@ -14,6 +14,8 @@ Use ADSI to lookup info about IdentityReferences from Access Control Entries tha
 
 ```
 Resolve-IdentityReference [[-IdentityReference] <String>] [[-ServerName] <String>] [[-AdsiServer] <PSObject>]
+ [[-KnownDomains] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
+ [[-Win32AccountsByCaption] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -48,6 +50,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DirectoryEntryCache
+Dictionary to cache directory entries to avoid redundant lookups
+
+Defaults to an empty thread-safe hashtable
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -IdentityReference
 IdentityReference from an Access Control Entry
 Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)
@@ -64,6 +83,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -KnownDomains
+{{ Fill KnownDomains Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ServerName
 Name of the directory server to use to resolve the IdentityReference
 
@@ -75,6 +109,36 @@ Aliases:
 Required: False
 Position: 2
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsByCaption
+{{ Fill Win32AccountsByCaption Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsBySID
+{{ Fill Win32AccountsBySID Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
