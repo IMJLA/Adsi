@@ -61,7 +61,8 @@ function Get-WinNTGroupMember {
                 # Maybe that could be a feature in the future
                 # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
                 $DirectoryMembers = & { $ThisDirEntry.Invoke('Members') } 2>$null
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members"
+
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
                 ForEach ($DirectoryMember in $DirectoryMembers) {
                     # The IADsGroup::Members method returns ComObjects
                     # But proper .Net objects are much easier to work with
@@ -69,17 +70,27 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
                     if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of $($Matches.Acct)"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
-                        if ($DomainsByNetbios[$MemberDomainNetbios] -and $MemberDomainNetbios -ne $SourceDomain) {
-                            $MemberDomainDn = $DomainsByNetbios[$MemberDomainNetbios].DistinguishedName
+                        $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
+                        if ($DomainCacheResult) {
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'# Domain NetBIOS cache hit for '$MemberDomainNetBios'"
+                            if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
+                                $MemberDomainDn = $DomainCacheResult.DistinguishedName
+                            }
+                        } else {
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'# Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is  $($Matches.Middle) and its name is $($Matches.Acct)"
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }
                         }
+                    } else {
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)'"
                     }
 
                     $MemberParams = @{
