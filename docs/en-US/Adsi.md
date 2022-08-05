@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.3
+Help Version: 3.0.4
 Locale: en-US
 ---
 
@@ -17,11 +17,6 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 ### [Add-SidInfo](Add-SidInfo.md)
 Add some useful properties to a DirectoryEntry object for easier access
 
-### [Add-Win32AccountToCache](Add-Win32AccountToCache.md)
-
-Add-Win32AccountToCache [[-SidCache] <hashtable>] [[-CaptionCache] <hashtable>] [[-AdsiServerCache] <hashtable>]
-
-
 ### [ConvertFrom-DirectoryEntry](ConvertFrom-DirectoryEntry.md)
 Convert a DirectoryEntry to a PSCustomObject
 
@@ -35,13 +30,18 @@ Convert a byte array to a string representation of its decimal format
 Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
-Convert a domain distinguishedName name to its FQDN
+Convert a domain distinguishedName name or NetBIOS name to its FQDN
 
 ### [ConvertTo-HexStringRepresentation](ConvertTo-HexStringRepresentation.md)
 Convert a SID from byte array format to a string representation of its hexadecimal format
 
 ### [ConvertTo-HexStringRepresentationForLDAPFilterString](ConvertTo-HexStringRepresentationForLDAPFilterString.md)
 Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
+
+### [ConvertTo-LDAPDomainNetBIOS](ConvertTo-LDAPDomainNetBIOS.md)
+
+ConvertTo-LDAPDomainNetBIOS [[-DomainFQDN] <string>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiServersByDns] <hashtable>] [[-DomainsByNetbios] <hashtable>]
+
 
 ### [ConvertTo-SidByteArray](ConvertTo-SidByteArray.md)
 Convert a SID from a string to binary format (byte array)

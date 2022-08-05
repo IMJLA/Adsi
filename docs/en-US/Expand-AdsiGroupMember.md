@@ -14,7 +14,8 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ```
 Expand-AdsiGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String[]>]
- [[-DirectoryEntryCache] <Hashtable>] [[-TrustedDomainSidNameMap] <Object>] [<CommonParameters>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-TrustedDomainSidNameMap] <Object>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -62,6 +63,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -PropertiesToLoad
 Properties of the group members to retrieve
 
@@ -86,8 +102,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
-Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
+Position: 5
+Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

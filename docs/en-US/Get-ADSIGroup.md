@@ -14,7 +14,7 @@ Get the directory entries for a group and its members using ADSI
 
 ```
 Get-AdsiGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesToLoad] <String[]>]
- [[-DirectoryEntryCache] <Hashtable>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -68,6 +68,21 @@ Aliases:
 Required: False
 Position: 1
 Default value: (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

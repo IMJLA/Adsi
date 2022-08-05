@@ -30,8 +30,10 @@ function Add-SidInfo {
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
         # Hashtable containing known domain SIDs as the keys and their names as the values
-        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
+        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios)
 
     )
 
@@ -40,6 +42,9 @@ function Add-SidInfo {
     process {
         ForEach ($Object in $InputObject) {
             $SID = $null
+            $SamAccountName = $null
+            $DomainObject = $null
+
             if ($null -eq $Object) { continue }
             elseif (
                 $null -ne $Object.objectSid.Value -and
@@ -50,22 +55,22 @@ function Add-SidInfo {
                 $Object.objectSid.Value.GetType().FullName -ne 'System.Management.Automation.PSMethod'
             ) {
                 [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid.Value, 0)
-            } elseif ($Object.Properties['objectSid'].Value) {
-                [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.Properties['objectSid'].Value, 0)
-            } elseif ($Object.Properties['objectSid']) {
-                [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]($Object.Properties['objectSid'] | ForEach-Object { $_ }), 0)
+            } elseif ($Object.Properties) {
+                if ($Object.Properties['objectSid'].Value) {
+                    [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.Properties['objectSid'].Value, 0)
+                } elseif ($Object.Properties['objectSid']) {
+                    [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]($Object.Properties['objectSid'] | ForEach-Object { $_ }), 0)
+                }
+                if ($Object.Properties['samaccountname']) {
+                    $SamAccountName = $Object.Properties['samaccountname']
+                } else {
+                    #DirectoryEntries from the WinNT provider for local accounts do not have a samaccountname attribute so we use name instead
+                    $SamAccountName = $Object.Properties['name']
+                }
             } elseif ($Object.objectSid) {
                 [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid, 0)
             }
 
-            if ($Object.Properties['samaccountname']) {
-                $SamAccountName = $Object.Properties['samaccountname']
-            } else {
-                #DirectoryEntries from the WinNT provider for local accounts do not have a samaccountname attribute so we use name instead
-                $SamAccountName = $Object.Properties['name']
-            }
-
-            $DomainObject = $null
             if ($Object.Domain.Sid) {
                 #if ($Object.Domain.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
                 # This would only have come from Add-SidInfo in the first place
@@ -76,7 +81,7 @@ function Add-SidInfo {
                 $DomainObject = $Object.Domain
                 #}
             }
-            if (!($DomainObject)) {
+            if (-not $DomainObject) {
                 # The SID of the domain is the SID of the user minus the last block of numbers
                 $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 
@@ -84,7 +89,7 @@ function Add-SidInfo {
                 $DomainObject = $TrustedDomainSidNameMap[$DomainSid]
             }
 
-            #Write-Debug "$SamAccountName`t$SID"
+            #Write-Debug -Message "$SamAccountName`t$SID"
 
             $Object |
             Add-Member -PassThru -Force @{

@@ -14,7 +14,8 @@ Get members of a group from the WinNT provider
 
 ```
 Get-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-DirectoryEntryCache] <Hashtable>]
- [[-PropertiesToLoad] <String[]>] [[-KnownDomains] <Object>] [<CommonParameters>]
+ [[-PropertiesToLoad] <String[]>] [[-DomainsByNetbios] <Hashtable>] [[-KnownDomains] <Object>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -63,6 +64,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -KnownDomains
 Hashtable of domain DNs
 
@@ -72,8 +88,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
-Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios)
+Position: 5
+Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -KeyByNetbios -DomainsByNetbios $DomainsByNetbios)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

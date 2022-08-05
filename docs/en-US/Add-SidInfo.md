@@ -13,7 +13,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 ## SYNTAX
 
 ```
-Add-SidInfo [[-InputObject] <Object>] [[-DirectoryEntryCache] <Hashtable>]
+Add-SidInfo [[-InputObject] <Object>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-TrustedDomainSidNameMap] <Object>] [<CommonParameters>]
 ```
 
@@ -50,6 +50,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -InputObject
 Expecting a \[System.DirectoryServices.DirectoryEntry\] from the LDAP or WinNT providers, or a \[PSCustomObject\] imitation from Get-DirectoryEntry.
 Must contain the objectSid property
@@ -75,8 +90,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
-Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
+Position: 4
+Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

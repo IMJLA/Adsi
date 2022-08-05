@@ -13,8 +13,10 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ## SYNTAX
 
 ```
-Resolve-Ace [[-InputObject] <PSObject[]>] [[-KnownServers] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
- [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [<CommonParameters>]
+Resolve-Ace [[-InputObject] <PSObject[]>] [[-AdsiServersByDns] <Hashtable>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
+ [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsBySID] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -107,6 +109,23 @@ It provides no known benefit over the cross-platform equivalent \[System.Securit
 
 ## PARAMETERS
 
+### -AdsiServersByDns
+Dictionary to cache known servers to avoid redundant lookups
+
+Defaults to an empty thread-safe hashtable
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups
 
@@ -124,6 +143,51 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByFqdn
+{{ Fill DomainsByFqdn Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 8
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySID
+{{ Fill DomainsBySID Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -InputObject
 Authorization Rule Collection of Access Control Entries from Discretionary Access Control Lists
 
@@ -136,22 +200,6 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -KnownServers
-Dictionary to cache known servers to avoid redundant lookups
-Defaults to an empty thread-safe hashtable
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: [hashtable]::Synchronized(@{})
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

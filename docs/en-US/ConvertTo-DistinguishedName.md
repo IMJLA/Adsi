@@ -12,8 +12,16 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ## SYNTAX
 
+### NetBIOS
 ```
-ConvertTo-DistinguishedName [-Domain] <String[]> [<CommonParameters>]
+ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
+ [-InputType <String>] [-OutputType <String>] [<CommonParameters>]
+```
+
+### FQDN
+```
+ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
+ [-OutputType <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -36,13 +44,94 @@ NetBIOS name of the domain
 
 ```yaml
 Type: System.String[]
-Parameter Sets: (All)
+Parameter Sets: NetBIOS
 Aliases:
 
 Required: True
-Position: 1
+Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DomainFQDN
+NetBIOS name of the domain
+
+```yaml
+Type: System.String[]
+Parameter Sets: FQDN
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: NetBIOS
+Aliases:
+
+Required: False
+Position: Named
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -InitType
+Type of initialization to be performed
+Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Init method (iads.h)
+https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_inittype_enum
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: ADS_NAME_INITTYPE_GC
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -InputType
+Format of the name of the directory object that will be used for the input
+Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Set method (iads.h)
+https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: ADS_NAME_TYPE_NT4
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -OutputType
+Format of the name of the directory object that will be used for the output
+Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
+https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: ADS_NAME_TYPE_1779
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

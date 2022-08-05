@@ -8,16 +8,25 @@ schema: 2.0.0
 # ConvertTo-Fqdn
 
 ## SYNOPSIS
-Convert a domain distinguishedName name to its FQDN
+Convert a domain distinguishedName name or NetBIOS name to its FQDN
 
 ## SYNTAX
 
+### DistinguishedName
 ```
-ConvertTo-Fqdn [[-DistinguishedName] <String[]>] [<CommonParameters>]
+ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DomainsByNetbios <Hashtable>] [-KnownDomains <Hashtable>]
+ [<CommonParameters>]
+```
+
+### NetBIOS
+```
+ConvertTo-Fqdn [-NetBIOS <String[]>] [-DomainsByNetbios <Hashtable>] [-KnownDomains <Hashtable>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses PowerShell's -replace operator to perform the conversion
+For the DistinguishedName parameter, uses PowerShell's -replace operator to perform the conversion
+For the NetBIOS parameter, uses ConvertTo-DistinguishedName to convert from NetBIOS to distinguishedName, then recursively calls this function to get the FQDN
 
 ## EXAMPLES
 
@@ -36,11 +45,56 @@ distinguishedName of the domain
 
 ```yaml
 Type: System.String[]
+Parameter Sets: DistinguishedName
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: Named
+Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -KnownDomains
+{{ Fill KnownDomains Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -NetBIOS
+NetBIOS name of the domain
+
+```yaml
+Type: System.String[]
+Parameter Sets: NetBIOS
+Aliases:
+
+Required: False
+Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False

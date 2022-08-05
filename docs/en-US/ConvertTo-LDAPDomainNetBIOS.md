@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Add-Win32AccountToCache
+# ConvertTo-LDAPDomainNetBIOS
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,8 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Add-Win32AccountToCache [[-SidCache] <Hashtable>] [[-CaptionCache] <Hashtable>]
- [[-AdsiServerCache] <Hashtable>]
+ConvertTo-LDAPDomainNetBIOS [[-DomainFQDN] <String>] [[-DirectoryEntryCache] <Hashtable>]
+ [[-DomainsByFqdn] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -31,8 +31,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -AdsiServerCache
-{{ Fill AdsiServerCache Description }}
+### -AdsiServersByDns
+{{ Fill AdsiServersByDns Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -40,14 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CaptionCache
-{{ Fill CaptionCache Description }}
+### -DirectoryEntryCache
+{{ Fill DirectoryEntryCache Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -61,8 +61,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -SidCache
-{{ Fill SidCache Description }}
+### -DomainFQDN
+{{ Fill DomainFQDN Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByFqdn
+{{ Fill DomainsByFqdn Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -70,7 +85,22 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

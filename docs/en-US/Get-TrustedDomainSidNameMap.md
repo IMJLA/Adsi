@@ -13,7 +13,8 @@ Returns a dictionary of trusted domains by the current computer
 ## SYNTAX
 
 ```
-Get-TrustedDomainSidNameMap [-KeyByNetbios] [[-DirectoryEntryCache] <Hashtable>]
+Get-TrustedDomainSidNameMap [-KeyByNetbios] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsBySID] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -50,6 +51,51 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByFqdn
+{{ Fill DomainsByFqdn Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySID
+{{ Fill DomainsBySID Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -KeyByNetbios
 Key the dictionary by the domain NetBIOS names instead of SIDs
 
@@ -72,5 +118,6 @@ Accept wildcard characters: False
 
 ### [System.Collections.Hashtable] The current domain trust relationships
 ## NOTES
+TODO: Audit usage of this function, have it return objects instead of hashtable, since it updates the threadsafe hashtables instead
 
 ## RELATED LINKS

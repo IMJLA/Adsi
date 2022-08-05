@@ -13,9 +13,10 @@ Use ADSI to lookup info about IdentityReferences from Access Control Entries tha
 ## SYNTAX
 
 ```
-Resolve-IdentityReference [[-IdentityReference] <String>] [[-ServerName] <String>] [[-AdsiServer] <PSObject>]
+Resolve-IdentityReference [-IdentityReference] <String> [[-ServerName] <String>] [[-AdsiServer] <PSObject>]
  [[-KnownDomains] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
- [[-Win32AccountsByCaption] <Hashtable>]
+ [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsBySID] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DomainsByFqdn] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -50,6 +51,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -AdsiServersByDns
+Dictionary to cache known servers to avoid redundant lookups
+
+Defaults to an empty thread-safe hashtable
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 11
+Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups
 
@@ -67,6 +85,51 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByFqdn
+{{ Fill DomainsByFqdn Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 10
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 9
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySID
+{{ Fill DomainsBySID Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 8
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -IdentityReference
 IdentityReference from an Access Control Entry
 Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)
@@ -76,7 +139,7 @@ Type: System.String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 1
 Default value: None
 Accept pipeline input: False
@@ -142,6 +205,9 @@ Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
+
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 

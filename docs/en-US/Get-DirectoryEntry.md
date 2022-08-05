@@ -14,7 +14,7 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ```
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
- [[-DirectoryEntryCache] <Hashtable>] [<CommonParameters>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -86,6 +86,21 @@ Aliases:
 Required: False
 Position: 1
 Default value: (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

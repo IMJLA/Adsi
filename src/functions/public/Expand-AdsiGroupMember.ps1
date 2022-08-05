@@ -29,8 +29,10 @@ function Expand-AdsiGroupMember {
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
         # Hashtable containing known domain SIDs as the keys and their names as the values
-        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache)
+        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios)
 
     )
 
@@ -45,7 +47,7 @@ function Expand-AdsiGroupMember {
             $i++
 
             #$status = ("$(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
-            #Write-Debug "  $status"
+            #Write-Debug -Message "  $status"
 
             $Principal = $null
 
@@ -61,11 +63,11 @@ function Expand-AdsiGroupMember {
 
                     #$Success = $true
                     #try {
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -DirectoryEntryCache $DirectoryEntryCache
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
                     #} catch {
                     #    $Success = $false
                     #    $Principal = $Entry
-                    #    Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
+                    #    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
                     #}
 
                     #if ($Success -eq $true) {
@@ -75,13 +77,17 @@ function Expand-AdsiGroupMember {
                     } catch {
                         #$Success = $false
                         $Principal = $Entry
-                        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
                     }
 
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
-                        Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
-                        $Principal = ($Principal | Get-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache).FullMembers | Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
+                        $Principal = (
+                            $Principal |
+                            Get-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
+                        ).FullMembers |
+                        Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap -DomainsByNetbios $DomainsByNetbios
 
                     }
 
@@ -93,7 +99,7 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
-            $Principal | Add-SidInfo -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap
+            Add-SidInfo -InputObject $Principal -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap -DomainsByNetbios $DomainsByNetbios
 
         }
     }

@@ -17,6 +17,8 @@ function Get-TrustedDomainSidNameMap {
         Get-TrustedDomainSidNameMap
 
         Get the trusted domains of the current computer
+        .NOTES
+        TODO: Audit usage of this function, have it return objects instead of hashtable, since it updates the threadsafe hashtables instead
     #>
     [OutputType([System.Collections.Hashtable])]
     param (
@@ -28,7 +30,13 @@ function Get-TrustedDomainSidNameMap {
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
         Uses a thread-safe hashtable by default
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$DomainsBySID = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
 
     )
 
@@ -49,7 +57,7 @@ function Get-TrustedDomainSidNameMap {
             continue
         }
 
-        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache
+        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
@@ -64,45 +72,41 @@ function Get-TrustedDomainSidNameMap {
             continue
         }
 
-        $DistinguishedName = ConvertTo-DistinguishedName -Domain $DomainNetbios
+        $DistinguishedName = ConvertTo-DistinguishedName -Domain $DomainNetbios -DomainsByNetbios $DomainsByNetbios
+        $OutputObject = [pscustomobject]@{
+            Dns               = $DomainDnsName
+            Netbios           = $DomainNetbios
+            Sid               = $DomainSid
+            DistinguishedName = $DistinguishedName
+        }
+        $DomainsBySID[$DomainSid] = $OutputObject
+        $DomainsByNetbios[$DomainNetbios] = $OutputObject
+        $DomainsByFqdn[$DomainDnsName] = $OutputObject
         if ($KeyByNetbios -eq $true) {
-            $Map[$DomainNetbios] = [pscustomobject]@{
-                Dns               = $DomainDnsName
-                Netbios           = $DomainNetbios
-                Sid               = $DomainSid
-                DistinguishedName = $DistinguishedName
-            }
+            $Map[$DomainNetbios] = $OutputObject
         } else {
-            $Map[$DomainSid] = [pscustomobject]@{
-                Dns               = $DomainDnsName
-                Netbios           = $DomainNetbios
-                Sid               = $DomainSid
-                DistinguishedName = $DistinguishedName
-            }
+            $Map[$DomainSid] = $OutputObject
         }
     }
 
     # Add the WinNT domain of the local computer as well
-    $LocalAccountSID = Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" |
-    Select-Object -First 1 -ExpandProperty SID
+    $LocalAccountSID = (Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'").SID[0]
     $DomainSid = $LocalAccountSID.Substring(0, $LocalAccountSID.LastIndexOf("-"))
     $DomainNetBios = hostname
     $DomainDnsName = "$DomainNetbios.$((Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters').'NV Domain')"
-
+    $OutputObject = [pscustomobject]@{
+        Dns               = $DomainDnsName
+        Netbios           = $DomainNetbios
+        Sid               = $DomainSid
+        DistinguishedName = $null
+    }
+    $DomainsBySID[$DomainSid] = $OutputObject
+    $DomainsByNetbios[$DomainNetbios] = $OutputObject
+    $DomainsByFqdn[$DomainDnsName] = $OutputObject
     if ($KeyByNetbios -eq $true) {
-        $Map[$DomainNetbios] = [pscustomobject]@{
-            Dns               = $DomainDnsName
-            Netbios           = $DomainNetbios
-            Sid               = $DomainSid
-            DistinguishedName = $null
-        }
+        $Map[$DomainNetbios] = $OutputObject
     } else {
-        $Map[$DomainSid] = [pscustomobject]@{
-            Dns               = $DomainDnsName
-            Netbios           = $DomainNetbios
-            Sid               = $DomainSid
-            DistinguishedName = $null
-        }
+        $Map[$DomainSid] = $OutputObject
     }
 
     return $Map

@@ -55,7 +55,9 @@ function Get-AdsiGroup {
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
         Uses a thread-safe hashtable by default
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{}))
 
     )
 
@@ -63,10 +65,12 @@ function Get-AdsiGroup {
         DirectoryEntryCache = $DirectoryEntryCache
         DirectoryPath       = $DirectoryPath
         PropertiesToLoad    = $PropertiesToLoad
+        DomainsByNetbios    = $DomainsByNetbios
     }
     $GroupMemberParams = @{
         DirectoryEntryCache = $DirectoryEntryCache
         PropertiesToLoad    = $PropertiesToLoad
+        DomainsByNetbios    = $DomainsByNetbios
     }
 
     switch -Regex ($DirectoryPath) {

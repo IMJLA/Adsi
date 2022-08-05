@@ -27,20 +27,34 @@ function Get-AdsiServer {
         [string[]]$AdsiServer,
 
         # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$KnownServers = [hashtable]::Synchronized(@{})
+        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
+
+        # Cache of known Win32_Account instances keyed by domain and SID
+        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
+        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{}))
 
     )
     process {
         ForEach ($ThisServer in $AdsiServer) {
-            if (!($KnownServers[$ThisServer])) {
+            if (-not $AdsiServersByDns[$ThisServer]) {
+                $AdsiProvider = $null
                 $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
-                $WellKnownSIDs = Get-WellKnownSid -CimServerName $ThisServer
-                $KnownServers[$ThisServer] = [pscustomobject]@{
-                    AdsiProvider  = $AdsiProvider
-                    WellKnownSIDs = $WellKnownSIDs
+                # Attempt to use CIM to populate the account caches with known instances of the Win32_Account class on $ThisServer
+                # Note: CIM is not expected to be reachable on domain controllers or other scenarios
+                # Because this does not interfere with returning the ADSI Server's PSCustomObject with the AdsiProvider, -ErrorAction SilentlyContinue was used
+                $null = Get-WellKnownSid -CimServerName $ThisServer -ErrorAction SilentlyContinue |
+                ForEach-Object {
+                    $Win32AccountsBySID["$($_.Domain)\$($_.SID)"] = $_
+                    $Win32AccountsByCaption["$($_.Domain)\$($_.Caption)"] = $_
+                }
+                $AdsiServersByDns[$ThisServer] = [pscustomobject]@{
+                    AdsiProvider = $AdsiProvider
+                    ServerName   = $ThisServer
                 }
             }
-            $KnownServers[$ThisServer]
+            $AdsiServersByDns[$ThisServer]
         }
     }
 }

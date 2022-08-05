@@ -17,6 +17,7 @@ function Get-WellKnownSid {
 
         Get the well-known SIDs on the remote computer 'server123'
     #>
+    [CmdletBinding()]
     [OutputType([Microsoft.Management.Infrastructure.CimInstance])]
     param (
         [Parameter(ValueFromPipeline)]
@@ -25,20 +26,18 @@ function Get-WellKnownSid {
     process {
         ForEach ($ThisServer in $CimServerName) {
             if ($ThisServer -eq (hostname) -or $ThisServer -eq 'localhost' -or $ThisServer -eq '127.0.0.1' -or [string]::IsNullOrEmpty($ThisServer)) {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tNew-CimSession"
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`t`$CimSession = New-CimSession"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession"
                 $CimSession = New-CimSession
+                $ThisServer = hostname
             } else {
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tNew-CimSession -ComputerName '$ThisServer'"
-                Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -ComputerName '$ThisServer'"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`t`$CimSession = New-CimSession -ComputerName '$ThisServer'"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession"
                 $CimSession = New-CimSession -ComputerName $ThisServer
             }
-            $Results = @{}
-            Get-CimInstance -ClassName Win32_Account -CimSession $CimSession |
-            ForEach-Object {
-                $Results[$_.Name] = $_
-            }
-            $Results
+
+            Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
+
             Remove-CimSession -CimSession $CimSession
         }
     }

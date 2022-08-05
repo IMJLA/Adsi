@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.4] - 2022-08-05 - Implemented broader caching, fixed many bugs
+
 ## [3.0.3] - 2022-08-01 - Improved caching in Resolve-IdentityReference (more improvements possible but this will do, pig)
 
 ## [3.0.2] - 2022-07-31 - Bug fix in ConvertFrom-DirectoryEntry

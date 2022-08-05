@@ -22,7 +22,9 @@ function Add-DomainFqdnToLdapPath {
 
         # Incomplete LDAP directory path containing a distinguishedName but lacking a server address
         [Parameter(ValueFromPipeline)]
-        [string[]]$DirectoryPath
+        [string[]]$DirectoryPath,
+
+        [hashtable]$DomainsByNetbios = [hashtable]::Synchronized(@{})
 
     )
     begin {
@@ -41,19 +43,19 @@ function Add-DomainFqdnToLdapPath {
                     $DomainDN = $null
                     $DomainFqdn = $null
                     $DomainDN = ([regex]::Matches($ThisPath, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
-                    $DomainFqdn = $DomainDN | ConvertTo-Fqdn
+                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -DomainsByNetbios $DomainsByNetbios
                     if ($ThisPath -match "LDAP:\/\/$DomainFqdn\/") {
-                        #Write-Debug "Domain FQDN already found in the directory path: $($ThisPath)"
+                        #Write-Debug -Message "Domain FQDN already found in the directory path: $($ThisPath)"
                         $FQDNPath = $ThisPath
                     } else {
                         $FQDNPath = $ThisPath -replace 'LDAP:\/\/', "LDAP://$DomainFqdn/"
                     }
                 } else {
-                    #Write-Debug "Domain DN not found in the directory path: $($ThisPath)"
+                    #Write-Debug -Message "Domain DN not found in the directory path: $($ThisPath)"
                     $FQDNPath = $ThisPath
                 }
             } else {
-                #Write-Debug "Not an expected directory path: $($ThisPath)"
+                #Write-Debug -Message "Not an expected directory path: $($ThisPath)"
                 $FQDNPath = $ThisPath
             }
 

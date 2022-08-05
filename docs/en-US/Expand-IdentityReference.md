@@ -14,7 +14,8 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ```
 Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [-NoGroupMembers]
- [[-DirectoryEntryCache] <Hashtable>] [[-IdentityReferenceCache] <Hashtable>] [<CommonParameters>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-IdentityReferenceCache] <Hashtable>] [[-DomainsBySID] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -61,6 +62,36 @@ Aliases:
 
 Required: False
 Position: 2
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySID
+{{ Fill DomainsBySID Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -13,7 +13,7 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 ## SYNTAX
 
 ```
-Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [<CommonParameters>]
+Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [[-DomainsByNetbios] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,6 +46,21 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
