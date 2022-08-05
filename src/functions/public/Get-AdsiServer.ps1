@@ -44,7 +44,7 @@ function Get-AdsiServer {
                 # Attempt to use CIM to populate the account caches with known instances of the Win32_Account class on $ThisServer
                 # Note: CIM is not expected to be reachable on domain controllers or other scenarios
                 # Because this does not interfere with returning the ADSI Server's PSCustomObject with the AdsiProvider, -ErrorAction SilentlyContinue was used
-                $null = Get-WellKnownSid -CimServerName $ThisServer -ErrorAction SilentlyContinue |
+                $null = Get-WellKnownSid -CimServerName $ThisServer -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue |
                 ForEach-Object {
                     $Win32AccountsBySID["$($_.Domain)\$($_.SID)"] = $_
                     $Win32AccountsByCaption["$($_.Domain)\$($_.Caption)"] = $_

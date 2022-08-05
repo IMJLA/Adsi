@@ -81,7 +81,7 @@ function ConvertTo-DistinguishedName {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache hit for '$ThisDomain'"
                 ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns
             } else {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
                 $IADsNameTranslateComObject = New-Object -comObject "NameTranslate"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"

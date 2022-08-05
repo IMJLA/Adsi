@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.6] - 2022-08-05 - Added missing cache param on get-adsiserver
+
 ## [3.0.5] - 2022-08-05 - Latest build
 
 ## [3.0.4] - 2022-08-05 - Implemented broader caching, fixed many bugs

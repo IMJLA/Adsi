@@ -72,8 +72,8 @@ function Get-WinNTGroupMember {
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
-                        if ($KnownDomains[$MemberDomainNetbios] -and $MemberDomainNetbios -ne $SourceDomain) {
-                            $MemberDomainDn = $KnownDomains[$MemberDomainNetbios].DistinguishedName
+                        if ($DomainsByNetbios[$MemberDomainNetbios] -and $MemberDomainNetbios -ne $SourceDomain) {
+                            $MemberDomainDn = $DomainsByNetbios[$MemberDomainNetbios].DistinguishedName
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {

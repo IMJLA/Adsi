@@ -343,7 +343,7 @@ function ConvertTo-DistinguishedName {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache hit for '$ThisDomain'"
                 ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns
             } else {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
                 $IADsNameTranslateComObject = New-Object -comObject "NameTranslate"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"
@@ -1339,7 +1339,7 @@ function Get-AdsiServer {
                 # Attempt to use CIM to populate the account caches with known instances of the Win32_Account class on $ThisServer
                 # Note: CIM is not expected to be reachable on domain controllers or other scenarios
                 # Because this does not interfere with returning the ADSI Server's PSCustomObject with the AdsiProvider, -ErrorAction SilentlyContinue was used
-                $null = Get-WellKnownSid -CimServerName $ThisServer -ErrorAction SilentlyContinue |
+                $null = Get-WellKnownSid -CimServerName $ThisServer -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue |
                 ForEach-Object {
                     $Win32AccountsBySID["$($_.Domain)\$($_.SID)"] = $_
                     $Win32AccountsByCaption["$($_.Domain)\$($_.Caption)"] = $_
@@ -1770,8 +1770,8 @@ function Get-WinNTGroupMember {
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
-                        if ($KnownDomains[$MemberDomainNetbios] -and $MemberDomainNetbios -ne $SourceDomain) {
-                            $MemberDomainDn = $KnownDomains[$MemberDomainNetbios].DistinguishedName
+                        if ($DomainsByNetbios[$MemberDomainNetbios] -and $MemberDomainNetbios -ne $SourceDomain) {
+                            $MemberDomainDn = $DomainsByNetbios[$MemberDomainNetbios].DistinguishedName
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
@@ -2669,6 +2669,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-LDAPDomainNetBIOS','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
