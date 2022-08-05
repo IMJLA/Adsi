@@ -13,7 +13,9 @@ Use CIM to get well-known SIDs
 ## SYNTAX
 
 ```
-Get-WellKnownSid [[-CimServerName] <String[]>] [<CommonParameters>]
+Get-WellKnownSid [[-CimServerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
+ [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-AdsiServersByDns] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -37,6 +39,21 @@ Get the well-known SIDs on the remote computer 'server123'
 
 ## PARAMETERS
 
+### -AdsiServersByDns
+Cache of known directory servers to reduce duplicate queries
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -CimServerName
 {{ Fill CimServerName Description }}
 
@@ -49,6 +66,68 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DomainsByFqdn
+{{ Fill DomainsByFqdn Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsByNetbios
+{{ Fill DomainsByNetbios Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsByCaption
+Cache of known Win32_Account instances keyed by domain (e.g.
+CONTOSO) and Caption (NTAccount name e.g.
+CONTOSO\User1)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsBySID
+Cache of known Win32_Account instances keyed by domain and SID
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

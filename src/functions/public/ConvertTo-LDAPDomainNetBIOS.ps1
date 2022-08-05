@@ -15,7 +15,7 @@ function ConvertTo-LDAPDomainNetBIOS {
         [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{}))
-        
+
     )
 
     $DomainCacheResult = $DomainsByFqdn[$DomainFQDN]
