@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.8] - 2022-08-05 - Caching fix in Resolve-IdentityReference
+
 ## [3.0.7] - 2022-08-05 - Bug fix in Get-WinNTGroupMember when detecting domain vs local users
 
 ## [3.0.6] - 2022-08-05 - Added missing cache param on get-adsiserver
