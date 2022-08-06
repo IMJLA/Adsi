@@ -43,7 +43,7 @@ function Expand-WinNTGroupMember {
 
             } else {
 
-                if ($ThisEntry.SchemaClassName -contains 'group') {
+                if ($ThisEntry.SchemaClassName -eq 'group') {
                     Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t'$($ThisEntry.Path)' is a WinNT group"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {

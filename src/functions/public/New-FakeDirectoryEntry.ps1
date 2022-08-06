@@ -44,7 +44,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'User'
+            $Properties['SchemaClassName'] = 'user'
         }
         'SYSTEM$' {
             $Properties['objectSid'] = 'S-1-5-18' | ConvertTo-SidByteArray
@@ -54,7 +54,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'User'
+            $Properties['SchemaClassName'] = 'user'
         }
         'INTERACTIVE$' {
             $Properties['objectSid'] = 'S-1-5-4' | ConvertTo-SidByteArray
@@ -64,7 +64,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'Group'
+            $Properties['SchemaClassName'] = 'group'
         }
         'Authenticated Users$' {
             $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
@@ -74,7 +74,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'Group'
+            $Properties['SchemaClassName'] = 'group'
         }
         'TrustedInstaller$' {
             $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
@@ -84,7 +84,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'User'
+            $Properties['SchemaClassName'] = 'user'
         }
     }
 

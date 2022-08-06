@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.11] - 2022-08-05 - bugfixes and readability improvements
+
 ## [3.0.10] - 2022-08-05 - bugfix in expand-identityreference, needed FullMembers property of Get-AdsiGroupMember output
 
 ## [3.0.9] - 2022-08-05 - Readability improvements

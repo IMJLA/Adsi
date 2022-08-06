@@ -928,7 +928,7 @@ function Expand-IdentityReference {
 
                     if (
                         $DirectoryEntry.Properties['objectClass'] -contains 'group' -or
-                        $DirectoryEntry.SchemaClassName -contains 'Group'
+                        $DirectoryEntry.SchemaClassName -eq 'group'
                     ) {
                         $ObjectType = 'Group'
                     } else {
@@ -937,7 +937,10 @@ function Expand-IdentityReference {
 
                     if ($NoGroupMembers -eq $false) {
 
-                        if ($DirectoryEntry.Properties['objectClass'] -contains 'group') {
+                        if (
+                            $DirectoryEntry.Properties['objectClass'] -contains 'group' -or
+                            $DirectoryEntry.SchemaClassName -eq 'group'
+                        ) {
 
                             # Retrieve the members of groups from the LDAP provider
                             #$Members = (Get-AdsiGroup -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $DirectoryEntry.Path -DomainsByNetbios $DomainsByNetbios).FullMembers
@@ -1058,7 +1061,7 @@ function Expand-WinNTGroupMember {
 
             } else {
 
-                if ($ThisEntry.SchemaClassName -contains 'group') {
+                if ($ThisEntry.SchemaClassName -eq 'group') {
                     Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t'$($ThisEntry.Path)' is a WinNT group"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
@@ -1782,7 +1785,7 @@ function Get-WinNTGroupMember {
         ForEach ($ThisDirEntry in $DirectoryEntry) {
             $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
             # Retrieve the members of local groups
-            if ($null -ne $ThisDirEntry.Properties['groupType'] -or $ThisDirEntry.schemaclassname -contains 'Group') {
+            if ($null -ne $ThisDirEntry.Properties['groupType'] -or $ThisDirEntry.schemaclassname -eq 'group') {
                 # Assembly: System.DirectoryServices.dll
                 # Namespace: System.DirectoryServices
                 # DirectoryEntry.Invoke(String, Object[]) Method
@@ -1965,7 +1968,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'User'
+            $Properties['SchemaClassName'] = 'user'
         }
         'SYSTEM$' {
             $Properties['objectSid'] = 'S-1-5-18' | ConvertTo-SidByteArray
@@ -1975,7 +1978,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'User'
+            $Properties['SchemaClassName'] = 'user'
         }
         'INTERACTIVE$' {
             $Properties['objectSid'] = 'S-1-5-4' | ConvertTo-SidByteArray
@@ -1985,7 +1988,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'Group'
+            $Properties['SchemaClassName'] = 'group'
         }
         'Authenticated Users$' {
             $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
@@ -1995,7 +1998,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'Group'
+            $Properties['SchemaClassName'] = 'group'
         }
         'TrustedInstaller$' {
             $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
@@ -2005,7 +2008,7 @@ function New-FakeDirectoryEntry {
                 Description = $Description
                 objectSid   = $SidByteAray
             }
-            $Properties['SchemaClassName'] = 'User'
+            $Properties['SchemaClassName'] = 'user'
         }
     }
 
@@ -2729,6 +2732,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-LDAPDomainNetBIOS','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
