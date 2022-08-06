@@ -277,7 +277,7 @@ function Expand-IdentityReference {
 
                             # Retrieve the members of groups from the LDAP provider
                             #$Members = (Get-AdsiGroup -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $DirectoryEntry.Path -DomainsByNetbios $DomainsByNetbios).FullMembers
-                            $Members = Get-AdsiGroupMember -Group $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
+                            $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios).FullMembers
 
                         } else {
 
