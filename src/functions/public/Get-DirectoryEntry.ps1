@@ -74,6 +74,8 @@ function Get-DirectoryEntry {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
+            # This is also invoked when DirectoryPath is null for any reason
+            # We will return a WinNT object representing the local computer's WinNT directory
             '^$' {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t$(hostname) does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
                 $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
@@ -94,7 +96,7 @@ function Get-DirectoryEntry {
                 Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
             }
-            # Otherwise the DirectoryPath is an LDAP path
+            # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
             default {
 
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
