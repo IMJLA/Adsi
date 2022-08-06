@@ -89,7 +89,9 @@ function Get-AdsiGroupMember {
 
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-AdsiGroupMember`t$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
 
-            $ProcessedGroupMembers = $CurrentADGroupMembers | Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap -DomainsByNetbios $DomainsByNetbios
+            $ProcessedGroupMembers = $CurrentADGroupMembers |
+            Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap -DomainsByNetbios $DomainsByNetbios
+
             $ThisGroup |
             Add-Member -MemberType NoteProperty -Name FullMembers -Value $ProcessedGroupMembers -Force -PassThru
 

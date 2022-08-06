@@ -70,7 +70,7 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
                     if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of $($Matches.Acct)"
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
@@ -84,7 +84,7 @@ function Get-WinNTGroupMember {
                             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'# Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is  $($Matches.Middle) and its name is $($Matches.Acct)"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }

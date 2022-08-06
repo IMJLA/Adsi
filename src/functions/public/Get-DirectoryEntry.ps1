@@ -90,7 +90,8 @@ function Get-DirectoryEntry {
                 Select-Object -First 1 |
                 Add-SidInfo -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
 
-                $DirectoryEntry | Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+                $DirectoryEntry |
+                Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
             }
             # Otherwise the DirectoryPath is an LDAP path

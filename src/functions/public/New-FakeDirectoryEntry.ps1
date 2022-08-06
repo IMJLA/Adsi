@@ -89,7 +89,10 @@ function New-FakeDirectoryEntry {
     }
 
     $DirectoryEntry = [pscustomobject]::new($Properties)
-    $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+
+    $DirectoryEntry |
+    Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+
     return $DirectoryEntry
 
 }

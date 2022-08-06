@@ -749,6 +749,15 @@ function Expand-IdentityReference {
                 $DirectoryEntry = $null
                 $Members = $null
 
+                $GetDirectoryEntryParams = @{
+                    DirectoryEntryCache = $DirectoryEntryCache
+                    DomainsByNetbios    = $DomainsByNetbios
+                }
+                $SearchDirectoryParams = @{
+                    DirectoryEntryCache = $DirectoryEntryCache
+                    DomainsByNetbios    = $DomainsByNetbios
+                }
+
                 $StartingIdentityName = $ThisIdentity.Name
                 $split = $StartingIdentityName.Split('\')
                 $domainNetbiosString = $split[0]
@@ -760,20 +769,34 @@ function Expand-IdentityReference {
                 ) {
                     Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) is a domain security principal"
 
-                    # Add this domain to our list of known domains
-                    if (
-                        -not $KnownDomains[$domainNetbiosString] -and
-                        -not [string]::IsNullOrEmpty($domainNetbiosString)
-                    ) {
-                        $KnownDomains[$domainNetbiosString] = ConvertTo-DistinguishedName -Domain $domainNetbiosString -DomainsByNetbios $DomainsByNetbios
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tCache miss for domain $($domainNetbiosString).  Adding its Distinguished Name to dictionary of known domains for future lookup"
+                    $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
+                    if ($DomainNetbiosCacheResult) {
+                        $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
+                        $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
+                    } else {
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tDomain NetBIOS cache miss for '$($domainNetbiosString)'"
+                        if ( -not [string]::IsNullOrEmpty($domainNetbiosString) ) {
+                            $DomainDn = ConvertTo-DistinguishedName -Domain $domainNetbiosString -DomainsByNetbios $DomainsByNetbios
+                        }
+                        $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$domainNetbiosString" -DomainsByNetbios $DomainsByNetbios
                     }
 
                     # Search the domain for the principal
-                    $DomainDn = $KnownDomains[$domainNetbiosString]
+                    $SearchDirectoryParams['Filter'] = "(samaccountname=$Name)"
+                    $SearchDirectoryParams['PropertiesToLoad'] = @(
+                        'objectClass',
+                        'distinguishedName',
+                        'name',
+                        'grouptype',
+                        'description',
+                        'managedby',
+                        'member',
+                        'objectClass',
+                        'Department',
+                        'Title'
+                    )
                     try {
-                        $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn" -DomainsByNetbios $DomainsByNetbios
-                        $DirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $SearchPath -Filter "(samaccountname=$Name)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title') -DomainsByNetbios $DomainsByNetbios
+                        $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
                         Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) could not be resolved against its directory"
                         Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($_.Exception.Message)"
@@ -785,11 +808,15 @@ function Expand-IdentityReference {
                     # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
                     $DomainDN = $CurrentDomain.distinguishedName.Value
                     $DomainFQDN = $DomainDN | ConvertTo-Fqdn
-                    $PartitionsPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://cn=partitions,cn=configuration,$DomainDn" -DomainsByNetbios $DomainsByNetbios
-                    $DomainCrossReference = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $PartitionsPath -Filter "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))" -PropertiesToLoad netbiosname -DomainsByNetbios $DomainsByNetbios
+
+                    $SearchDirectoryParams['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
+                    $SearchDirectoryParams['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
+                    $SearchDirectoryParams['PropertiesToLoad'] = 'netbiosname'
+
+                    $DomainCrossReference = Search-Directory @SearchDirectoryParams
                     if ($DomainCrossReference.Properties ) {
                         Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tThe domain '$DomainFQDN' is online"
-                        $domainNetbiosString = $DomainCrossReference.Properties['netbiosname']
+                        [string]$domainNetbiosString = $DomainCrossReference.Properties['netbiosname']
                         # TODO: The domain is online, so let's see if any domain trusts have issues?  Determine if SID is foreign security principal?
                         # TODO: What if the foreign security principal exists but the corresponding domain trust is down?  Don't want to recommend deletion of the ACE in that case.
                     }
@@ -797,8 +824,22 @@ function Expand-IdentityReference {
                     $SidBytes = [byte[]]::new($SidObject.BinaryLength)
                     $null = $SidObject.GetBinaryForm($SidBytes, 0)
                     $ObjectSid = ConvertTo-HexStringRepresentationForLDAPFilterString -SIDByteArray $SidBytes
+                    $SearchDirectoryParams['DirectoryPath'] = "LDAP://$DomainFQDN/$DomainDn"
+                    $SearchDirectoryParams['Filter'] = "(objectsid=$ObjectSid)"
+                    $SearchDirectoryParams['PropertiesToLoad'] = @(
+                        'objectClass',
+                        'distinguishedName',
+                        'name',
+                        'grouptype',
+                        'description',
+                        'managedby',
+                        'member',
+                        'objectClass',
+                        'Department',
+                        'Title'
+                    )
                     try {
-                        $DirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath "LDAP://$DomainDn" -Filter "(objectsid=$ObjectSid)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title') -DomainsByNetbios $DomainsByNetbios
+                        $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
                         Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) could not be resolved against its directory"
                         Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($_.Exception.Message)"
@@ -819,75 +860,71 @@ function Expand-IdentityReference {
 
                     if ($null -eq $name) { $name = $StartingIdentityName }
 
-                    if ($name -match 'S-\d+-\d+-\d+-\d+-\d+\-\d+\-\d+') {
-                        if ($Domains.Count -gt 1) {
-                            $DirectoryEntry = ForEach ($domainNetbiosString in $Domains) {
+                    if ($name -like "S-1-*") {
 
-                                try {
-                                    $UsersGroup = Get-DirectoryEntry -DirectoryPath "WinNT://$domainNetbiosString/Users,group" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-                                } catch {
-                                    Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tCould not connect to $domainNetbiosString using PSRemoting"
-                                    Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$_"
-                                }
-                                $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-                                $MembersOfUsersGroup | Where-Object -FilterScript { ($name -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
-                                $ThisIdentity = [pscustomobject]@{
-                                    Count = $(($ThisIdentityGroup | Measure-Object).Count)
-                                    Name  = "$domainNetbiosString\" + $DirectoryEntry.Name
-                                    Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $domainNetbiosString }
-                                    #####Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.Path -split '\\')[2] -eq $domainNetbiosString }
-                                }
+                        # The SID of the domain is the SID of the user minus the last block of numbers
+                        $DomainSid = $name.Substring(0, $name.LastIndexOf("-"))
 
-                            }
-
-                        }
-
-                        else {
-
-                            try {
-                                $UsersGroup = Get-DirectoryEntry -DirectoryPath "WinNT://$domainNetbiosString/Users,group" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-                            } catch {
-                                Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tCould not connect to $domainNetbiosString using PSRemoting"
-                                Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$_"
-                            }
-                            $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-                            $DirectoryEntry = $MembersOfUsersGroup | Where-Object -FilterScript { ($name -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
-                            $ThisIdentity = [pscustomobject]@{
-                                Count = $(($ThisIdentityGroup | Measure-Object).Count)
-                                Name  = "$domainNetbiosString\" + $DirectoryEntry.Name
-                                Group = $ThisIdentityGroup
-                            }
-
-                        }
-
-                    }
-
-                    else {
-                        if ($Domains.Count -gt 1) {
-                            $DirectoryEntry = ForEach ($domainNetbiosString in $Domains) {
-                                $DirectoryPath = "WinNT://$domainNetbiosString/$name"
-                                try {
-                                    Get-DirectoryEntry -DirectoryPath $DirectoryPath -PropertiesToLoad members -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-                                } catch {
-                                    Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryPath) could not be resolved"
-                                }
-                            }
+                        # Lookup other information about the domain using its SID as the key
+                        $DomainObject = $DomainsBySID[$DomainSid]
+                        if ($DomainObject) {
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users,group"
+                            $domainNetbiosString = $DomainObject.Netbios
                         } else {
-                            $DirectoryPath = "WinNT://$domainNetbiosString/$name"
-                            try {
-                                $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -PropertiesToLoad members -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-                            } catch {
-                                Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryPath) could not be resolved"
-                            }
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$domainNetbiosString/Users,group"
+                        }
 
+                        try {
+                            $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams
+                        } catch {
+                            Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tCould not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting"
+                            Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$_"
+                        }
+                        $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
+
+                        $DirectoryEntry = $MembersOfUsersGroup |
+                        Where-Object -FilterScript { ($name -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
+
+                        if ($DirectoryEntry.Name) {
+                            $AccountName = $DirectoryEntry.Name
+                        } else {
+                            if ($DirectoryEntry.Properties) {
+                                if ($DirectoryEntry.Properties['name'].Value) {
+                                    $AccountName = $DirectoryEntry.Properties['name'].Value
+                                } else {
+                                    $AccountName = $DirectoryEntry.Properties['name']
+                                }
+                            }
+                        }
+
+                        $ThisIdentity = [pscustomobject]@{
+                            Count = $(($ThisIdentityGroup | Measure-Object).Count)
+                            Name  = "$domainNetbiosString\" + $AccountName
+                            Group = $ThisIdentityGroup
+                            # Unclear why this was filtered so I have removed it to see what happens
+                            #Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $domainNetbiosString } # Should be already Resolved to a UNC path so it reflects the server name
+                        }
+
+                    } else {
+                        $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
+                        if ($DomainNetbiosCacheResult) {
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$name"
+                        } else {
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$domainNetbiosString/$name"
+                        }
+                        try {
+                            $GetDirectoryEntryParams['PropertiesToLoad'] = 'members'
+                            $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
+                        } catch {
+                            Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($GetDirectoryEntryParams['DirectoryPath']) could not be resolved"
                         }
                     }
-
                 }
 
                 $ObjectType = $null
                 if ($null -ne $DirectoryEntry) {
-                    $ThisIdentity | Add-Member -Name 'DirectoryEntry' -Value $DirectoryEntry -MemberType NoteProperty -Force
+                    $ThisIdentity |
+                    Add-Member -Name 'DirectoryEntry' -Value $DirectoryEntry -MemberType NoteProperty -Force
 
                     if (
                         $DirectoryEntry.Properties['objectClass'] -contains 'group' -or
@@ -921,13 +958,15 @@ function Expand-IdentityReference {
 
                                 if ($_.Domain) {
 
-                                    $_ | Add-Member -Force -NotePropertyMembers @{
+                                    $_ |
+                                    Add-Member -Force -NotePropertyMembers @{
                                         Group = $ThisIdentityGroup
                                     }
 
                                 } else {
 
-                                    $_ | Add-Member -Force -NotePropertyMembers @{
+                                    $_ |
+                                    Add-Member -Force -NotePropertyMembers @{
                                         Group  = $ThisIdentityGroup
                                         Domain = [pscustomobject]@{
                                             Dns     = $domainNetbiosString
@@ -947,7 +986,9 @@ function Expand-IdentityReference {
                 } else {
                     Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) could not be matched to a DirectoryEntry"
                 }
-                $ThisIdentity | Add-Member -Force -NotePropertyMembers @{
+
+                $ThisIdentity |
+                Add-Member -Force -NotePropertyMembers @{
                     DomainDn      = $DomainDn
                     DomainNetbios = $DomainNetBiosString
                     ObjectType    = $ObjectType
@@ -1285,7 +1326,9 @@ function Get-AdsiGroupMember {
 
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-AdsiGroupMember`t$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
 
-            $ProcessedGroupMembers = $CurrentADGroupMembers | Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap -DomainsByNetbios $DomainsByNetbios
+            $ProcessedGroupMembers = $CurrentADGroupMembers |
+            Expand-AdsiGroupMember -DirectoryEntryCache $DirectoryEntryCache -TrustedDomainSidNameMap $TrustedDomainSidNameMap -DomainsByNetbios $DomainsByNetbios
+
             $ThisGroup |
             Add-Member -MemberType NoteProperty -Name FullMembers -Value $ProcessedGroupMembers -Force -PassThru
 
@@ -1466,7 +1509,8 @@ function Get-DirectoryEntry {
                 Select-Object -First 1 |
                 Add-SidInfo -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
 
-                $DirectoryEntry | Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+                $DirectoryEntry |
+                Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
             }
             # Otherwise the DirectoryPath is an LDAP path
@@ -1768,7 +1812,7 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
                     if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of $($Matches.Acct)"
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
@@ -1782,7 +1826,7 @@ function Get-WinNTGroupMember {
                             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'# Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is  $($Matches.Middle) and its name is $($Matches.Acct)"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WinNTGroupMember`t'$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }
@@ -1966,7 +2010,10 @@ function New-FakeDirectoryEntry {
     }
 
     $DirectoryEntry = [pscustomobject]::new($Properties)
-    $DirectoryEntry | Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+
+    $DirectoryEntry |
+    Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
+
     return $DirectoryEntry
 
 }
@@ -2682,6 +2729,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-LDAPDomainNetBIOS','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
