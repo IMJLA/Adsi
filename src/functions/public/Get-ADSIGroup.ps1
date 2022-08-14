@@ -76,14 +76,14 @@ function Get-AdsiGroup {
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
-            Get-DirectoryEntry @GroupParams |
-            Get-WinNTGroupMember @GroupMemberParams
+            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
+            $FullMembers = Get-WinNTGroupMember @GroupMemberParams
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
-            Get-DirectoryEntry @GroupParams |
-            Get-WinNTGroupMember @GroupMemberParams
+            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
+            $FullMembers = Get-WinNTGroupMember @GroupMemberParams
         }
         default {
             if ($GroupName) {
@@ -91,9 +91,11 @@ function Get-AdsiGroup {
             } else {
                 $GroupParams['Filter'] = "(objectClass=group)"
             }
-            Search-Directory @GroupParams |
-            Get-AdsiGroupMember @GroupMemberParams
+            $GroupMemberParams['Group'] = Search-Directory @GroupParams
+            $FullMembers = Get-AdsiGroupMember @GroupMemberParams
         }
     }
+
+    $FullMembers
 
 }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.13] - 2022-08-14 - changes to expand-identityreference
+
 ## [3.0.12] - 2022-08-06 - bugfix for winnt groups in expand-identityreference
 
 ## [3.0.11] - 2022-08-05 - bugfixes and readability improvements

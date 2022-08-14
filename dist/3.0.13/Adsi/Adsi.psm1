@@ -771,6 +771,7 @@ function Expand-IdentityReference {
 
                     $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
                     if ($DomainNetbiosCacheResult) {
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tDomain NetBIOS cache hit for '$($domainNetbiosString)'"
                         $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                         $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
                     } else {
@@ -850,14 +851,6 @@ function Expand-IdentityReference {
 
                     Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) is a local security principal or unresolved SID"
 
-                    # Determine if SID belongs to current domain
-                    $IdentityDomainSID = $StartingIdentityName.Substring(0, $StartingIdentityName.LastIndexOf("-"))
-                    if ($IdentityDomainSID -eq $CurrentDomainSID) {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
-                    } else {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
-                    }
-
                     if ($null -eq $name) { $name = $StartingIdentityName }
 
                     if ($name -like "S-1-*") {
@@ -865,6 +858,13 @@ function Expand-IdentityReference {
 
                         # The SID of the domain is the SID of the user minus the last block of numbers
                         $DomainSid = $name.Substring(0, $name.LastIndexOf("-"))
+
+                        # Determine if SID belongs to current domain
+                        if ($DomainSid -eq $CurrentDomainSID) {
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
+                        } else {
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
+                        }
 
                         # Lookup other information about the domain using its SID as the key
                         $DomainObject = $DomainsBySID[$DomainSid]
@@ -1220,14 +1220,14 @@ function Get-AdsiGroup {
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
-            Get-DirectoryEntry @GroupParams |
-            Get-WinNTGroupMember @GroupMemberParams
+            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
+            $FullMembers = Get-WinNTGroupMember @GroupMemberParams
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
-            Get-DirectoryEntry @GroupParams |
-            Get-WinNTGroupMember @GroupMemberParams
+            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
+            $FullMembers = Get-WinNTGroupMember @GroupMemberParams
         }
         default {
             if ($GroupName) {
@@ -1235,10 +1235,12 @@ function Get-AdsiGroup {
             } else {
                 $GroupParams['Filter'] = "(objectClass=group)"
             }
-            Search-Directory @GroupParams |
-            Get-AdsiGroupMember @GroupMemberParams
+            $GroupMemberParams['Group'] = Search-Directory @GroupParams
+            $FullMembers = Get-AdsiGroupMember @GroupMemberParams
         }
     }
+
+    $FullMembers
 
 }
 function Get-AdsiGroupMember {
@@ -2737,6 +2739,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-LDAPDomainNetBIOS','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
