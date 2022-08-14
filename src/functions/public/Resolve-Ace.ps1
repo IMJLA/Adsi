@@ -129,7 +129,7 @@ function Resolve-Ace {
             $IdentityReference = $ThisACE.IdentityReference.ToString()
 
             if ([string]::IsNullOrEmpty($IdentityReference)) {
-                return
+                continue
             }
 
             $ThisServerDns = $null
@@ -223,6 +223,7 @@ function Resolve-Ace {
                 AdsiServersByDns       = $AdsiServersByDns
                 DomainsByFqdn          = $DomainsByFqdn
             }
+            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`tResolve-IdentityReference -IdentityReference '$IdentityReference'..."
             $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
 
             # not sure if I should add a param to offer DNS instead of NetBIOS

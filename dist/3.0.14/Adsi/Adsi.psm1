@@ -743,7 +743,7 @@ function Expand-IdentityReference {
 
             if ($null -eq $IdentityReferenceCache[$ThisIdentity.Name]) {
 
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tIdentityReferenceCache miss for '$($ThisIdentity.Name)'"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # IdentityReferenceCache miss for '$($ThisIdentity.Name)'"
 
                 $DomainDN = $null
                 $DirectoryEntry = $null
@@ -849,7 +849,7 @@ function Expand-IdentityReference {
 
                 } else {
 
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) is a local security principal or unresolved SID"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($StartingIdentityName) is a local security principal or unresolved SID"
 
                     if ($null -eq $name) { $name = $StartingIdentityName }
 
@@ -907,7 +907,7 @@ function Expand-IdentityReference {
                         }
 
                     } else {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) is a local security principal"
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($StartingIdentityName) is a local security principal"
                         $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
                         if ($DomainNetbiosCacheResult) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$name"
@@ -945,13 +945,13 @@ function Expand-IdentityReference {
                             $DirectoryEntry.Properties['objectClass'] -contains 'group'
                         ) {
                             # Retrieve the members of groups from the LDAP provider
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryEntry.Path) is an LDAP security principal"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($DirectoryEntry.Path) is an LDAP security principal"
                             $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios).FullMembers
                         } else {
                             # Retrieve the members of groups from the WinNT provider
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryEntry.Path) is a WinNT security principal"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($DirectoryEntry.Path) is a WinNT security principal"
                             if ( $DirectoryEntry.SchemaClassName -eq 'group') {
-                                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryEntry.Path) is a WinNT group"
+                                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($DirectoryEntry.Path) is a WinNT group"
                                 $Members = Get-WinNTGroupMember -DirectoryEntryCache $DirectoryEntryCache -DirectoryEntry $DirectoryEntry -KnownDomains $KnownDomains -DomainsByNetbios $DomainsByNetbios
                             }
 
@@ -984,13 +984,13 @@ function Expand-IdentityReference {
                             }
                         }
 
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members"
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members"
 
                         $ThisIdentity |
                         Add-Member -Name 'Members' -Value $Members -MemberType NoteProperty -Force
                     }
                 } else {
-                    Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t$($StartingIdentityName) could not be matched to a DirectoryEntry"
+                    Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($StartingIdentityName) could not be matched to a DirectoryEntry"
                 }
 
                 $ThisIdentity |
@@ -1004,7 +1004,7 @@ function Expand-IdentityReference {
             }
 
             else {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`tIdentityReferenceCache hit for '$($ThisIdentity.Name)'"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # IdentityReferenceCache hit for '$($ThisIdentity.Name)'"
                 $null = $IdentityReferenceCache[$ThisIdentity.Name].Group.Add($ThisIdentityGroup)
                 $ThisIdentity = $IdentityReferenceCache[$ThisIdentity.Name]
             }
@@ -2158,7 +2158,7 @@ function Resolve-Ace {
             $IdentityReference = $ThisACE.IdentityReference.ToString()
 
             if ([string]::IsNullOrEmpty($IdentityReference)) {
-                return
+                continue
             }
 
             $ThisServerDns = $null
@@ -2252,6 +2252,7 @@ function Resolve-Ace {
                 AdsiServersByDns       = $AdsiServersByDns
                 DomainsByFqdn          = $DomainsByFqdn
             }
+            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`tResolve-IdentityReference -IdentityReference '$IdentityReference'..."
             $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
 
             # not sure if I should add a param to offer DNS instead of NetBIOS
@@ -2454,19 +2455,6 @@ function Resolve-IdentityReference {
             }
             $AdsiServer = Get-AdsiServer -AdsiServer $DomainDns -AdsiServersByDns $AdsiServersByDns
 
-            # Recursively call this function to resolve the new IdentityReference we have
-            $ResolveIdentityReferenceParams = @{
-                IdentityReference      = $UnresolvedIdentityReference
-                ServerName             = $DomainDns
-                AdsiServer             = $AdsiServer
-                Win32AccountsBySID     = $Win32AccountsBySID
-                Win32AccountsByCaption = $Win32AccountsByCaption
-                DirectoryEntryCache    = $DirectoryEntryCache
-                DomainsBySID           = $DomainsBySID
-                DomainsByNetbios       = $DomainsByNetbios
-            }
-            $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
-
             if ( -not $UnresolvedIdentityReference ) {
                 $Resolved = [PSCustomObject]@{
                     IdentityReferenceOriginal   = $IdentityReference
@@ -2475,6 +2463,19 @@ function Resolve-IdentityReference {
                     IdentityReferenceNetBios    = "$DomainNetBIOS\$IdentityReference"
                     IdentityReferenceDns        = "$DomainDns\$IdentityReference"
                 }
+            } else {
+                # Recursively call this function to resolve the new IdentityReference we have
+                $ResolveIdentityReferenceParams = @{
+                    IdentityReference      = $UnresolvedIdentityReference
+                    ServerName             = $DomainDns
+                    AdsiServer             = $AdsiServer
+                    Win32AccountsBySID     = $Win32AccountsBySID
+                    Win32AccountsByCaption = $Win32AccountsByCaption
+                    DirectoryEntryCache    = $DirectoryEntryCache
+                    DomainsBySID           = $DomainsBySID
+                    DomainsByNetbios       = $DomainsByNetbios
+                }
+                $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
             }
 
             return $Resolved
@@ -2739,6 +2740,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-LDAPDomainNetBIOS','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

@@ -179,19 +179,6 @@ function Resolve-IdentityReference {
             }
             $AdsiServer = Get-AdsiServer -AdsiServer $DomainDns -AdsiServersByDns $AdsiServersByDns
 
-            # Recursively call this function to resolve the new IdentityReference we have
-            $ResolveIdentityReferenceParams = @{
-                IdentityReference      = $UnresolvedIdentityReference
-                ServerName             = $DomainDns
-                AdsiServer             = $AdsiServer
-                Win32AccountsBySID     = $Win32AccountsBySID
-                Win32AccountsByCaption = $Win32AccountsByCaption
-                DirectoryEntryCache    = $DirectoryEntryCache
-                DomainsBySID           = $DomainsBySID
-                DomainsByNetbios       = $DomainsByNetbios
-            }
-            $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
-
             if ( -not $UnresolvedIdentityReference ) {
                 $Resolved = [PSCustomObject]@{
                     IdentityReferenceOriginal   = $IdentityReference
@@ -200,6 +187,19 @@ function Resolve-IdentityReference {
                     IdentityReferenceNetBios    = "$DomainNetBIOS\$IdentityReference"
                     IdentityReferenceDns        = "$DomainDns\$IdentityReference"
                 }
+            } else {
+                # Recursively call this function to resolve the new IdentityReference we have
+                $ResolveIdentityReferenceParams = @{
+                    IdentityReference      = $UnresolvedIdentityReference
+                    ServerName             = $DomainDns
+                    AdsiServer             = $AdsiServer
+                    Win32AccountsBySID     = $Win32AccountsBySID
+                    Win32AccountsByCaption = $Win32AccountsByCaption
+                    DirectoryEntryCache    = $DirectoryEntryCache
+                    DomainsBySID           = $DomainsBySID
+                    DomainsByNetbios       = $DomainsByNetbios
+                }
+                $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
             }
 
             return $Resolved
