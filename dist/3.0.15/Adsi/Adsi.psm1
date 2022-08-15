@@ -112,15 +112,22 @@ function Add-SidInfo {
             $DomainObject = $null
 
             if ($null -eq $Object) { continue }
-            elseif (
-                $null -ne $Object.objectSid.Value -and
+            elseif ($Object.objectSid.Value ) {
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
                 # The following exception occurred while retrieving the string representation for method "objectSid":
                 # "Object reference not set to an instance of an object."
-                $Object.objectSid.Value.GetType().FullName -ne 'System.Management.Automation.PSMethod'
-            ) {
-                [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid.Value, 0)
+                if ( $Object.objectSid.Value.GetType().FullName -ne 'System.Management.Automation.PSMethod' ) {
+                    [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid.Value, 0)
+                }
+            } elseif ($Object.objectSid) {
+                # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
+                # So we need to filter out those instances here to avoid this error:
+                # The following exception occurred while retrieving the string representation for method "objectSid":
+                # "Object reference not set to an instance of an object."
+                if ($Object.objectSid.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
+                    [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid, 0)
+                }
             } elseif ($Object.Properties) {
                 if ($Object.Properties['objectSid'].Value) {
                     [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.Properties['objectSid'].Value, 0)
@@ -1069,7 +1076,7 @@ function Expand-WinNTGroupMember {
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
                         Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-WinNTGroupMember`t'$($ThisEntry.Path)' is a special group with no direct memberships"
-                        $ThisEntry | Add-SidInfo -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
+                        Add-SidInfo -InputObject $ThisEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
                     } else {
                         Get-WinNTGroupMember -DirectoryEntry $ThisEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
                     }
@@ -2435,7 +2442,7 @@ function Resolve-IdentityReference {
             # The SID of the domain is everything up to (but not including) the last hyphen
             $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
 
-            # Search the cache of domains (TrustedDomainSidNameMap)
+            # Search the cache of domains, first by SID, then by NetBIOS name
             $DomainCacheResult = $DomainsBySID[$DomainSid]
             if (-not $DomainCacheResult) {
                 $split = $UnresolvedIdentityReference -split '\\'
@@ -2740,6 +2747,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-LDAPDomainNetBIOS','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomainSidNameMap','Get-WellKnownSid','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

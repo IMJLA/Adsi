@@ -159,7 +159,7 @@ function Resolve-IdentityReference {
             # The SID of the domain is everything up to (but not including) the last hyphen
             $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
 
-            # Search the cache of domains (TrustedDomainSidNameMap)
+            # Search the cache of domains, first by SID, then by NetBIOS name
             $DomainCacheResult = $DomainsBySID[$DomainSid]
             if (-not $DomainCacheResult) {
                 $split = $UnresolvedIdentityReference -split '\\'

@@ -46,15 +46,22 @@ function Add-SidInfo {
             $DomainObject = $null
 
             if ($null -eq $Object) { continue }
-            elseif (
-                $null -ne $Object.objectSid.Value -and
+            elseif ($Object.objectSid.Value ) {
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
                 # The following exception occurred while retrieving the string representation for method "objectSid":
                 # "Object reference not set to an instance of an object."
-                $Object.objectSid.Value.GetType().FullName -ne 'System.Management.Automation.PSMethod'
-            ) {
-                [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid.Value, 0)
+                if ( $Object.objectSid.Value.GetType().FullName -ne 'System.Management.Automation.PSMethod' ) {
+                    [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid.Value, 0)
+                }
+            } elseif ($Object.objectSid) {
+                # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
+                # So we need to filter out those instances here to avoid this error:
+                # The following exception occurred while retrieving the string representation for method "objectSid":
+                # "Object reference not set to an instance of an object."
+                if ($Object.objectSid.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
+                    [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid, 0)
+                }
             } elseif ($Object.Properties) {
                 if ($Object.Properties['objectSid'].Value) {
                     [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.Properties['objectSid'].Value, 0)
