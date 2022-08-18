@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.16
+Help Version: 3.0.17
 Locale: en-US
 ---
 
@@ -90,6 +90,11 @@ Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security
 
 ### [Resolve-Ace](Resolve-Ace.md)
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
+
+### [Resolve-Ace3](Resolve-Ace3.md)
+
+Resolve-Ace3 [[-InputObject] <psobject[]>] [[-AdsiServersByDns] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-Win32AccountsBySID] <hashtable>] [[-Win32AccountsByCaption] <hashtable>] [[-DomainsBySID] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsByFqdn] <hashtable>] [<CommonParameters>]
+
 
 ### [Resolve-Ace4](Resolve-Ace4.md)
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
