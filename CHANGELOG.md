@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.16] - 2022-08-17 - test build
+
 ## [3.0.15] - 2022-08-14 - bugfix in Add-SidInfo
 
 ## [3.0.14] - 2022-08-14 - bugfix in resolve-identityreference and improved debug output in expand-identityreference

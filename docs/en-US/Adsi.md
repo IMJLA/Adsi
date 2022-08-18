@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.15
+Help Version: 3.0.16
 Locale: en-US
 ---
 
@@ -89,6 +89,9 @@ Invoke a member method of a ComObject [__ComObject]
 Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
 
 ### [Resolve-Ace](Resolve-Ace.md)
+Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
+
+### [Resolve-Ace4](Resolve-Ace4.md)
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
 
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)
