@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.18] - 2022-08-17 - test version of resolve-ace
+
 ## [3.0.17] - 2022-08-17 - test version of resolve-ace
 
 ## [3.0.16] - 2022-08-17 - test build
