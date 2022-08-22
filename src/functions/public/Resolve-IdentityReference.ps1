@@ -30,7 +30,16 @@ function Resolve-IdentityReference {
         # Object from Get-AdsiServer representing the directory server and its attributes
         [PSObject]$AdsiServer,
 
-        [hashtable]$KnownDomains = [hashtable]::Synchronized(@{}),
+        <#
+        Dictionary to cache known servers to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
+
+        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
+
+        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -39,27 +48,24 @@ function Resolve-IdentityReference {
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
-        [hashtable]$DomainsBySID = ([hashtable]::Synchronized(@{})),
-
+        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{})
+        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
     )
+
+    # Populate the caches of known domains if they are currently empty (not sure if this is required so commenting it out for now)
+    #if (($DomainsByFqdn.Keys.Count + $DomainsByNetBios.Keys.Count + $DomainsBySid.Keys.Count) -lt 1) {
+    #    $null = Get-TrustedDomainInfo -DirectoryEntryCache $DirectoryEntryCache -DomainsBySID $DomainsBySid -DomainsByNetbios $DomainsByNetbios -DomainsByFqdn $DomainsByFqdn
+    #}
 
     $ThisHostName = hostname
     if ($AdsiServer.AdsiProvider -eq 'LDAP') {
-        $ServerNetBIOS = ConvertTo-LDAPDomainNetBIOS -DomainFQDN $AdsiServer.ServerName -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -AdsiServersByDns $AdsiServersByDns -DomainsByNetbios $DomainsByNetbios
+        $ServerNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $AdsiServer.ServerName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
     } else {
         $ServerNetBIOS = ($AdsiServer.ServerName -split '\.')[0]
     }
@@ -106,8 +112,8 @@ function Resolve-IdentityReference {
                 }
             }
             if (-not $DomainDns) {
-                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -KnownDomains $KnownDomains -DomainsByNetbios $DomainsByNetbios
-                $DomainDn = $KnownDomains[$DomainNetBIOS]
+                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainDn = $DomainsByNetbios[$DomainNetBIOS].DistinguishedName
             }
 
             return [PSCustomObject]@{
@@ -175,9 +181,9 @@ function Resolve-IdentityReference {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Domain SID '$DomainSid' is unknown."
                 $DomainNetBIOS = $split[0]
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Translated NTAccount name for '$IdentityReference' is '$UnresolvedIdentityReference'"
-                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -KnownDomains $KnownDomains -DomainsByNetbios $DomainsByNetbios
+                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
-            $AdsiServer = Get-AdsiServer -AdsiServer $DomainDns -AdsiServersByDns $AdsiServersByDns
+            $AdsiServer = Get-AdsiServer -AdsiServer $DomainDns -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
 
             if ( -not $UnresolvedIdentityReference ) {
                 $Resolved = [PSCustomObject]@{
@@ -195,9 +201,11 @@ function Resolve-IdentityReference {
                     AdsiServer             = $AdsiServer
                     Win32AccountsBySID     = $Win32AccountsBySID
                     Win32AccountsByCaption = $Win32AccountsByCaption
+                    AdsiServersByDns       = $AdsiServersByDns
                     DirectoryEntryCache    = $DirectoryEntryCache
                     DomainsBySID           = $DomainsBySID
                     DomainsByNetbios       = $DomainsByNetbios
+                    DomainsByFqdn          = $DomainsByFqdn
                 }
                 $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
             }
@@ -230,7 +238,7 @@ function Resolve-IdentityReference {
                 $DomainDns = $DomainCacheResult.Dns
             }
             if (-not $DomainDns) {
-                $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -KnownDomains $KnownDomains -DomainsByNetbios $DomainsByNetbios
+                $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
 
             # Update the caches
@@ -256,8 +264,8 @@ function Resolve-IdentityReference {
             # But they may have real DirectoryEntry objects
             # Try to find the DirectoryEntry object locally on the server
             $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
-            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-            $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios).SidString
+            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).SidString
             $Caption = $IdentityReference -replace 'BUILTIN', $ServerNetBIOS
             $DomainDns = $AdsiServer.ServerName
 
@@ -286,75 +294,76 @@ function Resolve-IdentityReference {
     # Start by determining the domain
 
     if (-not [string]::IsNullOrEmpty($DomainNetBIOS)) {
-    }
-    $DomainDNCacheResult = $DomainsByNetbios[$DomainNetBIOS]
-    if (-not $DomainDNCacheResult) {
-        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t# Domain NetBIOS cache miss for '$($DomainNetBIOS)'."
-        $KnownDomains[$DomainNetBIOS] = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios
-    } else {
-        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t# Domain NetBIOS cache hit for '$($DomainNetBIOS)'."
-        $KnownDomains[$DomainNetBIOS] = $DomainDNCacheResult
-    }
+        $DomainNetBIOSCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+        if (-not $DomainNetBIOSCacheResult) {
+            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t# Domain NetBIOS cache miss for '$($DomainNetBIOS)'."
+            $DomainNetBIOSCacheResult = Get-DomainInfo -DomainNetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $DomainsByNetbios[$DomainNetBIOS] = $DomainNetBIOSCacheResult
 
-    $DomainDn = $KnownDomains[$DomainNetBIOS]
-    $DomainDns = ConvertTo-Fqdn -DistinguishedName $DomainDn -DomainsByNetbios $DomainsByNetbios
-
-    # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
-    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name')"
-    $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
-    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
-    $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
-
-    if (-not $SIDString) {
-        # Try to resolve the account against the domain indicated in its NT Account Name (which may or may not be the correct ADSI server for the account, it won't be if it's NT AUTHORITY\SYSTEM for example)
-        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name')"
-        $NTAccount = [System.Security.Principal.NTAccount]::new($DomainNetBIOS, $Name)
-        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
-        $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
-    } else {
-        $DomainNetBIOS = $ServerNetBIOS
-    }
-
-    if (-not $SIDString) {
-        # Try to resolve the account against the domain indicated in its NT Account Name
-        # Add this domain to our list of known domains
-        try {
-            $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn" -DomainsByNetbios $DomainsByNetbios
-            $DirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $SearchPath -Filter "(samaccountname=$Name)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title') -DomainsByNetbios $DomainsByNetbios
-            $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios).SidString
-        } catch {
-            Write-Warning "$(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t$($StartingIdentityName) could not be resolved against its directory"
-            Write-Warning "$(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t$($_.Exception.Message)"
+        } else {
+            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t# Domain NetBIOS cache hit for '$($DomainNetBIOS)'."
         }
+
+        $DomainDn = $DomainNetBIOSCacheResult.DistinguishedName
+        $DomainDns = $DomainNetBIOSCacheResult.Dns
+
+        # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
+        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name')"
+        $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
+        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+        $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+
+        if (-not $SIDString) {
+            # Try to resolve the account against the domain indicated in its NT Account Name (which may or may not be the correct ADSI server for the account, it won't be if it's NT AUTHORITY\SYSTEM for example)
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name')"
+            $NTAccount = [System.Security.Principal.NTAccount]::new($DomainNetBIOS, $Name)
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+            $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+        } else {
+            $DomainNetBIOS = $ServerNetBIOS
+        }
+
+        if (-not $SIDString) {
+            # Try to resolve the account against the domain indicated in its NT Account Name
+            # Add this domain to our list of known domains
+            try {
+                $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn"
+                $DirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $SearchPath -Filter "(samaccountname=$Name)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title') -DomainsByNetbios $DomainsByNetbios
+                $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).SidString
+            } catch {
+                Write-Warning "$(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t$($StartingIdentityName) could not be resolved against its directory"
+                Write-Warning "$(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t$($_.Exception.Message)"
+            }
+        }
+
+        if (-not $SIDString) {
+
+            # Try to find the DirectoryEntry object directly on the server
+            $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
+            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).SidString
+
+        }
+
+        if ($SIDString) {
+            $DomainNetBIOS = $ServerNetBIOS
+        }
+
+        # This covers unresolved SIDs for deleted accounts, broken domain trusts, etc.
+        if ( '' -eq "$Name" ) {
+            $Name = $IdentityReference
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# An identity reference girl has no name ($Name)"
+        } else {
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# '$IdentityReference' is named '$Name'"
+        }
+
+        return [PSCustomObject]@{
+            IdentityReferenceOriginal   = $IdentityReference
+            IdentityReferenceUnresolved = $IdentityReference
+            SIDString                   = $SIDString
+            IdentityReferenceNetBios    = "$DomainNetBios\$Name"
+            IdentityReferenceDns        = "$DomainDns\$Name"
+        }
+
     }
-
-    if (-not $SIDString) {
-
-        # Try to find the DirectoryEntry object directly on the server
-        $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
-        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-        $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios).SidString
-
-    }
-
-    if ($SIDString) {
-        $DomainNetBIOS = $ServerNetBIOS
-    }
-
-    # This covers unresolved SIDs for deleted accounts, broken domain trusts, etc.
-    if ( '' -eq "$Name" ) {
-        $Name = $IdentityReference
-        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# An identity reference girl has no name ($Name)"
-    } else {
-        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# '$IdentityReference' is named '$Name'"
-    }
-
-    return [PSCustomObject]@{
-        IdentityReferenceOriginal   = $IdentityReference
-        IdentityReferenceUnresolved = $IdentityReference
-        SIDString                   = $SIDString
-        IdentityReferenceNetBios    = "$DomainNetBios\$Name"
-        IdentityReferenceDns        = "$DomainDns\$Name"
-    }
-
 }

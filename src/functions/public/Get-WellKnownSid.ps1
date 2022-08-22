@@ -29,12 +29,25 @@ function Get-WellKnownSid {
         # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
         [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
-
         # Cache of known directory servers to reduce duplicate queries
         [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{}))
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+
     )
     begin {
         $AdsiServersWhoseWin32AccountsExistInCache = $Win32AccountsBySID.Keys |
@@ -48,7 +61,7 @@ function Get-WellKnownSid {
             }
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
-            $ThisServerNetbios = ConvertTo-LDAPDomainNetBIOS -DomainFQDN
+            $ThisServerNetbios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServer -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             if ($AdsiServersWhoseWin32AccountsExistInCache -contains $ThisServer) {
                 $Win32AccountsBySID.Keys | ForEach-Object {
                     if ($_ -like "$ThisServer\*") {

@@ -52,25 +52,37 @@ function Get-AdsiGroup {
         [string[]]$PropertiesToLoad,
 
         <#
-        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-        Uses a thread-safe hashtable by default
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{}))
+        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
 
     )
 
     $GroupParams = @{
-        DirectoryEntryCache = $DirectoryEntryCache
         DirectoryPath       = $DirectoryPath
         PropertiesToLoad    = $PropertiesToLoad
+        DirectoryEntryCache = $DirectoryEntryCache
+        DomainsByFqdn       = $DomainsByFqdn
         DomainsByNetbios    = $DomainsByNetbios
+        DomainsBySid        = $DomainsBySid
     }
     $GroupMemberParams = @{
-        DirectoryEntryCache = $DirectoryEntryCache
         PropertiesToLoad    = $PropertiesToLoad
+        DirectoryEntryCache = $DirectoryEntryCache
+        DomainsByFqdn       = $DomainsByFqdn
         DomainsByNetbios    = $DomainsByNetbios
+        DomainsBySid        = $DomainsBySid
     }
 
     switch -Regex ($DirectoryPath) {

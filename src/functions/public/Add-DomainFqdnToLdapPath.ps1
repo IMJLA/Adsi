@@ -3,10 +3,10 @@ function Add-DomainFqdnToLdapPath {
         .SYNOPSIS
         Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
         .DESCRIPTION
-        Uses RegEx to:  
-            Match the Domain Components from the Distinguished Name in the LDAP directory path  
-            Convert the Domain Components to an FQDN  
-            Insert them into the directory path as the server address
+        Uses RegEx to:
+            - Match the Domain Components from the Distinguished Name in the LDAP directory path
+            - Convert the Domain Components to an FQDN
+            - Insert them into the directory path as the server address
         .INPUTS
         [System.String]$DirectoryPath
         .OUTPUTS
@@ -22,9 +22,7 @@ function Add-DomainFqdnToLdapPath {
 
         # Incomplete LDAP directory path containing a distinguishedName but lacking a server address
         [Parameter(ValueFromPipeline)]
-        [string[]]$DirectoryPath,
-
-        [hashtable]$DomainsByNetbios = [hashtable]::Synchronized(@{})
+        [string[]]$DirectoryPath
 
     )
     begin {
@@ -43,23 +41,21 @@ function Add-DomainFqdnToLdapPath {
                     $DomainDN = $null
                     $DomainFqdn = $null
                     $DomainDN = ([regex]::Matches($ThisPath, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
-                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -DomainsByNetbios $DomainsByNetbios
+                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN
                     if ($ThisPath -match "LDAP:\/\/$DomainFqdn\/") {
-                        #Write-Debug -Message "Domain FQDN already found in the directory path: $($ThisPath)"
-                        $FQDNPath = $ThisPath
+                        #Write-Debug -Message " # Domain FQDN already found in the directory path: '$ThisPath'"
+                        $ThisPath
                     } else {
-                        $FQDNPath = $ThisPath -replace 'LDAP:\/\/', "LDAP://$DomainFqdn/"
+                        $ThisPath -replace 'LDAP:\/\/', "LDAP://$DomainFqdn/"
                     }
                 } else {
-                    #Write-Debug -Message "Domain DN not found in the directory path: $($ThisPath)"
-                    $FQDNPath = $ThisPath
+                    #Write-Debug -Message " # Domain DN not found in the directory path: '$ThisPath'"
+                    $ThisPath
                 }
             } else {
-                #Write-Debug -Message "Not an expected directory path: $($ThisPath)"
-                $FQDNPath = $ThisPath
+                #Write-Debug -Message " # Not an expected directory path: '$ThisPath'"
+                $ThisPath
             }
-
-            $FQDNPath
         }
     }
 }

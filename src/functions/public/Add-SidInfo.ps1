@@ -30,10 +30,11 @@ function Add-SidInfo {
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
+        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
 
-        # Hashtable containing known domain SIDs as the keys and their names as the values
-        $TrustedDomainSidNameMap = (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios)
+        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{}))
 
     )
 
@@ -93,7 +94,7 @@ function Add-SidInfo {
                 $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 
                 # Lookup other information about the domain using its SID as the key
-                $DomainObject = $TrustedDomainSidNameMap[$DomainSid]
+                $DomainObject = $DomainsBySid[$DomainSid]
             }
 
             #Write-Debug -Message "$SamAccountName`t$SID"
