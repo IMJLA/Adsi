@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# ConvertTo-LDAPDomainNetBIOS
+# Get-DomainInfo
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,8 +13,9 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-ConvertTo-LDAPDomainNetBIOS [[-DomainFQDN] <String>] [[-DirectoryEntryCache] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+Get-DomainInfo [[-DomainDn] <String>] [[-DomainDnsName] <String>] [[-DomainNetBIOS] <String>]
+ [[-DomainSID] <String>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -23,7 +24,7 @@ ConvertTo-LDAPDomainNetBIOS [[-DomainFQDN] <String>] [[-DirectoryEntryCache] <Ha
 ## EXAMPLES
 
 ### Example 1
-```
+```powershell
 PS C:\> {{ Add example code here }}
 ```
 
@@ -40,7 +41,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -55,14 +56,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DomainFQDN
-{{ Fill DomainFQDN Description }}
+### -DomainDn
+{{ Fill DomainDn Description }}
 
 ```yaml
 Type: System.String
@@ -71,6 +72,36 @@ Aliases:
 
 Required: False
 Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainDnsName
+{{ Fill DomainDnsName Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainNetBIOS
+{{ Fill DomainNetBIOS Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -85,7 +116,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 8
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -100,7 +131,37 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 6
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySid
+{{ Fill DomainsBySid Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainSID
+{{ Fill DomainSID Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -109,6 +170,7 @@ Accept wildcard characters: False
 ## INPUTS
 
 ### None
+
 ## OUTPUTS
 
 ### System.Object

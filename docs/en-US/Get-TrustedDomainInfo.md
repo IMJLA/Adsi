@@ -5,39 +5,33 @@ online version:
 schema: 2.0.0
 ---
 
-# ConvertTo-Fqdn
+# Get-TrustedDomainInfo
 
 ## SYNOPSIS
-Convert a domain distinguishedName name or NetBIOS name to its FQDN
+Returns a dictionary of trusted domains by the current computer
 
 ## SYNTAX
 
-### DistinguishedName
 ```
-ConvertTo-Fqdn [-DistinguishedName <String[]>] [-AdsiServersByDns <Hashtable>]
- [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>]
- [-DomainsByFqdn <Hashtable>] [<CommonParameters>]
-```
-
-### NetBIOS
-```
-ConvertTo-Fqdn [-NetBIOS <String[]>] [-AdsiServersByDns <Hashtable>] [-DirectoryEntryCache <Hashtable>]
- [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [<CommonParameters>]
+Get-TrustedDomainInfo [-KeyByNetbios] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
 ```
 
 ## DESCRIPTION
-For the DistinguishedName parameter, uses PowerShell's -replace operator to perform the conversion
-For the NetBIOS parameter, uses ConvertTo-DistinguishedName to convert from NetBIOS to distinguishedName, then recursively calls this function to get the FQDN
+Works only on domain-joined systems
+Use nltest to get the domain trust relationships for the domain of the current computer
+Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID
+For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used
+For each trusted domain the value contains the details retrieved with ADSI
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com'
-ad.contoso.com
+Get-TrustedDomainInfo
 ```
 
-Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
+Get the trusted domains of the current computer
 
 ## PARAMETERS
 
@@ -50,7 +44,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
+Position: 1
 Default value: [hashtable]::Synchronized(@{})
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -67,24 +61,9 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
+Position: 2
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DistinguishedName
-distinguishedName of the domain
-
-```yaml
-Type: System.String[]
-Parameter Sets: DistinguishedName
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -97,7 +76,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
+Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -112,7 +91,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
+Position: 3
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -127,36 +106,34 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: Named
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -NetBIOS
-NetBIOS name of the domain
+### -KeyByNetbios
+Key the dictionary by the domain NetBIOS names instead of SIDs
 
 ```yaml
-Type: System.String[]
-Parameter Sets: NetBIOS
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
+Default value: False
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
-
 ## INPUTS
 
-### [System.String]$DistinguishedName
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### [System.String] FQDN version of the distinguishedName
+### [System.Collections.Hashtable] The current domain trust relationships
 ## NOTES
+TODO: Audit usage of this function, have it return objects instead of hashtable, since it updates the threadsafe hashtables instead
 
 ## RELATED LINKS

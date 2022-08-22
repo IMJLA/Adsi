@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# ConvertTo-LDAPDomainNetBIOS
+# ConvertTo-DomainSidString
 
 ## SYNOPSIS
 {{ Fill in the Synopsis }}
@@ -13,8 +13,9 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-ConvertTo-LDAPDomainNetBIOS [[-DomainFQDN] <String>] [[-DirectoryEntryCache] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ConvertTo-DomainSidString [-DomainDnsName] <String> [[-DirectoryEntryCache] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,28 +24,13 @@ ConvertTo-LDAPDomainNetBIOS [[-DomainFQDN] <String>] [[-DirectoryEntryCache] <Ha
 ## EXAMPLES
 
 ### Example 1
-```
+```powershell
 PS C:\> {{ Add example code here }}
 ```
 
 {{ Add example description here }}
 
 ## PARAMETERS
-
-### -AdsiServersByDns
-{{ Fill AdsiServersByDns Description }}
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### -DirectoryEntryCache
 {{ Fill DirectoryEntryCache Description }}
@@ -61,15 +47,15 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DomainFQDN
-{{ Fill DomainFQDN Description }}
+### -DomainDnsName
+{{ Fill DomainDnsName Description }}
 
 ```yaml
 Type: System.String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 0
 Default value: None
 Accept pipeline input: False
@@ -85,7 +71,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -100,15 +86,34 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsBySid
+{{ Fill DomainsBySid Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
 ## INPUTS
 
 ### None
+
 ## OUTPUTS
 
 ### System.Object

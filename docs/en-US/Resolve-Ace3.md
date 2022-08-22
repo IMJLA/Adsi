@@ -15,7 +15,7 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ```
 Resolve-Ace3 [[-InputObject] <PSObject[]>] [[-AdsiServersByDns] <Hashtable>]
  [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
- [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsBySID] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
 ```
 
@@ -144,7 +144,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByFqdn
-{{ Fill DomainsByFqdn Description }}
+Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -159,22 +159,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByNetbios
-{{ Fill DomainsByNetbios Description }}
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 7
-Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsBySID
-{{ Fill DomainsBySID Description }}
+Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -183,6 +168,21 @@ Aliases:
 
 Required: False
 Position: 6
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySid
+Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -246,7 +246,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 Dependencies:
     Get-DirectoryEntry
     Add-SidInfo
-    Get-TrustedDomainSidNameMap
+    Get-TrustedDomainInfo
     Find-AdsiProvider
 
 if ($FolderPath.Length -gt 255) {
