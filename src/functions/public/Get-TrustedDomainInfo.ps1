@@ -1,4 +1,4 @@
-function Get-TrustedDomainSidNameMap {
+function Get-TrustedDomainInfo {
     <#
         .SYNOPSIS
         Returns a dictionary of trusted domains by the current computer
@@ -14,7 +14,7 @@ function Get-TrustedDomainSidNameMap {
         [System.Collections.Hashtable] The current domain trust relationships
 
         .EXAMPLE
-        Get-TrustedDomainSidNameMap
+        Get-TrustedDomainInfo
 
         Get the trusted domains of the current computer
         .NOTES
@@ -26,16 +26,23 @@ function Get-TrustedDomainSidNameMap {
         # Key the dictionary by the domain NetBIOS names instead of SIDs
         [Switch]$KeyByNetbios,
 
+        # Cache of known directory servers to reduce duplicate queries
+        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
+
         <#
-        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-        Uses a thread-safe hashtable by default
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$DomainsBySID = ([hashtable]::Synchronized(@{})),
-
+        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
 
+        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
 
     )
@@ -57,28 +64,7 @@ function Get-TrustedDomainSidNameMap {
             continue
         }
 
-        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios
-        try {
-            $null = $DomainDirectoryEntry.RefreshCache('objectSid')
-        } catch {
-            Write-Warning "$(Get-Date -Format s)`t$(hostname)`tGet-TrustedDomainSidNameMap`tLDAP Domain: '$DomainDnsName' - $($_.Exception.Message)"
-            continue
-        }
-
-        try {
-            $DomainSid = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$DomainDirectoryEntry.Properties["objectSid"].Value, 0).ToString()
-        } catch {
-            Write-Warning "$(Get-Date -Format s)`t$(hostname)`tGet-TrustedDomainSidNameMap`tLDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
-            continue
-        }
-
-        $DistinguishedName = ConvertTo-DistinguishedName -Domain $DomainNetbios -DomainsByNetbios $DomainsByNetbios
-        $OutputObject = [pscustomobject]@{
-            Dns               = $DomainDnsName
-            Netbios           = $DomainNetbios
-            Sid               = $DomainSid
-            DistinguishedName = $DistinguishedName
-        }
+        $OutputObject = Get-DomainInfo -DomainDnsName $DomainDnsName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
         $DomainsBySID[$DomainSid] = $OutputObject
         $DomainsByNetbios[$DomainNetbios] = $OutputObject
         $DomainsByFqdn[$DomainDnsName] = $OutputObject

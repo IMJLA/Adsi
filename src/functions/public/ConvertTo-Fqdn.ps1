@@ -31,9 +31,25 @@ function ConvertTo-Fqdn {
         )]
         [string[]]$NetBIOS,
 
-        [hashtable]$DomainsByNetbios = [hashtable]::Synchronized(@{}),
+        # Cache of known directory servers to reduce duplicate queries
+        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
-        [hashtable]$KnownDomains = [hashtable]::Synchronized(@{})
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+
     )
     process {
         ForEach ($DN in $DistinguishedName) {
@@ -41,18 +57,18 @@ function ConvertTo-Fqdn {
         }
 
         ForEach ($ThisNetBios in $NetBIOS) {
-            $DomainDn = $KnownDomains[$DomainNetBIOS]
+            $DomainObject = $DomainsByNetbios[$DomainNetBIOS]
 
             if (
-                -not $DomainDn -and
+                -not $DomainObject -and
                 -not [string]::IsNullOrEmpty($DomainNetBIOS)
             ) {
-                $KnownDomains[$DomainNetBIOS] = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-Fqdn`tCache miss for domain $($DomainNetBIOS).  Adding its Distinguished Name to dictionary of known domains for future lookup"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-Fqdn`t # Domain NetBIOS cache miss for '$DomainNetBIOS'"
+                $DomainObject = Get-DomainInfo -DomainNetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainsByNetbios[$DomainNetBIOS] = $DomainObject
             }
 
-            $DomainDn = $KnownDomains[$DomainNetBIOS]
-            ConvertTo-Fqdn -DistinguishedName $DomainDn
+            $DomainObject.Dns
         }
     }
 }

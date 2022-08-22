@@ -80,7 +80,7 @@ function Resolve-Ace4 {
         Dependencies:
             Get-DirectoryEntry
             Add-SidInfo
-            Get-TrustedDomainSidNameMap
+            Get-TrustedDomainInfo
             Find-AdsiProvider
 
         if ($FolderPath.Length -gt 255) {
