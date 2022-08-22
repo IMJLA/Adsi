@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.20] - 2022-08-21 - Efficiency and debug output improvements for Expand-IdentityReference
+
 ## [3.0.19] - 2022-08-17 - test version of resolve-ace
 
 ## [3.0.18] - 2022-08-17 - test version of resolve-ace
