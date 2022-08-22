@@ -246,7 +246,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 Dependencies:
     Get-DirectoryEntry
     Add-SidInfo
-    Get-TrustedDomainSidNameMap
+    Get-TrustedDomainInfo
     Find-AdsiProvider
 
 if ($FolderPath.Length -gt 255) {

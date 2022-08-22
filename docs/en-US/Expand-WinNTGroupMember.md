@@ -14,7 +14,8 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ```
 Expand-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-DirectoryEntryCache] <Hashtable>]
- [[-DomainsByNetbios] <Hashtable>] [<CommonParameters>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -47,8 +48,9 @@ Accept wildcard characters: False
 ```
 
 ### -DirectoryEntryCache
-Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
-Uses a thread-safe hashtable by default
+Dictionary to cache directory entries to avoid redundant lookups
+
+Defaults to an empty thread-safe hashtable
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -62,8 +64,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByFqdn
+Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DomainsByNetbios
-{{ Fill DomainsByNetbios Description }}
+Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -72,6 +89,21 @@ Aliases:
 
 Required: False
 Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySid
+Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False

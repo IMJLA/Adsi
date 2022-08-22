@@ -14,8 +14,8 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ```
 Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [-NoGroupMembers]
- [[-DirectoryEntryCache] <Hashtable>] [[-IdentityReferenceCache] <Hashtable>] [[-DomainsBySID] <Hashtable>]
- [[-DomainsByNetbios] <Hashtable>] [<CommonParameters>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
+ [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -53,7 +53,9 @@ Accept wildcard characters: False
 ```
 
 ### -DirectoryEntryCache
-Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
+Dictionary to cache directory entries to avoid redundant lookups
+
+Defaults to an empty thread-safe hashtable
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -67,8 +69,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DomainsByNetbios
-{{ Fill DomainsByNetbios Description }}
+### -DomainsByFqdn
+Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -82,23 +84,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DomainsBySID
-{{ Fill DomainsBySID Description }}
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -IdentityReferenceCache
-Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
+### -DomainsByNetbios
+Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -107,6 +94,21 @@ Aliases:
 
 Required: False
 Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySid
+Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False

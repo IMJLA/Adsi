@@ -465,10 +465,11 @@ task UnitTests -depends Lint -precondition $pesterPreReqs {
 } -description 'Execute Pester tests'
 
 task SourceControl -depends UnitTests {
+    $CurrentBranch = git branch --show-current
     # Commit to Git
     git add .
     git commit -m $CommitMessage
-    git push origin main
+    git push origin $CurrentBranch
 } -description 'git add, commit, and push'
 
 task Publish -depends SourceControl {
@@ -487,8 +488,12 @@ task Publish -depends SourceControl {
         $publishParams.Credential = $PublishPSRepositoryCredential
     }
 
-    # Publish to PSGallery
-    Publish-Module @publishParams
+    # Only publish a release if we are working on the main branch
+    $CurrentBranch = git branch --show-current
+    if ($NoPublish -eq $false -and $CurrentBranch -eq 'main') {
+        # Publish to PSGallery
+        Publish-Script @publishParams
+    }
 } -description 'Publish module to the defined PowerShell repository'
 
 task FinalTasks -depends Publish {

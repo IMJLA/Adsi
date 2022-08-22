@@ -14,7 +14,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ```
 Add-SidInfo [[-InputObject] <Object>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-TrustedDomainSidNameMap] <Object>] [<CommonParameters>]
+ [[-DomainsBySid] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -51,7 +51,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByNetbios
-{{ Fill DomainsByNetbios Description }}
+Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -60,6 +60,21 @@ Aliases:
 
 Required: False
 Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainsBySid
+Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -78,21 +93,6 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -TrustedDomainSidNameMap
-Hashtable containing known domain SIDs as the keys and their names as the values
-
-```yaml
-Type: System.Object
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: (Get-TrustedDomainSidNameMap -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios)
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
