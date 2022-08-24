@@ -34,6 +34,9 @@ function Expand-IdentityReference {
         # Do not get group members
         [switch]$NoGroupMembers,
 
+        # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
+        [hashtable]$IdentityReferenceCache = ([hashtable]::Synchronized(@{})),
+
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -69,6 +72,10 @@ function Expand-IdentityReference {
     process {
 
         ForEach ($ThisIdentity in $AccessControlEntry) {
+
+            if (-not $ThisIdentity) {
+                continue
+            }
 
             $ThisIdentityGroup = $ThisIdentity.Group
 
@@ -106,7 +113,7 @@ function Expand-IdentityReference {
 
                 if (
                     $null -ne $name -and
-                    ($ThisIdentity.Group.AdsiProvider | Select-Object -First 1) -eq 'LDAP'
+                    @($ThisIdentity.Group.AdsiProvider)[0] -eq 'LDAP'
                 ) {
                     Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # '$StartingIdentityName' is a domain security principal"
 
@@ -144,7 +151,10 @@ function Expand-IdentityReference {
                         Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($_.Exception.Message) for '$StartingIdentityName"
                     }
 
-                } elseif (((($StartingIdentityName -split '-') | Select-Object -SkipLast 1) -join '-') -eq $CurrentDomainSID) {
+                } elseif (
+                    $StartingIdentityName.Substring(0, $StartingIdentityName.LastIndexOf('-') + 1) -eq $CurrentDomainSID
+                    #((($StartingIdentityName -split '-') | Select-Object -SkipLast 1) -join '-') -eq $CurrentDomainSID
+                ) {
                     Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # '$StartingIdentityName' is an unresolved SID from the current domain"
 
                     # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
@@ -266,8 +276,6 @@ function Expand-IdentityReference {
 
                 $ObjectType = $null
                 if ($null -ne $DirectoryEntry) {
-                    #$ThisIdentity |
-                    #Add-Member -Name 'DirectoryEntry' -Value $DirectoryEntry -MemberType NoteProperty -Force
 
                     if (
                         $DirectoryEntry.Properties['objectClass'] -contains 'group' -or
@@ -298,43 +306,40 @@ function Expand-IdentityReference {
 
                         }
 
-                        $Members |
-                        ForEach-Object {
+                        # (Get-AdsiGroupMember).FullMembers or Get-WinNTGroupMember could return an array with null members so we must verify that is not true
+                        if ($Members) {
+                            $Members |
+                            ForEach-Object {
 
-                            if ($_.Domain) {
+                                if ($_.Domain) {
 
-                                $_ |
-                                Add-Member -Force -NotePropertyMembers @{
-                                    Group = $ThisIdentityGroup
-                                }
-
-                            } else {
-
-                                $_ |
-                                Add-Member -Force -NotePropertyMembers @{
-                                    Group  = $ThisIdentityGroup
-                                    Domain = [pscustomobject]@{
-                                        Dns     = $domainNetbiosString
-                                        Netbios = $domainNetbiosString
-                                        Sid     = ($name -split '-') | Select-Object -Last 1
+                                    Add-Member -InputObject $_ -Force -NotePropertyMembers @{
+                                        Group = $ThisIdentityGroup
                                     }
-                                }
 
+                                } else {
+
+                                    Add-Member -InputObject $_ -Force -NotePropertyMembers @{
+                                        Group  = $ThisIdentityGroup
+                                        Domain = [pscustomobject]@{
+                                            Dns     = $domainNetbiosString
+                                            Netbios = $domainNetbiosString
+                                            Sid     = ($name -split '-') | Select-Object -Last 1
+                                        }
+                                    }
+
+                                }
                             }
                         }
 
                         Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$StartingIdentityName'"
-
-                        #$ThisIdentity |
-                        #Add-Member -Name 'Members' -Value $Members -MemberType NoteProperty -Force
 
                     }
                 } else {
                     Write-Warning "$(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # '$StartingIdentityName' could not be matched to a DirectoryEntry"
                 }
 
-                $ThisIdentity |
-                Add-Member -Force -NotePropertyMembers @{
+                Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers @{
                     DomainDn       = $DomainDn
                     DomainNetbios  = $DomainNetBiosString
                     ObjectType     = $ObjectType
@@ -343,9 +348,7 @@ function Expand-IdentityReference {
                 }
                 $IdentityReferenceCache[$StartingIdentityName] = $ThisIdentity
 
-            }
-
-            else {
+            } else {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-IdentityReference`t # IdentityReferenceCache hit for '$($ThisIdentity.Name)'"
                 $null = $IdentityReferenceCache[$ThisIdentity.Name].Group.Add($ThisIdentityGroup)
                 $ThisIdentity = $IdentityReferenceCache[$ThisIdentity.Name]

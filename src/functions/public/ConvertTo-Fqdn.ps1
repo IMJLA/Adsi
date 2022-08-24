@@ -64,7 +64,7 @@ function ConvertTo-Fqdn {
                 -not [string]::IsNullOrEmpty($DomainNetBIOS)
             ) {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-Fqdn`t # Domain NetBIOS cache miss for '$DomainNetBIOS'"
-                $DomainObject = Get-DomainInfo -DomainNetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainObject = Get-AdsiServer -Netbios $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
                 $DomainsByNetbios[$DomainNetBIOS] = $DomainObject
             }
 

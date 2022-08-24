@@ -5,39 +5,38 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-AdsiServer
+# Get-Win32Account
 
 ## SYNOPSIS
-Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
+Use CIM to get well-known SIDs
 
 ## SYNTAX
 
 ```
-Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
+Get-Win32Account [[-CimServerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
  [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
-Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
+Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-AdsiServer -Fqdn localhost
+Get-WellKnownSid
 ```
 
-Find the ADSI provider of the local computer
+Get the well-known SIDs on the current computer
 
 ### EXAMPLE 2
 ```
-Get-AdsiServer -Fqdn 'ad.contoso.com'
+Get-WellKnownSid -CimServerName 'server123'
 ```
 
-Find the ADSI provider of the AD domain 'ad.contoso.com'
+Get the well-known SIDs on the remote computer 'server123'
 
 ## PARAMETERS
 
@@ -50,9 +49,24 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: [hashtable]::Synchronized(@{})
 Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CimServerName
+{{ Fill CimServerName Description }}
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -67,14 +81,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DomainsByFqdn
-Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values
+Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -82,7 +96,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 8
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -97,7 +111,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 6
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -112,38 +126,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Fqdn
-IP address or hostname of the directory server whose ADSI provider type to determine
-
-```yaml
-Type: System.String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Netbios
-NetBIOS name of the ADSI server whose information to determine
-
-```yaml
-Type: System.String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -159,7 +143,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -174,7 +158,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 2
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -185,10 +169,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String]$Fqdn
+### [System.String]$CimServerName
 ## OUTPUTS
 
-### [PSCustomObject] with AdsiProvider and WellKnownSIDs properties
+### [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace
 ## NOTES
 
 ## RELATED LINKS

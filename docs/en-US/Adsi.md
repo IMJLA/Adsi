@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.21
+Help Version: 3.0.22
 Locale: en-US
 ---
 
@@ -31,7 +31,7 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
 
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiServersByDns] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
+ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-AdsiServersByDns] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
 
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
@@ -66,6 +66,9 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 ### [Find-AdsiProvider](Find-AdsiProvider.md)
 Determine whether a directory server is an LDAP or a WinNT server
 
+### [Find-ServerNameInPath](Find-ServerNameInPath.md)
+{{ Fill in the Description }}
+
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI
 
@@ -86,6 +89,9 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 Get-DomainInfo [[-DomainDn] <string>] [[-DomainDnsName] <string>] [[-DomainNetBIOS] <string>] [[-DomainSID] <string>] [[-AdsiServersByDns] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
 
 
+### [Get-TrustedDomain](Get-TrustedDomain.md)
+Returns a dictionary of trusted domains by the current computer
+
 ### [Get-TrustedDomainInfo](Get-TrustedDomainInfo.md)
 Returns a dictionary of trusted domains by the current computer
 
@@ -93,6 +99,9 @@ Returns a dictionary of trusted domains by the current computer
 {{ Fill in the Description }}
 
 ### [Get-WellKnownSid](Get-WellKnownSid.md)
+Use CIM to get well-known SIDs
+
+### [Get-Win32Account](Get-Win32Account.md)
 Use CIM to get well-known SIDs
 
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)

@@ -50,6 +50,7 @@ function Get-TrustedDomainInfo {
     $Map = @{}
 
     # Redirect the error stream to null
+    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomainInfo`t$('& nltest /domain_trusts 2> $null')"
     $nltestresults = & nltest /domain_trusts 2> $null
     $NlTestRegEx = '[\d]*: .*'
     $TrustRelationships = $nltestresults -match $NlTestRegEx
@@ -64,8 +65,9 @@ function Get-TrustedDomainInfo {
             continue
         }
 
-        $OutputObject = Get-DomainInfo -DomainDnsName $DomainDnsName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-        $DomainsBySID[$DomainSid] = $OutputObject
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomainInfo`tGet-AdsiServer -Fqdn '$DomainDnsName'"
+        $OutputObject = Get-AdsiServer -Fqdn $DomainDnsName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+        $DomainsBySID[$OutputObject.Sid] = $OutputObject
         $DomainsByNetbios[$DomainNetbios] = $OutputObject
         $DomainsByFqdn[$DomainDnsName] = $OutputObject
         if ($KeyByNetbios -eq $true) {
@@ -76,6 +78,7 @@ function Get-TrustedDomainInfo {
     }
 
     # Add the WinNT domain of the local computer as well
+    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomainInfo`tGet-CimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
     $LocalAccountSID = (Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'").SID[0]
     $DomainSid = $LocalAccountSID.Substring(0, $LocalAccountSID.LastIndexOf("-"))
     $DomainNetBios = hostname

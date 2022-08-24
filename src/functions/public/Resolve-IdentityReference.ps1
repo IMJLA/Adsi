@@ -64,12 +64,7 @@ function Resolve-IdentityReference {
     #}
 
     $ThisHostName = hostname
-    if ($AdsiServer.AdsiProvider -eq 'LDAP') {
-        $ServerNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $AdsiServer.ServerName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-    } else {
-        $ServerNetBIOS = ($AdsiServer.ServerName -split '\.')[0]
-    }
-
+    $ServerNetBIOS = $AdsiServer.Netbios
     $split = $IdentityReference.Split('\')
     $DomainNetBIOS = $split[0]
     $DomainNetBIOS = $ServerNetBIOS
@@ -89,7 +84,7 @@ function Resolve-IdentityReference {
             IdentityReferenceUnresolved = $null # Could parse SID to get this?
             SIDString                   = $CacheResult.SID
             IdentityReferenceNetBios    = $CacheResult.Caption
-            IdentityReferenceDns        = "$($AdsiServer.ServerName)\$($CacheResult.Name)"
+            IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
         Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account SID cache miss for '$ServerNetBIOS\$IdentityReference'"
@@ -103,7 +98,7 @@ function Resolve-IdentityReference {
             # IdentityReference is an NT Account Name, and has been cached from this server
             Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account caption cache hit for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
-                $DomainDns = $AdsiServer.ServerName
+                $DomainDns = $AdsiServer.Dns
             }
             if (-not $DomainDns) {
                 $DomainCacheResult = $DomainsByNetbios[$CacheResult.Domain]
@@ -138,7 +133,7 @@ function Resolve-IdentityReference {
             IdentityReferenceUnresolved = $null
             SIDString                   = $CacheResult.SID
             IdentityReferenceNetBios    = $CacheResult.Caption
-            IdentityReferenceDns        = "$($AdsiServer.ServerName)\$($CacheResult.Name)"
+            IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
         Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account caption cache miss for '$ServerNetBIOS\$IdentityReference'"
@@ -183,7 +178,7 @@ function Resolve-IdentityReference {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Translated NTAccount name for '$IdentityReference' is '$UnresolvedIdentityReference'"
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
-            $AdsiServer = Get-AdsiServer -AdsiServer $DomainDns -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $AdsiServer = Get-AdsiServer -Fqdn $DomainDns -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
 
             if ( -not $UnresolvedIdentityReference ) {
                 $Resolved = [PSCustomObject]@{
@@ -267,7 +262,7 @@ function Resolve-IdentityReference {
             $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).SidString
             $Caption = $IdentityReference -replace 'BUILTIN', $ServerNetBIOS
-            $DomainDns = $AdsiServer.ServerName
+            $DomainDns = $AdsiServer.Dns
 
             # Update the caches
             $Win32Acct = [PSCustomObject]@{
@@ -297,7 +292,7 @@ function Resolve-IdentityReference {
         $DomainNetBIOSCacheResult = $DomainsByNetbios[$DomainNetBIOS]
         if (-not $DomainNetBIOSCacheResult) {
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t# Domain NetBIOS cache miss for '$($DomainNetBIOS)'."
-            $DomainNetBIOSCacheResult = Get-DomainInfo -DomainNetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $DomainNetBIOSCacheResult = Get-AdsiServer -Netbios $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             $DomainsByNetbios[$DomainNetBIOS] = $DomainNetBIOSCacheResult
 
         } else {

@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-TrustedDomainSidNameMap
+# Get-TrustedDomain
 
 ## SYNOPSIS
 Returns a dictionary of trusted domains by the current computer
@@ -13,7 +13,7 @@ Returns a dictionary of trusted domains by the current computer
 ## SYNTAX
 
 ```
-Get-TrustedDomainSidNameMap [-KeyByNetbios] [[-DirectoryEntryCache] <Hashtable>]
+Get-TrustedDomain [[-ThisHostname] <Object>]
 ```
 
 ## DESCRIPTION
@@ -27,40 +27,24 @@ For each trusted domain the value contains the details retrieved with ADSI
 
 ### EXAMPLE 1
 ```
-Get-TrustedDomainSidNameMap
+Get-TrustedDomain
 ```
 
 Get the trusted domains of the current computer
 
 ## PARAMETERS
 
-### -DirectoryEntryCache
-Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-Uses a thread-safe hashtable by default
+### -ThisHostname
+{{ Fill ThisHostname Description }}
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Object
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 1
-Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -KeyByNetbios
-Key the dictionary by the domain NetBIOS names instead of SIDs
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
+Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -70,7 +54,7 @@ Accept wildcard characters: False
 ### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### [System.Collections.Hashtable] The current domain trust relationships
+### [PSCustomObject] One object per trusted domain, each with a DomainFqdn property and a DomainNetbios property
 ## NOTES
 
 ## RELATED LINKS
