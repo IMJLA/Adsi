@@ -201,12 +201,13 @@ function Resolve-Ace {
             }
 
             if (-not $DomainNetBios) {
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`t# '$IdentityReference' has a domain NetBIOS name of '$DomainNetBios'"
 
             $GetAdsiServerParams = @{
-                AdsiServer             = $ThisServerDns
+                Fqdn                   = $ThisServerDns
                 AdsiServersByDns       = $AdsiServersByDns
                 Win32AccountsBySID     = $Win32AccountsBySID
                 Win32AccountsByCaption = $Win32AccountsByCaption
@@ -216,7 +217,7 @@ function Resolve-Ace {
                 DomainsBySid           = $DomainsBySid
             }
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
-            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`t# '$IdentityReference' has an ADSI server of '$($AdsiServer.AdsiProvider)://$($AdsiServer.ServerName)'"
+            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`t# '$IdentityReference' has an ADSI server of '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)'"
 
             $ResolveIdentityReferenceParams = @{
                 IdentityReference      = $IdentityReference
@@ -237,7 +238,7 @@ function Resolve-Ace {
 
             $ObjectProperties = @{
                 AdsiProvider              = $AdsiServer.AdsiProvider
-                AdsiServer                = $AdsiServer.ServerName
+                AdsiServer                = $AdsiServer.Dns
                 IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
                 IdentityReferenceName     = $ResolvedIdentityReference.IdentityReferenceUnresolved
                 IdentityReferenceResolved = $ResolvedIdentityReference.IdentityReferenceNetBios

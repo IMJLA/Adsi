@@ -26,22 +26,51 @@ function Get-DomainInfo {
     )
 
     if ($PSBoundParameters.ContainsKey('DomainNetBIOS')) {
+        $OutputObject = $DomainsByNetbios[$DomainNetbios]
+        if ($OutputObject) {
+            Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain NetBIOS cache hit for '$DomainNetbios'"
+            return $OutputObject
+        }
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain NetBIOS cache hit for '$DomainNetbios'"
         $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios
-        $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn
+        if ($DomainDn) {
+            $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn
+        } else {
+            $CimSession = New-CimSession -ComputerName $DomainNetBIOS
+            $ParentDomainDnsName = (Get-CimInstance -CimSession $CimSession -ClassName CIM_ComputerSystem).domain
+            if ($ParentDomainDnsName -eq 'WORKGROUP' -or $null -eq $ParentDomainDnsName) {
+                $ParentDomainDnsName = (Get-DnsClientGlobalSetting -CimSession $CimSession).SuffixSearchList[0]
+            }
+            $DomainDnsName = "$DomainNetBIOS.$ParentDomainDnsName"
+        }
         $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
     }
 
     if ($PSBoundParameters.ContainsKey('DomainDnsName')) {
+        $OutputObject = $DomainsByFqdn[$DomainDnsName]
+        if ($OutputObject) {
+            Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain FQDN cache hit for '$DomainDnsName'"
+            return $OutputObject
+        }
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain FQDN cache miss for '$DomainDnsName'"
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`tConvertTo-DistinguishedName -DomainFQDN '$DomainDnsName'"
         $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainDnsName
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`tConvertTo-DomainSidString -DomainDnsName '$DomainDnsName'"
         $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-        $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainDnsName $DomainDnsName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`tConvertTo-DomainNetBIOS -DomainFQDN '$DomainDnsName'"
+        $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainDnsName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
     }
 
-    [PSCustomObject]@{
+    $OutputObject = [PSCustomObject]@{
         Dns               = $DomainDnsName
-        NetBios           = $DomainNetBIOS
+        NetBIOS           = $DomainNetBIOS
         SID               = $DomainSid
         DistinguishedName = $DomainDn
     }
 
+    $DomainsBySID[$OutputObject.SID] = $OutputObject
+    $DomainsByNetbios[$DomainNetbios] = $OutputObject
+    $DomainsByFqdn[$DomainDnsName] = $OutputObject
+
+    return $OutputObject
 }

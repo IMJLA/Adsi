@@ -2,6 +2,8 @@ function ConvertTo-DomainNetBIOS {
     param (
         [string]$DomainFQDN,
 
+        [string]$AdsiProvider,
+
         # Cache of known directory servers to reduce duplicate queries
         [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
@@ -25,17 +27,19 @@ function ConvertTo-DomainNetBIOS {
 
     $DomainCacheResult = $DomainsByFqdn[$DomainFQDN]
     if ($DomainCacheResult) {
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainNetBIOS`t # Domain FQDN cache hit for '$DomainFQDN'"
         return $DomainCacheResult.Netbios
     }
 
+    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainNetBIOS`t # Domain FQDN cache miss for '$DomainFQDN'"
+
     $ThisHostName = HOSTNAME.EXE
 
-    $AdsiServer = Get-AdsiServer -AdsiServer $DomainFQDN -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-    if ($AdsiServer.AdsiProvider -eq 'LDAP') {
+    if ($AdsiProvider -eq 'LDAP') {
         $RootDSE = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/rootDSE" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tConvertTo-DomainNetBIOS`t`$RootDSE.InvokeGet('defaultNamingContext')"
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainNetBIOS`t`$RootDSE.InvokeGet('defaultNamingContext')"
         $DomainDistinguishedName = $RootDSE.InvokeGet("defaultNamingContext")
-        Write-Debug "  $(Get-Date -Format s)`t$ThisHostName`tConvertTo-DomainNetBIOS`t`$RootDSE.InvokeGet('configurationNamingContext')"
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainNetBIOS`t`$RootDSE.InvokeGet('configurationNamingContext')"
         $ConfigurationDN = $rootDSE.InvokeGet("configurationNamingContext")
         $partitions = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
 
@@ -47,6 +51,8 @@ function ConvertTo-DomainNetBIOS {
     } else {
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
         $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
+        ## Instead of just returning the NetBios name from the substring we could use it to populate the caches for future lookups.  Concerns about causing a loop.
+        ##(Get-AdsiServer -Netbios  -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).Netbios
     }
 
 }

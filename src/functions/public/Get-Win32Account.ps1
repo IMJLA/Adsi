@@ -1,4 +1,4 @@
-function Get-WellKnownSid {
+function Get-Win32Account {
     <#
         .SYNOPSIS
         Use CIM to get well-known SIDs
