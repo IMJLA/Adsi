@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.23
+Help Version: 3.0.24
 Locale: en-US
 ---
 
@@ -48,9 +48,6 @@ Convert a SID from byte array format to a string representation of its hexadecim
 ### [ConvertTo-HexStringRepresentationForLDAPFilterString](ConvertTo-HexStringRepresentationForLDAPFilterString.md)
 Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
 
-### [ConvertTo-LDAPDomainNetBIOS](ConvertTo-LDAPDomainNetBIOS.md)
-{{ Fill in the Description }}
-
 ### [ConvertTo-SidByteArray](ConvertTo-SidByteArray.md)
 Convert a SID from a string to binary format (byte array)
 
@@ -71,10 +68,10 @@ Determine whether a directory server is an LDAP or a WinNT server
 Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostname] <string>] [[-ThisFqdn] <string>]
 
 
-### [Get-AdsiGroup](Get-AdsiGroup.md)
+### [Get-ADSIGroup](Get-ADSIGroup.md)
 Get the directory entries for a group and its members using ADSI
 
-### [Get-AdsiGroupMember](Get-AdsiGroupMember.md)
+### [Get-ADSIGroupMember](Get-ADSIGroupMember.md)
 Get members of a group from the LDAP provider
 
 ### [Get-AdsiServer](Get-AdsiServer.md)
@@ -96,9 +93,6 @@ Returns a dictionary of trusted domains by the current computer
 
 ### [Get-TrustedDomainInfo](Get-TrustedDomainInfo.md)
 Returns a dictionary of trusted domains by the current computer
-
-### [Get-TrustedDomainSidNameMap](Get-TrustedDomainSidNameMap.md)
-{{ Fill in the Description }}
 
 ### [Get-WellKnownSid](Get-WellKnownSid.md)
 Use CIM to get well-known SIDs
