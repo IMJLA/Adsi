@@ -34,14 +34,12 @@ function ConvertTo-DomainSidString {
     try {
         $null = $DomainDirectoryEntry.RefreshCache('objectSid')
     } catch {
-        Write-Warning "$(Get-Date -Format s)`t$(hostname)`tConvertTo-DomainSidString`tLDAP Domain: '$DomainDnsName' - $($_.Exception.Message)"
+        Write-Debug "$(Get-Date -Format s)`t$(hostname)`tConvertTo-DomainSidString`t # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+        $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName
+        return $DomainSid
     }
 
-    if (-not $DomainDirectoryEntry) {
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`tGet-CimInstance -ComputerName $DomainDnsName -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-        [string]$LocalAccountSID = (Get-CimInstance -ComputerName $DomainDnsName -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'").SID[0]
-        return $LocalAccountSID.Substring(0, $LocalAccountSID.LastIndexOf("-"))
-    }
 
     $DomainSid = $null
 
