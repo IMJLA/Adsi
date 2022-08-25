@@ -494,6 +494,8 @@ task Publish -depends SourceControl {
         Write-Host "Publish-Module -Path '$env:BHBuildOutput' -Repository 'PSGallery'"
         # Publish to PSGallery
         Publish-Module @publishParams
+    } else {
+        Write-Host "Skipping publishing"
     }
 } -description 'Publish module to the defined PowerShell repository'
 

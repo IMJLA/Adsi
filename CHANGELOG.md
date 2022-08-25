@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.35] - 2022-08-25 - Testing updated build script
+
+## [3.0.34] - 2022-08-25 - Testing updated build script
+
 ## [3.0.33] - 2022-08-25 - Added AdsiProvider param to Get-Win32Account to reduce calls to Find-AdsiProvider
 
 ## [3.0.32] - 2022-08-25 - Fixed psake bug publish-module vs publish-script
