@@ -42,6 +42,13 @@ function ConvertTo-DistinguishedName {
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
         [string]$OutputType = 'ADS_NAME_TYPE_1779',
 
+        <#
+        AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+        This parameter can be used to reduce calls to Find-AdsiProvider
+
+        Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
+        #>
         [string]$AdsiProvider
 
     )
@@ -81,7 +88,8 @@ function ConvertTo-DistinguishedName {
             $DomainCacheResult = $DomainsByNetbios[$ThisDomain]
             if ($DomainCacheResult) {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache hit for '$ThisDomain'"
-                ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns -AdsiProvider $DomainCacheResult.AdsiProvider
+                #ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns -AdsiProvider $DomainCacheResult.AdsiProvider
+                $DomainCacheResult.DistinguishedName
             } else {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
@@ -91,21 +99,29 @@ function ConvertTo-DistinguishedName {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'"
                 $null = $IADsNameTranslateInterface.InvokeMember("Init", "InvokeMethod", $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
 
-                # Suppress errors when calling these next 2 methods (for a non-domain system there is no DistinguishedName for the domain)
-                #Exception calling "InvokeMember" with "5" argument(s): "Name translation: Could not find the name or insufficient right to see name. (Exception from HRESULT: 0x80072116)"
+                # For a non-domain-joined system there is no DistinguishedName for the domain
+                # Suppress errors when calling these next 2 methods
+                #     Exception calling "InvokeMember" with "5" argument(s): "Name translation: Could not find the name or insufficient right to see name. (Exception from HRESULT: 0x80072116)"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$null = `$IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInputType, '$ThisDomain\')) # For '$ThisDomain'"
                 $null = { $IADsNameTranslateInterface.InvokeMember("Set", "InvokeMethod", $Null, $IADsNameTranslateComObject, ($ChosenInputType, "$ThisDomain\")) } 2>$null
-                # Exception calling "InvokeMember" with "5" argument(s): "Unspecified error (Exception from HRESULT: 0x80004005 (E_FAIL))"
+                #     Exception calling "InvokeMember" with "5" argument(s): "Unspecified error (Exception from HRESULT: 0x80004005 (E_FAIL))"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, $ChosenOutputType) # For '$ThisDomain'"
-                $null = { $IADsNameTranslateInterface.InvokeMember("Get", "InvokeMethod", $Null, $IADsNameTranslateComObject, $ChosenOutputType) } 2>$null
+                $null = { $null = { $IADsNameTranslateInterface.InvokeMember("Get", "InvokeMethod", $Null, $IADsNameTranslateComObject, $ChosenOutputType) } 2>$null } 2>$null
             }
         }
         ForEach ($ThisDomain in $DomainFQDN) {
-            if (-not $AdsiProvider) {
-                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain
-            }
-            if ($AdsiProvider -ne 'WinNT') {
-                "dc=$($ThisDomain -replace '\.',',dc=')"
+            $DomainCacheResult = $DomainsByFqdn[$ThisDomain]
+            if ($DomainCacheResult) {
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain FQDN cache hit for '$ThisDomain'"
+                $DomainCacheResult.DistinguishedName
+            } else {
+                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain FQDN cache miss for '$ThisDomain'"
+                if (-not $AdsiProvider) {
+                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain
+                }
+                if ($AdsiProvider -ne 'WinNT') {
+                    "dc=$($ThisDomain -replace '\.',',dc=')"
+                }
             }
         }
     }

@@ -4,7 +4,11 @@
   <SupportedUICultures>
     <UICulture>
       <UICultureName>en-US</UICultureName>
+<<<<<<< HEAD:docs/UpdatableHelp/Adsi_282a2aed-9567-49a1-901c-122b7831a805_HelpInfo.xml
       <UICultureVersion>3.0.25</UICultureVersion>
+=======
+      <UICultureVersion>3.0.27</UICultureVersion>
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:docs/UpdatableHelp/Adsi_282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805_HelpInfo.xml
     </UICulture>
   </SupportedUICultures>
 </HelpInfo>

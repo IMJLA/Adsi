@@ -2,7 +2,11 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
+<<<<<<< HEAD
 Help Version: 3.0.25
+=======
+Help Version: 3.0.27
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 Locale: en-US
 ---
 
@@ -31,12 +35,12 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
 
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-AdsiServersByDns] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
+ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
 
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
@@ -86,11 +90,16 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
 
+<<<<<<< HEAD
 ### [Get-TrustedDomainInfo](Get-TrustedDomainInfo.md)
 Returns a dictionary of trusted domains by the current computer
+=======
+### [Get-TrustedDomainSidNameMap](Get-TrustedDomainSidNameMap.md)
+{{ Fill in the Description }}
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 
 ### [Get-WellKnownSid](Get-WellKnownSid.md)
-Use CIM to get well-known SIDs
+{{ Fill in the Description }}
 
 ### [Get-Win32Account](Get-Win32Account.md)
 Use CIM to get well-known SIDs

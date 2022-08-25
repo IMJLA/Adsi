@@ -4,9 +4,6 @@ function ConvertTo-DomainNetBIOS {
 
         [string]$AdsiProvider,
 
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -51,8 +48,6 @@ function ConvertTo-DomainNetBIOS {
     } else {
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
         $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
-        ## Instead of just returning the NetBios name from the substring we could use it to populate the caches for future lookups.  Concerns about causing a loop.
-        ##(Get-AdsiServer -Netbios  -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).Netbios
     }
 
 }

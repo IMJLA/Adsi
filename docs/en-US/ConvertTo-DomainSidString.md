@@ -15,7 +15,7 @@ schema: 2.0.0
 ```
 ConvertTo-DomainSidString [-DomainDnsName] <String> [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [<CommonParameters>]
+ [[-AdsiProvider] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,6 +31,21 @@ PS C:\> {{ Add example code here }}
 {{ Add example description here }}
 
 ## PARAMETERS
+
+### -AdsiProvider
+{{ Fill AdsiProvider Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryEntryCache
 {{ Fill DirectoryEntryCache Description }}

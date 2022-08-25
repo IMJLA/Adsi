@@ -14,9 +14,15 @@ Use ADSI to lookup info about IdentityReferences from Access Control Entries tha
 
 ```
 Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>]
+<<<<<<< HEAD
  [[-AdsiServersByDns] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
+=======
+ [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
+ [<CommonParameters>]
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 ```
 
 ## DESCRIPTION
@@ -62,12 +68,17 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+<<<<<<< HEAD
 Position: 3
+=======
+Position: 5
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 Default value: [hashtable]::Synchronized(@{})
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+<<<<<<< HEAD
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups
 
@@ -85,6 +96,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+=======
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 ### -DomainsByFqdn
 Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
@@ -94,7 +107,11 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+<<<<<<< HEAD
 Position: 9
+=======
+Position: 8
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -109,7 +126,11 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+<<<<<<< HEAD
 Position: 7
+=======
+Position: 6
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -124,7 +145,11 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+<<<<<<< HEAD
 Position: 8
+=======
+Position: 7
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -155,7 +180,11 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+<<<<<<< HEAD
 Position: 5
+=======
+Position: 4
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -170,7 +199,11 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+<<<<<<< HEAD
 Position: 4
+=======
+Position: 3
+>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
