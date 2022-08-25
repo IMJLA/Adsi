@@ -90,7 +90,7 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
-            Add-SidInfo -InputObject $Principal -DirectoryEntryCache $DirectoryEntryCache -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios
+            Add-SidInfo -InputObject $Principal -DomainsBySid $DomainsBySid
 
         }
     }
