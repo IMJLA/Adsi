@@ -211,7 +211,7 @@ function Resolve-Ace3 {
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
             Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # ADSI server is '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)' for '$IdentityReference'"
 
-            if (-not $DomainNetBios) {
+            if ([string]$DomainNetBios -eq '') {
                 $DomainNetBios = $AdsiServer.Netbios
             }
 
