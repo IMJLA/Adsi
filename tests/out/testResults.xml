@@ -18,6 +18,10 @@
                   <test-case description="runs without throwing errors" name="function 'Add-DomainFqdnToLdapPath.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Add-DomainFqdnToLdapPath.ps1&quot;)" time="0.0122" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Add-DomainFqdnToLdapPath.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0094" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Add-DomainFqdnToLdapPath.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Add-DomainFqdnToLdapPath.ps1&quot;)" time="0.0094" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Add-SidInfo.ps1'" executed="True" result="Success" success="True" time="0.0564" asserts="0" description="function 'Add-SidInfo.ps1'">
@@ -32,6 +36,10 @@
                   <test-case description="runs without throwing errors" name="function 'Add-SidInfo.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Add-SidInfo.ps1&quot;)" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Add-SidInfo.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0184" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Add-SidInfo.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Add-SidInfo.ps1&quot;)" time="0.0184" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertFrom-DirectoryEntry.ps1'" executed="True" result="Success" success="True" time="0.0802" asserts="0" description="function 'ConvertFrom-DirectoryEntry.ps1'">
@@ -46,6 +54,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertFrom-DirectoryEntry.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertFrom-DirectoryEntry.ps1&quot;)" time="0.0091" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertFrom-DirectoryEntry.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0255" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertFrom-DirectoryEntry.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertFrom-DirectoryEntry.ps1&quot;)" time="0.0255" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertFrom-PropertyValueCollectionToString.ps1'" executed="True" result="Success" success="True" time="0.114" asserts="0" description="function 'ConvertFrom-PropertyValueCollectionToString.ps1'">
@@ -60,6 +72,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertFrom-PropertyValueCollectionToString.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertFrom-PropertyValueCollectionToString.ps1&quot;)" time="0.0118" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertFrom-PropertyValueCollectionToString.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0078" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertFrom-PropertyValueCollectionToString.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertFrom-PropertyValueCollectionToString.ps1&quot;)" time="0.0078" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertTo-DecStringRepresentation.ps1'" executed="True" result="Success" success="True" time="0.1423" asserts="0" description="function 'ConvertTo-DecStringRepresentation.ps1'">
@@ -74,6 +90,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertTo-DecStringRepresentation.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DecStringRepresentation.ps1&quot;)" time="0.0098" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertTo-DecStringRepresentation.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0151" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertTo-DecStringRepresentation.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DecStringRepresentation.ps1&quot;)" time="0.0151" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertTo-DistinguishedName.ps1'" executed="True" result="Success" success="True" time="0.1692" asserts="0" description="function 'ConvertTo-DistinguishedName.ps1'">
@@ -88,6 +108,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertTo-DistinguishedName.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DistinguishedName.ps1&quot;)" time="0.0142" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertTo-DistinguishedName.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.1167" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertTo-DistinguishedName.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DistinguishedName.ps1&quot;)" time="0.1167" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertTo-DomainNetBIOS.ps1'" executed="True" result="Success" success="True" time="0.1889" asserts="0" description="function 'ConvertTo-DomainNetBIOS.ps1'">
@@ -102,6 +126,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertTo-DomainNetBIOS.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DomainNetBIOS.ps1&quot;)" time="0.0105" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertTo-DomainNetBIOS.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0076" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertTo-DomainNetBIOS.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DomainNetBIOS.ps1&quot;)" time="0.0076" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertTo-DomainSidString.ps1'" executed="True" result="Success" success="True" time="0.2154" asserts="0" description="function 'ConvertTo-DomainSidString.ps1'">
@@ -116,6 +144,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertTo-DomainSidString.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DomainSidString.ps1&quot;)" time="0.0102" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertTo-DomainSidString.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0571" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertTo-DomainSidString.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-DomainSidString.ps1&quot;)" time="0.0571" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertTo-Fqdn.ps1'" executed="True" result="Success" success="True" time="0.2365" asserts="0" description="function 'ConvertTo-Fqdn.ps1'">
@@ -144,6 +176,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertTo-HexStringRepresentation.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-HexStringRepresentation.ps1&quot;)" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertTo-HexStringRepresentation.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0169" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertTo-HexStringRepresentation.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-HexStringRepresentation.ps1&quot;)" time="0.0169" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertTo-HexStringRepresentationForLDAPFilterString.ps1'" executed="True" result="Success" success="True" time="0.2918" asserts="0" description="function 'ConvertTo-HexStringRepresentationForLDAPFilterString.ps1'">
@@ -158,6 +194,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertTo-HexStringRepresentationForLDAPFilterString.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-HexStringRepresentationForLDAPFilterString.ps1&quot;)" time="0.01" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertTo-HexStringRepresentationForLDAPFilterString.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0075" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertTo-HexStringRepresentationForLDAPFilterString.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-HexStringRepresentationForLDAPFilterString.ps1&quot;)" time="0.0075" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'ConvertTo-SidByteArray.ps1'" executed="True" result="Success" success="True" time="0.3162" asserts="0" description="function 'ConvertTo-SidByteArray.ps1'">
@@ -172,6 +212,10 @@
                   <test-case description="runs without throwing errors" name="function 'ConvertTo-SidByteArray.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-SidByteArray.ps1&quot;)" time="0.0112" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'ConvertTo-SidByteArray.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0065" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'ConvertTo-SidByteArray.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\ConvertTo-SidByteArray.ps1&quot;)" time="0.0065" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Expand-AdsiGroupMember.ps1'" executed="True" result="Success" success="True" time="0.3371" asserts="0" description="function 'Expand-AdsiGroupMember.ps1'">
@@ -186,6 +230,10 @@
                   <test-case description="runs without throwing errors" name="function 'Expand-AdsiGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Expand-AdsiGroupMember.ps1&quot;)" time="0.0105" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Expand-AdsiGroupMember.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0093" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Expand-AdsiGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Expand-AdsiGroupMember.ps1&quot;)" time="0.0093" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Expand-IdentityReference.ps1'" executed="True" result="Success" success="True" time="0.3595" asserts="0" description="function 'Expand-IdentityReference.ps1'">
@@ -200,6 +248,10 @@
                   <test-case description="runs without throwing errors" name="function 'Expand-IdentityReference.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Expand-IdentityReference.ps1&quot;)" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Expand-IdentityReference.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0106" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Expand-IdentityReference.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Expand-IdentityReference.ps1&quot;)" time="0.0106" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Expand-WinNTGroupMember.ps1'" executed="True" result="Success" success="True" time="0.3786" asserts="0" description="function 'Expand-WinNTGroupMember.ps1'">
@@ -214,6 +266,10 @@
                   <test-case description="runs without throwing errors" name="function 'Expand-WinNTGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Expand-WinNTGroupMember.ps1&quot;)" time="0.006" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Expand-WinNTGroupMember.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.008" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Expand-WinNTGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Expand-WinNTGroupMember.ps1&quot;)" time="0.008" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Find-AdsiProvider.ps1'" executed="True" result="Success" success="True" time="0.4004" asserts="0" description="function 'Find-AdsiProvider.ps1'">
@@ -228,6 +284,10 @@
                   <test-case description="runs without throwing errors" name="function 'Find-AdsiProvider.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Find-AdsiProvider.ps1&quot;)" time="0.0086" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Find-AdsiProvider.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0158" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Find-AdsiProvider.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Find-AdsiProvider.ps1&quot;)" time="0.0158" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Find-LocalAdsiServerSid.ps1'" executed="True" result="Success" success="True" time="0.42" asserts="0" description="function 'Find-LocalAdsiServerSid.ps1'">
@@ -242,6 +302,10 @@
                   <test-case description="runs without throwing errors" name="function 'Find-LocalAdsiServerSid.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Find-LocalAdsiServerSid.ps1&quot;)" time="0.0116" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Find-LocalAdsiServerSid.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0303" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Find-LocalAdsiServerSid.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Find-LocalAdsiServerSid.ps1&quot;)" time="0.0303" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-AdsiGroup.ps1'" executed="True" result="Success" success="True" time="0.4403" asserts="0" description="function 'Get-AdsiGroup.ps1'">
@@ -256,6 +320,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-AdsiGroup.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-AdsiGroup.ps1&quot;)" time="0.0052" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-AdsiGroup.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0084" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-AdsiGroup.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-AdsiGroup.ps1&quot;)" time="0.0084" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-AdsiGroupMember.ps1'" executed="True" result="Success" success="True" time="0.4651" asserts="0" description="function 'Get-AdsiGroupMember.ps1'">
@@ -270,6 +338,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-AdsiGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-AdsiGroupMember.ps1&quot;)" time="0.0059" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-AdsiGroupMember.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0096" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-AdsiGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-AdsiGroupMember.ps1&quot;)" time="0.0096" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-AdsiServer.ps1'" executed="True" result="Success" success="True" time="0.4855" asserts="0" description="function 'Get-AdsiServer.ps1'">
@@ -284,6 +356,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-AdsiServer.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-AdsiServer.ps1&quot;)" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-AdsiServer.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0732" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-AdsiServer.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-AdsiServer.ps1&quot;)" time="0.0732" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-CurrentDomain.ps1'" executed="True" result="Success" success="True" time="0.5058" asserts="0" description="function 'Get-CurrentDomain.ps1'">
@@ -312,6 +388,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-DirectoryEntry.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-DirectoryEntry.ps1&quot;)" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-DirectoryEntry.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0088" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-DirectoryEntry.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-DirectoryEntry.ps1&quot;)" time="0.0088" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-TrustedDomain.ps1'" executed="True" result="Success" success="True" time="0.55" asserts="0" description="function 'Get-TrustedDomain.ps1'">
@@ -326,6 +406,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-TrustedDomain.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-TrustedDomain.ps1&quot;)" time="0.0095" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-DomainInfo.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.007" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-DomainInfo.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-DomainInfo.ps1&quot;)" time="0.007" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-Win32Account.ps1'" executed="True" result="Success" success="True" time="0.5803" asserts="0" description="function 'Get-Win32Account.ps1'">
@@ -340,6 +424,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-Win32Account.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-Win32Account.ps1&quot;)" time="0.0104" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-TrustedDomain.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0163" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-TrustedDomain.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-TrustedDomain.ps1&quot;)" time="0.0163" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-Win32UserAccount.ps1'" executed="True" result="Success" success="True" time="0.6126" asserts="0" description="function 'Get-Win32UserAccount.ps1'">
@@ -354,6 +442,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-Win32UserAccount.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-Win32UserAccount.ps1&quot;)" time="0.0097" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-TrustedDomainInfo.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0105" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-TrustedDomainInfo.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-TrustedDomainInfo.ps1&quot;)" time="0.0105" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Get-WinNTGroupMember.ps1'" executed="True" result="Success" success="True" time="0.6457" asserts="0" description="function 'Get-WinNTGroupMember.ps1'">
@@ -368,6 +460,10 @@
                   <test-case description="runs without throwing errors" name="function 'Get-WinNTGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-WinNTGroupMember.ps1&quot;)" time="0.0082" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-WellKnownSid.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0087" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-WellKnownSid.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-WellKnownSid.ps1&quot;)" time="0.0087" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Invoke-ComObject.ps1'" executed="True" result="Success" success="True" time="0.6715" asserts="0" description="function 'Invoke-ComObject.ps1'">
@@ -382,6 +478,10 @@
                   <test-case description="runs without throwing errors" name="function 'Invoke-ComObject.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Invoke-ComObject.ps1&quot;)" time="0.0101" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-Win32Account.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0303" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-Win32Account.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-Win32Account.ps1&quot;)" time="0.0303" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'New-FakeDirectoryEntry.ps1'" executed="True" result="Success" success="True" time="0.7029" asserts="0" description="function 'New-FakeDirectoryEntry.ps1'">
@@ -396,6 +496,10 @@
                   <test-case description="runs without throwing errors" name="function 'New-FakeDirectoryEntry.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\New-FakeDirectoryEntry.ps1&quot;)" time="0.011" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-Win32UserAccount.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0454" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-Win32UserAccount.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-Win32UserAccount.ps1&quot;)" time="0.0454" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Resolve-Ace.ps1'" executed="True" result="Success" success="True" time="0.7366" asserts="0" description="function 'Resolve-Ace.ps1'">
@@ -410,6 +514,10 @@
                   <test-case description="runs without throwing errors" name="function 'Resolve-Ace.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Resolve-Ace.ps1&quot;)" time="0.0142" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Get-WinNTGroupMember.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0083" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Get-WinNTGroupMember.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Get-WinNTGroupMember.ps1&quot;)" time="0.0083" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Resolve-Ace3.ps1'" executed="True" result="Success" success="True" time="0.7636" asserts="0" description="function 'Resolve-Ace3.ps1'">
@@ -424,6 +532,10 @@
                   <test-case description="runs without throwing errors" name="function 'Resolve-Ace3.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Resolve-Ace3.ps1&quot;)" time="0.011" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
+              <test-suite type="ParameterizedTest" name="function 'Invoke-ComObject.ps1'.runs without throwing errors" executed="True" result="Success" success="True" time="0.0069" asserts="0" description="runs without throwing errors">
+                <results>
+                  <test-case description="runs without throwing errors" name="function 'Invoke-ComObject.ps1'.runs without throwing errors(&quot;E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\src\functions\public\Invoke-ComObject.ps1&quot;)" time="0.0069" asserts="0" success="True" result="Success" executed="True" />
+>>>>>>> main
             </results>
           </test-suite>
           <test-suite type="TestFixture" name="function 'Resolve-Ace4.ps1'" executed="True" result="Success" success="True" time="0.7977" asserts="0" description="function 'Resolve-Ace4.ps1'">
@@ -1493,9 +1605,15 @@ at &lt;ScriptBlock&gt;, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerSh
                 <results>
                   <test-case description="has a description" name="help for Get-Win32Account.- Help for parameter 'ComputerName'.has a description" time="0.0212" asserts="0" success="False" result="Failure" executed="True">
                     <failure>
-                      <message>Expected a value, but got $null or empty.</message>
-                      <stack-trace>at $parameterHelp.Description.Text | Should -Not -BeNullOrEmpty, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:103
-at &lt;ScriptBlock&gt;, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:103</stack-trace>
+                      <message>Expected strings to be the same, but they were different.
+Expected length: 6
+Actual length:   13
+Strings differ at index 1.
+Expected: 'String'
+But was:  'System.String'
+           -^</message>
+                      <stack-trace>at $parameterHelpType | Should -Be $parameter.ParameterType.Name, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:114
+at &lt;ScriptBlock&gt;, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:114</stack-trace>
                     </failure>
                   </test-case>
                   <test-case description="has the correct [mandatory] value" name="help for Get-Win32Account.- Help for parameter 'ComputerName'.has the correct [mandatory] value" time="0.005" asserts="0" success="True" result="Success" executed="True" />
@@ -1826,9 +1944,15 @@ at &lt;ScriptBlock&gt;, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerSh
                 <results>
                   <test-case description="has a description" name="help for Resolve-Ace3.- Help for parameter 'Win32AccountsByCaption'.has a description" time="0.0173" asserts="0" success="False" result="Failure" executed="True">
                     <failure>
-                      <message>Expected a value, but got $null or empty.</message>
-                      <stack-trace>at $parameterHelp.Description.Text | Should -Not -BeNullOrEmpty, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:103
-at &lt;ScriptBlock&gt;, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:103</stack-trace>
+                      <message>Expected strings to be the same, but they were different.
+Expected length: 6
+Actual length:   13
+Strings differ at index 1.
+Expected: 'String'
+But was:  'System.String'
+           -^</message>
+                      <stack-trace>at $parameterHelpType | Should -Be $parameter.ParameterType.Name, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:114
+at &lt;ScriptBlock&gt;, E:\Owner\Documents\Google Drive\Programs\Scripts\PowerShell\Adsi\tests\Help.tests.ps1:114</stack-trace>
                     </failure>
                   </test-case>
                   <test-case description="has the correct [mandatory] value" name="help for Resolve-Ace3.- Help for parameter 'Win32AccountsByCaption'.has the correct [mandatory] value" time="0.0131" asserts="0" success="True" result="Success" executed="True" />

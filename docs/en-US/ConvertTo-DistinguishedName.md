@@ -8,28 +8,32 @@ schema: 2.0.0
 # ConvertTo-DistinguishedName
 
 ## SYNOPSIS
+
 Convert a domain NetBIOS name to its distinguishedName
 
 ## SYNTAX
 
 ### NetBIOS
+
 ```
 ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
- [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [<CommonParameters>]
+ [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [-AdsiProvider <String>] [<CommonParameters>]
 ```
 
 ### FQDN
+
 ```
 ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
- [-OutputType <String>] [-AdsiProvider <String>] [<CommonParameters>]
+ [-OutputType <String>] [-AdsiProvider <String>] [-AdsiProvider <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
+<https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate>
 
 ## EXAMPLES
 
 ### EXAMPLE 1
+
 ```
 ConvertTo-DistinguishedName -Domain 'CONTOSO'
 DC=ad,DC=contoso,DC=com
@@ -40,6 +44,7 @@ Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,
 ## PARAMETERS
 
 ### -AdsiProvider
+
 AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
 
 This parameter can be used to reduce calls to Find-AdsiProvider
@@ -59,6 +64,7 @@ Accept wildcard characters: False
 ```
 
 ### -Domain
+
 NetBIOS name of the domain
 
 ```yaml
@@ -74,6 +80,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainFQDN
+
 NetBIOS name of the domain
 
 ```yaml
@@ -89,6 +96,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByNetbios
+
 {{ Fill DomainsByNetbios Description }}
 
 ```yaml
@@ -104,9 +112,10 @@ Accept wildcard characters: False
 ```
 
 ### -InitType
+
 Type of initialization to be performed
 Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Init method (iads.h)
-https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_inittype_enum
+<https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_inittype_enum>
 
 ```yaml
 Type: System.String
@@ -121,9 +130,10 @@ Accept wildcard characters: False
 ```
 
 ### -InputType
+
 Format of the name of the directory object that will be used for the input
 Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Set method (iads.h)
-https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
+<https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum>
 
 ```yaml
 Type: System.String
@@ -138,9 +148,10 @@ Accept wildcard characters: False
 ```
 
 ### -OutputType
+
 Format of the name of the directory object that will be used for the output
 Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
-https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
+<https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum>
 
 ```yaml
 Type: System.String
@@ -155,14 +166,17 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
+
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ### [System.String]$Domain
+
 ## OUTPUTS
 
 ### [System.String] distinguishedName of the domain
+
 ## NOTES
 
 ## RELATED LINKS
