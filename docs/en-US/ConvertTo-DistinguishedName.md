@@ -15,13 +15,13 @@ Convert a domain NetBIOS name to its distinguishedName
 ### NetBIOS
 ```
 ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
- [-InputType <String>] [-OutputType <String>] [<CommonParameters>]
+ [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [<CommonParameters>]
 ```
 
 ### FQDN
 ```
 ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
- [-OutputType <String>] [<CommonParameters>]
+ [-OutputType <String>] [-AdsiProvider <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,6 +38,21 @@ DC=ad,DC=contoso,DC=com
 Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
 
 ## PARAMETERS
+
+### -AdsiProvider
+{{ Fill AdsiProvider Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -Domain
 NetBIOS name of the domain

@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.22
+Help Version: 3.0.23
 Locale: en-US
 ---
 
@@ -66,8 +66,10 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 ### [Find-AdsiProvider](Find-AdsiProvider.md)
 Determine whether a directory server is an LDAP or a WinNT server
 
-### [Find-ServerNameInPath](Find-ServerNameInPath.md)
-{{ Fill in the Description }}
+### [Find-LocalAdsiServerSid](Find-LocalAdsiServerSid.md)
+
+Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostname] <string>] [[-ThisFqdn] <string>]
+
 
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI
@@ -103,6 +105,11 @@ Use CIM to get well-known SIDs
 
 ### [Get-Win32Account](Get-Win32Account.md)
 Use CIM to get well-known SIDs
+
+### [Get-Win32UserAccount](Get-Win32UserAccount.md)
+
+Get-Win32UserAccount [[-ComputerName] <string>] [[-ThisHostname] <string>] [[-ThisFqdn] <string>]
+
 
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)
 Get members of a group from the WinNT provider

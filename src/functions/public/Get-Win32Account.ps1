@@ -21,7 +21,7 @@ function Get-Win32Account {
     [OutputType([Microsoft.Management.Infrastructure.CimInstance])]
     param (
         [Parameter(ValueFromPipeline)]
-        [string[]]$CimServerName,
+        [string[]]$ComputerName,
 
         # Cache of known Win32_Account instances keyed by domain and SID
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
@@ -55,7 +55,7 @@ function Get-Win32Account {
         Sort-Object -Unique
     }
     process {
-        ForEach ($ThisServer in $CimServerName) {
+        ForEach ($ThisServer in $ComputerName) {
             if ($ThisServer -eq (hostname) -or $ThisServer -eq 'localhost' -or $ThisServer -eq '127.0.0.1' -or [string]::IsNullOrEmpty($ThisServer)) {
                 $ThisServer = hostname
             }

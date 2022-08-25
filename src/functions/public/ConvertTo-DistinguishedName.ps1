@@ -40,7 +40,9 @@ function ConvertTo-DistinguishedName {
         # Format of the name of the directory object that will be used for the output
         # Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
-        [string]$OutputType = 'ADS_NAME_TYPE_1779'
+        [string]$OutputType = 'ADS_NAME_TYPE_1779',
+
+        [string]$AdsiProvider
 
     )
     begin {
@@ -79,7 +81,7 @@ function ConvertTo-DistinguishedName {
             $DomainCacheResult = $DomainsByNetbios[$ThisDomain]
             if ($DomainCacheResult) {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache hit for '$ThisDomain'"
-                ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns
+                ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns -AdsiProvider $DomainCacheResult.AdsiProvider
             } else {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
@@ -99,7 +101,12 @@ function ConvertTo-DistinguishedName {
             }
         }
         ForEach ($ThisDomain in $DomainFQDN) {
-            "dc=$($ThisDomain -replace '\.',',dc=')"
+            if (-not $AdsiProvider) {
+                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain
+            }
+            if ($AdsiProvider -ne 'WinNT') {
+                "dc=$($ThisDomain -replace '\.',',dc=')"
+            }
         }
     }
 }

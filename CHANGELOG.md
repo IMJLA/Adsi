@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.23] - 2022-08-24 - bugfixes in Get-AdsiServer
+
 ## [3.0.22] - 2022-08-24 - Get-TrustedDomain, Get-Win32Account, and upgrades to Get-AdsiServer. Deprecated Get-WellKnownSid and Get-TrustedDomainInfo
 
 ## [3.0.21] - 2022-08-22 - Improved caching

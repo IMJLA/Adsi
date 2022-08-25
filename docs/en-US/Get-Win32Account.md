@@ -13,7 +13,7 @@ Use CIM to get well-known SIDs
 ## SYNTAX
 
 ```
-Get-Win32Account [[-CimServerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
+Get-Win32Account [[-ComputerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
  [<CommonParameters>]
@@ -55,8 +55,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CimServerName
-{{ Fill CimServerName Description }}
+### -ComputerName
+{{ Fill ComputerName Description }}
 
 ```yaml
 Type: System.String[]
