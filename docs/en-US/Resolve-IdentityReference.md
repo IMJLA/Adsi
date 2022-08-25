@@ -16,7 +16,7 @@ Use ADSI to lookup info about IdentityReferences from Access Control Entries tha
 Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>]
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [[-ThisHostName] <String>] [<CommonParameters>]
+ [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -125,6 +125,23 @@ Aliases:
 Required: True
 Position: 1
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisFqdn
+FQDN of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 10
+Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

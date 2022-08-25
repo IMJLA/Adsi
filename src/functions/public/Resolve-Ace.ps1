@@ -120,7 +120,14 @@ function Resolve-Ace {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
-        [string]$ThisHostName = (HOSTNAME.EXE)
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 
     )
 
@@ -179,7 +186,7 @@ function Resolve-Ace {
                     }
                     if (-not $ThisServerDns) {
                         $ThisServerDn = ConvertTo-DistinguishedName -Domain $DomainNetBios -DomainsByNetbios $DomainsByNetbios
-                        $ThisServerDns = ConvertTo-Fqdn -DistinguishedName $ThisServerDn
+                        $ThisServerDns = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
                     }
                 }
             }
@@ -202,7 +209,7 @@ function Resolve-Ace {
 
             if (-not $DomainNetBios) {
                 $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has a domain NetBIOS name of '$DomainNetBios'"
 
@@ -214,6 +221,8 @@ function Resolve-Ace {
                 DomainsByFqdn          = $DomainsByFqdn
                 DomainsByNetbios       = $DomainsByNetbios
                 DomainsBySid           = $DomainsBySid
+                ThisHostName           = $ThisHostName
+                ThisFqdn               = $ThisFqdn
             }
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
             Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has an ADSI server of '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)'"
@@ -227,6 +236,8 @@ function Resolve-Ace {
                 DomainsBySID           = $DomainsBySID
                 DomainsByNetbios       = $DomainsByNetbios
                 DomainsByFqdn          = $DomainsByFqdn
+                ThisHostName           = $ThisHostName
+                ThisFqdn               = $ThisFqdn
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`tResolve-IdentityReference -IdentityReference '$IdentityReference'..."
             $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams

@@ -22,7 +22,21 @@ function Add-DomainFqdnToLdapPath {
 
         # Incomplete LDAP directory path containing a distinguishedName but lacking a server address
         [Parameter(ValueFromPipeline)]
-        [string[]]$DirectoryPath
+        [string[]]$DirectoryPath,
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 
     )
     begin {
@@ -41,7 +55,7 @@ function Add-DomainFqdnToLdapPath {
                     $DomainDN = $null
                     $DomainFqdn = $null
                     $DomainDN = ([regex]::Matches($ThisPath, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
-                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN
+                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
                     if ($ThisPath -match "LDAP:\/\/$DomainFqdn\/") {
                         #Write-Debug -Message " # Domain FQDN already found in the directory path: '$ThisPath'"
                         $ThisPath

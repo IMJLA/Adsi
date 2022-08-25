@@ -9,7 +9,7 @@ function Get-Win32UserAccount {
         #>
         [string]$ThisHostName = (HOSTNAME.EXE),
 
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName(($ThisHostName)).HostName)
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
     )
     if (
         $ComputerName -eq $ThisHostname -or

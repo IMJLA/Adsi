@@ -16,13 +16,14 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ```
 ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>]
  [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>]
- [-ThisHostName <String>] [<CommonParameters>]
+ [-ThisHostName <String>] [-ThisFqdn <String>] [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
 ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>]
- [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [<CommonParameters>]
+ [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [-ThisFqdn <String>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -130,6 +131,23 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ThisFqdn
+FQDN of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
