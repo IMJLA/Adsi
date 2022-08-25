@@ -37,7 +37,9 @@ function Get-AdsiGroupMember {
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+
+        [string]$ThisHostName = (HOSTNAME.EXE)
 
     )
     begin {
@@ -77,7 +79,7 @@ function Get-AdsiGroupMember {
                 $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path
             }
 
-            #Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-AdsiGroupMember`t$($SearchParameters['Filter'])"
+            #Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-AdsiGroupMember`t$($SearchParameters['Filter'])"
 
             $GroupMemberSearch = Search-Directory @SearchParameters
 
@@ -92,7 +94,7 @@ function Get-AdsiGroupMember {
                 $CurrentADGroupMembers = $null
             }
 
-            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-AdsiGroupMember`t$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-AdsiGroupMember`t$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
 
             $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios
 

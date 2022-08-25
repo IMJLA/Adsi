@@ -48,7 +48,9 @@ function Get-Win32Account {
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+
+        [string]$ThisHostName = (HOSTNAME.EXE)
 
     )
     begin {
@@ -63,7 +65,7 @@ function Get-Win32Account {
                 $ThisServer -eq '127.0.0.1' -or
                 [string]::IsNullOrEmpty($ThisServer)
             ) {
-                $ThisServer = hostname
+                $ThisServer = $ThisHostName
             }
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
@@ -78,14 +80,14 @@ function Get-Win32Account {
                 }
             } else {
 
-                if ($ThisServer -eq (hostname)) {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`t`$CimSession = New-CimSession # For '$ThisServer'"
+                if ($ThisServer -eq $ThisHostName) {
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession # For '$ThisServer'"
                     $CimSession = New-CimSession
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 } else {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
                     $CimSession = New-CimSession -ComputerName $ThisServer
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 }
 
                 $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession

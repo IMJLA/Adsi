@@ -37,7 +37,9 @@ function Expand-AdsiGroupMember {
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+
+        [string]$ThisHostName = (HOSTNAME.EXE)
 
     )
 
@@ -51,7 +53,7 @@ function Expand-AdsiGroupMember {
 
             $i++
 
-            #$status = ("$(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
+            #$status = ("$(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
             #Write-Debug -Message "  $status"
 
             $Principal = $null
@@ -73,12 +75,12 @@ function Expand-AdsiGroupMember {
                     } catch {
                         #$Success = $false
                         $Principal = $Entry
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
                     }
 
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
+                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
                         $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
                         $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios
 

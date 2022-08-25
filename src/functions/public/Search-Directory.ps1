@@ -43,11 +43,11 @@ function Search-Directory {
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
+        [string]$ThisHostName = (HOSTNAME.EXE)
 
     )
-
-    $ThisHostName = HOSTNAME.EXE
 
     $DirectoryEntryParameters = @{
         DirectoryEntryCache = $DirectoryEntryCache
@@ -60,7 +60,7 @@ function Search-Directory {
 
     if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {
         $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
-        $DirectoryPath = "WinNT://$Workgroup/$(hostname)"
+        $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
     }
     $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath
 

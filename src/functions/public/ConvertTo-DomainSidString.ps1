@@ -28,16 +28,18 @@ function ConvertTo-DomainSidString {
 
         Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
         #>
-        [string]$AdsiProvider
+        [string]$AdsiProvider,
+
+        [string]$ThisHostName = (HOSTNAME.EXE)
 
     )
 
     $CacheResult = $DomainsByFqdn[$DomainDnsName]
     if ($CacheResult) {
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`t # Domain FQDN cache hit for '$DomainDnsName'"
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`t # Domain FQDN cache hit for '$DomainDnsName'"
         return $CacheResult.Sid
     }
-    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`t # Domain FQDN cache miss for '$DomainDnsName'"
+    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`t # Domain FQDN cache miss for '$DomainDnsName'"
 
     if (
         -not $AdsiProvider -or
@@ -47,13 +49,13 @@ function ConvertTo-DomainSidString {
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
-            Write-Debug "$(Get-Date -Format s)`t$(hostname)`tConvertTo-DomainSidString`t # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
-            Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+            Write-Debug "$(Get-Date -Format s)`t$ThisHostname`tConvertTo-DomainSidString`t # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
+            Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName
             return $DomainSid
         }
     } else {
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName
         return $DomainSid
     }
@@ -71,13 +73,13 @@ function ConvertTo-DomainSidString {
         $SidByteArray = [byte[]]$DomainDirectoryEntry.objectSid
     }
 
-    Write-Debug "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-DomainSidString`t[System.Security.Principal.SecurityIdentifier]::new([byte[]]@($($SidByteArray -join ',')), 0).ToString()"
+    Write-Debug "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DomainSidString`t[System.Security.Principal.SecurityIdentifier]::new([byte[]]@($($SidByteArray -join ',')), 0).ToString()"
     $DomainSid = [System.Security.Principal.SecurityIdentifier]::new($SidByteArray, 0).ToString()
 
     if ($DomainSid) {
         return $DomainSid
     } else {
-        Write-Warning "$(Get-Date -Format s)`t$(hostname)`tConvertTo-DomainSidString`t # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
+        Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tConvertTo-DomainSidString`t # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
     }
 
 }

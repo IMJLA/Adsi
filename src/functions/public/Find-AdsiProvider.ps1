@@ -26,26 +26,28 @@ function Find-AdsiProvider {
 
         # IP address or hostname of the directory server whose ADSI provider type to determine
         [Parameter(ValueFromPipeline)]
-        [string[]]$AdsiServer
+        [string[]]$AdsiServer,
+
+        [string]$ThisHostName = (HOSTNAME.EXE)
 
     )
     process {
         ForEach ($ThisServer in $AdsiServer) {
             $AdsiProvider = $null
             $AdsiPath = "LDAP://$ThisServer"
-            Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
             try {
                 $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                 $AdsiProvider = 'LDAP'
-            } catch { Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t# $ThisServer did not respond to LDAP" }
+            } catch { Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t# $ThisServer did not respond to LDAP" }
             if (!$AdsiProvider) {
                 $AdsiPath = "WinNT://$ThisServer"
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
                 try {
                     $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                     $AdsiProvider = 'WinNT'
                 } catch {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tFind-AdsiProvider`t# $ThisServer did not respond to WinNT"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t# $ThisServer did not respond to WinNT"
                 }
             }
             if (!$AdsiProvider) {
