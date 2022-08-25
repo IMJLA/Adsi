@@ -80,7 +80,7 @@ function Resolve-Ace4 {
         Dependencies:
             Get-DirectoryEntry
             Add-SidInfo
-            Get-TrustedDomainInfo
+            Get-TrustedDomain
             Find-AdsiProvider
 
         if ($FolderPath.Length -gt 255) {
@@ -95,13 +95,6 @@ function Resolve-Ace4 {
             ValueFromPipeline
         )]
         [PSObject[]]$InputObject,
-
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups

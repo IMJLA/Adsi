@@ -79,7 +79,7 @@ function Resolve-Ace {
         Dependencies:
             Get-DirectoryEntry
             Add-SidInfo
-            Get-TrustedDomainInfo
+            Get-TrustedDomain
             Find-AdsiProvider
 
         if ($FolderPath.Length -gt 255) {
@@ -94,13 +94,6 @@ function Resolve-Ace {
             ValueFromPipeline
         )]
         [PSObject[]]$InputObject,
-
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -202,13 +195,12 @@ function Resolve-Ace {
 
             if (-not $DomainNetBios) {
                 $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`t# '$IdentityReference' has a domain NetBIOS name of '$DomainNetBios'"
 
             $GetAdsiServerParams = @{
                 Fqdn                   = $ThisServerDns
-                AdsiServersByDns       = $AdsiServersByDns
                 Win32AccountsBySID     = $Win32AccountsBySID
                 Win32AccountsByCaption = $Win32AccountsByCaption
                 DirectoryEntryCache    = $DirectoryEntryCache
@@ -221,14 +213,12 @@ function Resolve-Ace {
 
             $ResolveIdentityReferenceParams = @{
                 IdentityReference      = $IdentityReference
-                ServerName             = $ThisServerDns
                 AdsiServer             = $AdsiServer
                 Win32AccountsBySID     = $Win32AccountsBySID
                 Win32AccountsByCaption = $Win32AccountsByCaption
                 DirectoryEntryCache    = $DirectoryEntryCache
                 DomainsBySID           = $DomainsBySID
                 DomainsByNetbios       = $DomainsByNetbios
-                AdsiServersByDns       = $AdsiServersByDns
                 DomainsByFqdn          = $DomainsByFqdn
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`tResolve-IdentityReference -IdentityReference '$IdentityReference'..."

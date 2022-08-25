@@ -26,14 +26,14 @@ Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Accou
 
 ### EXAMPLE 1
 ```
-Get-WellKnownSid
+Get-Win32Account
 ```
 
 Get the well-known SIDs on the current computer
 
 ### EXAMPLE 2
 ```
-Get-WellKnownSid -CimServerName 'server123'
+Get-Win32Account -CimServerName 'server123'
 ```
 
 Get the well-known SIDs on the remote computer 'server123'
@@ -56,7 +56,7 @@ Accept wildcard characters: False
 ```
 
 ### -ComputerName
-{{ Fill ComputerName Description }}
+Name or address of the computer whose Win32_Account instances to return
 
 ```yaml
 Type: System.String[]
@@ -169,7 +169,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String]$CimServerName
+### [System.String]$ComputerName
 ## OUTPUTS
 
 ### [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace

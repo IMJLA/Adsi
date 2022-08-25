@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.27] - 2022-08-25 - merge conflicts resolved
+
+## [3.0.26] - 2022-08-25 - Debug output improvements for resolve-identityreference
+
+## [3.0.25] - 2022-08-25 - Reduced usage of Find-AdsiProvider by adding -AdsiServer param for when it is already known
+
+## [3.0.24] - 2022-08-24 - Removed AdsiServersByDns, Get-WellKnownSid, Get-DomainInfo, Get-TrustedDomainInfo
+
 ## [3.0.23] - 2022-08-24 - bugfixes in Get-AdsiServer
 
 ## [3.0.22] - 2022-08-24 - Get-TrustedDomain, Get-Win32Account, and upgrades to Get-AdsiServer. Deprecated Get-WellKnownSid and Get-TrustedDomainInfo
@@ -53,7 +61,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.0.1] - 2022-07-31 - Added ConvertFrom-DirectoryEntry
 
-## [3.0.0] - 2022-07-31 - Removed Find-ServerNameInPath because it belongs in the PsNtfs module (it parses file paths).
+## [3.0.0] - 2022-07-31 - Removed Find-ServerNameInPath because it belongs in the PsNtfs module (it parses file paths)
 
 ## [2.0.7] - 2022-07-30 - Added error prevention to Get-TrustedDomainSidNameMap and Expand-IdentityReference
 
@@ -69,7 +77,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.0.1] - 2022-07-24 - Added TrustedInstaller to Get-DirectoryEntry as a system account to be mocked using New-FakeDirectoryEntry
 
-## [2.0.0] - 2022-07-24 - Major breaking changes, functions removed, parameters modified.  Especially Resolve-IdentityReference and Expand-IdentityReference had significant changes.  Added Resolve-ACE and Expand-IdentityReference.
+## [2.0.0] - 2022-07-24 - Major breaking changes, functions removed, parameters modified.  Especially Resolve-IdentityReference and Expand-IdentityReference had significant changes.  Added Resolve-ACE and Expand-IdentityReference
 
 ## [1.0.204] - 2022-07-09 - Changed GroupMember boolean parameter on Expand-IdentityReference to a NoGroupMembers switch parameter
 
@@ -207,7 +215,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.0.137] - 2022-06-05 - Updated Resolve-IdentityReference
 
-## [1.0.136] - 2022-06-03 - Minor performance improvements and comment-based help on all functions up through the I's.  The I's have it!
+## [1.0.136] - 2022-06-03 - Minor performance improvements and comment-based help on all functions up through the I's.  The I's have it
 
 ## [1.0.135] - 2022-06-03 - reproducing bug in platyps
 

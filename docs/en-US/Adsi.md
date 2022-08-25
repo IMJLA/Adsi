@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.23
+Help Version: 3.0.27
 Locale: en-US
 ---
 
@@ -31,12 +31,12 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
 
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-AdsiServersByDns] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
+ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
 
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
@@ -71,10 +71,10 @@ Determine whether a directory server is an LDAP or a WinNT server
 Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostname] <string>] [[-ThisFqdn] <string>]
 
 
-### [Get-AdsiGroup](Get-AdsiGroup.md)
+### [Get-ADSIGroup](Get-ADSIGroup.md)
 Get the directory entries for a group and its members using ADSI
 
-### [Get-AdsiGroupMember](Get-AdsiGroupMember.md)
+### [Get-ADSIGroupMember](Get-ADSIGroupMember.md)
 Get members of a group from the LDAP provider
 
 ### [Get-AdsiServer](Get-AdsiServer.md)
@@ -94,14 +94,11 @@ Get-DomainInfo [[-DomainDn] <string>] [[-DomainDnsName] <string>] [[-DomainNetBI
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
 
-### [Get-TrustedDomainInfo](Get-TrustedDomainInfo.md)
-Returns a dictionary of trusted domains by the current computer
-
 ### [Get-TrustedDomainSidNameMap](Get-TrustedDomainSidNameMap.md)
 {{ Fill in the Description }}
 
 ### [Get-WellKnownSid](Get-WellKnownSid.md)
-Use CIM to get well-known SIDs
+{{ Fill in the Description }}
 
 ### [Get-Win32Account](Get-Win32Account.md)
 Use CIM to get well-known SIDs
