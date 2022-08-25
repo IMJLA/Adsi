@@ -13,7 +13,7 @@ function Resolve-IdentityReference {
         .OUTPUTS
         [PSCustomObject] with UnresolvedIdentityReference and SIDString properties (each strings)
         .EXAMPLE
-        Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -ServerName 'localhost' -AdsiServer (Get-AdsiServer 'localhost')
+        Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')
 
         Get information about the local Administrator account
     #>
@@ -23,9 +23,6 @@ function Resolve-IdentityReference {
         # Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)
         [Parameter(Mandatory)]
         [string]$IdentityReference,
-
-        # Name of the directory server to use to resolve the IdentityReference
-        [string]$ServerName,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
         [PSObject]$AdsiServer,
@@ -192,7 +189,6 @@ function Resolve-IdentityReference {
                 # Recursively call this function to resolve the new IdentityReference we have
                 $ResolveIdentityReferenceParams = @{
                     IdentityReference      = $UnresolvedIdentityReference
-                    ServerName             = $DomainDns
                     AdsiServer             = $AdsiServer
                     Win32AccountsBySID     = $Win32AccountsBySID
                     Win32AccountsByCaption = $Win32AccountsByCaption

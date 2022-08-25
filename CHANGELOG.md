@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.25] - 2022-08-25 - Removed ServerName param from resolve-identityreference
+
 ## [3.0.24] - 2022-08-25 - integrate latest changes from merged branches
 
 ## [3.0.23] - 2022-08-24 - bugfixes in Get-AdsiServer

@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.24
+Help Version: 3.0.25
 Locale: en-US
 ---
 
@@ -82,11 +82,6 @@ Use ADSI to get the current domain
 
 ### [Get-DirectoryEntry](Get-DirectoryEntry.md)
 Use Active Directory Service Interfaces to retrieve an object from a directory
-
-### [Get-DomainInfo](Get-DomainInfo.md)
-
-Get-DomainInfo [[-DomainDn] <string>] [[-DomainDnsName] <string>] [[-DomainNetBIOS] <string>] [[-DomainSID] <string>] [[-AdsiServersByDns] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
-
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
