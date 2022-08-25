@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.38] - 2022-08-25 - bugfix was not using cache properly in resolve-ace
+
 ## [3.0.37] - 2022-08-25 - fixed ReadMe
 
 ## [3.0.36] - 2022-08-25 - trying build script fix

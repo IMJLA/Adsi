@@ -2616,11 +2616,11 @@ function Resolve-Ace {
                     if ($DomainSid) {
                         $DomainCacheResult = $DomainsBySID[$DomainSid]
                         if ($DomainCacheResult) {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain SID cache hit for '$DomainSid'"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain SID cache hit for '$DomainSid' for '$IdentityReference'"
                             $ThisServerDns = $DomainCacheResult.Dns
                             $DomainNetBios = $DomainCacheResult.Netbios
                         } else {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain SID cache miss for '$DomainSid'"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain SID cache miss for '$DomainSid' for '$IdentityReference'"
                         }
                     }
                 }
@@ -2649,23 +2649,7 @@ function Resolve-Ace {
                 # Bug: I think this will report incorrectly for a remote domain not in the cache (trust broken or something)
                 $ThisServerDns = Find-ServerNameInPath -LiteralPath $LiteralPath
             }
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has a domain DNS name of '$ThisServerDns'"
-
-            if (-not $DomainNetBios) {
-                $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
-                if ($DomainCacheResult) {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain FQDN cache hit for '$ThisServerDns'"
-                    $DomainNetBios = $DomainCacheResult.Netbios
-                } else {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain FQDN cache miss for '$ThisServerDns'"
-                }
-            }
-
-            if (-not $DomainNetBios) {
-                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-            }
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has a domain NetBIOS name of '$DomainNetBios'"
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN is '$ThisServerDns' for '$IdentityReference'"
 
             $GetAdsiServerParams = @{
                 Fqdn                   = $ThisServerDns
@@ -2679,7 +2663,34 @@ function Resolve-Ace {
                 ThisFqdn               = $ThisFqdn
             }
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has an ADSI server of '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)'"
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # ADSI server is '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)' for '$IdentityReference'"
+
+            if (-not $DomainNetBios) {
+                $DomainNetBios = $AdsiServer.Netbios
+            }
+
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain NetBIOS is '$DomainNetBios' for '$IdentityReference'"
+
+            <#
+            $AdsiProvider = $null
+            if (-not $DomainNetBios) {
+                $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
+                if ($DomainCacheResult) {
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN cache hit for '$ThisServerDns'"
+                    $DomainNetBios = $DomainCacheResult.Netbios
+                    $AdsiProvider = $DomainCacheResult.AdsiProvider
+                } else {
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN cache miss for '$ThisServerDns'"
+                }
+            }
+
+            if (-not $DomainNetBios) {
+                if (-not $AdsiProvider) {
+                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
+                }
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            }
+            #>
 
             $ResolveIdentityReferenceParams = @{
                 IdentityReference      = $IdentityReference
@@ -2879,11 +2890,11 @@ function Resolve-Ace3 {
                     if ($DomainSid) {
                         $DomainCacheResult = $DomainsBySID[$DomainSid]
                         if ($DomainCacheResult) {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain SID cache hit for '$DomainSid'"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain SID cache hit for '$DomainSid' for '$IdentityReference'"
                             $ThisServerDns = $DomainCacheResult.Dns
                             $DomainNetBios = $DomainCacheResult.Netbios
                         } else {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain SID cache miss for '$DomainSid'"
+                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain SID cache miss for '$DomainSid' for '$IdentityReference'"
                         }
                     }
                 }
@@ -2912,23 +2923,7 @@ function Resolve-Ace3 {
                 # Bug: I think this will report incorrectly for a remote domain not in the cache (trust broken or something)
                 $ThisServerDns = Find-ServerNameInPath -LiteralPath $LiteralPath
             }
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has a domain DNS name of '$ThisServerDns'"
-
-            if (-not $DomainNetBios) {
-                $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
-                if ($DomainCacheResult) {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain FQDN cache hit for '$ThisServerDns'"
-                    $DomainNetBios = $DomainCacheResult.Netbios
-                } else {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# Domain FQDN cache miss for '$ThisServerDns'"
-                }
-            }
-
-            if (-not $DomainNetBios) {
-                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-            }
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has a domain NetBIOS name of '$DomainNetBios'"
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN is '$ThisServerDns' for '$IdentityReference'"
 
             $GetAdsiServerParams = @{
                 Fqdn                   = $ThisServerDns
@@ -2942,7 +2937,34 @@ function Resolve-Ace3 {
                 ThisFqdn               = $ThisFqdn
             }
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t# '$IdentityReference' has an ADSI server of '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)'"
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # ADSI server is '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)' for '$IdentityReference'"
+
+            if (-not $DomainNetBios) {
+                $DomainNetBios = $AdsiServer.Netbios
+            }
+
+            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain NetBIOS is '$DomainNetBios' for '$IdentityReference'"
+
+            <#
+            $AdsiProvider = $null
+            if (-not $DomainNetBios) {
+                $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
+                if ($DomainCacheResult) {
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN cache hit for '$ThisServerDns'"
+                    $DomainNetBios = $DomainCacheResult.Netbios
+                    $AdsiProvider = $DomainCacheResult.AdsiProvider
+                } else {
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN cache miss for '$ThisServerDns'"
+                }
+            }
+
+            if (-not $DomainNetBios) {
+                if (-not $AdsiProvider) {
+                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
+                }
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            }
+            #>
 
             $ResolveIdentityReferenceParams = @{
                 IdentityReference      = $IdentityReference
@@ -3576,6 +3598,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 
