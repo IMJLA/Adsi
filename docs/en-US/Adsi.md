@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.24
+Help Version: 3.0.25
 Locale: en-US
 ---
 
@@ -36,7 +36,7 @@ ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-D
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
@@ -47,6 +47,9 @@ Convert a SID from byte array format to a string representation of its hexadecim
 
 ### [ConvertTo-HexStringRepresentationForLDAPFilterString](ConvertTo-HexStringRepresentationForLDAPFilterString.md)
 Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
+
+### [ConvertTo-LDAPDomainNetBIOS](ConvertTo-LDAPDomainNetBIOS.md)
+{{ Fill in the Description }}
 
 ### [ConvertTo-SidByteArray](ConvertTo-SidByteArray.md)
 Convert a SID from a string to binary format (byte array)
@@ -85,6 +88,12 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
+
+### [Get-TrustedDomainSidNameMap](Get-TrustedDomainSidNameMap.md)
+{{ Fill in the Description }}
+
+### [Get-WellKnownSid](Get-WellKnownSid.md)
+{{ Fill in the Description }}
 
 ### [Get-Win32Account](Get-Win32Account.md)
 Use CIM to get well-known SIDs

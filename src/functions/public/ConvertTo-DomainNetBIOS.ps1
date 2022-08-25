@@ -48,8 +48,6 @@ function ConvertTo-DomainNetBIOS {
     } else {
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
         $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
-        ## Instead of just returning the NetBios name from the substring we could use it to populate the caches for future lookups.  Concerns about causing a loop.
-        ##(Get-AdsiServer -Netbios   -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).Netbios
     }
 
 }

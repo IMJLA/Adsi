@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.25] - 2022-08-25 - Reduced usage of Find-AdsiProvider by adding -AdsiServer param for when it is already known
+
 ## [3.0.24] - 2022-08-24 - Removed AdsiServersByDns, Get-WellKnownSid, Get-DomainInfo, Get-TrustedDomainInfo
 
 ## [3.0.23] - 2022-08-24 - bugfixes in Get-AdsiServer

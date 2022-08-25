@@ -19,7 +19,16 @@ function ConvertTo-DomainSidString {
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+
+        <#
+        AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+        This parameter can be used to reduce calls to Find-AdsiProvider
+
+        Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
+        #>
+        [string]$AdsiProvider
 
     )
 
@@ -30,11 +39,20 @@ function ConvertTo-DomainSidString {
     }
     Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`t # Domain FQDN cache miss for '$DomainDnsName'"
 
-    $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-    try {
-        $null = $DomainDirectoryEntry.RefreshCache('objectSid')
-    } catch {
-        Write-Debug "$(Get-Date -Format s)`t$(hostname)`tConvertTo-DomainSidString`t # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
+    if (
+        -not $AdsiProvider -or
+        $AdsiProvider -eq 'LDAP'
+    ) {
+        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+        try {
+            $null = $DomainDirectoryEntry.RefreshCache('objectSid')
+        } catch {
+            Write-Debug "$(Get-Date -Format s)`t$(hostname)`tConvertTo-DomainSidString`t # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
+            Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+            $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName
+            return $DomainSid
+        }
+    } else {
         Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName
         return $DomainSid

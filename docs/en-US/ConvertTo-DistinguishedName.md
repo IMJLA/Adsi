@@ -40,7 +40,11 @@ Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,
 ## PARAMETERS
 
 ### -AdsiProvider
-{{ Fill AdsiProvider Description }}
+AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+This parameter can be used to reduce calls to Find-AdsiProvider
+
+Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
 
 ```yaml
 Type: System.String

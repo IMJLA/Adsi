@@ -43,7 +43,9 @@ function Get-Win32Account {
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+
+        [string]$AdsiProvider
 
     )
     begin {
@@ -58,8 +60,9 @@ function Get-Win32Account {
             }
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
-            $ThisServerNetbios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServer -AdsiProvider $AdsiProvider  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            if (-not $AdsiProvider) {
+                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
+            }
             if ($AdsiServersWhoseWin32AccountsExistInCache -contains $ThisServer) {
                 $Win32AccountsBySID.Keys | ForEach-Object {
                     if ($_ -like "$ThisServer\*") {
@@ -77,8 +80,7 @@ function Get-Win32Account {
                     Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 }
 
-                $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
-                $Win32_Accounts
+                Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
 
                 Remove-CimSession -CimSession $CimSession
             }
