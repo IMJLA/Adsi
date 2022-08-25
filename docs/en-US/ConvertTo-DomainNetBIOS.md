@@ -8,7 +8,6 @@ schema: 2.0.0
 # ConvertTo-DomainNetBIOS
 
 ## SYNOPSIS
-
 {{ Fill in the Synopsis }}
 
 ## SYNTAX
@@ -20,14 +19,12 @@ ConvertTo-DomainNetBIOS [[-DomainFQDN] <String>] [[-AdsiProvider] <String>]
 ```
 
 ## DESCRIPTION
-
 {{ Fill in the Description }}
 
 ## EXAMPLES
 
 ### Example 1
-
-```
+```powershell
 PS C:\> {{ Add example code here }}
 ```
 
@@ -36,7 +33,6 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -AdsiProvider
-
 {{ Fill AdsiProvider Description }}
 
 ```yaml
@@ -52,7 +48,6 @@ Accept wildcard characters: False
 ```
 
 ### -DirectoryEntryCache
-
 {{ Fill DirectoryEntryCache Description }}
 
 ```yaml
@@ -68,7 +63,6 @@ Accept wildcard characters: False
 ```
 
 ### -DomainFQDN
-
 {{ Fill DomainFQDN Description }}
 
 ```yaml
@@ -84,7 +78,6 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByFqdn
-
 {{ Fill DomainsByFqdn Description }}
 
 ```yaml
@@ -100,7 +93,6 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByNetbios
-
 {{ Fill DomainsByNetbios Description }}
 
 ```yaml
@@ -116,7 +108,6 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsBySid
-
 {{ Fill DomainsBySid Description }}
 
 ```yaml
@@ -138,7 +129,6 @@ Accept wildcard characters: False
 ## OUTPUTS
 
 ### System.Object
-
 ## NOTES
 
 ## RELATED LINKS

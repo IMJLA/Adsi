@@ -8,7 +8,6 @@ schema: 2.0.0
 # Get-AdsiServer
 
 ## SYNOPSIS
-
 Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
 
 ## SYNTAX
@@ -20,14 +19,12 @@ Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-Win32AccountsBySI
 ```
 
 ## DESCRIPTION
-
 Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
 Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
 
 ## EXAMPLES
 
 ### EXAMPLE 1
-
 ```
 Get-AdsiServer -Fqdn localhost
 ```
@@ -35,7 +32,6 @@ Get-AdsiServer -Fqdn localhost
 Find the ADSI provider of the local computer
 
 ### EXAMPLE 2
-
 ```
 Get-AdsiServer -Fqdn 'ad.contoso.com'
 ```
@@ -45,7 +41,6 @@ Find the ADSI provider of the AD domain 'ad.contoso.com'
 ## PARAMETERS
 
 ### -DirectoryEntryCache
-
 Dictionary to cache directory entries to avoid redundant lookups
 
 Defaults to an empty thread-safe hashtable
@@ -63,7 +58,6 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByFqdn
-
 Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values
 
 ```yaml
@@ -79,7 +73,6 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsByNetbios
-
 Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
@@ -95,7 +88,6 @@ Accept wildcard characters: False
 ```
 
 ### -DomainsBySid
-
 Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
@@ -111,7 +103,6 @@ Accept wildcard characters: False
 ```
 
 ### -Fqdn
-
 IP address or hostname of the directory server whose ADSI provider type to determine
 
 ```yaml
@@ -127,7 +118,6 @@ Accept wildcard characters: False
 ```
 
 ### -Netbios
-
 NetBIOS name of the ADSI server whose information to determine
 
 ```yaml
@@ -143,7 +133,6 @@ Accept wildcard characters: False
 ```
 
 ### -Win32AccountsByCaption
-
 Cache of known Win32_Account instances keyed by domain (e.g.
 CONTOSO) and Caption (NTAccount name e.g.
 CONTOSO\User1)
@@ -161,7 +150,6 @@ Accept wildcard characters: False
 ```
 
 ### -Win32AccountsBySID
-
 Cache of known Win32_Account instances keyed by domain and SID
 
 ```yaml
@@ -177,17 +165,14 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ### [System.String]$Fqdn
-
 ## OUTPUTS
 
 ### [PSCustomObject] with AdsiProvider and WellKnownSIDs properties
-
 ## NOTES
 
 ## RELATED LINKS

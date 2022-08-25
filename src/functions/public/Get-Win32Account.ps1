@@ -26,10 +26,8 @@ function Get-Win32Account {
         [string[]]$ComputerName,
 
         # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{}))
+        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
 
-        <<<<<<<< HEAD:src/functions/public/Get-Win32Account.ps1
-        ========
         # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
         [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
 
@@ -52,7 +50,6 @@ function Get-Win32Account {
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
 
-        >>>>>>>> main:src/functions/public/Get-WellKnownSid.ps1
     )
     begin {
         $AdsiServersWhoseWin32AccountsExistInCache = $Win32AccountsBySID.Keys |
@@ -70,11 +67,8 @@ function Get-Win32Account {
             }
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
-            <<<<<<<< HEAD:src/functions/public/Get-Win32Account.ps1
-            ========
             $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
             $ThisServerNetbios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServer -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-            >>>>>>>> main:src/functions/public/Get-WellKnownSid.ps1
             if ($AdsiServersWhoseWin32AccountsExistInCache -contains $ThisServer) {
                 $Win32AccountsBySID.Keys |
                 ForEach-Object {

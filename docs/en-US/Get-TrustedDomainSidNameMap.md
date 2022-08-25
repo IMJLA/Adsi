@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-TrustedDomainInfo
+# Get-TrustedDomainSidNameMap
 
 ## SYNOPSIS
 Returns a dictionary of trusted domains by the current computer
@@ -13,8 +13,8 @@ Returns a dictionary of trusted domains by the current computer
 ## SYNTAX
 
 ```
-Get-TrustedDomainInfo [-KeyByNetbios] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
- [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
+Get-TrustedDomainSidNameMap [-KeyByNetbios] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsBySID] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -28,15 +28,16 @@ For each trusted domain the value contains the details retrieved with ADSI
 
 ### EXAMPLE 1
 ```
-Get-TrustedDomainInfo
+Get-TrustedDomainSidNameMap
 ```
 
 Get the trusted domains of the current computer
 
 ## PARAMETERS
 
-### -AdsiServersByDns
-Cache of known directory servers to reduce duplicate queries
+### -DirectoryEntryCache
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Uses a thread-safe hashtable by default
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -45,30 +46,13 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: [hashtable]::Synchronized(@{})
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DirectoryEntryCache
-Dictionary to cache directory entries to avoid redundant lookups
-
-Defaults to an empty thread-safe hashtable
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DomainsByFqdn
-Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+{{ Fill DomainsByFqdn Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -76,14 +60,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DomainsByNetbios
-Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+{{ Fill DomainsByNetbios Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -97,8 +81,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DomainsBySid
-Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+### -DomainsBySID
+{{ Fill DomainsBySID Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -106,7 +90,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 2
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
