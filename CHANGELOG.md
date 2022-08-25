@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.40] - 2022-08-25 - bugfix get-adsiserver typo in param name for get-win32account
+
 ## [3.0.39] - 2022-08-25 - bugfix was not using cache properly in resolve-ace
 
 ## [3.0.38] - 2022-08-25 - bugfix was not using cache properly in resolve-ace
