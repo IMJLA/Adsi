@@ -40,7 +40,6 @@ function ConvertTo-DomainSidString {
         return $DomainSid
     }
 
-
     $DomainSid = $null
 
     if ($DomainDirectoryEntry.Properties) {

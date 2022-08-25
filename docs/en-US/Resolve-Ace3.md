@@ -13,10 +13,9 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ## SYNTAX
 
 ```
-Resolve-Ace3 [[-InputObject] <PSObject[]>] [[-AdsiServersByDns] <Hashtable>]
- [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
- [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
+Resolve-Ace3 [[-InputObject] <PSObject[]>] [[-DirectoryEntryCache] <Hashtable>]
+ [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -109,23 +108,6 @@ It provides no known benefit over the cross-platform equivalent \[System.Securit
 
 ## PARAMETERS
 
-### -AdsiServersByDns
-Dictionary to cache known servers to avoid redundant lookups
-
-Defaults to an empty thread-safe hashtable
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: [hashtable]::Synchronized(@{})
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups
 
@@ -137,7 +119,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 2
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -152,7 +134,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -167,7 +149,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -182,7 +164,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 6
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -212,7 +194,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -227,7 +209,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -246,7 +228,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 Dependencies:
     Get-DirectoryEntry
     Add-SidInfo
-    Get-TrustedDomainInfo
+    Get-TrustedDomain
     Find-AdsiProvider
 
 if ($FolderPath.Length -gt 255) {

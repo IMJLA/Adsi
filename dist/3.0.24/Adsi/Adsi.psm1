@@ -382,9 +382,6 @@ function ConvertTo-DomainNetBIOS {
 
         [string]$AdsiProvider,
 
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -430,7 +427,7 @@ function ConvertTo-DomainNetBIOS {
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
         $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
         ## Instead of just returning the NetBios name from the substring we could use it to populate the caches for future lookups.  Concerns about causing a loop.
-        ##(Get-AdsiServer -Netbios  -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).Netbios
+        ##(Get-AdsiServer -Netbios   -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid).Netbios
     }
 
 }
@@ -475,7 +472,6 @@ function ConvertTo-DomainSidString {
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName
         return $DomainSid
     }
-
 
     $DomainSid = $null
 
@@ -533,9 +529,6 @@ function ConvertTo-Fqdn {
         )]
         [string[]]$NetBIOS,
 
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -566,7 +559,7 @@ function ConvertTo-Fqdn {
                 -not [string]::IsNullOrEmpty($DomainNetBIOS)
             ) {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-Fqdn`t # Domain NetBIOS cache miss for '$DomainNetBIOS'"
-                $DomainObject = Get-AdsiServer -Netbios $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainObject = Get-AdsiServer -Netbios $DomainNetBIOS  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
                 $DomainsByNetbios[$DomainNetBIOS] = $DomainObject
             }
 
@@ -1523,9 +1516,6 @@ function Get-AdsiServer {
         # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
         [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
 
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -1546,7 +1536,6 @@ function Get-AdsiServer {
     process {
         ForEach ($DomainFqdn in $Fqdn) {
             $OutputObject = $DomainsByFqdn[$DomainFqdn]
-            #####if (-not $AdsiServersByDns[$DomainFqdn]) {
             if ($OutputObject) {
                 Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-AdsiServer`t # Domain FQDN cache hit for '$DomainFqdn'"
                 $OutputObject
@@ -1560,21 +1549,10 @@ function Get-AdsiServer {
             Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-AdsiServer`tConvertTo-DomainSidString -DomainDnsName '$DomainFqdn'"
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainFqdn -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-AdsiServer`tConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn'"
-            $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-AdsiServer`tGet-Win32Account -ComputerName '$DomainFqdn'"
-            $Win32Accounts = Get-Win32Account -ComputerName $DomainFqdn -Win32AccountsBySID $Win32AccountsBySID -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetBios -DomainsBySid $DomainsBySid -ErrorAction SilentlyContinue
-            <#
-            #####$AdsiServersByDns[$DomainFqdn] = [pscustomobject]@{
-            #####    AdsiProvider = $AdsiProvider
-            #####    ServerName   = $DomainFqdn
-            #####}
-
-            # Attempt to use CIM to populate the account caches with known instances of the Win32_Account class on $DomainFqdn
-            # Note: CIM is not expected to be reachable on domain controllers or other scenarios
-            # Because this does not interfere with returning the ADSI Server's PSCustomObject with the AdsiProvider, -ErrorAction SilentlyContinue was used
-            #####$Win32Accounts = Get-WellKnownSid -CimServerName $DomainFqdn -Win32AccountsBySID $Win32AccountsBySID -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetBios -DomainsBySid $DomainsBySid -ErrorAction SilentlyContinue
-            #>
-
+            $Win32Accounts = Get-Win32Account -ComputerName $DomainFqdn -Win32AccountsBySID $Win32AccountsBySID  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetBios -DomainsBySid $DomainsBySid -ErrorAction SilentlyContinue
+            
             $Win32Accounts |
             ForEach-Object {
                 $Win32AccountsBySID["$($_.Domain)\$($_.SID)"] = $_
@@ -1593,7 +1571,6 @@ function Get-AdsiServer {
             $DomainsByNetbios[$OutputObject.Netbios] = $OutputObject
             $DomainsByFqdn[$DomainFqdn] = $OutputObject
             $OutputObject
-            #####$AdsiServersByDns[$DomainFqdn]
         }
 
         ForEach ($DomainNetbios in $Netbios) {
@@ -1621,7 +1598,7 @@ function Get-AdsiServer {
             Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-AdsiServer`tFind-AdsiProvider -AdsiServer '$DomainDnsName'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainDnsName
             Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-AdsiServer`tGet-Win32Account -ComputerName '$DomainDnsName'"
-            $Win32Accounts = Get-Win32Account -ComputerName $DomainDnsName -Win32AccountsBySID $Win32AccountsBySID -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetBios -DomainsBySid $DomainsBySid -ErrorAction SilentlyContinue
+            $Win32Accounts = Get-Win32Account -ComputerName $DomainDnsName -Win32AccountsBySID $Win32AccountsBySID  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetBios -DomainsBySid $DomainsBySid -ErrorAction SilentlyContinue
 
             $Win32Accounts |
             ForEach-Object {
@@ -1805,82 +1782,6 @@ function Get-DirectoryEntry {
     return $DirectoryEntry
 
 }
-function Get-DomainInfo {
-    param (
-        [string]$DomainDn,
-        [string]$DomainDnsName,
-        [string]$DomainNetBIOS,
-        [string]$DomainSID,
-
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
-        <#
-        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-
-        Uses a thread-safe hashtable by default
-        #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
-    )
-
-    if ($PSBoundParameters.ContainsKey('DomainNetBIOS')) {
-        $OutputObject = $DomainsByNetbios[$DomainNetbios]
-        if ($OutputObject) {
-            Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain NetBIOS cache hit for '$DomainNetbios'"
-            return $OutputObject
-        }
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain NetBIOS cache hit for '$DomainNetbios'"
-        $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios
-        if ($DomainDn) {
-            $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn
-        } else {
-            $CimSession = New-CimSession -ComputerName $DomainNetBIOS
-            $ParentDomainDnsName = (Get-CimInstance -CimSession $CimSession -ClassName CIM_ComputerSystem).domain
-            if ($ParentDomainDnsName -eq 'WORKGROUP' -or $null -eq $ParentDomainDnsName) {
-                $ParentDomainDnsName = (Get-DnsClientGlobalSetting -CimSession $CimSession).SuffixSearchList[0]
-            }
-            $DomainDnsName = "$DomainNetBIOS.$ParentDomainDnsName"
-        }
-        $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-    }
-
-    if ($PSBoundParameters.ContainsKey('DomainDnsName')) {
-        $OutputObject = $DomainsByFqdn[$DomainDnsName]
-        if ($OutputObject) {
-            Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain FQDN cache hit for '$DomainDnsName'"
-            return $OutputObject
-        }
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`t # Domain FQDN cache miss for '$DomainDnsName'"
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`tConvertTo-DistinguishedName -DomainFQDN '$DomainDnsName'"
-        $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainDnsName
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`tConvertTo-DomainSidString -DomainDnsName '$DomainDnsName'"
-        $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-DomainInfo`tConvertTo-DomainNetBIOS -DomainFQDN '$DomainDnsName'"
-        $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainDnsName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-    }
-
-    $OutputObject = [PSCustomObject]@{
-        Dns               = $DomainDnsName
-        NetBIOS           = $DomainNetBIOS
-        SID               = $DomainSid
-        DistinguishedName = $DomainDn
-    }
-
-    $DomainsBySID[$OutputObject.SID] = $OutputObject
-    $DomainsByNetbios[$DomainNetbios] = $OutputObject
-    $DomainsByFqdn[$DomainDnsName] = $OutputObject
-
-    return $OutputObject
-}
 function Get-TrustedDomain {
     <#
         .SYNOPSIS
@@ -1907,7 +1808,7 @@ function Get-TrustedDomain {
         $ThisHostname = (HOSTNAME.EXE)
     )
     # Redirect the error stream to null, errors are expected on non-domain-joined systems
-    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomainInfo`t$('& nltest /domain_trusts 2> $null')"
+    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomain`t$('& nltest /domain_trusts 2> $null')"
     $nltestresults = & nltest /domain_trusts 2> $null
     $NlTestRegEx = '[\d]*: .*'
     $TrustRelationships = $nltestresults -match $NlTestRegEx
@@ -1924,199 +1825,6 @@ function Get-TrustedDomain {
         }
     }
 }
-function Get-TrustedDomainInfo {
-    <#
-        .SYNOPSIS
-        Returns a dictionary of trusted domains by the current computer
-        .DESCRIPTION
-        Works only on domain-joined systems
-        Use nltest to get the domain trust relationships for the domain of the current computer
-        Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID
-        For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used
-        For each trusted domain the value contains the details retrieved with ADSI
-        .INPUTS
-        None. Pipeline input is not accepted.
-        .OUTPUTS
-        [System.Collections.Hashtable] The current domain trust relationships
-
-        .EXAMPLE
-        Get-TrustedDomainInfo
-
-        Get the trusted domains of the current computer
-        .NOTES
-        TODO: Audit usage of this function, have it return objects instead of hashtable, since it updates the threadsafe hashtables instead
-    #>
-    [OutputType([System.Collections.Hashtable])]
-    param (
-
-        # Key the dictionary by the domain NetBIOS names instead of SIDs
-        [Switch]$KeyByNetbios,
-
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
-        <#
-        Dictionary to cache directory entries to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
-
-    )
-
-    $Map = @{}
-
-    # Redirect the error stream to null
-    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomainInfo`t$('& nltest /domain_trusts 2> $null')"
-    $nltestresults = & nltest /domain_trusts 2> $null
-    $NlTestRegEx = '[\d]*: .*'
-    $TrustRelationships = $nltestresults -match $NlTestRegEx
-
-    foreach ($TrustRelationship in $TrustRelationships) {
-
-        $RegEx = '(?<index>[\d]*): (?<netbios>\S*) (?<dns>\S*).*'
-        if ($TrustRelationship -match $RegEx) {
-            $DomainDnsName = $Matches.dns
-            $DomainNetbios = $Matches.netbios
-        } else {
-            continue
-        }
-
-        Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomainInfo`tGet-AdsiServer -Fqdn '$DomainDnsName'"
-        $OutputObject = Get-AdsiServer -Fqdn $DomainDnsName -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-        $DomainsBySID[$OutputObject.Sid] = $OutputObject
-        $DomainsByNetbios[$DomainNetbios] = $OutputObject
-        $DomainsByFqdn[$DomainDnsName] = $OutputObject
-        if ($KeyByNetbios -eq $true) {
-            $Map[$DomainNetbios] = $OutputObject
-        } else {
-            $Map[$DomainSid] = $OutputObject
-        }
-    }
-
-    # Add the WinNT domain of the local computer as well
-    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomainInfo`tGet-CimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-    $LocalAccountSID = (Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'").SID[0]
-    $DomainSid = $LocalAccountSID.Substring(0, $LocalAccountSID.LastIndexOf("-"))
-    $DomainNetBios = hostname
-    $DomainDnsName = "$DomainNetbios.$((Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters').'NV Domain')"
-    $OutputObject = [pscustomobject]@{
-        Dns               = $DomainDnsName
-        Netbios           = $DomainNetbios
-        Sid               = $DomainSid
-        DistinguishedName = $null
-    }
-    $DomainsBySID[$DomainSid] = $OutputObject
-    $DomainsByNetbios[$DomainNetbios] = $OutputObject
-    $DomainsByFqdn[$DomainDnsName] = $OutputObject
-    if ($KeyByNetbios -eq $true) {
-        $Map[$DomainNetbios] = $OutputObject
-    } else {
-        $Map[$DomainSid] = $OutputObject
-    }
-
-    return $Map
-
-}
-function Get-WellKnownSid {
-    <#
-        .SYNOPSIS
-        Use CIM to get well-known SIDs
-        .DESCRIPTION
-        Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class
-        .INPUTS
-        [System.String]$CimServerName
-        .OUTPUTS
-        [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace
-        .EXAMPLE
-        Get-WellKnownSid
-
-        Get the well-known SIDs on the current computer
-        .EXAMPLE
-        Get-WellKnownSid -CimServerName 'server123'
-
-        Get the well-known SIDs on the remote computer 'server123'
-    #>
-    [CmdletBinding()]
-    [OutputType([Microsoft.Management.Infrastructure.CimInstance])]
-    param (
-        [Parameter(ValueFromPipeline)]
-        [string[]]$CimServerName,
-
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
-        <#
-        Dictionary to cache directory entries to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
-
-    )
-    begin {
-        $AdsiServersWhoseWin32AccountsExistInCache = $Win32AccountsBySID.Keys |
-        ForEach-Object { ($_ -split '\\')[0] } |
-        Sort-Object -Unique
-    }
-    process {
-        ForEach ($ThisServer in $CimServerName) {
-            if ($ThisServer -eq (hostname) -or $ThisServer -eq 'localhost' -or $ThisServer -eq '127.0.0.1' -or [string]::IsNullOrEmpty($ThisServer)) {
-                $ThisServer = hostname
-            }
-            # Return matching objects from the cache if possible rather than performing a CIM query
-            # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
-            $ThisServerNetbios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServer -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-            if ($AdsiServersWhoseWin32AccountsExistInCache -contains $ThisServer) {
-                $Win32AccountsBySID.Keys | ForEach-Object {
-                    if ($_ -like "$ThisServer\*") {
-                        $Win32AccountsBySID[$_]
-                    }
-                }
-            } else {
-                if ($ThisServer -eq (hostname)) {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`t`$CimSession = New-CimSession # For '$ThisServer'"
-                    $CimSession = New-CimSession
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
-                } else {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
-                    $CimSession = New-CimSession -ComputerName $ThisServer
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
-                }
-
-                $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
-                $Win32_Accounts
-
-                Remove-CimSession -CimSession $CimSession
-            }
-        }
-    }
-}
 function Get-Win32Account {
     <#
         .SYNOPSIS
@@ -2128,11 +1836,11 @@ function Get-Win32Account {
         .OUTPUTS
         [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace
         .EXAMPLE
-        Get-WellKnownSid
+        Get-Win32Account
 
         Get the well-known SIDs on the current computer
         .EXAMPLE
-        Get-WellKnownSid -CimServerName 'server123'
+        Get-Win32Account -CimServerName 'server123'
 
         Get the well-known SIDs on the remote computer 'server123'
     #>
@@ -2147,9 +1855,6 @@ function Get-Win32Account {
 
         # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
         [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -2181,7 +1886,7 @@ function Get-Win32Account {
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
             $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
-            $ThisServerNetbios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServer -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $ThisServerNetbios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServer -AdsiProvider $AdsiProvider  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             if ($AdsiServersWhoseWin32AccountsExistInCache -contains $ThisServer) {
                 $Win32AccountsBySID.Keys | ForEach-Object {
                     if ($_ -like "$ThisServer\*") {
@@ -2190,13 +1895,13 @@ function Get-Win32Account {
                 }
             } else {
                 if ($ThisServer -eq (hostname)) {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`t`$CimSession = New-CimSession # For '$ThisServer'"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`t`$CimSession = New-CimSession # For '$ThisServer'"
                     $CimSession = New-CimSession
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 } else {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
                     $CimSession = New-CimSession -ComputerName $ThisServer
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-WellKnownSid`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 }
 
                 $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
@@ -2590,7 +2295,7 @@ function Resolve-Ace {
         Dependencies:
             Get-DirectoryEntry
             Add-SidInfo
-            Get-TrustedDomainInfo
+            Get-TrustedDomain
             Find-AdsiProvider
 
         if ($FolderPath.Length -gt 255) {
@@ -2605,13 +2310,6 @@ function Resolve-Ace {
             ValueFromPipeline
         )]
         [PSObject[]]$InputObject,
-
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -2713,13 +2411,12 @@ function Resolve-Ace {
 
             if (-not $DomainNetBios) {
                 $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`t# '$IdentityReference' has a domain NetBIOS name of '$DomainNetBios'"
 
             $GetAdsiServerParams = @{
                 Fqdn                   = $ThisServerDns
-                AdsiServersByDns       = $AdsiServersByDns
                 Win32AccountsBySID     = $Win32AccountsBySID
                 Win32AccountsByCaption = $Win32AccountsByCaption
                 DirectoryEntryCache    = $DirectoryEntryCache
@@ -2739,7 +2436,6 @@ function Resolve-Ace {
                 DirectoryEntryCache    = $DirectoryEntryCache
                 DomainsBySID           = $DomainsBySID
                 DomainsByNetbios       = $DomainsByNetbios
-                AdsiServersByDns       = $AdsiServersByDns
                 DomainsByFqdn          = $DomainsByFqdn
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`tResolve-IdentityReference -IdentityReference '$IdentityReference'..."
@@ -2845,7 +2541,7 @@ function Resolve-Ace3 {
         Dependencies:
             Get-DirectoryEntry
             Add-SidInfo
-            Get-TrustedDomainInfo
+            Get-TrustedDomain
             Find-AdsiProvider
 
         if ($FolderPath.Length -gt 255) {
@@ -2860,13 +2556,6 @@ function Resolve-Ace3 {
             ValueFromPipeline
         )]
         [PSObject[]]$InputObject,
-
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -2967,13 +2656,13 @@ function Resolve-Ace3 {
             }
 
             if (-not $DomainNetBios) {
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`t# '$IdentityReference' has a domain NetBIOS name of '$DomainNetBios'"
 
             $GetAdsiServerParams = @{
                 Fqdn                   = $ThisServerDns
-                AdsiServersByDns       = $AdsiServersByDns
                 Win32AccountsBySID     = $Win32AccountsBySID
                 Win32AccountsByCaption = $Win32AccountsByCaption
                 DirectoryEntryCache    = $DirectoryEntryCache
@@ -2993,7 +2682,6 @@ function Resolve-Ace3 {
                 DirectoryEntryCache    = $DirectoryEntryCache
                 DomainsBySID           = $DomainsBySID
                 DomainsByNetbios       = $DomainsByNetbios
-                AdsiServersByDns       = $AdsiServersByDns
                 DomainsByFqdn          = $DomainsByFqdn
             }
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-Ace`tResolve-IdentityReference -IdentityReference '$IdentityReference'..."
@@ -3100,7 +2788,7 @@ function Resolve-Ace4 {
         Dependencies:
             Get-DirectoryEntry
             Add-SidInfo
-            Get-TrustedDomainInfo
+            Get-TrustedDomain
             Find-AdsiProvider
 
         if ($FolderPath.Length -gt 255) {
@@ -3115,13 +2803,6 @@ function Resolve-Ace4 {
             ValueFromPipeline
         )]
         [PSObject[]]$InputObject,
-
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -3174,13 +2855,6 @@ function Resolve-IdentityReference {
 
         # Object from Get-AdsiServer representing the directory server and its attributes
         [PSObject]$AdsiServer,
-
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
 
@@ -3252,7 +2926,7 @@ function Resolve-IdentityReference {
                 }
             }
             if (-not $DomainDns) {
-                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
                 $DomainDn = $DomainsByNetbios[$DomainNetBIOS].DistinguishedName
             }
 
@@ -3321,9 +2995,9 @@ function Resolve-IdentityReference {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Domain SID '$DomainSid' is unknown."
                 $DomainNetBIOS = $split[0]
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Translated NTAccount name for '$IdentityReference' is '$UnresolvedIdentityReference'"
-                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
-            $AdsiServer = Get-AdsiServer -Fqdn $DomainDns -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $AdsiServer = Get-AdsiServer -Fqdn $DomainDns  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
 
             if ( -not $UnresolvedIdentityReference ) {
                 $Resolved = [PSCustomObject]@{
@@ -3341,7 +3015,6 @@ function Resolve-IdentityReference {
                     AdsiServer             = $AdsiServer
                     Win32AccountsBySID     = $Win32AccountsBySID
                     Win32AccountsByCaption = $Win32AccountsByCaption
-                    AdsiServersByDns       = $AdsiServersByDns
                     DirectoryEntryCache    = $DirectoryEntryCache
                     DomainsBySID           = $DomainsBySID
                     DomainsByNetbios       = $DomainsByNetbios
@@ -3378,7 +3051,7 @@ function Resolve-IdentityReference {
                 $DomainDns = $DomainCacheResult.Dns
             }
             if (-not $DomainDns) {
-                $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
 
             # Update the caches
@@ -3437,7 +3110,7 @@ function Resolve-IdentityReference {
         $DomainNetBIOSCacheResult = $DomainsByNetbios[$DomainNetBIOS]
         if (-not $DomainNetBIOSCacheResult) {
             Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tResolve-IdentityReference`t# Domain NetBIOS cache miss for '$($DomainNetBIOS)'."
-            $DomainNetBIOSCacheResult = Get-AdsiServer -Netbios $DomainNetBIOS -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+            $DomainNetBIOSCacheResult = Get-AdsiServer -Netbios $DomainNetBIOS  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             $DomainsByNetbios[$DomainNetBIOS] = $DomainNetBIOSCacheResult
 
         } else {
@@ -3612,7 +3285,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-DomainInfo','Get-TrustedDomain','Get-TrustedDomainInfo','Get-WellKnownSid','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 

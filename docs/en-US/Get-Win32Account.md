@@ -14,9 +14,8 @@ Use CIM to get well-known SIDs
 
 ```
 Get-Win32Account [[-ComputerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
- [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
- [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [<CommonParameters>]
+ [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,34 +25,19 @@ Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Accou
 
 ### EXAMPLE 1
 ```
-Get-WellKnownSid
+Get-Win32Account
 ```
 
 Get the well-known SIDs on the current computer
 
 ### EXAMPLE 2
 ```
-Get-WellKnownSid -CimServerName 'server123'
+Get-Win32Account -CimServerName 'server123'
 ```
 
 Get the well-known SIDs on the remote computer 'server123'
 
 ## PARAMETERS
-
-### -AdsiServersByDns
-Cache of known directory servers to reduce duplicate queries
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: [hashtable]::Synchronized(@{})
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### -ComputerName
 {{ Fill ComputerName Description }}
@@ -81,7 +65,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -96,7 +80,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -111,7 +95,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -126,7 +110,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 6
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False

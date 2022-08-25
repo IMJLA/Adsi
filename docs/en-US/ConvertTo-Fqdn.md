@@ -14,15 +14,14 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 
 ### DistinguishedName
 ```
-ConvertTo-Fqdn [-DistinguishedName <String[]>] [-AdsiServersByDns <Hashtable>]
- [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>]
- [-DomainsByFqdn <Hashtable>] [<CommonParameters>]
+ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>]
+ [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
-ConvertTo-Fqdn [-NetBIOS <String[]>] [-AdsiServersByDns <Hashtable>] [-DirectoryEntryCache <Hashtable>]
- [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [<CommonParameters>]
+ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>]
+ [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,21 +39,6 @@ ad.contoso.com
 Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
 
 ## PARAMETERS
-
-### -AdsiServersByDns
-Cache of known directory servers to reduce duplicate queries
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: [hashtable]::Synchronized(@{})
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups
