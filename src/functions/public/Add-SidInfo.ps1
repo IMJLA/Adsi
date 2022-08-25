@@ -24,21 +24,10 @@ function Add-SidInfo {
         [Parameter(ValueFromPipeline)]
         $InputObject,
 
-        <#
-        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-        Uses a thread-safe hashtable by default
-        #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
-
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{}))
 
     )
-
-    begin {}
 
     process {
         ForEach ($Object in $InputObject) {
@@ -99,16 +88,11 @@ function Add-SidInfo {
 
             #Write-Debug -Message "$SamAccountName`t$SID"
 
-            $Object |
-            Add-Member -PassThru -Force @{
+            Add-Member -InputObject $Object -PassThru -Force @{
                 SidString      = $SID
                 Domain         = $DomainObject
                 SamAccountName = $SamAccountName
             }
         }
-    }
-
-    end {
-
     }
 }
