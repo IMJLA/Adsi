@@ -15,13 +15,14 @@ Convert a domain NetBIOS name to its distinguishedName
 ### NetBIOS
 ```
 ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
- [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [<CommonParameters>]
+ [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>]
+ [<CommonParameters>]
 ```
 
 ### FQDN
 ```
 ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
- [-OutputType <String>] [-AdsiProvider <String>] [<CommonParameters>]
+ [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -150,6 +151,23 @@ Aliases:
 Required: False
 Position: Named
 Default value: ADS_NAME_TYPE_1779
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

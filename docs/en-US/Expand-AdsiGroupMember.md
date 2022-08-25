@@ -15,7 +15,7 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 ```
 Expand-AdsiGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String[]>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
+ [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -120,6 +120,23 @@ Aliases:
 Required: False
 Position: 2
 Default value: @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
+Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.28
+Help Version: 3.0.29
 Locale: en-US
 ---
 
@@ -31,12 +31,12 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
 
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>]
+ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-ThisHostName] <string>]
 
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [[-ThisHostName] <string>] [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
@@ -65,7 +65,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 
 ### [Find-LocalAdsiServerSid](Find-LocalAdsiServerSid.md)
 
-Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostname] <string>] [[-ThisFqdn] <string>]
+Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>]
 
 
 ### [Get-ADSIGroup](Get-ADSIGroup.md)
@@ -91,7 +91,7 @@ Use CIM to get well-known SIDs
 
 ### [Get-Win32UserAccount](Get-Win32UserAccount.md)
 
-Get-Win32UserAccount [[-ComputerName] <string>] [[-ThisHostname] <string>] [[-ThisFqdn] <string>]
+Get-Win32UserAccount [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>]
 
 
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)

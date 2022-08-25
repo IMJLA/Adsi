@@ -13,7 +13,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 ## SYNTAX
 
 ```
-Find-AdsiProvider [[-AdsiServer] <String[]>] [<CommonParameters>]
+Find-AdsiProvider [[-AdsiServer] <String[]>] [[-ThisHostName] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -49,6 +49,23 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

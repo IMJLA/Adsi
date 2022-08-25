@@ -15,7 +15,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ```
 Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [-NoGroupMembers]
  [[-IdentityReferenceCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
+ [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -140,6 +140,23 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
+Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -15,7 +15,7 @@ Get information about a directory server including the ADSI provider it hosts an
 ```
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
+ [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -128,6 +128,23 @@ Aliases:
 Required: False
 Position: 2
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 9
+Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

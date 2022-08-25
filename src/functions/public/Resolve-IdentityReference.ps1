@@ -47,6 +47,11 @@ function Resolve-IdentityReference {
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
 
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
         [string]$ThisHostName = (HOSTNAME.EXE)
     )
 

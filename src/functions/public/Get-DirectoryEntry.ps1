@@ -53,6 +53,11 @@ function Get-DirectoryEntry {
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
         [string]$ThisHostName = (HOSTNAME.EXE)
 
     )

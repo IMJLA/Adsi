@@ -30,6 +30,11 @@ function ConvertTo-DomainSidString {
         #>
         [string]$AdsiProvider,
 
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
         [string]$ThisHostName = (HOSTNAME.EXE)
 
     )

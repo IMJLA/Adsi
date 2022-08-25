@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Find-LocalAdsiServerSid [[-ComputerName] <String>] [[-ThisHostname] <String>] [[-ThisFqdn] <String>]
+Find-LocalAdsiServerSid [[-ComputerName] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
 ```
 
 ## DESCRIPTION
@@ -60,8 +60,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ThisHostname
-{{ Fill ThisHostname Description }}
+### -ThisHostName
+{{ Fill ThisHostName Description }}
 
 ```yaml
 Type: System.String

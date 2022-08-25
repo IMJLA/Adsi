@@ -15,7 +15,7 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ```
 Resolve-Ace3 [[-InputObject] <PSObject[]>] [[-DirectoryEntryCache] <Hashtable>]
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
+ [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -182,6 +182,23 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 8
+Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

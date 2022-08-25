@@ -15,7 +15,7 @@ Use Active Directory Service Interfaces to search an LDAP directory
 ```
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
  [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>] [[-SearchScope] <String>]
- [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-ThisHostName] <String>]
 ```
 
 ## DESCRIPTION
@@ -151,6 +151,23 @@ Aliases:
 Required: False
 Position: 6
 Default value: Subtree
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 9
+Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

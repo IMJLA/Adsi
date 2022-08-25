@@ -1,7 +1,14 @@
 function Get-Win32UserAccount {
     param (
         [string]$ComputerName,
-        [string]$ThisHostname = (HOSTNAME.EXE),
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
         [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName(($ThisHostName)).HostName)
     )
     if (
