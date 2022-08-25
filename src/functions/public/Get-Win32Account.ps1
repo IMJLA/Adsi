@@ -55,7 +55,16 @@ function Get-Win32Account {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
-        [string]$ThisHostName = (HOSTNAME.EXE)
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        <#
+        AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+        This parameter can be used to reduce calls to Find-AdsiProvider
+
+        Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
+        #>
+        [string]$AdsiProvider
 
     )
     begin {
@@ -72,10 +81,11 @@ function Get-Win32Account {
             ) {
                 $ThisServer = $ThisHostName
             }
+            if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
+                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
+            }
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
-            $ThisServerNetbios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServer -AdsiProvider $AdsiProvider -AdsiServersByDns $AdsiServersByDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             if ($AdsiServersWhoseWin32AccountsExistInCache -contains $ThisServer) {
                 $Win32AccountsBySID.Keys |
                 ForEach-Object {

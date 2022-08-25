@@ -121,9 +121,11 @@ function ConvertTo-DistinguishedName {
                 $DomainCacheResult.DistinguishedName
             } else {
                 Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain FQDN cache miss for '$ThisDomain'"
-                if (-not $AdsiProvider) {
+
+                if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
                     $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain
                 }
+
                 if ($AdsiProvider -ne 'WinNT') {
                     "dc=$($ThisDomain -replace '\.',',dc=')"
                 }

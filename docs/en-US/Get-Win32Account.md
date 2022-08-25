@@ -16,7 +16,7 @@ Use CIM to get well-known SIDs
 Get-Win32Account [[-ComputerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [[-ThisHostName] <String>] [<CommonParameters>]
+ [[-ThisHostName] <String>] [[-AdsiProvider] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -39,6 +39,25 @@ Get-Win32Account -CimServerName 'server123'
 Get the well-known SIDs on the remote computer 'server123'
 
 ## PARAMETERS
+
+### -AdsiProvider
+AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+This parameter can be used to reduce calls to Find-AdsiProvider
+
+Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 10
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -AdsiServersByDns
 Cache of known directory servers to reduce duplicate queries
