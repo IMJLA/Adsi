@@ -52,7 +52,11 @@ function ConvertTo-DomainNetBIOS {
         }
     } else {
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
-        $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
+        if ($LengthOfNetBIOSName -eq -1) {
+            $DomainFQDN
+        } else {
+            $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
+        }
     }
 
 }
