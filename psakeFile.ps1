@@ -490,12 +490,12 @@ task Publish -depends SourceControl {
 
     # Only publish a release if we are working on the main branch
     $CurrentBranch = git branch --show-current
-    if ($NoPublish -eq $false -and $CurrentBranch -eq 'main') {
+    if ($NoPublish -ne $true -and $CurrentBranch -eq 'main') {
         Write-Host "Publish-Module -Path '$env:BHBuildOutput' -Repository 'PSGallery'"
         # Publish to PSGallery
         Publish-Module @publishParams
     } else {
-        Write-Host "Skipping publishing"
+        Write-Host "Skipping publishing. NoPublish is $NoPublish and current git branch is $CurrentBranch"
     }
 } -description 'Publish module to the defined PowerShell repository'
 
