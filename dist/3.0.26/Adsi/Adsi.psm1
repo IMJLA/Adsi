@@ -3000,12 +3000,7 @@ function Resolve-IdentityReference {
 
     switch -Wildcard ($IdentityReference) {
         "S-1-*" {
-            # IdentityReference is a SID (Revision 1)
-
-            # Constricted a SecurityIdentifier object based on the SID
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference')"
-            $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
-
+            # IdentityReference is a Revision 1 SID
             <#
             Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
                 This .Net method makes it impossible to redirect the error stream directly
@@ -3014,6 +3009,7 @@ function Resolve-IdentityReference {
                 The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error
             #>
             Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+            $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
             $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 
             # The SID of the domain is everything up to (but not including) the last hyphen
@@ -3161,9 +3157,8 @@ function Resolve-IdentityReference {
         $DomainDns = $DomainNetBIOSCacheResult.Dns
 
         # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
-        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name')"
-        $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
         Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+        $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
         $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
 
         if (-not $SIDString) {
@@ -3326,6 +3321,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 
