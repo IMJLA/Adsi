@@ -12,7 +12,7 @@
     RootModule        = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion     = '3.0.27'
+    ModuleVersion     = '3.0.28'
     # ID used to uniquely identify this module
     GUID              = '282a2aed-9567-49a1-901c-122b7831a805'
 
@@ -65,11 +65,9 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-IdentityReference', 'Expand-WinNTGroupMember', 'Find-AdsiProvider', 'Find-LocalAdsiServerSid', 'Get-ADSIGroup', 'Get-ADSIGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-DomainInfo', 'Get-TrustedDomain', 'Get-TrustedDomainInfo', 'Get-WellKnownSid', 'Get-Win32Account', 'Get-Win32UserAccount', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'New-FakeDirectoryEntry', 'Resolve-Ace', 'Resolve-Ace3', 'Resolve-Ace4', 'Resolve-IdentityReference', 'Search-Directory')
-
+    FunctionsToExport = @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport   = @()
-    FunctionsToExport = @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-IdentityReference', 'Expand-WinNTGroupMember', 'Find-AdsiProvider', 'Find-LocalAdsiServerSid', 'Get-ADSIGroup', 'Get-ADSIGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-DomainInfo', 'Get-TrustedDomain', 'Get-Win32Account', 'Get-Win32UserAccount', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'New-FakeDirectoryEntry', 'Resolve-Ace', 'Resolve-Ace3', 'Resolve-Ace4', 'Resolve-IdentityReference', 'Search-Directory')
     AliasesToExport   = @()
 
     # DSC resources to export from this module
@@ -121,13 +119,4 @@
     # DefaultCommandPrefix = ''
 
 }
-
-
-    # HelpInfoURI = ''
-
-    # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
-    # DefaultCommandPrefix = ''
-
-}
-
 

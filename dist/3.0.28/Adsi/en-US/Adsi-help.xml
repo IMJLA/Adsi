@@ -3568,473 +3568,6 @@ Path              : WinNT://ComputerName</dev:code>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:name>Get-TrustedDomainInfo</command:name>
-      <command:verb>Get</command:verb>
-      <command:noun>TrustedDomainInfo</command:noun>
-========
-      <command:name>Get-TrustedDomainSidNameMap</command:name>
-      <command:verb>Get</command:verb>
-      <command:noun>TrustedDomainSidNameMap</command:noun>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-      <maml:description>
-        <maml:para>Returns a dictionary of trusted domains by the current computer</maml:para>
-      </maml:description>
-    </command:details>
-    <maml:description>
-      <maml:para>Works only on domain-joined systems Use nltest to get the domain trust relationships for the domain of the current computer Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used For each trusted domain the value contains the details retrieved with ADSI</maml:para>
-    </maml:description>
-    <command:syntax>
-      <command:syntaxItem>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-        <maml:name>Get-TrustedDomainInfo</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>AdsiServersByDns</maml:name>
-          <maml:description>
-            <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
-========
-        <maml:name>Get-TrustedDomainSidNameMap</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>DirectoryEntryCache</maml:name>
-          <maml:description>
-            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-          <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>DirectoryEntryCache</maml:name>
-          <maml:description>
-            <maml:para>Dictionary to cache directory entries to avoid redundant lookups</maml:para>
-            <maml:para>Defaults to an empty thread-safe hashtable</maml:para>
-========
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>DomainsBySID</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill DomainsBySID Description }}</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>DomainsByNetbios</maml:name>
-          <maml:description>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-            <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
-========
-            <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-          <maml:name>DomainsBySid</maml:name>
-          <maml:description>
-            <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>DomainsByFqdn</maml:name>
-          <maml:description>
-            <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
-========
-          <maml:name>DomainsByFqdn</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>KeyByNetbios</maml:name>
-          <maml:description>
-            <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
-          </maml:description>
-          <dev:type>
-            <maml:name>System.Management.Automation.SwitchParameter</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>False</dev:defaultValue>
-        </command:parameter>
-      </command:syntaxItem>
-    </command:syntax>
-    <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-        <maml:name>AdsiServersByDns</maml:name>
-        <maml:description>
-          <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>Dictionary to cache directory entries to avoid redundant lookups</maml:para>
-          <maml:para>Defaults to an empty thread-safe hashtable</maml:para>
-========
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>DomainsByFqdn</maml:name>
-        <maml:description>
-          <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
-========
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>DomainsByFqdn</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>DomainsByNetbios</maml:name>
-        <maml:description>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-          <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
-========
-          <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>DomainsBySid</maml:name>
-        <maml:description>
-          <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
-========
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>DomainsBySID</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DomainsBySID Description }}</maml:para>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>KeyByNetbios</maml:name>
-        <maml:description>
-          <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Management.Automation.SwitchParameter</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Management.Automation.SwitchParameter</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>False</dev:defaultValue>
-      </command:parameter>
-    </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>None. Pipeline input is not accepted.</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>[System.Collections.Hashtable] The current domain trust relationships</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
-    <maml:alertSet>
-      <maml:alert>
-        <maml:para>TODO: Audit usage of this function, have it return objects instead of hashtable, since it updates the threadsafe hashtables instead</maml:para>
-      </maml:alert>
-    </maml:alertSet>
-    <command:examples>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-        <dev:code>Get-TrustedDomainInfo</dev:code>
-========
-        <dev:code>Get-TrustedDomainSidNameMap</dev:code>
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
-        <dev:remarks>
-          <maml:para>Get the trusted domains of the current computer</maml:para>
-        </dev:remarks>
-      </command:example>
-    </command:examples>
-    <command:relatedLinks />
-  </command:command>
-  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
-    <command:details>
-      <command:name>Get-WellKnownSid</command:name>
-      <command:verb>Get</command:verb>
-      <command:noun>WellKnownSid</command:noun>
-      <maml:description>
-        <maml:para>Use CIM to get well-known SIDs</maml:para>
-      </maml:description>
-    </command:details>
-    <maml:description>
-      <maml:para>Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class</maml:para>
-    </maml:description>
-    <command:syntax>
-      <command:syntaxItem>
-        <maml:name>Get-WellKnownSid</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
-          <maml:name>CimServerName</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill CimServerName Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String[]</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>Win32AccountsBySID</maml:name>
-          <maml:description>
-            <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>Win32AccountsByCaption</maml:name>
-          <maml:description>
-            <maml:para>Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>DomainsByFqdn</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>AdsiServersByDns</maml:name>
-          <maml:description>
-            <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-          <maml:name>DomainsByNetbios</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-      </command:syntaxItem>
-    </command:syntax>
-    <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>AdsiServersByDns</maml:name>
-        <maml:description>
-          <maml:para>Cache of known directory servers to reduce duplicate queries</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
-        <maml:name>CimServerName</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill CimServerName Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String[]</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>DomainsByFqdn</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-        <maml:name>DomainsByNetbios</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>Win32AccountsByCaption</maml:name>
-        <maml:description>
-          <maml:para>Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>Win32AccountsBySID</maml:name>
-        <maml:description>
-          <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-    </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>[System.String]$CimServerName</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>[Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
-    <maml:alertSet>
-      <maml:alert>
-        <maml:para></maml:para>
-      </maml:alert>
-    </maml:alertSet>
-    <command:examples>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-WellKnownSid</dev:code>
-        <dev:remarks>
-          <maml:para>Get the well-known SIDs on the current computer</maml:para>
-        </dev:remarks>
-      </command:example>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>Get-WellKnownSid -CimServerName 'server123'</dev:code>
-        <dev:remarks>
-          <maml:para>Get the well-known SIDs on the remote computer 'server123'</maml:para>
-        </dev:remarks>
-      </command:example>
-    </command:examples>
-    <command:relatedLinks />
-  </command:command>
-  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
-    <command:details>
       <command:name>Get-Win32Account</command:name>
       <command:verb>Get</command:verb>
       <command:noun>Win32Account</command:noun>
@@ -5755,8 +5288,6 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-========
           <maml:name>Win32AccountsBySID</maml:name>
           <maml:description>
             <maml:para>{{ Fill Win32AccountsBySID Description }}</maml:para>
@@ -5781,7 +5312,6 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
           <maml:name>AdsiServersByDns</maml:name>
           <maml:description>
             <maml:para>Dictionary to cache known servers to avoid redundant lookups</maml:para>
@@ -5794,48 +5324,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           </dev:type>
           <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
         </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>Win32AccountsBySID</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill Win32AccountsBySID Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>Win32AccountsByCaption</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill Win32AccountsByCaption Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-          <maml:name>DirectoryEntryCache</maml:name>
-          <maml:description>
-            <maml:para>Dictionary to cache directory entries to avoid redundant lookups</maml:para>
-            <maml:para>Defaults to an empty thread-safe hashtable</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
-========
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5847,11 +5336,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
-========
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5863,11 +5348,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
-========
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5894,11 +5375,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-========
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
         <maml:name>AdsiServersByDns</maml:name>
         <maml:description>
           <maml:para>Dictionary to cache known servers to avoid redundant lookups</maml:para>
@@ -5911,24 +5388,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
       </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-        <maml:name>DirectoryEntryCache</maml:name>
-        <maml:description>
-          <maml:para>Dictionary to cache directory entries to avoid redundant lookups</maml:para>
-          <maml:para>Defaults to an empty thread-safe hashtable</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
-========
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5940,11 +5400,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
-========
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5956,11 +5412,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
-========
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5984,11 +5436,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-========
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
         <maml:name>Win32AccountsByCaption</maml:name>
         <maml:description>
           <maml:para>{{ Fill Win32AccountsByCaption Description }}</maml:para>
@@ -6000,11 +5448,7 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-<<<<<<<< HEAD:dist/3.0.25/Adsi/en-US/Adsi-help.xml
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-========
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
->>>>>>>> 9663a8b96d44b8aea92dad5f252f70db06c934d5:dist/3.0.27/Adsi/en-US/Adsi-help.xml
         <maml:name>Win32AccountsBySID</maml:name>
         <maml:description>
           <maml:para>{{ Fill Win32AccountsBySID Description }}</maml:para>
