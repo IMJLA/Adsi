@@ -24,7 +24,7 @@ function Get-TrustedDomain {
         $ThisHostname = (HOSTNAME.EXE)
     )
     # Redirect the error stream to null, errors are expected on non-domain-joined systems
-    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$(hostname)`t$(whoami)`tGet-TrustedDomain`t$('& nltest /domain_trusts 2> $null')"
+    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tGet-TrustedDomain`t$('& nltest /domain_trusts 2> $null')"
     $nltestresults = & nltest /domain_trusts 2> $null
     $NlTestRegEx = '[\d]*: .*'
     $TrustRelationships = $nltestresults -match $NlTestRegEx

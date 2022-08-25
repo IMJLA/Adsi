@@ -45,7 +45,9 @@ function ConvertTo-Fqdn {
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{}))
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+
+        [string]$ThisHostName = (HOSTNAME.EXE)
 
     )
     process {
@@ -60,7 +62,7 @@ function ConvertTo-Fqdn {
                 -not $DomainObject -and
                 -not [string]::IsNullOrEmpty($DomainNetBIOS)
             ) {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$(hostname)`tConvertTo-Fqdn`t # Domain NetBIOS cache miss for '$DomainNetBIOS'"
+                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-Fqdn`t # Domain NetBIOS cache miss for '$DomainNetBIOS'"
                 $DomainObject = Get-AdsiServer -Netbios $DomainNetBIOS  -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
                 $DomainsByNetbios[$DomainNetBIOS] = $DomainObject
             }
