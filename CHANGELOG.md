@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.31] - 2022-08-25 - troubleshoot psgallery publication
+
 ## [3.0.30] - 2022-08-25 - further implemented ThisHostname param, also implemented ThisFqdn
 
 ## [3.0.29] - 2022-08-25 - improved comment-based help
