@@ -60,7 +60,7 @@ function Find-AdsiProvider {
             try {
                 $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                 $AdsiProvider = 'LDAP'
-            } catch { Write-LogMsg @LogParams -Text "# $ThisServer did not respond to LDAP" }
+            } catch { Write-LogMsg @LogParams -Text " # $ThisServer did not respond to LDAP" }
             if (!$AdsiProvider) {
                 $AdsiPath = "WinNT://$ThisServer"
                 Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
@@ -68,7 +68,7 @@ function Find-AdsiProvider {
                     $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                     $AdsiProvider = 'WinNT'
                 } catch {
-                    Write-LogMsg @LogParams -Text "# $ThisServer did not respond to WinNT"
+                    Write-LogMsg @LogParams -Text " # $ThisServer did not respond to WinNT"
                 }
             }
             if (!$AdsiProvider) {

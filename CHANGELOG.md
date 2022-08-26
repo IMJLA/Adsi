@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.45] - 2022-08-26 - Debug output cleanup
+
 ## [3.0.44] - 2022-08-26 - Removed metadata from debug output (now inserted by Write-LogMsg)
 
 ## [3.0.43] - 2022-08-26 - Implemented LogMsgCache and WhoAmI params for Write-LogMsg

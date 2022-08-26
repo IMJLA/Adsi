@@ -53,13 +53,16 @@ function Add-SidInfo {
     }
 
     process {
+
         ForEach ($Object in $InputObject) {
+
             $SID = $null
             $SamAccountName = $null
             $DomainObject = $null
 
-            if ($null -eq $Object) { continue }
-            elseif ($Object.objectSid.Value ) {
+            if ($null -eq $Object) {
+                continue
+            } elseif ($Object.objectSid.Value ) {
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
                 # The following exception occurred while retrieving the string representation for method "objectSid":

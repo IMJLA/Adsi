@@ -87,7 +87,7 @@ function Expand-WinNTGroupMember {
             } else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
-                    Write-LogMsg @LogParams -Text "$($ThisEntry.Path)' is a WinNT group"
+                    Write-LogMsg @LogParams -Text "'$($ThisEntry.Path)' is a WinNT group"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
                         Write-LogMsg @LogParams -Text "$($ThisEntry.Path)' is a special group with no direct memberships"

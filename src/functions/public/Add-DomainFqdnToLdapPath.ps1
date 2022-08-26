@@ -47,12 +47,14 @@ function Add-DomainFqdnToLdapPath {
     )
     begin {
 
+        <#
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = 'Debug'
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }
+        #>
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
@@ -70,10 +72,17 @@ function Add-DomainFqdnToLdapPath {
 
             if ($ThisPath -match $PathRegEx) {
 
-                if ($ThisPath -match $DomainRegEx) {
+                $RegExMatches = $null
+                $RegExMatches = [regex]::Matches($ThisPath, $DomainRegEx)
+
+                if ($RegExMatches) {
                     $DomainDN = $null
                     $DomainFqdn = $null
-                    $DomainDN = ([regex]::Matches($ThisPath, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
+
+                    $RegExMatches = $RegExMatches |
+                    ForEach-Object { $_.Value }
+
+                    $DomainDN = $RegExMatches -join ','
                     $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
                     if ($ThisPath -match "LDAP:\/\/$DomainFqdn\/") {
                         #Write-LogMsg @LogParams -Text " # Domain FQDN already found in the directory path: '$ThisPath'"
