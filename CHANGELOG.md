@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.42] - 2022-08-25 - bugfix Resolve-IdentityReference missing DirectoryEntryCache param
+
 ## [3.0.41] - 2022-08-25 - bugfix ConvertTo-DomainNetBIOS to handle non-FQDN FQDNs
 
 ## [3.0.40] - 2022-08-25 - bugfix get-adsiserver typo in param name for get-win32account

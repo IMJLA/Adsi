@@ -27,6 +27,13 @@ function Resolve-IdentityReference {
         # Object from Get-AdsiServer representing the directory server and its attributes
         [PSObject]$AdsiServer,
 
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
 
         [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
