@@ -80,24 +80,24 @@ function Expand-WinNTGroupMember {
                 Write-Warning "'$ThisEntry' has no properties"
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-WinNTGroupMember`t'$($ThisEntry.Path)' is an ADSI group"
+                Write-LogMsg @LogParams -Text "$($ThisEntry.Path)' is an ADSI group"
                 $AdsiGroup = Get-AdsiGroup -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $ThisEntry.Path -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainsBySid @LoggingParams
 
             } else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-WinNTGroupMember`t'$($ThisEntry.Path)' is a WinNT group"
+                    Write-LogMsg @LogParams -Text "$($ThisEntry.Path)' is a WinNT group"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-WinNTGroupMember`t'$($ThisEntry.Path)' is a special group with no direct memberships"
+                        Write-LogMsg @LogParams -Text "$($ThisEntry.Path)' is a special group with no direct memberships"
                         Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
                     } else {
                         Get-WinNTGroupMember -DirectoryEntry $ThisEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
                     }
 
                 } else {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-WinNTGroupMember`t'$($ThisEntry.Path)' is a user account"
+                    Write-LogMsg @LogParams -Text "$($ThisEntry.Path)' is a user account"
                     Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
                 }
 

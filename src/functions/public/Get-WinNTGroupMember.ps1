@@ -103,7 +103,7 @@ function Get-WinNTGroupMember {
                 # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
                 $DirectoryMembers = & { $ThisDirEntry.Invoke('Members') } 2>$null
 
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
+                Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
                 ForEach ($DirectoryMember in $DirectoryMembers) {
                     # The IADsGroup::Members method returns ComObjects
                     # But proper .Net objects are much easier to work with
@@ -111,27 +111,27 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
                     if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
+                        Write-LogMsg @LogParams -Text " # '$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
                         if ($DomainCacheResult) {
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t' # Domain NetBIOS cache hit for '$MemberDomainNetBios'"
+                            Write-LogMsg @LogParams -Text "' # Domain NetBIOS cache hit for '$MemberDomainNetBios'"
                             if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
                             }
                         } else {
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t' # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
+                            Write-LogMsg @LogParams -Text "' # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
+                            Write-LogMsg @LogParams -Text " # '$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }
                         }
                     } else {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)'"
+                        Write-LogMsg @LogParams -Text " # '$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)'"
                     }
 
                     $MemberParams = @{
@@ -143,12 +143,12 @@ function Get-WinNTGroupMember {
                         WhoAmI              = $WhoAmI
                     }
                     if ($MemberDomainDn) {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$MemberName' is a domain security principal"
+                        Write-LogMsg @LogParams -Text " # '$MemberName' is a domain security principal"
                         $MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
                         $MemberParams['Filter'] = "(samaccountname=$MemberName)"
                         $MemberDirectoryEntry = Search-Directory @MemberParams
                     } else {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' is a local security principal"
+                        Write-LogMsg @LogParams -Text " # '$DirectoryPath' is a local security principal"
                         $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
 
@@ -156,7 +156,7 @@ function Get-WinNTGroupMember {
 
                 }
             } else {
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$($ThisDirEntry.Path)' is not a group"
+                Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' is not a group"
             }
         }
     }

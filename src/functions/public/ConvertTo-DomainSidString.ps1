@@ -68,10 +68,10 @@ function ConvertTo-DomainSidString {
 
     $CacheResult = $DomainsByFqdn[$DomainDnsName]
     if ($CacheResult) {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`t # Domain FQDN cache hit for '$DomainDnsName'"
+        Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainDnsName'"
         return $CacheResult.Sid
     }
-    Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`t # Domain FQDN cache miss for '$DomainDnsName'"
+    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainDnsName'"
 
     if (
         -not $AdsiProvider -or
@@ -82,12 +82,12 @@ function ConvertTo-DomainSidString {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
             Write-Debug "$(Get-Date -Format s)`t$ThisHostname`tConvertTo-DomainSidString`t # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+            Write-LogMsg @LogParams -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
             return $DomainSid
         }
     } else {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainSidString`tFind-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+        Write-LogMsg @LogParams -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
         return $DomainSid
     }

@@ -90,7 +90,7 @@ function Expand-IdentityReference {
             WhoAmI       = $WhoAmI
         }
 
-        #Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
+        #Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
 
         # Get the SID of the current domain
         $CurrentDomain = (Get-CurrentDomain)
@@ -118,13 +118,13 @@ function Expand-IdentityReference {
 
             #Display the progress bar
             #$status = $percentage + "% - Using ADSI to get info on NTFS IdentityReference $i of " + $AccessControlEntry.Count + ": " + $ThisIdentity.Name
-            #Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`tStatus: $status"
+            #Write-LogMsg @LogParams -Text "Status: $status"
 
             #Write-Progress -Activity ("Unique IdentityReferences: " + $AccessControlEntry.Count) -Status $status -PercentComplete $percentage
 
             if ($null -eq $IdentityReferenceCache[$ThisIdentity.Name]) {
 
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # IdentityReferenceCache miss for '$($ThisIdentity.Name)'"
+                Write-LogMsg @LogParams -Text " # IdentityReferenceCache miss for '$($ThisIdentity.Name)'"
 
                 $DomainDN = $null
                 $DirectoryEntry = $null
@@ -154,15 +154,15 @@ function Expand-IdentityReference {
                     $null -ne $name -and
                     @($ThisIdentity.Group.AdsiProvider)[0] -eq 'LDAP'
                 ) {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' is a domain security principal"
+                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a domain security principal"
 
                     $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
                     if ($DomainNetbiosCacheResult) {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # Domain NetBIOS cache hit for '$domainNetbiosString' for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$domainNetbiosString' for '$StartingIdentityName'"
                         $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                         $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
                     } else {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # Domain NetBIOS cache miss for '$domainNetbiosString' for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$domainNetbiosString' for '$StartingIdentityName'"
                         if ( -not [string]::IsNullOrEmpty($domainNetbiosString) ) {
                             $DomainDn = ConvertTo-DistinguishedName -Domain $domainNetbiosString -DomainsByNetbios $DomainsByNetbios @LoggingParams
                         }
@@ -194,7 +194,7 @@ function Expand-IdentityReference {
                     $StartingIdentityName.Substring(0, $StartingIdentityName.LastIndexOf('-') + 1) -eq $CurrentDomainSID
                     #((($StartingIdentityName -split '-') | Select-Object -SkipLast 1) -join '-') -eq $CurrentDomainSID
                 ) {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' is an unresolved SID from the current domain"
+                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is an unresolved SID from the current domain"
 
                     # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
                     $DomainDN = $CurrentDomain.distinguishedName.Value
@@ -206,7 +206,7 @@ function Expand-IdentityReference {
 
                     $DomainCrossReference = Search-Directory @SearchDirectoryParams
                     if ($DomainCrossReference.Properties ) {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t# The domain '$DomainFQDN' is online for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text "# The domain '$DomainFQDN' is online for '$StartingIdentityName'"
                         [string]$domainNetbiosString = $DomainCrossReference.Properties['netbiosname']
                         # TODO: The domain is online, so let's see if any domain trusts have issues?  Determine if SID is foreign security principal?
                         # TODO: What if the foreign security principal exists but the corresponding domain trust is down?  Don't want to recommend deletion of the ACE in that case.
@@ -239,21 +239,21 @@ function Expand-IdentityReference {
 
                 } else {
 
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' is a local security principal or unresolved SID"
+                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a local security principal or unresolved SID"
 
                     if ($null -eq $name) { $name = $StartingIdentityName }
 
                     if ($name -like "S-1-*") {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$($StartingIdentityName) is an unresolved SID"
+                        Write-LogMsg @LogParams -Text "$($StartingIdentityName) is an unresolved SID"
 
                         # The SID of the domain is the SID of the user minus the last block of numbers
                         $DomainSid = $name.Substring(0, $name.LastIndexOf("-"))
 
                         # Determine if SID belongs to current domain
                         if ($DomainSid -eq $CurrentDomainSID) {
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$($StartingIdentityName) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
+                            Write-LogMsg @LogParams -Text "$($StartingIdentityName) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
                         } else {
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$($StartingIdentityName) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
+                            Write-LogMsg @LogParams -Text "$($StartingIdentityName) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
                         }
 
                         # Lookup other information about the domain using its SID as the key
@@ -297,7 +297,7 @@ function Expand-IdentityReference {
                         }
 
                     } else {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' is a local security principal"
+                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a local security principal"
                         $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
                         if ($DomainNetbiosCacheResult) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$name"
@@ -333,13 +333,13 @@ function Expand-IdentityReference {
                             $DirectoryEntry.Properties['objectClass'] -contains 'group'
                         ) {
                             # Retrieve the members of groups from the LDAP provider
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # $($DirectoryEntry.Path) is an LDAP security principal for '$StartingIdentityName'"
+                            Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) is an LDAP security principal for '$StartingIdentityName'"
                             $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams).FullMembers
                         } else {
                             # Retrieve the members of groups from the WinNT provider
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # $($DirectoryEntry.Path) is a WinNT security principal for '$StartingIdentityName'"
+                            Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) is a WinNT security principal for '$StartingIdentityName'"
                             if ( $DirectoryEntry.SchemaClassName -eq 'group') {
-                                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # $($DirectoryEntry.Path) is a WinNT group for '$StartingIdentityName'"
+                                Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) is a WinNT group for '$StartingIdentityName'"
                                 $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
                             }
 
@@ -371,7 +371,7 @@ function Expand-IdentityReference {
                             }
                         }
 
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$StartingIdentityName'"
 
                     }
                 } else {
@@ -388,7 +388,7 @@ function Expand-IdentityReference {
                 $IdentityReferenceCache[$StartingIdentityName] = $ThisIdentity
 
             } else {
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # IdentityReferenceCache hit for '$($ThisIdentity.Name)'"
+                Write-LogMsg @LogParams -Text " # IdentityReferenceCache hit for '$($ThisIdentity.Name)'"
                 $null = $IdentityReferenceCache[$ThisIdentity.Name].Group.Add($ThisIdentityGroup)
                 $ThisIdentity = $IdentityReferenceCache[$ThisIdentity.Name]
             }

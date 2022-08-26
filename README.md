@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.43
+Help Version: 3.0.44
 Locale: en-US
 ---
 
@@ -68,9 +68,6 @@ Determine whether a directory server is an LDAP or a WinNT server
 Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
 
 
-### [Find-ServerNameInPath](docs/en-US/Find-ServerNameInPath.md)
-{{ Fill in the Description }}
-
 ### [Get-ADSIGroup](docs/en-US/Get-ADSIGroup.md)
 Get the directory entries for a group and its members using ADSI
 
@@ -88,12 +85,6 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-TrustedDomain](docs/en-US/Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
-
-### [Get-TrustedDomainSidNameMap](docs/en-US/Get-TrustedDomainSidNameMap.md)
-{{ Fill in the Description }}
-
-### [Get-WellKnownSid](docs/en-US/Get-WellKnownSid.md)
-{{ Fill in the Description }}
 
 ### [Get-Win32Account](docs/en-US/Get-Win32Account.md)
 Use CIM to get well-known SIDs

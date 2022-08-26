@@ -112,7 +112,7 @@ function Resolve-IdentityReference {
     $CacheResult = $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"]
     if ($CacheResult) {
         #IdentityReference is a SID, and has been cached from this server
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account SID cache hit for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text "# Win32_Account SID cache hit for '$ServerNetBIOS\$IdentityReference'"
         return [PSCustomObject]@{
             IdentityReferenceOriginal   = $IdentityReference
             # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
@@ -122,7 +122,7 @@ function Resolve-IdentityReference {
             IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account SID cache miss for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text "# Win32_Account SID cache miss for '$ServerNetBIOS\$IdentityReference'"
     }
     if ($Name) {
         # Win32_Account provides a NetBIOS-resolved IdentityReference
@@ -131,7 +131,7 @@ function Resolve-IdentityReference {
         $CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$ServerNetBIOS\$Name"]
         if ($CacheResult) {
             # IdentityReference is an NT Account Name, and has been cached from this server
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account caption cache hit for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
+            Write-LogMsg @LogParams -Text "# Win32_Account caption cache hit for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
                 $DomainDns = $AdsiServer.Dns
             }
@@ -155,13 +155,13 @@ function Resolve-IdentityReference {
                 IdentityReferenceDns        = "$DomainDns\$($CacheResult.Name)"
             }
         } else {
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account caption cache miss for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
+            Write-LogMsg @LogParams -Text "# Win32_Account caption cache miss for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
         }
     }
     $CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$IdentityReference"]
     if ($CacheResult) {
         # IdentityReference is an NT Account Name, and has been cached from this server
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account caption cache hit for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text "# Win32_Account caption cache hit for '$ServerNetBIOS\$IdentityReference'"
         return [PSCustomObject]@{
             IdentityReferenceOriginal   = $IdentityReference
             # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
@@ -171,7 +171,7 @@ function Resolve-IdentityReference {
             IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Win32_Account caption cache miss for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text "# Win32_Account caption cache miss for '$ServerNetBIOS\$IdentityReference'"
     }
 
     switch -Wildcard ($IdentityReference) {
@@ -184,7 +184,7 @@ function Resolve-IdentityReference {
                 I don't understand exactly why
                 The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error
             #>
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+            Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
             $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
             $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 
@@ -196,17 +196,17 @@ function Resolve-IdentityReference {
             if (-not $DomainCacheResult) {
                 $split = $UnresolvedIdentityReference -split '\\'
                 $DomainCacheResult = $DomainsByNetbios[$split[0]]
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Domain SID cache miss for '$DomainSid'"
+                Write-LogMsg @LogParams -Text "# Domain SID cache miss for '$DomainSid'"
             } else {
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Domain SID cache hit for '$DomainSid'"
+                Write-LogMsg @LogParams -Text "# Domain SID cache hit for '$DomainSid'"
             }
             if ($DomainCacheResult) {
                 $DomainNetBIOS = $DomainCacheResult.Netbios
                 $DomainDns = $DomainCacheResult.Dns
             } else {
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Domain SID '$DomainSid' is unknown."
+                Write-LogMsg @LogParams -Text "# Domain SID '$DomainSid' is unknown."
                 $DomainNetBIOS = $split[0]
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# Translated NTAccount name for '$IdentityReference' is '$UnresolvedIdentityReference'"
+                Write-LogMsg @LogParams -Text "# Translated NTAccount name for '$IdentityReference' is '$UnresolvedIdentityReference'"
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
             }
             $AdsiServer = Get-AdsiServer -Fqdn $DomainDns -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
@@ -245,10 +245,10 @@ function Resolve-IdentityReference {
         "NT SERVICE\*" {
             # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
             if ($ServerNetBIOS -eq $ThisHostName) {
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tsc.exe showsid $Name"
+                Write-LogMsg @LogParams -Text "sc.exe showsid $Name"
                 [string[]]$ScResult = & sc.exe showsid $Name
             } else {
-                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`tInvoke-Command -ComputerName $ServerNetBIOS -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $Name"
+                Write-LogMsg @LogParams -Text "Invoke-Command -ComputerName $ServerNetBIOS -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $Name"
                 [string[]]$ScResult = Invoke-Command -ComputerName $ServerNetBIOS -ScriptBlock { & sc.exe showsid $args[0] } -ArgumentList $Name
             }
             $ScResultProps = @{}
@@ -325,27 +325,27 @@ function Resolve-IdentityReference {
     if (-not [string]::IsNullOrEmpty($DomainNetBIOS)) {
         $DomainNetBIOSCacheResult = $DomainsByNetbios[$DomainNetBIOS]
         if (-not $DomainNetBIOSCacheResult) {
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-IdentityReference`t# Domain NetBIOS cache miss for '$($DomainNetBIOS)'."
+            Write-LogMsg @LogParams -Text "# Domain NetBIOS cache miss for '$($DomainNetBIOS)'."
             $DomainNetBIOSCacheResult = Get-AdsiServer -Netbios $DomainNetBIOS -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
             $DomainsByNetbios[$DomainNetBIOS] = $DomainNetBIOSCacheResult
 
         } else {
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-IdentityReference`t# Domain NetBIOS cache hit for '$($DomainNetBIOS)'."
+            Write-LogMsg @LogParams -Text "# Domain NetBIOS cache hit for '$($DomainNetBIOS)'."
         }
 
         $DomainDn = $DomainNetBIOSCacheResult.DistinguishedName
         $DomainDns = $DomainNetBIOSCacheResult.Dns
 
         # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+        Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
         $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
         $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
 
         if (-not $SIDString) {
             # Try to resolve the account against the domain indicated in its NT Account Name (which may or may not be the correct ADSI server for the account, it won't be if it's NT AUTHORITY\SYSTEM for example)
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name')"
+            Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name')"
             $NTAccount = [System.Security.Principal.NTAccount]::new($DomainNetBIOS, $Name)
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+            Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
             $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
         } else {
             $DomainNetBIOS = $ServerNetBIOS
@@ -380,9 +380,9 @@ function Resolve-IdentityReference {
         # This covers unresolved SIDs for deleted accounts, broken domain trusts, etc.
         if ( '' -eq "$Name" ) {
             $Name = $IdentityReference
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# An identity reference girl has no name ($Name)"
+            Write-LogMsg @LogParams -Text "# An identity reference girl has no name ($Name)"
         } else {
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tResolve-IdentityReference`t# '$IdentityReference' is named '$Name'"
+            Write-LogMsg @LogParams -Text "# '$IdentityReference' is named '$Name'"
         }
 
         return [PSCustomObject]@{

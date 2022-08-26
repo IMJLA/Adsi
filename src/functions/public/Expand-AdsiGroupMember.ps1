@@ -85,7 +85,7 @@ function Expand-AdsiGroupMember {
             $i++
 
             #$status = ("$(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
-            #Write-LogMsg @LogParams -Text "  $status"
+            #Write-LogMsg @LogParams -Text "$status"
 
             $Principal = $null
 
@@ -106,12 +106,12 @@ function Expand-AdsiGroupMember {
                     } catch {
                         #$Success = $false
                         $Principal = $Entry
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
+                        Write-LogMsg @LogParams -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
                     }
 
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
-                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
+                        Write-LogMsg @LogParams -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
                         $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
                         $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
 

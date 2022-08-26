@@ -110,7 +110,7 @@ function Get-AdsiGroupMember {
                 $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
             }
 
-            #Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-AdsiGroupMember`t$($SearchParameters['Filter'])"
+            #Write-LogMsg @LogParams -Text "$($SearchParameters['Filter'])"
 
             $GroupMemberSearch = Search-Directory @SearchParameters
 
@@ -125,7 +125,7 @@ function Get-AdsiGroupMember {
                 $CurrentADGroupMembers = $null
             }
 
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-AdsiGroupMember`t$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
+            Write-LogMsg @LogParams -Text "$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
 
             $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
 

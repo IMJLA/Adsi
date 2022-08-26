@@ -87,25 +87,25 @@ function Search-Directory {
 
     $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
-    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))"
+    Write-LogMsg @LogParams -Text "`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))"
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
 
     if ($Filter) {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.Filter = '$Filter'"
+        Write-LogMsg @LogParams -Text "`$DirectorySearcher.Filter = '$Filter'"
         $DirectorySearcher.Filter = $Filter
     }
 
-    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.PageSize = '$PageSize'"
+    Write-LogMsg @LogParams -Text "`$DirectorySearcher.PageSize = '$PageSize'"
     $DirectorySearcher.PageSize = $PageSize
-    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.SearchScope = '$SearchScope'"
+    Write-LogMsg @LogParams -Text "`$DirectorySearcher.SearchScope = '$SearchScope'"
     $DirectorySearcher.SearchScope = $SearchScope
 
     ForEach ($Property in $PropertiesToLoad) {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.PropertiesToLoad.Add('$Property')"
+        Write-LogMsg @LogParams -Text "`$DirectorySearcher.PropertiesToLoad.Add('$Property')"
         $null = $DirectorySearcher.PropertiesToLoad.Add($Property)
     }
 
-    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.FindAll()"
+    Write-LogMsg @LogParams -Text "`$DirectorySearcher.FindAll()"
     $SearchResultCollection = $DirectorySearcher.FindAll()
     # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
     # Error: Cannot access a disposed object.

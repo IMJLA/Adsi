@@ -116,13 +116,13 @@ function Get-Win32Account {
             } else {
 
                 if ($ThisServer -eq $ThisHostName) {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession # For '$ThisServer'"
                     $CimSession = New-CimSession
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 } else {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
                     $CimSession = New-CimSession -ComputerName $ThisServer
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 }
 
                 $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession

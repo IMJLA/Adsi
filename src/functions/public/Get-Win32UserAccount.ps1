@@ -35,10 +35,10 @@ function Get-Win32UserAccount {
         $ComputerName -eq "$ThisHostname." -or
         $ComputerName -eq $ThisFqdn
     ) {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tGet-Win32UserAccount`tGet-CimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
+        Write-LogMsg @LogParams -Text "Get-CimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
         Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'"
     } else {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tGet-Win32UserAccount`tGet-CimInstance -ComputerName $ComputerName -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
+        Write-LogMsg @LogParams -Text "Get-CimInstance -ComputerName $ComputerName -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
         # If an Active Directory domain is targeted there are no local accounts and CIM connectivity is not expected
         # Suppress errors and return nothing in that case
         Get-CimInstance -ComputerName $ComputerName -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" -ErrorAction SilentlyContinue

@@ -177,18 +177,18 @@ function Resolve-Ace3 {
             switch -Wildcard ($IdentityReference) {
                 "S-1-*" {
                     # IdentityReference is a SID (Revision 1)
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t'$IdentityReference'.LastIndexOf('-')"
+                    Write-LogMsg @LogParams -Text "'$IdentityReference'.LastIndexOf('-')"
                     $IndexOfLastHyphen = $IdentityReference.LastIndexOf("-")
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t'$IdentityReference'.Substring(0, $IndexOfLastHyphen)"
+                    Write-LogMsg @LogParams -Text "'$IdentityReference'.Substring(0, $IndexOfLastHyphen)"
                     $DomainSid = $IdentityReference.Substring(0, $IndexOfLastHyphen)
                     if ($DomainSid) {
                         $DomainCacheResult = $DomainsBySID[$DomainSid]
                         if ($DomainCacheResult) {
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain SID cache hit for '$DomainSid' for '$IdentityReference'"
+                            Write-LogMsg @LogParams -Text " # Domain SID cache hit for '$DomainSid' for '$IdentityReference'"
                             $ThisServerDns = $DomainCacheResult.Dns
                             $DomainNetBios = $DomainCacheResult.Netbios
                         } else {
-                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain SID cache miss for '$DomainSid' for '$IdentityReference'"
+                            Write-LogMsg @LogParams -Text " # Domain SID cache miss for '$DomainSid' for '$IdentityReference'"
                         }
                     }
                 }
@@ -217,7 +217,7 @@ function Resolve-Ace3 {
                 # Bug: I think this will report incorrectly for a remote domain not in the cache (trust broken or something)
                 $ThisServerDns = Find-ServerNameInPath -LiteralPath $LiteralPath
             }
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN is '$ThisServerDns' for '$IdentityReference'"
+            Write-LogMsg @LogParams -Text " # Domain FQDN is '$ThisServerDns' for '$IdentityReference'"
 
             $GetAdsiServerParams = @{
                 Fqdn                   = $ThisServerDns
@@ -233,24 +233,24 @@ function Resolve-Ace3 {
                 WhoAmI                 = $WhoAmI
             }
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # ADSI server is '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)' for '$IdentityReference'"
+            Write-LogMsg @LogParams -Text " # ADSI server is '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)' for '$IdentityReference'"
 
             if ([string]$DomainNetBios -eq '') {
                 $DomainNetBios = $AdsiServer.Netbios
             }
 
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain NetBIOS is '$DomainNetBios' for '$IdentityReference'"
+            Write-LogMsg @LogParams -Text " # Domain NetBIOS is '$DomainNetBios' for '$IdentityReference'"
 
             <#
             $AdsiProvider = $null
             if (-not $DomainNetBios) {
                 $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
                 if ($DomainCacheResult) {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN cache hit for '$ThisServerDns'"
+                    Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisServerDns'"
                     $DomainNetBios = $DomainCacheResult.Netbios
                     $AdsiProvider = $DomainCacheResult.AdsiProvider
                 } else {
-                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`t # Domain FQDN cache miss for '$ThisServerDns'"
+                    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$ThisServerDns'"
                 }
             }
 
@@ -276,7 +276,7 @@ function Resolve-Ace3 {
                 LogMsgCache            = $LogMsgCache
                 WhoAmI                 = $WhoAmI
             }
-            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tResolve-Ace`tResolve-IdentityReference -IdentityReference '$IdentityReference'..."
+            Write-LogMsg @LogParams -Text "Resolve-IdentityReference -IdentityReference '$IdentityReference'..."
             $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
 
             # not sure if I should add a param to offer DNS instead of NetBIOS

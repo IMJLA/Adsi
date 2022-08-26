@@ -50,17 +50,17 @@ function ConvertTo-DomainNetBIOS {
 
     $DomainCacheResult = $DomainsByFqdn[$DomainFQDN]
     if ($DomainCacheResult) {
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainNetBIOS`t # Domain FQDN cache hit for '$DomainFQDN'"
+        Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
         return $DomainCacheResult.Netbios
     }
 
-    Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainNetBIOS`t # Domain FQDN cache miss for '$DomainFQDN'"
+    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFQDN'"
 
     if ($AdsiProvider -eq 'LDAP') {
         $RootDSE = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/rootDSE" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LoggingParams
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainNetBIOS`t`$RootDSE.InvokeGet('defaultNamingContext')"
+        Write-LogMsg @LogParams -Text "`$RootDSE.InvokeGet('defaultNamingContext')"
         $DomainDistinguishedName = $RootDSE.InvokeGet("defaultNamingContext")
-        Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tConvertTo-DomainNetBIOS`t`$RootDSE.InvokeGet('configurationNamingContext')"
+        Write-LogMsg @LogParams -Text "`$RootDSE.InvokeGet('configurationNamingContext')"
         $ConfigurationDN = $rootDSE.InvokeGet("configurationNamingContext")
         $partitions = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LoggingParams
 
