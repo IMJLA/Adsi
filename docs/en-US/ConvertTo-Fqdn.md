@@ -16,14 +16,15 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ```
 ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>]
  [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>]
- [-ThisHostName <String>] [-ThisFqdn <String>] [<CommonParameters>]
+ [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] [-LogMsgCache <Hashtable>]
+ [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
 ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>]
  [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [-ThisFqdn <String>]
- [<CommonParameters>]
+ [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -119,6 +120,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -NetBIOS
 NetBIOS name of the domain
 
@@ -164,6 +180,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -16,13 +16,14 @@ Convert a domain NetBIOS name to its distinguishedName
 ```
 ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
  [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>]
- [<CommonParameters>]
+ [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [<CommonParameters>]
 ```
 
 ### FQDN
 ```
 ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
- [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>] [<CommonParameters>]
+ [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>] [-WhoAmI <String>]
+ [-LogMsgCache <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -138,6 +139,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -OutputType
 Format of the name of the directory object that will be used for the output
 Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
@@ -168,6 +184,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

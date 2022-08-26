@@ -16,7 +16,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 Expand-IdentityReference [[-AccessControlEntry] <Object[]>] [-NoGroupMembers]
  [[-IdentityReferenceCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -130,6 +130,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 10
+Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -NoGroupMembers
 Do not get group members
 
@@ -175,6 +190,21 @@ Aliases:
 Required: False
 Position: 7
 Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 9
+Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

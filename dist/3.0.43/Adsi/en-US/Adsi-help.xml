@@ -53,6 +53,30 @@
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -67,6 +91,18 @@
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>ThisFqdn</maml:name>
@@ -93,6 +129,18 @@
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -171,6 +219,43 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>ThisHostName</maml:name>
+          <maml:description>
+            <maml:para>Hostname of the computer running this function.</maml:para>
+            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -197,6 +282,43 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>ThisHostName</maml:name>
+        <maml:description>
+          <maml:para>Hostname of the computer running this function.</maml:para>
+          <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -556,6 +678,18 @@ ForEach-Object {
           <dev:defaultValue>ADS_NAME_TYPE_NT4</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>OutputType</maml:name>
           <maml:description>
             <maml:para>Format of the name of the directory object that will be used for the output Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h) https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum</maml:para>
@@ -579,6 +713,18 @@ ForEach-Object {
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -634,6 +780,18 @@ ForEach-Object {
           <dev:defaultValue>ADS_NAME_TYPE_NT4</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>OutputType</maml:name>
           <maml:description>
             <maml:para>Format of the name of the directory object that will be used for the output Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h) https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum</maml:para>
@@ -657,6 +815,18 @@ ForEach-Object {
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -736,6 +906,18 @@ ForEach-Object {
         <dev:defaultValue>ADS_NAME_TYPE_NT4</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>OutputType</maml:name>
         <maml:description>
           <maml:para>Format of the name of the directory object that will be used for the output Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h) https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum</maml:para>
@@ -759,6 +941,18 @@ ForEach-Object {
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -897,6 +1091,30 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill WhoAmI Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -972,10 +1190,34 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>{{ Fill ThisHostName Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill WhoAmI Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1132,6 +1374,30 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill WhoAmI Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -1207,6 +1473,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
@@ -1223,6 +1501,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>{{ Fill ThisHostName Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill WhoAmI Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1345,6 +1635,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>ThisFqdn</maml:name>
           <maml:description>
             <maml:para>FQDN of the computer running this function.</maml:para>
@@ -1369,6 +1671,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -1422,6 +1736,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
           <maml:name>NetBIOS</maml:name>
           <maml:description>
@@ -1459,6 +1785,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1524,6 +1862,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
         <maml:name>NetBIOS</maml:name>
         <maml:description>
@@ -1561,6 +1911,18 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -1864,6 +2226,18 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
@@ -1951,6 +2325,18 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -2015,6 +2401,18 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
@@ -2052,6 +2450,18 @@ ad.contoso.com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -2116,6 +2526,18 @@ ad.contoso.com</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>IdentityReferenceCache</maml:name>
@@ -2204,6 +2626,18 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>NoGroupMembers</maml:name>
           <maml:description>
@@ -2291,6 +2725,18 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>NoGroupMembers</maml:name>
         <maml:description>
@@ -2328,6 +2774,18 @@ ad.contoso.com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -2511,6 +2969,30 @@ Expand-IdentityReference</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -2575,6 +3057,18 @@ Expand-IdentityReference</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
@@ -2600,6 +3094,18 @@ Expand-IdentityReference</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -2678,6 +3184,30 @@ Expand-IdentityReference</dev:code>
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -2693,6 +3223,18 @@ Expand-IdentityReference</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>ThisHostName</maml:name>
         <maml:description>
@@ -2705,6 +3247,18 @@ Expand-IdentityReference</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -2825,6 +3379,30 @@ Expand-IdentityReference</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill WhoAmI Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -2836,6 +3414,18 @@ Expand-IdentityReference</dev:code>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
           <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -2856,6 +3446,18 @@ Expand-IdentityReference</dev:code>
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>{{ Fill ThisHostName Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill WhoAmI Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -2903,6 +3505,92 @@ Expand-IdentityReference</dev:code>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
+      <command:name>Find-ServerNameInPath</command:name>
+      <command:verb>Find</command:verb>
+      <command:noun>ServerNameInPath</command:noun>
+      <maml:description>
+        <maml:para>Parse a literal path to find its server</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Currently only supports local file paths or UNC paths</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Find-ServerNameInPath</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>LiteralPath</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill LiteralPath Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>LiteralPath</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill LiteralPath Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>[System.String] representing the name of the server that was extracted from the path</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Find-ServerNameInPath -LiteralPath 'C:\Test'</dev:code>
+        <dev:remarks>
+          <maml:para>Return the hostname of the local computer because a local filepath was used</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Find-ServerNameInPath -LiteralPath '\\server123\Test\'</dev:code>
+        <dev:remarks>
+          <maml:para>Return server123 because a UNC path for a folder shared on server123 was used</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
       <command:name>Get-AdsiGroup</command:name>
       <command:verb>Get</command:verb>
       <command:noun>AdsiGroup</command:noun>
@@ -2927,6 +3615,30 @@ Expand-IdentityReference</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>GroupName</maml:name>
@@ -3104,6 +3816,18 @@ Expand-IdentityReference</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
@@ -3142,6 +3866,18 @@ Expand-IdentityReference</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -3213,6 +3949,18 @@ Expand-IdentityReference</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
@@ -3300,6 +4048,18 @@ Expand-IdentityReference</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -3363,6 +4123,18 @@ Expand-IdentityReference</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
@@ -3400,6 +4172,18 @@ Expand-IdentityReference</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -3477,6 +4261,30 @@ Expand-IdentityReference</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Netbios</maml:name>
@@ -3640,6 +4448,18 @@ Expand-IdentityReference</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Netbios</maml:name>
         <maml:description>
@@ -3677,6 +4497,18 @@ Expand-IdentityReference</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>Win32AccountsByCaption</maml:name>
@@ -3900,6 +4732,30 @@ Expand-IdentityReference</dev:code>
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -3963,6 +4819,18 @@ Expand-IdentityReference</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
@@ -3987,6 +4855,18 @@ Expand-IdentityReference</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -4062,7 +4942,8 @@ Path              : WinNT://ComputerName</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>ThisHostname</maml:name>
           <maml:description>
-            <maml:para>{{ Fill ThisHostname Description }}</maml:para>
+            <maml:para>Hostname of the computer running this function.</maml:para>
+            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
@@ -4071,13 +4952,50 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>ThisHostname</maml:name>
         <maml:description>
-          <maml:para>{{ Fill ThisHostname Description }}</maml:para>
+          <maml:para>Hostname of the computer running this function.</maml:para>
+          <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
@@ -4085,6 +5003,18 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -4118,6 +5048,194 @@ Path              : WinNT://ComputerName</dev:code>
         <dev:code>Get-TrustedDomain</dev:code>
         <dev:remarks>
           <maml:para>Get the trusted domains of the current computer</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Get-TrustedDomainSidNameMap</command:name>
+      <command:verb>Get</command:verb>
+      <command:noun>TrustedDomainSidNameMap</command:noun>
+      <maml:description>
+        <maml:para>Returns a dictionary of trusted domains by the current computer</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Works only on domain-joined systems Use nltest to get the domain trust relationships for the domain of the current computer Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used For each trusted domain the value contains the details retrieved with ADSI</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Get-TrustedDomainSidNameMap</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>DirectoryEntryCache</maml:name>
+          <maml:description>
+            <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>KeyByNetbios</maml:name>
+          <maml:description>
+            <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>System.Management.Automation.SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>DirectoryEntryCache</maml:name>
+        <maml:description>
+          <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>KeyByNetbios</maml:name>
+        <maml:description>
+          <maml:para>Key the dictionary by the domain NetBIOS names instead of SIDs</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Management.Automation.SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>[System.Collections.Hashtable] The current domain trust relationships</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-TrustedDomainSidNameMap</dev:code>
+        <dev:remarks>
+          <maml:para>Get the trusted domains of the current computer</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
+      <command:name>Get-WellKnownSid</command:name>
+      <command:verb>Get</command:verb>
+      <command:noun>WellKnownSid</command:noun>
+      <maml:description>
+        <maml:para>Use CIM to get well-known SIDs</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Get-WellKnownSid</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+          <maml:name>CimServerName</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill CimServerName Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String[]</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+        <maml:name>CimServerName</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill CimServerName Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>[System.String]$CimServerName</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>[Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-WellKnownSid</dev:code>
+        <dev:remarks>
+          <maml:para>Get the well-known SIDs on the current computer</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-WellKnownSid -CimServerName 'server123'</dev:code>
+        <dev:remarks>
+          <maml:para>Get the well-known SIDs on the remote computer 'server123'</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -4163,6 +5281,30 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Win32AccountsBySID</maml:name>
@@ -4352,6 +5494,18 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>ThisHostName</maml:name>
         <maml:description>
@@ -4364,6 +5518,18 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>Win32AccountsByCaption</maml:name>
@@ -4484,6 +5650,30 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill WhoAmI Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -4495,6 +5685,18 @@ Path              : WinNT://ComputerName</dev:code>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
           <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -4515,6 +5717,18 @@ Path              : WinNT://ComputerName</dev:code>
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>{{ Fill ThisHostName Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill WhoAmI Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -4586,6 +5800,18 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
@@ -4674,6 +5900,18 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -4738,6 +5976,18 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
@@ -4775,6 +6025,18 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -5071,6 +6333,30 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
@@ -5234,6 +6520,18 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
@@ -5259,6 +6557,18 @@ New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>Win32AccountsByCaption</maml:name>
@@ -5412,6 +6722,30 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
@@ -5575,6 +6909,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
@@ -5600,6 +6946,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>Win32AccountsByCaption</maml:name>
@@ -6068,6 +7426,30 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           </dev:type>
           <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>AdsiServer</maml:name>
           <maml:description>
@@ -6255,6 +7637,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
@@ -6280,6 +7674,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>Win32AccountsByCaption</maml:name>
@@ -6368,6 +7774,30 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>LogMsgCache</maml:name>
+          <maml:description>
+            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Filter</maml:name>
@@ -6529,6 +7959,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>LogMsgCache</maml:name>
+        <maml:description>
+          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PageSize</maml:name>
         <maml:description>
@@ -6577,6 +8019,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>WhoAmI</maml:name>
+        <maml:description>
+          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>

@@ -58,9 +58,29 @@ function Get-DirectoryEntry {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
-        [string]$ThisHostName = (HOSTNAME.EXE)
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
+
+    $LogParams = @{
+        ThisHostname = $ThisHostname
+        Type         = 'Debug'
+        LogMsgCache  = $LogMsgCache
+        WhoAmI       = $WhoAmI
+    }
+
+    $LoggingParams = @{
+        ThisHostname = $ThisHostname
+        LogMsgCache  = $LogMsgCache
+        WhoAmI       = $WhoAmI
+    }
+
 
     $DirectoryEntry = $null
     if ($null -eq $DirectoryEntryCache[$DirectoryPath]) {
@@ -88,10 +108,10 @@ function Get-DirectoryEntry {
             # This is also invoked when DirectoryPath is null for any reason
             # We will return a WinNT object representing the local computer's WinNT directory
             '^$' {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t$ThisHostname does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t$ThisHostname does not appear to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
                 $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
                 $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
                 if ($Credential) {
                     $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
                 } else {
@@ -101,7 +121,7 @@ function Get-DirectoryEntry {
                 $SampleUser = $DirectoryEntry.PSBase.Children |
                 Where-Object -FilterScript { $_.schemaclassname -eq 'user' } |
                 Select-Object -First 1 |
-                Add-SidInfo -DomainsBySid $DomainsBySid
+                Add-SidInfo -DomainsBySid $DomainsBySid @LoggingParams
 
                 $DirectoryEntry |
                 Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
@@ -110,7 +130,7 @@ function Get-DirectoryEntry {
             # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
             default {
 
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
                 if ($Credential) {
                     $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
                 } else {
@@ -123,7 +143,7 @@ function Get-DirectoryEntry {
 
         $DirectoryEntryCache[$DirectoryPath] = $DirectoryEntry
     } else {
-        #Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`tDirectoryEntryCache hit for '$DirectoryPath'"
+        #Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`tDirectoryEntryCache hit for '$DirectoryPath'"
         $DirectoryEntry = $DirectoryEntryCache[$DirectoryPath]
     }
 

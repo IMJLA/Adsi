@@ -64,10 +64,30 @@ function Get-Win32Account {
 
         Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
         #>
-        [string]$AdsiProvider
+        [string]$AdsiProvider,
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
     begin {
+
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = 'Debug'
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
         $AdsiServersWhoseWin32AccountsExistInCache = $Win32AccountsBySID.Keys |
         ForEach-Object { ($_ -split '\\')[0] } |
         Sort-Object -Unique
@@ -82,7 +102,7 @@ function Get-Win32Account {
                 $ThisServer = $ThisHostName
             }
             if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
-                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer
+                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer @LoggingParams
             }
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
@@ -96,13 +116,13 @@ function Get-Win32Account {
             } else {
 
                 if ($ThisServer -eq $ThisHostName) {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession # For '$ThisServer'"
                     $CimSession = New-CimSession
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 } else {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`t`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
                     $CimSession = New-CimSession -ComputerName $ThisServer
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-Win32Account`tGet-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
                 }
 
                 $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession

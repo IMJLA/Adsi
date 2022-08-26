@@ -15,7 +15,8 @@ Get the directory entries for a group and its members using ADSI
 ```
 Get-AdsiGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesToLoad] <String[]>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
+ [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
+ [[-LogMsgCache] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -134,6 +135,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 11
+Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -PropertiesToLoad
 Properties of the group and its members to find in the directory
 
@@ -194,6 +210,21 @@ Aliases:
 Required: False
 Position: 8
 Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 10
+Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

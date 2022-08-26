@@ -16,6 +16,7 @@ function ConvertTo-DistinguishedName {
     #>
     [OutputType([System.String])]
     param (
+
         # NetBIOS name of the domain
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'NetBIOS')]
         [string[]]$Domain,
@@ -56,10 +57,29 @@ function ConvertTo-DistinguishedName {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
-        [string]$ThisHostName = (HOSTNAME.EXE)
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
     begin {
+
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = 'Debug'
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
 
         # Declare constants for these Windows enums
         # We need to because PowerShell makes it hard to directly use the Win32 API and read the enum definition
@@ -92,38 +112,38 @@ function ConvertTo-DistinguishedName {
         ForEach ($ThisDomain in $Domain) {
             $DomainCacheResult = $DomainsByNetbios[$ThisDomain]
             if ($DomainCacheResult) {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain NetBIOS cache hit for '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain NetBIOS cache hit for '$ThisDomain'"
                 #ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns -AdsiProvider $DomainCacheResult.AdsiProvider
                 $DomainCacheResult.DistinguishedName
             } else {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
                 $IADsNameTranslateComObject = New-Object -comObject "NameTranslate"
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"
                 $IADsNameTranslateInterface = $IADsNameTranslateComObject.GetType()
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'"
                 $null = $IADsNameTranslateInterface.InvokeMember("Init", "InvokeMethod", $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
 
                 # For a non-domain-joined system there is no DistinguishedName for the domain
                 # Suppress errors when calling these next 2 methods
                 #     Exception calling "InvokeMember" with "5" argument(s): "Name translation: Could not find the name or insufficient right to see name. (Exception from HRESULT: 0x80072116)"
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$null = `$IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInputType, '$ThisDomain\')) # For '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$null = `$IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInputType, '$ThisDomain\')) # For '$ThisDomain'"
                 $null = { $IADsNameTranslateInterface.InvokeMember("Set", "InvokeMethod", $Null, $IADsNameTranslateComObject, ($ChosenInputType, "$ThisDomain\")) } 2>$null
                 #     Exception calling "InvokeMember" with "5" argument(s): "Unspecified error (Exception from HRESULT: 0x80004005 (E_FAIL))"
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, $ChosenOutputType) # For '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t`$IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, $ChosenOutputType) # For '$ThisDomain'"
                 $null = { $null = { $IADsNameTranslateInterface.InvokeMember("Get", "InvokeMethod", $Null, $IADsNameTranslateComObject, $ChosenOutputType) } 2>$null } 2>$null
             }
         }
         ForEach ($ThisDomain in $DomainFQDN) {
             $DomainCacheResult = $DomainsByFqdn[$ThisDomain]
             if ($DomainCacheResult) {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain FQDN cache hit for '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain FQDN cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
             } else {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain FQDN cache miss for '$ThisDomain'"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tConvertTo-DistinguishedName`t# Domain FQDN cache miss for '$ThisDomain'"
 
                 if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
-                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain
+                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain @LoggingParams
                 }
 
                 if ($AdsiProvider -ne 'WinNT') {

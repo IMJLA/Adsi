@@ -13,7 +13,8 @@ Add some useful properties to a DirectoryEntry object for easier access
 ## SYNTAX
 
 ```
-Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <Hashtable>] [<CommonParameters>]
+Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -61,6 +62,53 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -LogMsgCache
+Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisHostName
+Hostname of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: (whoami.EXE)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

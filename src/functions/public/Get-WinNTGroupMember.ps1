@@ -52,9 +52,31 @@ function Get-WinNTGroupMember {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
         #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
+    begin {
+
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = 'Debug'
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+    }
     process {
         ForEach ($ThisDirEntry in $DirectoryEntry) {
             $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
@@ -81,7 +103,7 @@ function Get-WinNTGroupMember {
                 # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
                 $DirectoryMembers = & { $ThisDirEntry.Invoke('Members') } 2>$null
 
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
                 ForEach ($DirectoryMember in $DirectoryMembers) {
                     # The IADsGroup::Members method returns ComObjects
                     # But proper .Net objects are much easier to work with
@@ -89,27 +111,27 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
                     if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
+                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
                         if ($DomainCacheResult) {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t' # Domain NetBIOS cache hit for '$MemberDomainNetBios'"
+                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t' # Domain NetBIOS cache hit for '$MemberDomainNetBios'"
                             if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
                             }
                         } else {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t' # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
+                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t' # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
-                            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
+                            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }
                         }
                     } else {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)'"
+                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)'"
                     }
 
                     $MemberParams = @{
@@ -117,22 +139,24 @@ function Get-WinNTGroupMember {
                         DirectoryPath       = $DirectoryPath
                         PropertiesToLoad    = $PropertiesToLoad
                         DomainsByNetbios    = $DomainsByNetbios
+                        LogMsgCache         = $LogMsgCache
+                        WhoAmI              = $WhoAmI
                     }
                     if ($MemberDomainDn) {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$MemberName' is a domain security principal"
+                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$MemberName' is a domain security principal"
                         $MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
                         $MemberParams['Filter'] = "(samaccountname=$MemberName)"
                         $MemberDirectoryEntry = Search-Directory @MemberParams
                     } else {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' is a local security principal"
+                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$DirectoryPath' is a local security principal"
                         $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
 
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
 
                 }
             } else {
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$($ThisDirEntry.Path)' is not a group"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tGet-WinNTGroupMember`t # '$($ThisDirEntry.Path)' is not a group"
             }
         }
     }

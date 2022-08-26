@@ -13,7 +13,8 @@ Determine whether a directory server is an LDAP or a WinNT server
 ## SYNTAX
 
 ```
-Find-AdsiProvider [[-AdsiServer] <String[]>] [[-ThisHostName] <String>] [<CommonParameters>]
+Find-AdsiProvider [[-AdsiServer] <String[]>] [[-ThisHostName] <String>] [[-WhoAmI] <String>]
+ [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -52,6 +53,21 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ThisHostName
 Hostname of the computer running this function.
 
@@ -65,6 +81,21 @@ Aliases:
 Required: False
 Position: 2
 Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

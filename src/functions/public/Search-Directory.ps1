@@ -50,13 +50,29 @@ function Search-Directory {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
-        [string]$ThisHostName = (HOSTNAME.EXE)
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
+
+    $LogParams = @{
+        ThisHostname = $ThisHostname
+        Type         = 'Debug'
+        LogMsgCache  = $LogMsgCache
+        WhoAmI       = $WhoAmI
+    }
 
     $DirectoryEntryParameters = @{
         DirectoryEntryCache = $DirectoryEntryCache
         DomainsByNetbios    = $DomainsByNetbios
+        ThisHostname        = $ThisHostname
+        LogMsgCache         = $LogMsgCache
+        WhoAmI              = $WhoAmI
     }
 
     if ($Credential) {
@@ -71,25 +87,25 @@ function Search-Directory {
 
     $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
 
-    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))"
+    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))"
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
 
     if ($Filter) {
-        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.Filter = '$Filter'"
+        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.Filter = '$Filter'"
         $DirectorySearcher.Filter = $Filter
     }
 
-    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.PageSize = '$PageSize'"
+    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.PageSize = '$PageSize'"
     $DirectorySearcher.PageSize = $PageSize
-    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.SearchScope = '$SearchScope'"
+    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.SearchScope = '$SearchScope'"
     $DirectorySearcher.SearchScope = $SearchScope
 
     ForEach ($Property in $PropertiesToLoad) {
-        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.PropertiesToLoad.Add('$Property')"
+        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.PropertiesToLoad.Add('$Property')"
         $null = $DirectorySearcher.PropertiesToLoad.Add($Property)
     }
 
-    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.FindAll()"
+    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostName`tSearch-Directory`t`$DirectorySearcher.FindAll()"
     $SearchResultCollection = $DirectorySearcher.FindAll()
     # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
     # Error: Cannot access a disposed object.

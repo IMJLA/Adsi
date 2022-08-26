@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-TrustedDomain
+# Get-TrustedDomainSidNameMap
 
 ## SYNOPSIS
 Returns a dictionary of trusted domains by the current computer
@@ -13,7 +13,7 @@ Returns a dictionary of trusted domains by the current computer
 ## SYNTAX
 
 ```
-Get-TrustedDomain [[-ThisHostname] <Object>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
+Get-TrustedDomainSidNameMap [-KeyByNetbios] [[-DirectoryEntryCache] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -27,15 +27,16 @@ For each trusted domain the value contains the details retrieved with ADSI
 
 ### EXAMPLE 1
 ```
-Get-TrustedDomain
+Get-TrustedDomainSidNameMap
 ```
 
 Get the trusted domains of the current computer
 
 ## PARAMETERS
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -DirectoryEntryCache
+Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
+Uses a thread-safe hashtable by default
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -43,40 +44,23 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
-Default value: $Global:LogMessages
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostname
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.Object
-Parameter Sets: (All)
-Aliases:
-
-Required: False
 Position: 1
-Default value: (HOSTNAME.EXE)
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+### -KeyByNetbios
+Key the dictionary by the domain NetBIOS names instead of SIDs
 
 ```yaml
-Type: System.String
+Type: System.Management.Automation.SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
-Default value: (whoami.EXE)
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -86,7 +70,7 @@ Accept wildcard characters: False
 ### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### [PSCustomObject] One object per trusted domain, each with a DomainFqdn property and a DomainNetbios property
+### [System.Collections.Hashtable] The current domain trust relationships
 ## NOTES
 
 ## RELATED LINKS

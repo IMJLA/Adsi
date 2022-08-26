@@ -15,7 +15,7 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 ```
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
- [[-ThisHostName] <String>] [<CommonParameters>]
+ [[-ThisHostName] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -121,6 +121,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 9
+Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -PropertiesToLoad
 Properties of the target object to retrieve
 
@@ -149,6 +164,21 @@ Aliases:
 Required: False
 Position: 7
 Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 8
+Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

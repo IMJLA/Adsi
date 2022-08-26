@@ -15,7 +15,8 @@ schema: 2.0.0
 ```
 ConvertTo-DomainSidString [-DomainDnsName] <String> [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [[-AdsiProvider] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [<CommonParameters>]
+ [[-AdsiProvider] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
+ [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -122,6 +123,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+{{ Fill LogMsgCache Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 9
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ThisFqdn
 {{ Fill ThisFqdn Description }}
 
@@ -147,6 +163,21 @@ Aliases:
 
 Required: False
 Position: 6
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+{{ Fill WhoAmI Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 8
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

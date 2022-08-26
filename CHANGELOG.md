@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.43] - 2022-08-26 - Implemented LogMsgCache and WhoAmI params for Write-LogMsg
+
 ## [3.0.42] - 2022-08-25 - bugfix Resolve-IdentityReference missing DirectoryEntryCache param
 
 ## [3.0.41] - 2022-08-25 - bugfix ConvertTo-DomainNetBIOS to handle non-FQDN FQDNs

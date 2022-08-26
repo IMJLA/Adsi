@@ -51,11 +51,30 @@ function Expand-AdsiGroupMember {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
         #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
-
     begin {
+
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = 'Debug'
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
         $i = 0
     }
 
@@ -66,7 +85,7 @@ function Expand-AdsiGroupMember {
             $i++
 
             #$status = ("$(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
-            #Write-Debug -Message "  $status"
+            #Write-LogMsg @LogParams -Text "  $status"
 
             $Principal = $null
 
@@ -80,20 +99,20 @@ function Expand-AdsiGroupMember {
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
                     $Domain = $DomainsBySid[$DomainSid]
 
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LogginParams
 
                     try {
                         $null = $Principal.RefreshCache($PropertiesToLoad)
                     } catch {
                         #$Success = $false
                         $Principal = $Entry
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
+                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t$SID could not be retrieved from $Domain"
                     }
 
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
-                        Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
-                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
+                        Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`t'$($Principal.properties['name'])' is a group in $Domain"
+                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
                         $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
 
                     }
@@ -104,7 +123,7 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
-            Add-SidInfo -InputObject $Principal -DomainsBySid $DomainsBySid
+            Add-SidInfo -InputObject $Principal -DomainsBySid $DomainsBySid @LoggingParams
 
         }
     }

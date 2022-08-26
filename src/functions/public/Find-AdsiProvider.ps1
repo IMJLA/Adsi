@@ -33,26 +33,42 @@ function Find-AdsiProvider {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
-        [string]$ThisHostName = (HOSTNAME.EXE)
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
+    begin {
+
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = 'Debug'
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+    }
     process {
         ForEach ($ThisServer in $AdsiServer) {
             $AdsiProvider = $null
             $AdsiPath = "LDAP://$ThisServer"
-            Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
+            Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
             try {
                 $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                 $AdsiProvider = 'LDAP'
-            } catch { Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t# $ThisServer did not respond to LDAP" }
+            } catch { Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t# $ThisServer did not respond to LDAP" }
             if (!$AdsiProvider) {
                 $AdsiPath = "WinNT://$ThisServer"
-                Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
+                Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
                 try {
                     $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
                     $AdsiProvider = 'WinNT'
                 } catch {
-                    Write-Debug -Message "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t# $ThisServer did not respond to WinNT"
+                    Write-LogMsg @LogParams -Text "  $(Get-Date -Format s)`t$ThisHostname`tFind-AdsiProvider`t# $ThisServer did not respond to WinNT"
                 }
             }
             if (!$AdsiProvider) {

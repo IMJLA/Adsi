@@ -36,10 +36,29 @@ function Add-DomainFqdnToLdapPath {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
         #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
     begin {
+
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = 'Debug'
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
 
         $PathRegEx = '(?<Path>LDAP:\/\/[^\/]*)'
         $DomainRegEx = '(?i)DC=\w{1,}?\b'
@@ -55,19 +74,19 @@ function Add-DomainFqdnToLdapPath {
                     $DomainDN = $null
                     $DomainFqdn = $null
                     $DomainDN = ([regex]::Matches($ThisPath, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
-                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
+                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
                     if ($ThisPath -match "LDAP:\/\/$DomainFqdn\/") {
-                        #Write-Debug -Message " # Domain FQDN already found in the directory path: '$ThisPath'"
+                        #Write-LogMsg @LogParams -Text " # Domain FQDN already found in the directory path: '$ThisPath'"
                         $ThisPath
                     } else {
                         $ThisPath -replace 'LDAP:\/\/', "LDAP://$DomainFqdn/"
                     }
                 } else {
-                    #Write-Debug -Message " # Domain DN not found in the directory path: '$ThisPath'"
+                    #Write-LogMsg @LogParams -Text " # Domain DN not found in the directory path: '$ThisPath'"
                     $ThisPath
                 }
             } else {
-                #Write-Debug -Message " # Not an expected directory path: '$ThisPath'"
+                #Write-LogMsg @LogParams -Text " # Not an expected directory path: '$ThisPath'"
                 $ThisPath
             }
         }

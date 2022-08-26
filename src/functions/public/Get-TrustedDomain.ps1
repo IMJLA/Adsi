@@ -21,10 +21,31 @@ function Get-TrustedDomain {
     #>
     [OutputType([PSCustomObject])]
     param (
-        $ThisHostname = (HOSTNAME.EXE)
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        $ThisHostname = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
+
     )
+
+    $LogParams = @{
+        ThisHostname = $ThisHostname
+        Type         = 'Debug'
+        LogMsgCache  = $LogMsgCache
+        WhoAmI       = $WhoAmI
+    }
+
     # Redirect the error stream to null, errors are expected on non-domain-joined systems
-    Write-Debug -Message "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tGet-TrustedDomain`t$('& nltest /domain_trusts 2> $null')"
+    Write-LogMsg @LogParams -Text "  $(Get-Date -Format 'yyyy-MM-ddThh:mm:ss.ffff')`t$ThisHostname`t$(whoami)`tGet-TrustedDomain`t$('& nltest /domain_trusts 2> $null')"
     $nltestresults = & nltest /domain_trusts 2> $null
     $NlTestRegEx = '[\d]*: .*'
     $TrustRelationships = $nltestresults -match $NlTestRegEx

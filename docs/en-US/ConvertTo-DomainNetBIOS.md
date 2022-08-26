@@ -15,7 +15,7 @@ schema: 2.0.0
 ```
 ConvertTo-DomainNetBIOS [[-DomainFQDN] <String>] [[-AdsiProvider] <String>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>]
+ [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -122,6 +122,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -LogMsgCache
+{{ Fill LogMsgCache Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 8
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ThisHostName
 {{ Fill ThisHostName Description }}
 
@@ -132,6 +147,21 @@ Aliases:
 
 Required: False
 Position: 6
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhoAmI
+{{ Fill WhoAmI Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

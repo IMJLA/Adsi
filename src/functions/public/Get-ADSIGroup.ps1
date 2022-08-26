@@ -79,10 +79,15 @@ function Get-AdsiGroup {
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
         #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
-
     $GroupParams = @{
         DirectoryPath       = $DirectoryPath
         PropertiesToLoad    = $PropertiesToLoad
@@ -90,6 +95,9 @@ function Get-AdsiGroup {
         DomainsByFqdn       = $DomainsByFqdn
         DomainsByNetbios    = $DomainsByNetbios
         DomainsBySid        = $DomainsBySid
+        ThisHostname        = $ThisHostname
+        LogMsgCache         = $LogMsgCache
+        WhoAmI              = $WhoAmI
     }
     $GroupMemberParams = @{
         PropertiesToLoad    = $PropertiesToLoad
@@ -99,6 +107,8 @@ function Get-AdsiGroup {
         DomainsBySid        = $DomainsBySid
         ThisHostName        = $ThisHostName
         ThisFqdn            = $ThisFqdn
+        LogMsgCache         = $LogMsgCache
+        WhoAmI              = $WhoAmI
     }
 
     switch -Regex ($DirectoryPath) {
