@@ -118,7 +118,7 @@ function Resolve-IdentityReference {
             # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
             IdentityReferenceUnresolved = $null # Could parse SID to get this?
             SIDString                   = $CacheResult.SID
-            IdentityReferenceNetBios    = $CacheResult.Caption
+            IdentityReferenceNetBios    = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\"
             IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
@@ -151,7 +151,7 @@ function Resolve-IdentityReference {
                 # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
                 IdentityReferenceUnresolved = $IdentityReference
                 SIDString                   = $CacheResult.SID
-                IdentityReferenceNetBios    = $CacheResult.Caption
+                IdentityReferenceNetBios    = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\"
                 IdentityReferenceDns        = "$DomainDns\$($CacheResult.Name)"
             }
         } else {
@@ -167,7 +167,7 @@ function Resolve-IdentityReference {
             # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
             IdentityReferenceUnresolved = $null
             SIDString                   = $CacheResult.SID
-            IdentityReferenceNetBios    = $CacheResult.Caption
+            IdentityReferenceNetBios    = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\"
             IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
