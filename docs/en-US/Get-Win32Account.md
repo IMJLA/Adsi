@@ -17,7 +17,7 @@ Get-Win32Account [[-ComputerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
  [[-ThisHostName] <String>] [[-AdsiProvider] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
- [<CommonParameters>]
+ [[-CimSession] <CimSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -71,6 +71,21 @@ Aliases:
 Required: False
 Position: 4
 Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CimSession
+Existing CIM session to the computer (to avoid creating redundant CIM sessions)
+
+```yaml
+Type: Microsoft.Management.Infrastructure.CimSession
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 13
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

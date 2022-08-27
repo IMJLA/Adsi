@@ -1997,6 +1997,14 @@ function Get-AdsiServer {
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }
+        
+        $CacheParams = @{
+            AdsiProvider        = $AdsiProvider
+            DirectoryEntryCache = $DirectoryEntryCache
+            DomainsByFqdn       = $DomainsByFqdn
+            DomainsByNetbios    = $DomainsByNetbios
+            DomainsBySid        = $DomainsBySid
+        }
 
     }
     process {
@@ -2013,9 +2021,9 @@ function Get-AdsiServer {
             Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider'"
             $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider @LoggingParams
             Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn'"
-            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainFqdn -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainFqdn -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
             Write-LogMsg @LogParams -Text "ConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn'"
-            $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LoggingParams
+            $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn @CacheParams @LoggingParams
             Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainFqdn'"
             $Win32Accounts = Get-Win32Account -ComputerName $DomainFqdn -AdsiProvider $AdsiProvider -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue @LoggingParams
 
@@ -2048,29 +2056,30 @@ function Get-AdsiServer {
             }
             Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
 
-            Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName'"
+            Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$DomainNetBIOS'"
+            $CimSession = New-AdsiServerCimSession -ComputerName $DomainNetBIOS @LoggingParams
+
+            Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName' # for '$DomainNetbios'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainDnsName @LoggingParams
 
             Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -Domain '$DomainNetBIOS'"
             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
 
             if ($DomainDn) {
-                Write-LogMsg @LogParams -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn'"
-                $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                Write-LogMsg @LogParams -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' # for '$DomainNetbios'"
+                $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -ThisFqdn $ThisFqdn @LoggingParams
             } else {
-                $CimSession = New-CimSession -ComputerName $DomainNetbios
-                $ParentDomainDnsName = (Get-CimInstance -CimSession $CimSession -ClassName CIM_ComputerSystem).domain
-                if ($ParentDomainDnsName -eq 'WORKGROUP' -or $null -eq $ParentDomainDnsName) {
-                    $ParentDomainDnsName = (Get-DnsClientGlobalSetting -CimSession $CimSession).SuffixSearchList[0]
-                }
+                $ParentDomainDnsName = Get-ParentDomainDnsName -DomainsByNetbios $DomainNetBIOS -CimSession $CimSession @LoggingParams
                 $DomainDnsName = "$DomainNetBIOS.$ParentDomainDnsName"
             }
 
-            Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn'"
-            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+            Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' # for '$DomainNetbios'"
+            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
 
-            Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainDnsName'"
-            $Win32Accounts = Get-Win32Account -ComputerName $DomainDnsName -AdsiProvider $AdsiProvider -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue @LoggingParams
+            Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainDnsName' # for '$DomainNetbios'"
+            $Win32Accounts = Get-Win32Account -ComputerName $DomainDnsName -AdsiProvider $AdsiProvider -Win32AccountsBySID $Win32AccountsBySID -CimSession $CimSession -ErrorAction SilentlyContinue @LoggingParams
+
+            Remove-CimSession -CimSession $CimSession
 
             $Win32Accounts |
             ForEach-Object {
@@ -2281,6 +2290,59 @@ function Get-DirectoryEntry {
     return $DirectoryEntry
 
 }
+function Get-ParentDomainDnsName {
+    param (
+
+        # NetBIOS name of the domain whose parent domain DNS to return
+        [string]$DomainNetbios,
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages,
+
+        # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
+        [CimSession]$CimSession
+    )
+
+    $LogParams = @{
+        ThisHostname = $ThisHostname
+        Type         = 'Debug'
+        LogMsgCache  = $LogMsgCache
+        WhoAmI       = $WhoAmI
+    }
+
+    if (-not $CimSession) {
+        Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$DomainNetbios'"
+        $CimSession = New-AdsiServerCimSession -ComputerName $DomainNetbios @LoggingParams
+        $RemoveCimSession = $true
+    }
+
+    Write-LogMsg @LogParams -Text "(Get-CimInstance -CimSession `$CimSession -ClassName CIM_ComputerSystem).domain # for '$DomainNetbios'"
+    $ParentDomainDnsName = (Get-CimInstance -CimSession $CimSession -ClassName CIM_ComputerSystem).domain
+
+    if ($ParentDomainDnsName -eq 'WORKGROUP' -or $null -eq $ParentDomainDnsName) {
+        # For workgroup computers there is no parent domain DNS (workgroups operate on NetBIOS)
+        # There could also be unexpeted scenarios where the parent domain DNS is null
+        # In all of these cases, we will use the primary DNS search suffix (that is where the OS would attempt to register DNS records for the computer)
+        Write-LogMsg @LogParams -Text "(Get-DnsClientGlobalSetting -CimSession `$CimSession).SuffixSearchList[0] # for '$DomainNetbios'"
+        $ParentDomainDnsName = (Get-DnsClientGlobalSetting -CimSession $CimSession).SuffixSearchList[0]
+    }
+
+    if ($RemoveCimSession) {
+        Remove-CimSession -CimSession $CimSession
+    }
+
+    return $ParentDomainDnsName
+}
 function Get-TrustedDomain {
     <#
         .SYNOPSIS
@@ -2417,7 +2479,10 @@ function Get-Win32Account {
         [string]$WhoAmI = (whoami.EXE),
 
         # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        [hashtable]$LogMsgCache = $Global:LogMessages,
+
+        # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
+        [CimSession]$CimSession
 
     )
     begin {
@@ -2462,20 +2527,18 @@ function Get-Win32Account {
                 }
             } else {
 
-                if ($ThisServer -eq $ThisHostName) {
-                    Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession # For '$ThisServer'"
-                    $CimSession = New-CimSession
-                    Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
-                } else {
-                    Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
-                    $CimSession = New-CimSession -ComputerName $ThisServer
-                    Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                if (-not $CimSession) {
+                    Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$ThisHostName'"
+                    $CimSession = New-AdsiServerCimSession -ComputerName $ThisHostName @LoggingParams
+                    $RemoveCimSession = $true
                 }
 
-                $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
-                $Win32_Accounts
+                Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
 
-                Remove-CimSession -CimSession $CimSession
+                if ($RemoveCimSession) {
+                    Remove-CimSession -CimSession $CimSession
+                }
 
             }
         }
@@ -2748,6 +2811,42 @@ function Invoke-ComObject {
         $Invoke = "GetProperty"
     }
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
+}
+function New-AdsiServerCimSession {
+    param (
+
+        # Name of the computer to start a CIM session on
+        [string]$ComputerName,
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages
+    )
+
+    $LogParams = @{
+        ThisHostname = $ThisHostname
+        Type         = 'Debug'
+        LogMsgCache  = $LogMsgCache
+        WhoAmI       = $WhoAmI
+    }
+
+    if ($ComputerName -eq $ThisHostName) {
+        Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession # for '$ComputerName'"
+        New-CimSession
+    } else {
+        Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession -ComputerName '$ComputerName' # for '$ComputerName'"
+        New-CimSession -ComputerName $ComputerName
+    }
+
 }
 function New-FakeDirectoryEntry {
     <#
@@ -4088,7 +4187,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 

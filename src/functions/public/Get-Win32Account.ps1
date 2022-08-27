@@ -70,7 +70,10 @@ function Get-Win32Account {
         [string]$WhoAmI = (whoami.EXE),
 
         # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        [hashtable]$LogMsgCache = $Global:LogMessages,
+
+        # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
+        [CimSession]$CimSession
 
     )
     begin {
@@ -115,20 +118,18 @@ function Get-Win32Account {
                 }
             } else {
 
-                if ($ThisServer -eq $ThisHostName) {
-                    Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession # For '$ThisServer'"
-                    $CimSession = New-CimSession
-                    Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
-                } else {
-                    Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession -ComputerName '$ThisServer' # For '$ThisServer'"
-                    $CimSession = New-CimSession -ComputerName $ThisServer
-                    Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                if (-not $CimSession) {
+                    Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$ThisHostName'"
+                    $CimSession = New-AdsiServerCimSession -ComputerName $ThisHostName @LoggingParams
+                    $RemoveCimSession = $true
                 }
 
-                $Win32_Accounts = Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
-                $Win32_Accounts
+                Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
+                Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
 
-                Remove-CimSession -CimSession $CimSession
+                if ($RemoveCimSession) {
+                    Remove-CimSession -CimSession $CimSession
+                }
 
             }
         }
