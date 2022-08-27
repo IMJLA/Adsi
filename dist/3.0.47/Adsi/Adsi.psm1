@@ -3783,7 +3783,7 @@ function Resolve-IdentityReference {
                     IdentityReferenceOriginal   = $IdentityReference
                     IdentityReferenceUnresolved = $IdentityReference
                     SIDString                   = $IdentityReference
-                    IdentityReferenceNetBios    = "$DomainNetBIOS\$IdentityReference"
+                    IdentityReferenceNetBios    = "$DomainNetBIOS\$IdentityReference" -replace "^$ThisHostname\\", "$ThisHostname\"
                     IdentityReferenceDns        = "$DomainDns\$IdentityReference"
                 }
             } else {
@@ -3827,7 +3827,7 @@ function Resolve-IdentityReference {
             }
 
             $SIDString = $ScResultProps['SERVICE SID']
-            $Caption = $IdentityReference -replace 'NT SERVICE', $ServerNetBIOS
+            $Caption = $IdentityReference -replace 'NT SERVICE', $ServerNetBIOS -replace "^$ThisHostname\\", "$ThisHostname\"
 
             $DomainCacheResult = $DomainsByNetbios[$ServerNetBIOS]
             if ($DomainCacheResult) {
@@ -3862,7 +3862,7 @@ function Resolve-IdentityReference {
             $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
             $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -DomainsBySid $DomainsBySid @LoggingParams
             $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LoggingParams).SidString
-            $Caption = $IdentityReference -replace 'BUILTIN', $ServerNetBIOS
+            $Caption = $IdentityReference -replace 'BUILTIN', $ServerNetBIOS -replace "^$ThisHostname\\", "$ThisHostname\"
             $DomainDns = $AdsiServer.Dns
 
             # Update the caches
@@ -3956,7 +3956,7 @@ function Resolve-IdentityReference {
             IdentityReferenceOriginal   = $IdentityReference
             IdentityReferenceUnresolved = $IdentityReference
             SIDString                   = $SIDString
-            IdentityReferenceNetBios    = "$DomainNetBios\$Name"
+            IdentityReferenceNetBios    = "$DomainNetBios\$Name" -replace "^$ThisHostname\\", "$ThisHostname\"
             IdentityReferenceDns        = "$DomainDns\$Name"
         }
 
@@ -4089,6 +4089,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 

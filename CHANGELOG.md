@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.47] - 2022-08-26 - Added -replace operation to caption in Resolve-IdentityReference to ensure correct capitalization of hostname in IdentityReferenceNetBios prop
+
 ## [3.0.46] - 2022-08-26 - Added -replace operation to caption in Resolve-IdentityReference to ensure correct capitalization of hostname in IdentityReferenceNetBios prop
 
 ## [3.0.45] - 2022-08-26 - Debug output cleanup
