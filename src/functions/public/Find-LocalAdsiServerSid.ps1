@@ -38,7 +38,7 @@ function Find-LocalAdsiServerSid {
     }
 
     Write-LogMsg @LogParams -Text "Get-Win32UserAccount -ComputerName '$ComputerName'"
-    $Win32UserAccounts = Get-Win32UserAccount -ComputerName $ComputerName -ThisHostname $ThisHostname -ThisFqdn $ThisFqdn @LoggingParams
+    $Win32UserAccounts = Get-Win32UserAccount -ComputerName $ComputerName -ThisFqdn $ThisFqdn @LoggingParams
     if (-not $Win32UserAccounts) {
         return
     }

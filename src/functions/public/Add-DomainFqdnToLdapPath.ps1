@@ -83,7 +83,7 @@ function Add-DomainFqdnToLdapPath {
                     ForEach-Object { $_.Value }
 
                     $DomainDN = $RegExMatches -join ','
-                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisFqdn $ThisFqdn @LoggingParams
                     if ($ThisPath -match "LDAP:\/\/$DomainFqdn\/") {
                         #Write-LogMsg @LogParams -Text " # Domain FQDN already found in the directory path: '$ThisPath'"
                         $ThisPath

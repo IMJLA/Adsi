@@ -83,12 +83,12 @@ function ConvertTo-DomainSidString {
         } catch {
             Write-Debug "$(Get-Date -Format s)`t$ThisHostname`tConvertTo-DomainSidString`t # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
             Write-LogMsg @LogParams -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
-            $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+            $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName-ThisFqdn $ThisFqdn @LoggingParams
             return $DomainSid
         }
     } else {
         Write-LogMsg @LogParams -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
-        $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+        $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LoggingParams
         return $DomainSid
     }
 

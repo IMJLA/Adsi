@@ -58,6 +58,13 @@ function Get-Win32Account {
         [string]$ThisHostName = (HOSTNAME.EXE),
 
         <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        <#
         AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
 
         This parameter can be used to reduce calls to Find-AdsiProvider
@@ -119,8 +126,8 @@ function Get-Win32Account {
             } else {
 
                 if (-not $CimSession) {
-                    Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$ThisHostName'"
-                    $CimSession = New-AdsiServerCimSession -ComputerName $ThisHostName @LoggingParams
+                    Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$ThisServer'"
+                    $CimSession = New-AdsiServerCimSession -ComputerName $ThisServer -ThisFqdn $ThisFqdn @LoggingParams
                     $RemoveCimSession = $true
                 }
 

@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.47
+Help Version: 3.0.48
 Locale: en-US
 ---
 
@@ -83,6 +83,11 @@ Use ADSI to get the current domain
 ### [Get-DirectoryEntry](docs/en-US/Get-DirectoryEntry.md)
 Use Active Directory Service Interfaces to retrieve an object from a directory
 
+### [Get-ParentDomainDnsName](docs/en-US/Get-ParentDomainDnsName.md)
+
+Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-ThisHostName] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-CimSession] <CimSession>]
+
+
 ### [Get-TrustedDomain](docs/en-US/Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
 
@@ -99,6 +104,11 @@ Get members of a group from the WinNT provider
 
 ### [Invoke-ComObject](docs/en-US/Invoke-ComObject.md)
 Invoke a member method of a ComObject [__ComObject]
+
+### [New-AdsiServerCimSession](docs/en-US/New-AdsiServerCimSession.md)
+
+New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
+
 
 ### [New-FakeDirectoryEntry](docs/en-US/New-FakeDirectoryEntry.md)
 Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory

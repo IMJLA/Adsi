@@ -11,6 +11,13 @@ function Get-ParentDomainDnsName {
         #>
         [string]$ThisHostName = (HOSTNAME.EXE),
 
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
@@ -30,7 +37,7 @@ function Get-ParentDomainDnsName {
 
     if (-not $CimSession) {
         Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$DomainNetbios'"
-        $CimSession = New-AdsiServerCimSession -ComputerName $DomainNetbios @LoggingParams
+        $CimSession = New-AdsiServerCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn @LoggingParams
         $RemoveCimSession = $true
     }
 

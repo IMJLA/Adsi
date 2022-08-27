@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.49] - 2022-08-27 - bugfix for ps 5.1 (removed redundant -ThisHostname param usage when already including that in the splat)
+
 ## [3.0.48] - 2022-08-27 - improved handling of CIM sessions by Get-AdsiServer and dependencies
 
 ## [3.0.47] - 2022-08-26 - Added -replace operation to caption in Resolve-IdentityReference to ensure correct capitalization of hostname in IdentityReferenceNetBios prop

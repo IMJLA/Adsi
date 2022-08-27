@@ -13,8 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-New-AdsiServerCimSession [[-ComputerName] <String>] [[-ThisHostName] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>]
+New-AdsiServerCimSession [[-ComputerName] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -55,7 +55,22 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisFqdn
+{{ Fill ThisFqdn Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -85,7 +100,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

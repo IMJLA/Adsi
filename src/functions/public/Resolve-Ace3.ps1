@@ -208,7 +208,7 @@ function Resolve-Ace3 {
                     }
                     if (-not $ThisServerDns) {
                         $ThisServerDn = ConvertTo-DistinguishedName -Domain $DomainNetBios -DomainsByNetbios $DomainsByNetbios @LoggingParams
-                        $ThisServerDns = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                        $ThisServerDns = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisFqdn $ThisFqdn @LoggingParams
                     }
                 }
             }

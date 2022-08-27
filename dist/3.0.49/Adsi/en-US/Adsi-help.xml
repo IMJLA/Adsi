@@ -4878,6 +4878,18 @@ Path              : WinNT://ComputerName</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>ThisFqdn</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill ThisFqdn Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>WhoAmI</maml:name>
           <maml:description>
             <maml:para>{{ Fill WhoAmI Description }}</maml:para>
@@ -4889,7 +4901,7 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>LogMsgCache</maml:name>
           <maml:description>
             <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
@@ -4901,7 +4913,7 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>CimSession</maml:name>
           <maml:description>
             <maml:para>{{ Fill CimSession Description }}</maml:para>
@@ -4916,7 +4928,7 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>CimSession</maml:name>
         <maml:description>
           <maml:para>{{ Fill CimSession Description }}</maml:para>
@@ -4940,7 +4952,7 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>LogMsgCache</maml:name>
         <maml:description>
           <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
@@ -4948,6 +4960,18 @@ Path              : WinNT://ComputerName</dev:code>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>ThisFqdn</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill ThisFqdn Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -4964,7 +4988,7 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
           <maml:para>{{ Fill WhoAmI Description }}</maml:para>
@@ -5170,6 +5194,19 @@ Path              : WinNT://ComputerName</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+          <maml:name>ThisFqdn</maml:name>
+          <maml:description>
+            <maml:para>FQDN of the computer running this function.</maml:para>
+            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>AdsiProvider</maml:name>
           <maml:description>
             <maml:para>AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names</maml:para>
@@ -5183,7 +5220,7 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>WhoAmI</maml:name>
           <maml:description>
             <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -5195,7 +5232,7 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
           <maml:name>LogMsgCache</maml:name>
           <maml:description>
             <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -5207,7 +5244,7 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
           <maml:name>CimSession</maml:name>
           <maml:description>
             <maml:para>Existing CIM session to the computer (to avoid creating redundant CIM sessions)</maml:para>
@@ -5320,7 +5357,7 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
         <maml:name>AdsiProvider</maml:name>
         <maml:description>
           <maml:para>AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names</maml:para>
@@ -5346,7 +5383,7 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
         <maml:name>CimSession</maml:name>
         <maml:description>
           <maml:para>Existing CIM session to the computer (to avoid creating redundant CIM sessions)</maml:para>
@@ -5419,7 +5456,7 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
         <maml:name>LogMsgCache</maml:name>
         <maml:description>
           <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -5430,6 +5467,19 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+        <maml:name>ThisFqdn</maml:name>
+        <maml:description>
+          <maml:para>FQDN of the computer running this function.</maml:para>
+          <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>ThisHostName</maml:name>
@@ -5444,7 +5494,7 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
           <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -6191,6 +6241,18 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>ThisFqdn</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill ThisFqdn Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>WhoAmI</maml:name>
           <maml:description>
             <maml:para>{{ Fill WhoAmI Description }}</maml:para>
@@ -6202,7 +6264,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>LogMsgCache</maml:name>
           <maml:description>
             <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
@@ -6229,7 +6291,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>LogMsgCache</maml:name>
         <maml:description>
           <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
@@ -6237,6 +6299,18 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>ThisFqdn</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill ThisFqdn Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
@@ -6253,7 +6327,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
           <maml:para>{{ Fill WhoAmI Description }}</maml:para>

@@ -97,17 +97,17 @@ function Get-AdsiGroupMember {
 
             if ($ThisGroup.Path -match $PathRegEx) {
 
-                $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $Matches.Path -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $Matches.Path -ThisFqdn $ThisFqdn @LoggingParams
 
                 if ($ThisGroup.Path -match $DomainRegEx) {
                     $Domain = ([regex]::Matches($ThisGroup.Path, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
-                    $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$Domain" -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                    $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$Domain" -ThisFqdn $ThisFqdn @LoggingParams
                 } else {
-                    $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                    $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -ThisFqdn $ThisFqdn @LoggingParams
                 }
 
             } else {
-                $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                $SearchParameters['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -ThisFqdn $ThisFqdn @LoggingParams
             }
 
             #Write-LogMsg @LogParams -Text "$($SearchParameters['Filter'])"
@@ -117,7 +117,7 @@ function Get-AdsiGroupMember {
             if ($GroupMemberSearch.Count -gt 0) {
 
                 $CurrentADGroupMembers = $GroupMemberSearch | ForEach-Object {
-                    $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $_.Path -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+                    $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $_.Path -ThisFqdn $ThisFqdn @LoggingParams
                     Get-DirectoryEntry -DirectoryPath $FQDNPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LoggingParams
                 }
 
@@ -127,7 +127,7 @@ function Get-AdsiGroupMember {
 
             Write-LogMsg @LogParams -Text "$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
 
-            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn @LoggingParams
+            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios -ThisFqdn $ThisFqdn @LoggingParams
 
             Add-Member -InputObject $ThisGroup -MemberType NoteProperty -Name FullMembers -Value $ProcessedGroupMembers -Force -PassThru
 

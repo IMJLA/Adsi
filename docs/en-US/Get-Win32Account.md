@@ -16,8 +16,8 @@ Use CIM to get well-known SIDs
 Get-Win32Account [[-ComputerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [[-ThisHostName] <String>] [[-AdsiProvider] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
- [[-CimSession] <CimSession>] [<CommonParameters>]
+ [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-AdsiProvider] <String>] [[-WhoAmI] <String>]
+ [[-LogMsgCache] <Hashtable>] [[-CimSession] <CimSession>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -54,7 +54,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 11
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -84,7 +84,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 14
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -176,8 +176,25 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
+Position: 13
 Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisFqdn
+FQDN of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 10
+Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -208,7 +225,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: 12
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
