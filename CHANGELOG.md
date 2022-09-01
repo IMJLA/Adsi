@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.52] - 2022-08-31 - Added convertfrom-searchresult and convertfrom-resultpropertyvaluecollectiontostring
+
 ## [3.0.51] - 2022-08-31 - Added convertfrom-searchresult and convertfrom-resultpropertyvaluecollectiontostring
 
 ## [3.0.50] - 2022-08-31 - Added convertfrom-searchresult and convertfrom-resultpropertyvaluecollectiontostring
