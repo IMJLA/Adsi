@@ -126,7 +126,7 @@ function Resolve-IdentityReference {
     }
     if ($Name) {
         # Win32_Account provides a NetBIOS-resolved IdentityReference
-        # NT Authority\SYSTEM on would be SERVER123\SYSTEM as a Win32_Account on a server with hostname server123
+        # NT Authority\SYSTEM would be SERVER123\SYSTEM as a Win32_Account on a server with hostname server123
         # This could also match on a domain account since those can be returned as Win32_Account, not sure if that will be a bug or what
         $CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$ServerNetBIOS\$Name"]
         if ($CacheResult) {

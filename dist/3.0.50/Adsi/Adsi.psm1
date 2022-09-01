@@ -290,6 +290,77 @@ function ConvertFrom-PropertyValueCollectionToString {
         default { "$($PropertyValueCollection.Value)" }
     }
 }
+function ConvertFrom-ResultPropertyValueCollectionToString {
+    <#
+        .SYNOPSIS
+        Convert a ResultPropertyValueCollection to a string
+        .DESCRIPTION
+        Useful when working with System.DirectoryServices and some other namespaces
+        .INPUTS
+        None. Pipeline input is not accepted.
+        .OUTPUTS
+        [System.String]
+        .EXAMPLE
+        $DirectoryEntry = [adsi]("WinNT://$(hostname)")
+        $DirectoryEntry.Properties.Keys |
+        ForEach-Object {
+            ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
+        }
+
+        For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
+    #>
+    param (
+        [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
+    )
+    $SubType = & { $ResultPropertyValueCollection.Value.GetType().FullName } 2>$null
+    switch ($SubType) {
+        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $ResultPropertyValueCollection.Value }
+        default { "$($ResultPropertyValueCollection.Value)" }
+    }
+}
+function ConvertFrom-SearchResult {
+    <#
+    .SYNOPSIS
+    Convert a SearchResult to a PSCustomObject
+    .DESCRIPTION
+    Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
+    This obfuscates the troublesome ResultPropertyCollection and ResultPropertyValueCollection and Hashtable aspects of working with ADSI searches
+    .NOTES
+    # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of SearchResult to see how to get those properties
+    #>
+
+    param (
+        [Parameter(
+            Position = 0,
+            ValueFromPipeline
+        )]
+        [System.DirectoryServices.SearchResult[]]$SearchResult
+    )
+
+    process {
+        ForEach ($ThisSearchResult in $SearchResult) {
+            $ObjectWithProperties = $ThisSearchResult |
+            Select-Object -Property *
+
+            $ObjectNoteProperties = $ObjectWithProperties |
+            Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
+
+            $ThisObject = @{}
+
+            # Enumerate the keys of the ResultPropertyCollection
+            ForEach ($ThisProperty in $ThisSearchResult.Properties.Keys) {
+                $ThisObject = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
+            }
+
+            # We will allow any existing properties to override members of the ResultPropertyCollection
+            ForEach ($ThisObjProperty in $ObjectNoteProperties) {
+                $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+            }
+
+            [PSCustomObject]$ThisObject
+        }
+    }
+}
 function ConvertTo-DecStringRepresentation {
     <#
         .SYNOPSIS
@@ -3826,7 +3897,7 @@ function Resolve-IdentityReference {
     }
     if ($Name) {
         # Win32_Account provides a NetBIOS-resolved IdentityReference
-        # NT Authority\SYSTEM on would be SERVER123\SYSTEM as a Win32_Account on a server with hostname server123
+        # NT Authority\SYSTEM would be SERVER123\SYSTEM as a Win32_Account on a server with hostname server123
         # This could also match on a domain account since those can be returned as Win32_Account, not sure if that will be a bug or what
         $CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$ServerNetBIOS\$Name"]
         if ($CacheResult) {
@@ -4221,7 +4292,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 

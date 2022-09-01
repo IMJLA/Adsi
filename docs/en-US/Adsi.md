@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 3.0.49
+Help Version: 3.0.50
 Locale: en-US
 ---
 
@@ -22,6 +22,12 @@ Convert a DirectoryEntry to a PSCustomObject
 
 ### [ConvertFrom-PropertyValueCollectionToString](ConvertFrom-PropertyValueCollectionToString.md)
 Convert a PropertyValueCollection to a string
+
+### [ConvertFrom-ResultPropertyValueCollectionToString](ConvertFrom-ResultPropertyValueCollectionToString.md)
+Convert a ResultPropertyValueCollection to a string
+
+### [ConvertFrom-SearchResult](ConvertFrom-SearchResult.md)
+Convert a SearchResult to a PSCustomObject
 
 ### [ConvertTo-DecStringRepresentation](ConvertTo-DecStringRepresentation.md)
 Convert a byte array to a string representation of its decimal format
