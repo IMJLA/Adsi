@@ -4,6 +4,7 @@ function Expand-AdsiGroupMember {
         Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
         .DESCRIPTION
         Recursively retrieves group members and detailed information about them
+        Specifically gets the SID, and resolves foreign security principals to their DirectoryEntry from the trusted domain
         .INPUTS
         [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
         .OUTPUTS
@@ -21,7 +22,13 @@ function Expand-AdsiGroupMember {
         $DirectoryEntry,
 
         # Properties of the group members to retrieve
-        [string[]]$PropertiesToLoad = @('operatingSystem', 'objectSid', 'samAccountName', 'objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title'),
+        [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
+
+        # Cache of known Win32_Account instances keyed by domain and SID
+        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
+        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
 
         <#
         Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
@@ -34,7 +41,7 @@ function Expand-AdsiGroupMember {
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [hashtable]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
@@ -75,6 +82,36 @@ function Expand-AdsiGroupMember {
             WhoAmI       = $WhoAmI
         }
 
+        # The DomainsBySID cache must be populated with trusted domains in order to translate foreign security principals
+        if ( $DomainsBySid.Keys.Count -lt 1 ) {
+            Write-LogMsg @LogParams -Text "# No valid DomainsBySid cache found"
+            $DomainsBySid = ([hashtable]::Synchronized(@{}))
+
+            $GetAdsiServerParams = @{
+                Win32AccountsBySID     = $Win32AccountsBySID
+                Win32AccountsByCaption = $Win32AccountsByCaption
+                DirectoryEntryCache    = $DirectoryEntryCache
+                DomainsByNetbios       = $DomainsByNetbios
+                DomainsBySid           = $DomainsBySid
+                DomainsByFqdn          = $DomainsByFqdn
+                ThisFqdn               = $ThisFqdn
+            }
+
+            Get-TrustedDomain |
+            ForEach-Object {
+                Write-LogMsg @LogParams -Text "Get-AdsiServer -Fqdn $($_.DomainFqdn)"
+                $null = Get-AdsiServer -Fqdn $_.DomainFqdn @GetAdsiServerParams @LoggingParams
+            }
+        } else {
+            Write-LogMsg @LogParams -Text "# Valid DomainsBySid cache found"
+        }
+
+        $CacheParams = @{
+            DirectoryEntryCache = $DirectoryEntryCache
+            DomainsByNetbios    = $DomainsByNetbios
+            DomainsBySid        = $DomainsBySid
+        }
+
         $i = 0
     }
 
@@ -99,7 +136,7 @@ function Expand-AdsiGroupMember {
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
                     $Domain = $DomainsBySid[$DomainSid]
 
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LogginParams
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @CacheParams @LogginParams
 
                     try {
                         $null = $Principal.RefreshCache($PropertiesToLoad)
@@ -112,8 +149,8 @@ function Expand-AdsiGroupMember {
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
                         Write-LogMsg @LogParams -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
-                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
-                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid -DomainsByNetbios $DomainsByNetbios -ThisHostName $ThisHostName -ThisFqdn $ThisFqdn
+                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
+                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName @CacheParams
 
                     }
 

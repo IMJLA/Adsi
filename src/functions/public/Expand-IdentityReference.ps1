@@ -173,15 +173,17 @@ function Expand-IdentityReference {
                     $SearchDirectoryParams['Filter'] = "(samaccountname=$Name)"
                     $SearchDirectoryParams['PropertiesToLoad'] = @(
                         'objectClass',
+                        'objectSid',
+                        'samAccountName',
                         'distinguishedName',
                         'name',
                         'grouptype',
                         'description',
                         'managedby',
                         'member',
-                        'objectClass',
                         'Department',
-                        'Title'
+                        'Title',
+                        'primaryGroupToken'
                     )
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
@@ -219,15 +221,17 @@ function Expand-IdentityReference {
                     $SearchDirectoryParams['Filter'] = "(objectsid=$ObjectSid)"
                     $SearchDirectoryParams['PropertiesToLoad'] = @(
                         'objectClass',
+                        'objectSid',
+                        'samAccountName',
                         'distinguishedName',
                         'name',
                         'grouptype',
                         'description',
                         'managedby',
                         'member',
-                        'objectClass',
                         'Department',
-                        'Title'
+                        'Title',
+                        'primaryGroupToken'
                     )
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
@@ -305,7 +309,21 @@ function Expand-IdentityReference {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$domainNetbiosString/$name"
                         }
                         try {
-                            $GetDirectoryEntryParams['PropertiesToLoad'] = 'members'
+                            $GetDirectoryEntryParams['PropertiesToLoad'] = @(
+                                'members',
+                                'objectClass',
+                                'objectSid',
+                                'samAccountName',
+                                'distinguishedName',
+                                'name',
+                                'grouptype',
+                                'description',
+                                'managedby',
+                                'member',
+                                'Department',
+                                'Title',
+                                'primaryGroupToken'
+                            )
                             $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
                             Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$($GetDirectoryEntryParams['DirectoryPath']) could not be resolved for '$StartingIdentityName'"

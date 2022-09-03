@@ -76,6 +76,23 @@ function Get-WinNTGroupMember {
             WhoAmI       = $WhoAmI
         }
 
+        $PropertiesToLoad += 'Department',
+        'description',
+        'distinguishedName',
+        'grouptype',
+        'managedby',
+        'member',
+        'name',
+        'objectClass',
+        'objectSid',
+        'operatingSystem',
+        'primaryGroupToken',
+        'samAccountName',
+        'Title'
+
+        $PropertiesToLoad = $PropertiesToLoad |
+        Sort-Object -Unique
+
     }
     process {
         ForEach ($ThisDirEntry in $DirectoryEntry) {
@@ -102,8 +119,17 @@ function Get-WinNTGroupMember {
                 # Maybe that could be a feature in the future
                 # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
                 $DirectoryMembers = & { $ThisDirEntry.Invoke('Members') } 2>$null
-
                 Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
+                $MembersToGet = @{
+                    'WinNTMembers' = @()
+                }
+                $MemberParams = @{
+                    DirectoryEntryCache = $DirectoryEntryCache
+                    PropertiesToLoad    = $PropertiesToLoad
+                    DomainsByNetbios    = $DomainsByNetbios
+                    LogMsgCache         = $LogMsgCache
+                    WhoAmI              = $WhoAmI
+                }
                 ForEach ($DirectoryMember in $DirectoryMembers) {
                     # The IADsGroup::Members method returns ComObjects
                     # But proper .Net objects are much easier to work with
@@ -117,12 +143,12 @@ function Get-WinNTGroupMember {
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
                         if ($DomainCacheResult) {
-                            Write-LogMsg @LogParams -Text "' # Domain NetBIOS cache hit for '$MemberDomainNetBios'"
+                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios'"
                             if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
                             }
                         } else {
-                            Write-LogMsg @LogParams -Text "' # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
+                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
                             Write-LogMsg @LogParams -Text " # '$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
@@ -134,26 +160,48 @@ function Get-WinNTGroupMember {
                         Write-LogMsg @LogParams -Text " # '$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)'"
                     }
 
-                    $MemberParams = @{
-                        DirectoryEntryCache = $DirectoryEntryCache
-                        DirectoryPath       = $DirectoryPath
-                        PropertiesToLoad    = $PropertiesToLoad
-                        DomainsByNetbios    = $DomainsByNetbios
-                        LogMsgCache         = $LogMsgCache
-                        WhoAmI              = $WhoAmI
-                    }
+                    # LDAP directories have a distinguishedName
                     if ($MemberDomainDn) {
+                        # LDAP directories support searching
+                        # Combine all members' samAccountNames into a single search per directory distinguishedName
+                        # Use a hashtable with the directory path as the key and a string as the definition
+                        # The string is a partial LDAP filter, just the segments of the LDAP filter for each samAccountName
                         Write-LogMsg @LogParams -Text " # '$MemberName' is a domain security principal"
-                        $MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
-                        $MemberParams['Filter'] = "(samaccountname=$MemberName)"
-                        $MemberDirectoryEntry = Search-Directory @MemberParams
+                        $MembersToGet["LDAP://$MemberDomainDn"] += "(samaccountname=$MemberName)"
+                        ##$MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
+                        ##$MemberParams['Filter'] = "(samaccountname=$MemberName)"
+                        ##$MemberDirectoryEntry = Search-Directory @MemberParams
                     } else {
+                        # WinNT directories do not support searching so we will retrieve each member individually
+                        # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
                         Write-LogMsg @LogParams -Text " # '$DirectoryPath' is a local security principal"
-                        $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
+                        $MembersToGet['WinNTMembers'] = $DirectoryPath
+                        ##$MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
 
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+                    ##Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
+                }
+
+                # Get and Expand the directory entries for the WinNT group members
+                $MembersToGet['WinNTMembers'] |
+                ForEach-Object {
+                    $MemberParams['DirectoryPath'] = $_
+                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'"
+                    $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+                }
+
+                # Remove the WinNTMembers key from the hashtable so the only remaining keys are distinguishedName(s) of LDAP directories
+                $MembersToGet.Remove('WinNTMembers')
+
+                # Get and Expand the directory entries for the LDAP group members
+                $MembersToGet.Keys |
+                ForEach-Object {
+                    $MemberParams['DirectoryPath'] = $_
+                    $MemberParams['Filter'] = "(|$($MembersToGet[$_]))"
+                    $MemberDirectoryEntries = Search-Directory @MemberParams
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                 }
             } else {
                 Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' is not a group"

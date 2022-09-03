@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.56] - 2022-09-03 - Implemented support for LDAP "members" who have a group as their Primary Group
+
+## [3.0.55] - 2022-09-03 - Implemented support for LDAP "members" who have a group as their Primary Group
+
+## [3.0.54] - 2022-09-03 - Implemented support for LDAP "members" who have a group as their Primary Group
+
+## [3.0.53] - 2022-09-03 - Implemented support for LDAP "members" who have a group as their Primary Group
+
 ## [3.0.52] - 2022-08-31 - Added convertfrom-searchresult and convertfrom-resultpropertyvaluecollectiontostring
 
 ## [3.0.51] - 2022-08-31 - Added convertfrom-searchresult and convertfrom-resultpropertyvaluecollectiontostring

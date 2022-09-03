@@ -32,24 +32,8 @@ function Get-AdsiGroup {
         # Name (CN or Common Name) of the group to retrieve
         [string]$GroupName,
 
-        # Properties of the group and its members to find in the directory
-        <#
-        [string[]]$PropertiesToLoad = @(
-            'department',
-            'description',
-            'distinguishedName',
-            'grouptype',
-            'managedby',
-            'member',
-            'name',
-            'objectClass',
-            'objectSid',
-            'operatingSystem',
-            'samAccountName',
-            'title'
-        ),
-        #>
-        [string[]]$PropertiesToLoad,
+        # Properties of the group members to retrieve
+        [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups

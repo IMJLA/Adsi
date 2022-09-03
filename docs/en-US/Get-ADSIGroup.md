@@ -151,22 +151,7 @@ Accept wildcard characters: False
 ```
 
 ### -PropertiesToLoad
-Properties of the group and its members to find in the directory
-
-       \[string\[\]\]$PropertiesToLoad = @(
-           'department',
-           'description',
-           'distinguishedName',
-           'grouptype',
-           'managedby',
-           'member',
-           'name',
-           'objectClass',
-           'objectSid',
-           'operatingSystem',
-           'samAccountName',
-           'title'
-       ),
+Properties of the group members to retrieve
 
 ```yaml
 Type: System.String[]
@@ -175,7 +160,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value: None
+Default value: (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -13,10 +13,10 @@ Get members of a group from the LDAP provider
 ## SYNTAX
 
 ```
-Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-DirectoryEntryCache] <Hashtable>]
- [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
- [<CommonParameters>]
+Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
+ [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-NoRecurse] [-PrimaryGroupOnly] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -44,7 +44,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -59,7 +59,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 8
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -74,7 +74,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 6
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -89,7 +89,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -119,8 +119,42 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 12
 Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -NoRecurse
+Perform a non-recursive search of the memberOf attribute
+
+Otherwise the search will be recursive by default
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PrimaryGroupOnly
+Search the primaryGroupId attribute only
+
+Ignore the memberOf attribute
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -151,7 +185,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 10
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -168,7 +202,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 9
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -183,8 +217,40 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 11
 Default value: (whoami.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsByCaption
+Cache of known Win32_Account instances keyed by domain (e.g.
+CONTOSO) and Caption (NTAccount name e.g.
+CONTOSO\User1)
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Win32AccountsBySID
+Cache of known Win32_Account instances keyed by domain and SID
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
