@@ -81,7 +81,6 @@ function Get-DirectoryEntry {
         WhoAmI       = $WhoAmI
     }
 
-
     $DirectoryEntry = $null
     if ($null -eq $DirectoryEntryCache[$DirectoryPath]) {
         switch -regex ($DirectoryPath) {

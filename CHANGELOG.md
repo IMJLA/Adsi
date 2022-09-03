@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [3.0.57] - 2022-09-03 - removed repetitive timestamps from get-directoryentry
+
 ## [3.0.56] - 2022-09-03 - Implemented support for LDAP "members" who have a group as their Primary Group
 
 ## [3.0.55] - 2022-09-03 - Implemented support for LDAP "members" who have a group as their Primary Group
