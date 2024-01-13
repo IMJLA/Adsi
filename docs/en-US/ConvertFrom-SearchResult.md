@@ -13,7 +13,8 @@ Convert a SearchResult to a PSCustomObject
 ## SYNTAX
 
 ```
-ConvertFrom-SearchResult [[-SearchResult] <SearchResult[]>] [<CommonParameters>]
+ConvertFrom-SearchResult [[-SearchResult] <SearchResult[]>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,6 +31,21 @@ PS C:\> {{ Add example code here }}
 {{ Add example description here }}
 
 ## PARAMETERS
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -SearchResult
 {{ Fill SearchResult Description }}

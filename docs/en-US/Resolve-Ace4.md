@@ -15,7 +15,8 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ```
 Resolve-Ace4 [[-InputObject] <PSObject[]>] [[-DirectoryEntryCache] <Hashtable>]
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsBySID] <Hashtable>]
- [[-DomainsByNetbios] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [<CommonParameters>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -182,6 +183,21 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

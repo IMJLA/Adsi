@@ -13,7 +13,7 @@ Convert a SID from a string to binary format (byte array)
 ## SYNTAX
 
 ```
-ConvertTo-SidByteArray [[-SidString] <String[]>] [<CommonParameters>]
+ConvertTo-SidByteArray [[-SidString] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -29,6 +29,21 @@ ConvertTo-SidByteArray -SidString $SID
 Convert the SID string to a byte array
 
 ## PARAMETERS
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -SidString
 SID to convert to binary

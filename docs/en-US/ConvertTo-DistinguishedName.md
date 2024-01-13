@@ -16,14 +16,14 @@ Convert a domain NetBIOS name to its distinguishedName
 ```
 ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
  [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>]
- [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [<CommonParameters>]
+ [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### FQDN
 ```
 ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
  [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>] [-WhoAmI <String>]
- [-LogMsgCache <Hashtable>] [<CommonParameters>]
+ [-LogMsgCache <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -167,6 +167,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: ADS_NAME_TYPE_1779
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

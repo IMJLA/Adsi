@@ -16,7 +16,8 @@ Get members of a group from the LDAP provider
 Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-NoRecurse] [-PrimaryGroupOnly] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-NoRecurse] [-PrimaryGroupOnly]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -155,6 +156,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

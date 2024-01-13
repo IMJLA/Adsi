@@ -16,7 +16,7 @@ Get information about a directory server including the ADSI provider it hosts an
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -143,6 +143,21 @@ Aliases:
 
 Required: False
 Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -17,14 +17,14 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>]
  [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>]
  [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] [-LogMsgCache <Hashtable>]
- [<CommonParameters>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
 ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>]
  [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [-ThisFqdn <String>]
- [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [<CommonParameters>]
+ [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -147,6 +147,21 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

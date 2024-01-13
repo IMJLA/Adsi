@@ -14,7 +14,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 
 ```
 Find-AdsiProvider [[-AdsiServer] <String[]>] [[-ThisHostName] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
+ [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -64,6 +64,21 @@ Aliases:
 Required: False
 Position: 4
 Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

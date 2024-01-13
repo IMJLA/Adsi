@@ -14,7 +14,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ```
 Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -76,6 +76,21 @@ Aliases:
 Required: False
 Position: 5
 Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

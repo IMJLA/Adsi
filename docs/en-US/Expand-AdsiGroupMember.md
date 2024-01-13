@@ -17,7 +17,7 @@ Expand-AdsiGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [<CommonParameters>]
+ [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -123,6 +123,21 @@ Aliases:
 Required: False
 Position: 12
 Default value: $Global:LogMessages
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: System.Management.Automation.ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
