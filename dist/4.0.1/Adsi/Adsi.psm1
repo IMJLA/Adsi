@@ -2328,7 +2328,20 @@ function Get-CurrentDomain {
     #>
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     $Obj = [adsi]::new()
-    try { $null = $Obj.RefreshCache('objectSid') } catch { return }
+    try { $null = $Obj.RefreshCache('objectSid') } catch {
+        # Assume local computer/workgroup, use CIM rather than ADSI
+        # TODO: Make this more efficient.  CIM Sessions, pass in hostname via param, etc.
+        $ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
+        $AdminAccount = Get-CimInstance -ClassName Win32_UserAccount -Filter "LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'"
+        $Obj = [PSCustomObject]@{
+            ObjectSid         = [PSCustomObject]@{
+                Value = $AdminAccount.Sid.Substring(0, $AdminAccount.Sid.LastIndexOf('-')) | ConvertTo-SidByteArray
+            }
+            DistinguishedName = [PSCustomObject]@{
+                Value = "DC=$(& HOSTNAME.EXE)"
+            }
+        }
+    }
     return $Obj
 }
 function Get-DirectoryEntry {
@@ -4471,6 +4484,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 

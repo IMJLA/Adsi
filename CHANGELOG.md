@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.1] - 2024-01-15 - Added support for non-domain-joined local computers to Get-CurrentDomain
+
 ## [4.0.0] - 2024-01-13 - removed Find-ServerNameInPath (belongs in PsNtfs module more than Adsi module)
 
 ## [3.0.57] - 2022-09-03 - removed repetitive timestamps from get-directoryentry
