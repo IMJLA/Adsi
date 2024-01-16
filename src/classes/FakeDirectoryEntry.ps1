@@ -1,5 +1,10 @@
 class FakeDirectoryEntry {
 
+    <#
+    Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
+    The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+    #>
+
     [string]$Name
     [string]$Parent
     [string]$Path
