@@ -151,7 +151,7 @@ function Get-WinNTGroupMember {
                             Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                         }
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
-                            Write-LogMsg @LogParams -Text " # '$DirectoryPath' came from an ADSI server joined to the domain of '$($Matches.Domain)' but its domain is '$($Matches.Middle)' and its name is '$($Matches.Acct)'"
+                            Write-LogMsg @LogParams -Text " # '$DirectoryPath' is named '$($Matches.Acct)' and is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)'"
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }
@@ -175,7 +175,7 @@ function Get-WinNTGroupMember {
                         # WinNT directories do not support searching so we will retrieve each member individually
                         # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
                         Write-LogMsg @LogParams -Text " # '$DirectoryPath' is a local security principal"
-                        $MembersToGet['WinNTMembers'] = $DirectoryPath
+                        $MembersToGet['WinNTMembers'] += $DirectoryPath
                         ##$MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
 

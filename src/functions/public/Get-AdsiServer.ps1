@@ -121,10 +121,9 @@ function Get-AdsiServer {
             Write-LogMsg @LogParams -Text "Get-Win32Account -AdsiProvider '$AdsiProvider' -ComputerName '$DomainFqdn' -ThisFqdn '$ThisFqdn'"
             $Win32Accounts = Get-Win32Account -ComputerName $DomainFqdn -ThisFqdn $ThisFqdn -AdsiProvider $AdsiProvider -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue @LoggingParams
 
-            $Win32Accounts |
-            ForEach-Object {
-                $Win32AccountsBySID["$($_.Domain)\$($_.SID)"] = $_
-                $Win32AccountsByCaption["$($_.Domain)\$($_.Caption)"] = $_
+            ForEach ($Acct in $Win32Accounts) {
+                $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                $Win32AccountsByCaption[$Acct.Caption] = $Acct
             }
 
             $OutputObject = [PSCustomObject]@{
@@ -176,10 +175,9 @@ function Get-AdsiServer {
 
             Remove-CimSession -CimSession $CimSession
 
-            $Win32Accounts |
-            ForEach-Object {
-                $Win32AccountsBySID["$($_.Domain)\$($_.SID)"] = $_
-                $Win32AccountsByCaption["$($_.Domain)\$($_.Caption)"] = $_
+            ForEach ($Acct in $Win32Accounts) {
+                $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                $Win32AccountsByCaption[$Acct.Caption] = $Acct
             }
 
             $OutputObject = [PSCustomObject]@{
