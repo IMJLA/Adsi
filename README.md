@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.2
+Help Version: 4.0.3
 Locale: en-US
 ---
 
@@ -120,9 +120,6 @@ Invoke a member method of a ComObject [__ComObject]
 
 New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
 
-
-### [New-FakeDirectoryEntry](docs/en-US/New-FakeDirectoryEntry.md)
-Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
 
 ### [Resolve-Ace](docs/en-US/Resolve-Ace.md)
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists

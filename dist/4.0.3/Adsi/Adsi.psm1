@@ -1,4 +1,84 @@
 
+class FakeDirectoryEntry {
+
+    [string]$Name
+    [string]$Parent
+    [string]$Path
+    [type]$SchemaEntry
+    [byte[]]$objectSid
+    [string]$Description
+    [hashtable]$Properties
+    [string]$SchemaClassName
+
+    FakeDirectoryEntry (
+        [string]$DirectoryPath
+    ) {
+
+        $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
+        $StartIndex = $LastSlashIndex + 1
+        $This.Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
+        $This.Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
+        $This.Path = $DirectoryPath
+        $This.SchemaEntry = [System.DirectoryServices.DirectoryEntry]
+        switch -regex ($DirectoryPath) {
+
+            'CREATOR OWNER$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
+                $This.Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
+                $This.Properties = @{
+                    Name        = $This.Name
+                    Description = $This.Description
+                    objectSid   = $This.objectSid
+                }
+                $This.SchemaClassName = 'user'
+            }
+            'SYSTEM$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
+                $This.Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
+                $This.Properties = @{
+                    Name        = $This.Name
+                    Description = $This.Description
+                    objectSid   = $This.objectSid
+                }
+                $This.SchemaClassName = 'user'
+            }
+            'INTERACTIVE$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
+                $This.Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
+                $This.Properties = @{
+                    Name        = $This.Name
+                    Description = $This.Description
+                    objectSid   = $This.objectSid
+                }
+                $This.SchemaClassName = 'group'
+            }
+            'Authenticated Users$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
+                $This.Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
+                $This.Properties = @{
+                    Name        = $This.Name
+                    Description = $This.Description
+                    objectSid   = $This.objectSid
+                }
+                $This.SchemaClassName = 'group'
+            }
+            'TrustedInstaller$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
+                $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
+                $This.Properties = @{
+                    Name        = $This.Name
+                    Description = $This.Description
+                    objectSid   = $This.objectSid
+                }
+                $This.SchemaClassName = 'user'
+            }
+        }
+    }
+
+    [void]RefreshCache([string[]]$Nonsense) {}
+    [void]Invoke([string]$Nonsense) {}
+
+}
 function Add-DomainFqdnToLdapPath {
     <#
         .SYNOPSIS
@@ -3142,104 +3222,6 @@ function New-AdsiServerCimSession {
     }
 
 }
-function New-FakeDirectoryEntry {
-    <#
-        .SYNOPSIS
-        Returns a PSCustomObject in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
-        .DESCRIPTION
-        The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-        We will create dummy objects instead of performing the query
-        .INPUTS
-        None. Pipeline input is not accepted.
-        .OUTPUTS
-        [System.Management.Automation.PSCustomObject]
-        .EXAMPLE
-        ----------  EXAMPLE 1  ----------
-        New-FakeDirectoryEntry -DirectoryPath 'WinNT://WORKGROUP/Computer/CREATOR OWNER'
-
-        Create a fake DirectoryEntry to represent the CREATOR OWNER special security principal
-    #>
-    [OutputType([System.Management.Automation.PSCustomObject])]
-    param (
-
-        <#
-        Path to the directory object to retrieve
-        Defaults to the root of the current domain (but don't use it for that, just do this instead: [System.DirectoryServices.DirectorySearcher]::new())
-        #>
-        [string]$DirectoryPath
-
-    )
-
-    $DirectoryEntry = $null
-    $Properties = @{
-        Name        = ($DirectoryPath -split '\/') | Select-Object -Last 1
-        Parent      = $DirectoryPath | Split-Path -Parent
-        Path        = $DirectoryPath
-        SchemaEntry = [System.DirectoryServices.DirectoryEntry]
-    }
-
-    switch -regex ($DirectoryPath) {
-
-        'CREATOR OWNER$' {
-            $Properties['objectSid'] = 'S-1-3-0' | ConvertTo-SidByteArray
-            $Properties['Description'] = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-            $Properties['Properties'] = @{
-                Name        = $Properties['Name']
-                Description = $Description
-                objectSid   = $SidByteAray
-            }
-            $Properties['SchemaClassName'] = 'user'
-        }
-        'SYSTEM$' {
-            $Properties['objectSid'] = 'S-1-5-18' | ConvertTo-SidByteArray
-            $Properties['Description'] = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-            $Properties['Properties'] = @{
-                Name        = $Properties['Name']
-                Description = $Description
-                objectSid   = $SidByteAray
-            }
-            $Properties['SchemaClassName'] = 'user'
-        }
-        'INTERACTIVE$' {
-            $Properties['objectSid'] = 'S-1-5-4' | ConvertTo-SidByteArray
-            $Properties['Description'] = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-            $Properties['Properties'] = @{
-                Name        = $Properties['Name']
-                Description = $Description
-                objectSid   = $SidByteAray
-            }
-            $Properties['SchemaClassName'] = 'group'
-        }
-        'Authenticated Users$' {
-            $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
-            $Properties['Description'] = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-            $Properties['Properties'] = @{
-                Name        = $Properties['Name']
-                Description = $Description
-                objectSid   = $SidByteAray
-            }
-            $Properties['SchemaClassName'] = 'group'
-        }
-        'TrustedInstaller$' {
-            $Properties['objectSid'] = 'S-1-5-11' | ConvertTo-SidByteArray
-            $Properties['Description'] = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
-            $Properties['Properties'] = @{
-                Name        = $Properties['Name']
-                Description = $Description
-                objectSid   = $SidByteAray
-            }
-            $Properties['SchemaClassName'] = 'user'
-        }
-    }
-
-    $DirectoryEntry = [pscustomobject]::new($Properties)
-
-    $DirectoryEntry |
-    Add-Member -MemberType ScriptMethod -Name RefreshCache -Force -Value {}
-
-    return $DirectoryEntry
-
-}
 function Resolve-Ace {
     <#
         .SYNOPSIS
@@ -4485,7 +4467,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 

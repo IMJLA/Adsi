@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.3] - 2024-01-15 - replaced New-FakeDirectoryEntry with FakeDirectoryEntry class
+
 ## [4.0.2] - 2024-01-15 - fix double-domain bug in Win32AccountCaptionCache in Get-AdsiServer and Resolve-IdentityReference;fix OnlyReturnLastWinNTGroupMember bug in Get-WinNTGroupMember
 
 ## [4.0.1] - 2024-01-15 - Added support for non-domain-joined local computers to Get-CurrentDomain
