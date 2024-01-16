@@ -89,19 +89,19 @@ function Get-DirectoryEntry {
             We will create own dummy objects instead of performing the query
             #>
             '^WinNT:\/\/.*\/CREATOR OWNER$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
             '^WinNT:\/\/.*\/SYSTEM$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
             '^WinNT:\/\/.*\/INTERACTIVE$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
             '^WinNT:\/\/.*\/Authenticated Users$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
             '^WinNT:\/\/.*\/TrustedInstaller$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
             # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
             # This is also invoked when DirectoryPath is null for any reason

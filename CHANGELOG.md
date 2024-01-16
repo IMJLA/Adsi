@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.5] - 2024-01-15 - bugfix forgot to replace new-fakedirectoryentry with fakedirectoryentry constructor in get-directoryentry
+
 ## [4.0.4] - 2024-01-15 - added comments to FakeDirectoryEntry class
 
 ## [4.0.3] - 2024-01-15 - replaced New-FakeDirectoryEntry with FakeDirectoryEntry class
