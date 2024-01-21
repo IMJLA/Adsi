@@ -117,9 +117,8 @@ function Get-DirectoryEntry {
                     $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
                 }
 
-                $SampleUser = $DirectoryEntry.PSBase.Children |
-                Where-Object -FilterScript { $_.schemaclassname -eq 'user' } |
-                Select-Object -First 1 |
+                $SampleUser = @($DirectoryEntry.PSBase.Children |
+                    Where-Object -FilterScript { $_.schemaclassname -eq 'user' })[0] |
                 Add-SidInfo -DomainsBySid $DomainsBySid @LoggingParams
 
                 $DirectoryEntry |
