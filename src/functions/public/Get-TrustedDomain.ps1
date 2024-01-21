@@ -46,19 +46,19 @@ function Get-TrustedDomain {
 
     # Redirect the error stream to null, errors are expected on non-domain-joined systems
     Write-LogMsg @LogParams -Text "$('& nltest /domain_trusts 2> $null')"
-    $nltestresults = & nltest /domain_trusts 2> $null
-    $NlTestRegEx = '[\d]*: .*'
-    $TrustRelationships = $nltestresults -match $NlTestRegEx
+    #$nltestresults = & nltest /domain_trusts 2> $null
+    $nltestresults = & nltest /domain_trusts 2>&1
 
+    #$NlTestRegEx = '[\d]*: .*'
     $RegExForEachTrust = '(?<index>[\d]*): (?<netbios>\S*) (?<dns>\S*).*'
-    foreach ($TrustRelationship in $TrustRelationships) {
-        if ($TrustRelationship -match $RegExForEachTrust) {
-            [PSCustomObject]@{
-                DomainFqdn    = $Matches.dns
-                DomainNetbios = $Matches.netbios
+    ForEach ($Result in $nltestresults) {
+        if ($Result.GetType() -eq [string]) {
+            if ($Result -match $RegExForEachTrust) {
+                [PSCustomObject]@{
+                    DomainFqdn    = $Matches.dns
+                    DomainNetbios = $Matches.netbios
+                }
             }
-        } else {
-            continue
         }
     }
 }

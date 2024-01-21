@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.7] - 2024-01-21 - bugfix Get-TrustedDomain suppress nltest errors from transcript
+
 ## [4.0.6] - 2024-01-21 - enhancement-performance remove usage of select-object -first
 
 ## [4.0.5] - 2024-01-15 - bugfix forgot to replace new-fakedirectoryentry with fakedirectoryentry constructor in get-directoryentry

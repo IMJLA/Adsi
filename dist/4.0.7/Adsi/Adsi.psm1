@@ -2700,19 +2700,19 @@ function Get-TrustedDomain {
 
     # Redirect the error stream to null, errors are expected on non-domain-joined systems
     Write-LogMsg @LogParams -Text "$('& nltest /domain_trusts 2> $null')"
-    $nltestresults = & nltest /domain_trusts 2> $null
-    $NlTestRegEx = '[\d]*: .*'
-    $TrustRelationships = $nltestresults -match $NlTestRegEx
+    #$nltestresults = & nltest /domain_trusts 2> $null
+    $nltestresults = & nltest /domain_trusts 2>&1
 
+    #$NlTestRegEx = '[\d]*: .*'
     $RegExForEachTrust = '(?<index>[\d]*): (?<netbios>\S*) (?<dns>\S*).*'
-    foreach ($TrustRelationship in $TrustRelationships) {
-        if ($TrustRelationship -match $RegExForEachTrust) {
-            [PSCustomObject]@{
-                DomainFqdn    = $Matches.dns
-                DomainNetbios = $Matches.netbios
+    ForEach ($Result in $nltestresults) {
+        if ($Result.GetType() -eq [string]) {
+            if ($Result -match $RegExForEachTrust) {
+                [PSCustomObject]@{
+                    DomainFqdn    = $Matches.dns
+                    DomainNetbios = $Matches.netbios
+                }
             }
-        } else {
-            continue
         }
     }
 }
@@ -4472,6 +4472,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 
