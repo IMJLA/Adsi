@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.8] - 2024-01-27 - bugfix resolve-identityreference calls to get-directoryentry.  also optimize expand-identityreference
+
 ## [4.0.7] - 2024-01-21 - bugfix Get-TrustedDomain suppress nltest errors from transcript
 
 ## [4.0.6] - 2024-01-21 - enhancement-performance remove usage of select-object -first

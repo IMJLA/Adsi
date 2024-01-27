@@ -1330,6 +1330,7 @@ function Expand-IdentityReference {
                 $DomainDN = $null
                 $DirectoryEntry = $null
                 $Members = $null
+                $ObjectType = $null
 
                 $GetDirectoryEntryParams = @{
                     DirectoryEntryCache = $DirectoryEntryCache
@@ -1348,30 +1349,30 @@ function Expand-IdentityReference {
 
                 $StartingIdentityName = $ThisIdentity.Name
                 $split = $StartingIdentityName.Split('\')
-                $domainNetbiosString = $split[0]
-                $name = $split[1]
+                $DomainNetBIOS = $split[0]
+                $SamaccountnameOrSid = $split[1]
 
                 if (
-                    $null -ne $name -and
+                    $null -ne $SamaccountnameOrSid -and
                     @($ThisIdentity.Group.AdsiProvider)[0] -eq 'LDAP'
                 ) {
                     Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a domain security principal"
 
-                    $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
+                    $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
                     if ($DomainNetbiosCacheResult) {
-                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$domainNetbiosString' for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$StartingIdentityName'"
                         $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                         $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
                     } else {
-                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$domainNetbiosString' for '$StartingIdentityName'"
-                        if ( -not [string]::IsNullOrEmpty($domainNetbiosString) ) {
-                            $DomainDn = ConvertTo-DistinguishedName -Domain $domainNetbiosString -DomainsByNetbios $DomainsByNetbios @LoggingParams
+                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$StartingIdentityName'"
+                        if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
+                            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                         }
-                        $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$domainNetbiosString" -ThisFqdn $ThisFqdn @LogParams
+                        $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainNetBIOS" -ThisFqdn $ThisFqdn @LogParams
                     }
 
                     # Search the domain for the principal
-                    $SearchDirectoryParams['Filter'] = "(samaccountname=$Name)"
+                    $SearchDirectoryParams['Filter'] = "(samaccountname=$SamaccountnameOrSid)"
                     $SearchDirectoryParams['PropertiesToLoad'] = @(
                         'objectClass',
                         'objectSid',
@@ -1395,7 +1396,6 @@ function Expand-IdentityReference {
 
                 } elseif (
                     $StartingIdentityName.Substring(0, $StartingIdentityName.LastIndexOf('-') + 1) -eq $CurrentDomainSID
-                    #((($StartingIdentityName -split '-') | Select-Object -SkipLast 1) -join '-') -eq $CurrentDomainSID
                 ) {
                     Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is an unresolved SID from the current domain"
 
@@ -1410,7 +1410,7 @@ function Expand-IdentityReference {
                     $DomainCrossReference = Search-Directory @SearchDirectoryParams
                     if ($DomainCrossReference.Properties ) {
                         Write-LogMsg @LogParams -Text " # The domain '$DomainFQDN' is online for '$StartingIdentityName'"
-                        [string]$domainNetbiosString = $DomainCrossReference.Properties['netbiosname']
+                        [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
                         # TODO: The domain is online, so let's see if any domain trusts have issues?  Determine if SID is foreign security principal?
                         # TODO: What if the foreign security principal exists but the corresponding domain trust is down?  Don't want to recommend deletion of the ACE in that case.
                     }
@@ -1441,18 +1441,18 @@ function Expand-IdentityReference {
                         Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # $($_.Exception.Message) for '$StartingIdentityName'"
                     }
 
-
                 } else {
 
                     Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a local security principal or unresolved SID"
 
-                    if ($null -eq $name) { $name = $StartingIdentityName }
+                    if ($null -eq $SamaccountnameOrSid) { $SamaccountnameOrSid = $StartingIdentityName }
 
-                    if ($name -like "S-1-*") {
+                    if ($SamaccountnameOrSid -like "S-1-*") {
+
                         Write-LogMsg @LogParams -Text "$($StartingIdentityName) is an unresolved SID"
 
                         # The SID of the domain is the SID of the user minus the last block of numbers
-                        $DomainSid = $name.Substring(0, $name.LastIndexOf("-"))
+                        $DomainSid = $SamaccountnameOrSid.Substring(0, $SamaccountnameOrSid.LastIndexOf("-"))
 
                         # Determine if SID belongs to current domain
                         if ($DomainSid -eq $CurrentDomainSID) {
@@ -1465,9 +1465,9 @@ function Expand-IdentityReference {
                         $DomainObject = $DomainsBySID[$DomainSid]
                         if ($DomainObject) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users,group"
-                            $domainNetbiosString = $DomainObject.Netbios
+                            $DomainNetBIOS = $DomainObject.Netbios
                         } else {
-                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$domainNetbiosString/Users,group"
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/Users,group"
                         }
 
                         try {
@@ -1479,7 +1479,7 @@ function Expand-IdentityReference {
                         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
                         $DirectoryEntry = $MembersOfUsersGroup |
-                        Where-Object -FilterScript { ($name -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
+                        Where-Object -FilterScript { ($SamaccountnameOrSid -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
 
                         if ($DirectoryEntry.Name) {
                             $AccountName = $DirectoryEntry.Name
@@ -1495,19 +1495,19 @@ function Expand-IdentityReference {
 
                         $ThisIdentity = [pscustomobject]@{
                             Count = $(($ThisIdentityGroup | Measure-Object).Count)
-                            Name  = "$domainNetbiosString\" + $AccountName
+                            Name  = "$DomainNetBIOS\" + $AccountName
                             Group = $ThisIdentityGroup
                             # Unclear why this was filtered so I have removed it to see what happens
-                            #Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $domainNetbiosString } # Should be already Resolved to a UNC path so it reflects the server name
+                            #Group = $ThisIdentityGroup | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $DomainNetBIOS } # Should be already Resolved to a UNC path so it reflects the server name
                         }
 
                     } else {
                         Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a local security principal"
-                        $DomainNetbiosCacheResult = $DomainsByNetbios[$domainNetbiosString]
+                        $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
                         if ($DomainNetbiosCacheResult) {
-                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$name"
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamaccountnameOrSid"
                         } else {
-                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$domainNetbiosString/$name"
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamaccountnameOrSid"
                         }
                         try {
                             $GetDirectoryEntryParams['PropertiesToLoad'] = @(
@@ -1532,16 +1532,18 @@ function Expand-IdentityReference {
                     }
                 }
 
-                $ObjectType = $null
+                $PropertiesToAdd = @{
+                    DomainDn       = $DomainDn
+                    DomainNetbios  = $DomainNetBIOS
+                    DirectoryEntry = $DirectoryEntry
+                }
                 if ($null -ne $DirectoryEntry) {
 
-                    if (
-                        $DirectoryEntry.Properties['objectClass'] -contains 'group' -or
-                        $DirectoryEntry.SchemaClassName -eq 'group'
-                    ) {
-                        $ObjectType = 'Group'
-                    } else {
-                        $ObjectType = 'User'
+                    # WinNT objects have a SchemaClassName property which is a string
+                    # LDAP objects have an objectClass property which is an ordered list of strings, the last being the class name of the object instance
+                    # ToDo: LDAP objects may have SchemaClassName too.  When/why?  Should I just request it always in the list of properties?
+                    if (-not $DirectoryEntry.SchemaClassName) {
+                        $PropertiesToAdd['SchemaClassName'] = @($DirectoryEntry.Properties['objectClass'])[-1] #untested but should work, last value should be the correct one https://learn.microsoft.com/en-us/windows/win32/ad/retrieving-the-objectclass-property
                     }
 
                     if ($NoGroupMembers -eq $false) {
@@ -1549,7 +1551,7 @@ function Expand-IdentityReference {
                         if (
                             # WinNT DirectoryEntries do not contain an objectClass property
                             # If this property exists it is an LDAP DirectoryEntry rather than WinNT
-                            $DirectoryEntry.Properties['objectClass'] -contains 'group'
+                            $PropertiesToAdd['SchemaClassName'] -eq 'group'
                         ) {
                             # Retrieve the members of groups from the LDAP provider
                             Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$StartingIdentityName'"
@@ -1579,9 +1581,9 @@ function Expand-IdentityReference {
                                     Add-Member -InputObject $_ -Force -NotePropertyMembers @{
                                         Group  = $ThisIdentityGroup
                                         Domain = [pscustomobject]@{
-                                            Dns     = $domainNetbiosString
-                                            Netbios = $domainNetbiosString
-                                            Sid     = ($name -split '-') | Select-Object -Last 1
+                                            Dns     = $DomainNetBIOS
+                                            Netbios = $DomainNetBIOS
+                                            Sid     = ($SamaccountnameOrSid -split '-') | Select-Object -Last 1
                                         }
                                     }
 
@@ -1589,6 +1591,7 @@ function Expand-IdentityReference {
                             }
                         }
 
+                        $PropertiesToAdd['Members'] = $Members
                         Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$StartingIdentityName'"
 
                     }
@@ -1596,13 +1599,7 @@ function Expand-IdentityReference {
                     Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' could not be matched to a DirectoryEntry"
                 }
 
-                Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers @{
-                    DomainDn       = $DomainDn
-                    DomainNetbios  = $DomainNetBiosString
-                    ObjectType     = $ObjectType
-                    DirectoryEntry = $DirectoryEntry
-                    Members        = $Members
-                }
+                Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers $PropertiesToAdd
                 $IdentityReferenceCache[$StartingIdentityName] = $ThisIdentity
 
             } else {
@@ -4243,7 +4240,7 @@ function Resolve-IdentityReference {
             # But they may have real DirectoryEntry objects
             # Try to find the DirectoryEntry object locally on the server
             $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
-            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -DomainsBySid $DomainsBySid @LoggingParams
+            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LoggingParams
             $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LoggingParams).SidString
             $Caption = $IdentityReference -replace 'BUILTIN', $ServerNetBIOS -replace "^$ThisHostname\\", "$ThisHostname\"
             $DomainDns = $AdsiServer.Dns
@@ -4318,7 +4315,7 @@ function Resolve-IdentityReference {
 
             # Try to find the DirectoryEntry object directly on the server
             $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
-            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -DomainsBySid $DomainsBySid @LoggingParams
+            $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -DirectoryEntryCache $DirectoryEntryCache -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @LoggingParams
             $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LoggingParams).SidString
 
         }
@@ -4472,6 +4469,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 
