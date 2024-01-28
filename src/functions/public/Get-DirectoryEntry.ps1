@@ -109,6 +109,15 @@ function Get-DirectoryEntry {
             '^WinNT:\/\/.*\/ALL RESTRICTED APPLICATION PACKAGES$' {
                 $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
+            '^WinNT:\/\/.*\/Everyone$' {
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
+            }
+            '^WinNT:\/\/.*\/LOCAL SERVICE$' {
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
+            }
+            '^WinNT:\/\/.*\/NETWORK SERVICE$' {
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
+            }
             # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
             # This is also invoked when DirectoryPath is null for any reason
             # We will return a WinNT object representing the local computer's WinNT directory

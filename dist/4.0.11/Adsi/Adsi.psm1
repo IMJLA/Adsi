@@ -2362,7 +2362,6 @@ function Get-AdsiServer {
                 NETWORK SERVICE                S-1-5-20
                 BUILTIN                        S-1-5-32
 
-             [System.Security.Principal.WellKnownSidType]
 
              # PS 5.1 returns fewer results than PS 7.4
                 PS C:\Users\Owner> ForEach ($SidType in [System.Security.Principal.WellKnownSidType].GetEnumNames()) {$var = [System.Security.Principal.WellKnownSidType]::$SidType; [System.Security.Principal.SecurityIdentifier]::new($var,$LogonDomainSid) |Add-Member -PassThru -NotePropertyMembers @{'WellKnownSidType' = $SidType}}
@@ -2761,6 +2760,15 @@ function Get-DirectoryEntry {
                 $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
             '^WinNT:\/\/.*\/ALL RESTRICTED APPLICATION PACKAGES$' {
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
+            }
+            '^WinNT:\/\/.*\/Everyone$' {
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
+            }
+            '^WinNT:\/\/.*\/LOCAL SERVICE$' {
+                $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
+            }
+            '^WinNT:\/\/.*\/NETWORK SERVICE$' {
                 $DirectoryEntry = [FakeDirectoryEntry]::new($DirectoryPath)
             }
             # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
@@ -4785,6 +4793,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','Resolve-Ace','Resolve-Ace3','Resolve-Ace4','Resolve-IdentityReference','Search-Directory')
+
 
 
 
