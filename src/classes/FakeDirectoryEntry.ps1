@@ -76,6 +76,26 @@ class FakeDirectoryEntry {
                 }
                 $This.SchemaClassName = 'user'
             }
+            'ALL APPLICATION PACKAGES$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-1'
+                $This.Description = 'All applications running in an app package context. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
+                $This.Properties = @{
+                    Name        = $This.Name
+                    Description = $This.Description
+                    objectSid   = $This.objectSid
+                }
+                $This.SchemaClassName = 'group'
+            }
+            'ALL RESTRICTED APPLICATION PACKAGES$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
+                $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
+                $This.Properties = @{
+                    Name        = $This.Name
+                    Description = $This.Description
+                    objectSid   = $This.objectSid
+                }
+                $This.SchemaClassName = 'group'
+            }
         }
     }
 

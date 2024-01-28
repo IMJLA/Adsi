@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.10] - 2024-01-27 - bugfix resolve-identityreference and get-directoryentry
+
 ## [4.0.9] - 2024-01-27 - bugfix resolve-identityreference usinv invalid param when calling add-domainfqdntoldappath
 
 ## [4.0.8] - 2024-01-27 - bugfix resolve-identityreference calls to get-directoryentry.  also optimize expand-identityreference
