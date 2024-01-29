@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.13
+Help Version: 4.0.14
 Locale: en-US
 ---
 
@@ -120,9 +120,6 @@ Invoke a member method of a ComObject [__ComObject]
 
 New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
 
-
-### [Resolve-Ace](Resolve-Ace.md)
-Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
 
 ### [Resolve-Ace3](Resolve-Ace3.md)
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
