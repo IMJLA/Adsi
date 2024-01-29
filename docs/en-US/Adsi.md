@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.11
+Help Version: 4.0.12
 Locale: en-US
 ---
 
@@ -125,9 +125,6 @@ New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
 
 ### [Resolve-Ace3](Resolve-Ace3.md)
-Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
-
-### [Resolve-Ace4](Resolve-Ace4.md)
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
 
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)
