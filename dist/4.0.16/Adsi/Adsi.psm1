@@ -48,7 +48,7 @@ class FakeDirectoryEntry {
                 $This.SchemaClassName = 'group'
             }
             'TrustedInstaller$' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
                 $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
                 $This.SchemaClassName = 'user'
             }
@@ -1516,25 +1516,25 @@ function Expand-IdentityReference {
                         } else {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamaccountnameOrSid"
                         }
+                        $GetDirectoryEntryParams['PropertiesToLoad'] = @(
+                            'members',
+                            'objectClass',
+                            'objectSid',
+                            'samAccountName',
+                            'distinguishedName',
+                            'name',
+                            'grouptype',
+                            'description',
+                            'managedby',
+                            'member',
+                            'Department',
+                            'Title',
+                            'primaryGroupToken'
+                        )
                         try {
-                            $GetDirectoryEntryParams['PropertiesToLoad'] = @(
-                                'members',
-                                'objectClass',
-                                'objectSid',
-                                'samAccountName',
-                                'distinguishedName',
-                                'name',
-                                'grouptype',
-                                'description',
-                                'managedby',
-                                'member',
-                                'Department',
-                                'Title',
-                                'primaryGroupToken'
-                            )
                             $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
-                            Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$($GetDirectoryEntryParams['DirectoryPath']) could not be resolved for '$StartingIdentityName'"
+                            Write-LogMsg @LogParams -Type Warning -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$StartingIdentityName'. Error: $($_.Exception.Message.Trim())"
                         }
                     }
                 }
@@ -1603,7 +1603,7 @@ function Expand-IdentityReference {
 
                     }
                 } else {
-                    Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' could not be matched to a DirectoryEntry"
+                    Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be matched to a DirectoryEntry"
                 }
 
                 Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers $PropertiesToAdd
@@ -4362,6 +4362,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','Resolve-Ace3','Resolve-IdentityReference','Search-Directory')
+
 
 
 

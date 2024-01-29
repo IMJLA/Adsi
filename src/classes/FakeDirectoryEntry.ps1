@@ -47,7 +47,7 @@ class FakeDirectoryEntry {
                 $This.SchemaClassName = 'group'
             }
             'TrustedInstaller$' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
                 $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
                 $This.SchemaClassName = 'user'
             }

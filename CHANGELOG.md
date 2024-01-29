@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.16] - 2024-01-28 - updated warning output in expand-identityreference
+
 ## [4.0.15] - 2024-01-28 - bugfix and code cleanup fakedirectoryentry class
 
 ## [4.0.14] - 2024-01-28 - removed resolve-ace

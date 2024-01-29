@@ -308,25 +308,25 @@ function Expand-IdentityReference {
                         } else {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamaccountnameOrSid"
                         }
+                        $GetDirectoryEntryParams['PropertiesToLoad'] = @(
+                            'members',
+                            'objectClass',
+                            'objectSid',
+                            'samAccountName',
+                            'distinguishedName',
+                            'name',
+                            'grouptype',
+                            'description',
+                            'managedby',
+                            'member',
+                            'Department',
+                            'Title',
+                            'primaryGroupToken'
+                        )
                         try {
-                            $GetDirectoryEntryParams['PropertiesToLoad'] = @(
-                                'members',
-                                'objectClass',
-                                'objectSid',
-                                'samAccountName',
-                                'distinguishedName',
-                                'name',
-                                'grouptype',
-                                'description',
-                                'managedby',
-                                'member',
-                                'Department',
-                                'Title',
-                                'primaryGroupToken'
-                            )
                             $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
-                            Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$($GetDirectoryEntryParams['DirectoryPath']) could not be resolved for '$StartingIdentityName'"
+                            Write-LogMsg @LogParams -Type Warning -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$StartingIdentityName'. Error: $($_.Exception.Message.Trim())"
                         }
                     }
                 }
@@ -395,7 +395,7 @@ function Expand-IdentityReference {
 
                     }
                 } else {
-                    Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' could not be matched to a DirectoryEntry"
+                    Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be matched to a DirectoryEntry"
                 }
 
                 Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers $PropertiesToAdd
