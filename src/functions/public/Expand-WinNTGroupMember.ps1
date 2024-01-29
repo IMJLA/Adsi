@@ -77,7 +77,7 @@ function Expand-WinNTGroupMember {
         ForEach ($ThisEntry in $DirectoryEntry) {
 
             if (!($ThisEntry.Properties)) {
-                Write-Warning "'$ThisEntry' has no properties"
+                Write-LogMsg @LogParams -Type Warning -Text "'$ThisEntry' has no properties"
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 Write-LogMsg @LogParams -Text "'$($ThisEntry.Path)' is an ADSI group"

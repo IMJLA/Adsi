@@ -189,8 +189,8 @@ function Expand-IdentityReference {
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
-                        Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' could not be resolved against its directory"
-                        Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # $($_.Exception.Message) for '$StartingIdentityName"
+                        Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be resolved against its directory"
+                        Write-LogMsg @LogParams -Type Warning -Text " # $($_.Exception.Message) for '$StartingIdentityName"
                     }
 
                 } elseif (
@@ -236,8 +236,8 @@ function Expand-IdentityReference {
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
-                        Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # '$StartingIdentityName' could not be resolved against its directory"
-                        Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t # $($_.Exception.Message) for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be resolved against its directory"
+                        Write-LogMsg @LogParams -Type Warning -Text " # $($_.Exception.Message) for '$StartingIdentityName'"
                     }
 
                 } else {
@@ -272,8 +272,8 @@ function Expand-IdentityReference {
                         try {
                             $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
-                            Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`tCould not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting"
-                            Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tExpand-IdentityReference`t$_"
+                            Write-LogMsg @LogParams -Type Warning -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting"
+                            Write-LogMsg @LogParams -Type Warning -Text "$_"
                         }
                         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 

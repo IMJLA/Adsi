@@ -166,12 +166,12 @@ function Get-DirectoryEntry {
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
 
         } catch {
-            Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t'$DirectoryPath' could not be retrieved."
+            Write-LogMsg @LogParams -Type Warning -Text "'$DirectoryPath' could not be retrieved."
 
             # Ensure that the error message appears on 1 line
             # Use .Trim() to remove leading and trailing whitespace
             # Use -replace to remove an errant line break in the following specific error I encountered: The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
-            Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tGet-DirectoryEntry`t'$($_.Exception.Message.Trim() -replace '\s"',' "')"
+            Write-LogMsg @LogParams -Type Warning -Text "'$($_.Exception.Message.Trim() -replace '\s"',' "')"
             return
         }
     }

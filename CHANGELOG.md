@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.17] - 2024-01-28 - replace remaining instances of write-debug/warning with write-logmsg
+
 ## [4.0.16] - 2024-01-28 - updated warning output in expand-identityreference
 
 ## [4.0.15] - 2024-01-28 - bugfix and code cleanup fakedirectoryentry class
