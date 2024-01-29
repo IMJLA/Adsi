@@ -31,9 +31,10 @@ class FakeDirectoryEntry {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
                 $This.Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
                 $This.Properties = @{
-                    Name        = $This.Name
-                    Description = $This.Description
-                    objectSid   = $This.objectSid
+                    Name            = $This.Name
+                    Description     = $This.Description
+                    objectSid       = $This.objectSid
+                    SchemaClassName = 'user'
                 }
                 $This.SchemaClassName = 'user'
             }
@@ -41,9 +42,10 @@ class FakeDirectoryEntry {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
                 $This.Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
                 $This.Properties = @{
-                    Name        = $This.Name
-                    Description = $This.Description
-                    objectSid   = $This.objectSid
+                    Name            = $This.Name
+                    Description     = $This.Description
+                    objectSid       = $This.objectSid
+                    SchemaClassName = 'user'
                 }
                 $This.SchemaClassName = 'user'
             }
@@ -51,9 +53,10 @@ class FakeDirectoryEntry {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
                 $This.Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
                 $This.Properties = @{
-                    Name        = $This.Name
-                    Description = $This.Description
-                    objectSid   = $This.objectSid
+                    Name            = $This.Name
+                    Description     = $This.Description
+                    objectSid       = $This.objectSid
+                    SchemaClassName = 'group'
                 }
                 $This.SchemaClassName = 'group'
             }
@@ -61,9 +64,10 @@ class FakeDirectoryEntry {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
                 $This.Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
                 $This.Properties = @{
-                    Name        = $This.Name
-                    Description = $This.Description
-                    objectSid   = $This.objectSid
+                    Name            = $This.Name
+                    Description     = $This.Description
+                    objectSid       = $This.objectSid
+                    SchemaClassName = 'group'
                 }
                 $This.SchemaClassName = 'group'
             }
@@ -71,9 +75,10 @@ class FakeDirectoryEntry {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
                 $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
                 $This.Properties = @{
-                    Name        = $This.Name
-                    Description = $This.Description
-                    objectSid   = $This.objectSid
+                    Name            = $This.Name
+                    Description     = $This.Description
+                    objectSid       = $This.objectSid
+                    SchemaClassName = 'user'
                 }
                 $This.SchemaClassName = 'user'
             }
@@ -81,9 +86,10 @@ class FakeDirectoryEntry {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-1'
                 $This.Description = 'All applications running in an app package context. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
                 $This.Properties = @{
-                    Name        = $This.Name
-                    Description = $This.Description
-                    objectSid   = $This.objectSid
+                    Name            = $This.Name
+                    Description     = $This.Description
+                    objectSid       = $This.objectSid
+                    SchemaClassName = 'group'
                 }
                 $This.SchemaClassName = 'group'
             }
@@ -91,9 +97,10 @@ class FakeDirectoryEntry {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
                 $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
                 $This.Properties = @{
-                    Name        = $This.Name
-                    Description = $This.Description
-                    objectSid   = $This.objectSid
+                    Name            = $This.Name
+                    Description     = $This.Description
+                    objectSid       = $This.objectSid
+                    SchemaClassName = 'group'
                 }
                 $This.SchemaClassName = 'group'
             }
@@ -4675,6 +4682,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','Resolve-Ace','Resolve-Ace3','Resolve-IdentityReference','Search-Directory')
+
 
 
 

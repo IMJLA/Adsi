@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.13] - 2024-01-28 - bug workaround duplicate SchemaClassName in FakeDirectoryEntry class
+
 ## [4.0.12] - 2024-01-28 - Updated to show progress in single-threaded mode Resolve-Ace and Resolve-Ace3
 
 ## [4.0.11] - 2024-01-28 - Added support for additional built-in accounts to Get-DirectoryEntry
