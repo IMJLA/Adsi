@@ -111,7 +111,7 @@ function ConvertTo-DomainSidString {
     if ($DomainSid) {
         return $DomainSid
     } else {
-        Write-Warning "$(Get-Date -Format s)`t$ThisHostname`tConvertTo-DomainSidString`t # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
+        Write-LogMsg @LogParams -Type Warning -Text " # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
     }
 
 }
