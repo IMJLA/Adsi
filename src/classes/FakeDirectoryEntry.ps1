@@ -1,3 +1,4 @@
+[NoRunspaceAffinity()] # Make this class thread-safe
 class FakeDirectoryEntry {
 
     <#

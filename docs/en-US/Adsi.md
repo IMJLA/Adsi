@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.18
+Help Version: 4.0.19
 Locale: en-US
 ---
 
@@ -119,6 +119,11 @@ Invoke a member method of a ComObject [__ComObject]
 ### [New-AdsiServerCimSession](New-AdsiServerCimSession.md)
 
 New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
+
+
+### [New-FakeDirectoryEntry](New-FakeDirectoryEntry.md)
+
+New-FakeDirectoryEntry [[-DirectoryPath] <string>]
 
 
 ### [Resolve-Ace3](Resolve-Ace3.md)

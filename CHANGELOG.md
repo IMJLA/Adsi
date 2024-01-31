@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.19] - 2024-01-31 - reverted to function New-FakeDirectoryEntry instead of PS Class due to class limitations
+
 ## [4.0.18] - 2024-01-28 - replace remaining instances of write-debug/warning with write-logmsg
 
 ## [4.0.17] - 2024-01-28 - replace remaining instances of write-debug/warning with write-logmsg
