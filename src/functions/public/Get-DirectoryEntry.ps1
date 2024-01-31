@@ -89,34 +89,34 @@ function Get-DirectoryEntry {
             We will create own dummy objects instead of performing the query
             #>
             '^WinNT:\/\/.*\/CREATOR OWNER$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/SYSTEM$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/INTERACTIVE$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/Authenticated Users$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/TrustedInstaller$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/ALL APPLICATION PACKAGES$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/ALL RESTRICTED APPLICATION PACKAGES$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/Everyone$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/LOCAL SERVICE$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             '^WinNT:\/\/.*\/NETWORK SERVICE$' {
-                $DirectoryEntry = New-FakeDirectory -DirectoryPath $DirectoryPath
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
             }
             # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
             # This is also invoked when DirectoryPath is null for any reason
