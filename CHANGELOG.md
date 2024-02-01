@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.21] - 2024-01-31 - rename resolve-ace3 back to resolve-ace
+
 ## [4.0.20] - 2024-01-31 - oops
 
 ## [4.0.19] - 2024-01-31 - reverted to function New-FakeDirectoryEntry instead of PS Class due to class limitations

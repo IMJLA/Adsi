@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Resolve-Ace3
+# Resolve-Ace
 
 ## SYNOPSIS
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
@@ -13,7 +13,7 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ## SYNTAX
 
 ```
-Resolve-Ace3 [[-InputObject] <PSObject[]>] [[-DirectoryEntryCache] <Hashtable>]
+Resolve-Ace [[-InputObject] <PSObject[]>] [[-DirectoryEntryCache] <Hashtable>]
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]

@@ -1,4 +1,4 @@
-function Resolve-Ace3 {
+function Resolve-Ace {
     <#
     .SYNOPSIS
     Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists

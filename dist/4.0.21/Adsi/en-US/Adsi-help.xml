@@ -7298,9 +7298,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
-      <command:name>Resolve-Ace3</command:name>
+      <command:name>Resolve-Ace</command:name>
       <command:verb>Resolve</command:verb>
-      <command:noun>Ace3</command:noun>
+      <command:noun>Ace</command:noun>
       <maml:description>
         <maml:para>Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists</maml:para>
       </maml:description>
@@ -7310,7 +7310,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
-        <maml:name>Resolve-Ace3</maml:name>
+        <maml:name>Resolve-Ace</maml:name>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>InputObject</maml:name>
           <maml:description>
