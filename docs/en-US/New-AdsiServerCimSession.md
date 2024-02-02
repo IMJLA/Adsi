@@ -14,7 +14,7 @@ schema: 2.0.0
 
 ```
 New-AdsiServerCimSession [[-ComputerName] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
 ```
 
 ## DESCRIPTION
@@ -41,6 +41,22 @@ Aliases:
 
 Required: False
 Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DebugOutputStream
+{{ Fill DebugOutputStream Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+Accepted values: Silent, Quiet, Success, Debug, Verbose, Output, Host, Warning, Error, Information, 
+
+Required: False
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

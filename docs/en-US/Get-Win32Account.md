@@ -17,8 +17,8 @@ Get-Win32Account [[-ComputerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
  [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-AdsiProvider] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [[-CimSession] <CimSession>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ [[-LogMsgCache] <Hashtable>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -103,6 +103,21 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 15
+Default value: Debug
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

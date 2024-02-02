@@ -16,7 +16,8 @@ Get information about a directory server including the ADSI provider it hosts an
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,6 +41,21 @@ Get-AdsiServer -Fqdn 'ad.contoso.com'
 Find the ADSI provider of the AD domain 'ad.contoso.com'
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 13
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups

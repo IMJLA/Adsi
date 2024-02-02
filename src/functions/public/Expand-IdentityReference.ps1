@@ -34,6 +34,10 @@ function Expand-IdentityReference {
         # Do not get group members
         [switch]$NoGroupMembers,
 
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug',
+
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
         [hashtable]$IdentityReferenceCache = ([hashtable]::Synchronized(@{})),
 
@@ -79,7 +83,7 @@ function Expand-IdentityReference {
 
         $LogParams = @{
             ThisHostname = $ThisHostname
-            Type         = 'Debug'
+            Type         = $DebugOutputStream
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }

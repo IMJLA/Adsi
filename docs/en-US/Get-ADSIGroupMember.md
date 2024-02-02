@@ -17,7 +17,7 @@ Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-Win3
  [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-NoRecurse] [-PrimaryGroupOnly]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -34,6 +34,21 @@ Return the group's DirectoryEntry plus a FullMembers property containing the mem
 Get members of the domain Administrators group
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 13
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryEntryCache
 Hashtable containing cached directory entries so they don't have to be retrieved from the directory again

@@ -63,14 +63,18 @@ function ConvertTo-DistinguishedName {
         [string]$WhoAmI = (whoami.EXE),
 
         # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        [hashtable]$LogMsgCache = $Global:LogMessages,
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug'
 
     )
     begin {
 
         $LogParams = @{
             ThisHostname = $ThisHostname
-            Type         = 'Debug'
+            Type         = $DebugOutputStream
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }

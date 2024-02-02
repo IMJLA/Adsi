@@ -16,7 +16,8 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 Resolve-Ace [[-InputObject] <PSObject[]>] [[-DirectoryEntryCache] <Hashtable>]
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -108,6 +109,21 @@ The \[System.IO.FileSystemAclExtensions\] class is a Windows-specific implementa
 It provides no known benefit over the cross-platform equivalent \[System.Security.AccessControl.FileSecurity\]
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 12
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups

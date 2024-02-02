@@ -17,14 +17,15 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>]
  [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>]
  [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] [-LogMsgCache <Hashtable>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
 ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>]
  [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [-ThisFqdn <String>]
- [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-DebugOutputStream <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -42,6 +43,21 @@ ad.contoso.com
 Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups

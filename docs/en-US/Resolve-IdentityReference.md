@@ -17,7 +17,8 @@ Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject
  [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -65,6 +66,21 @@ Aliases:
 Required: False
 Position: 6
 Default value: [hashtable]::Synchronized(@{})
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 14
+Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

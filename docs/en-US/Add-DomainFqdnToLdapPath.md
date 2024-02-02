@@ -14,7 +14,8 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 
 ```
 Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -34,6 +35,21 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com
 Add the domain FQDN to a single LDAP directory path
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryPath
 Incomplete LDAP directory path containing a distinguishedName but lacking a server address

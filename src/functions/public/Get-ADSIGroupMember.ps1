@@ -77,14 +77,18 @@ function Get-AdsiGroupMember {
 
         Ignore the memberOf attribute
         #>
-        [switch]$PrimaryGroupOnly
+        [switch]$PrimaryGroupOnly,
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug'
 
     )
     begin {
 
         $LogParams = @{
             ThisHostname = $ThisHostname
-            Type         = 'Debug'
+            Type         = $DebugOutputStream
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }

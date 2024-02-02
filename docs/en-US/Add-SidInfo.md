@@ -14,7 +14,8 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ```
 Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -33,6 +34,21 @@ The output object's default format is not modified so with default formatting it
 Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DomainsBySid
 Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values

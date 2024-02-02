@@ -16,7 +16,8 @@ Get members of a group from the WinNT provider
 Get-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String[]>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -33,6 +34,21 @@ Convert them from COM objects into usable DirectoryEntry objects
 Get members of the local Administrators group
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 11
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryEntry
 DirectoryEntry \[System.DirectoryServices.DirectoryEntry\] of the WinNT group whose members to get

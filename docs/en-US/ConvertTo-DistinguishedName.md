@@ -16,14 +16,16 @@ Convert a domain NetBIOS name to its distinguishedName
 ```
 ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
  [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>]
- [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-DebugOutputStream <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### FQDN
 ```
 ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
  [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>] [-WhoAmI <String>]
- [-LogMsgCache <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-LogMsgCache <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -56,6 +58,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

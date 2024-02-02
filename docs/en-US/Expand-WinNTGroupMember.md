@@ -16,7 +16,7 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 Expand-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
  [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -32,6 +32,21 @@ Recursively retrieves group members and detailed information about them
 Need to fix example and add notes
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 10
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DirectoryEntry
 Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry

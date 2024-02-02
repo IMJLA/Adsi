@@ -80,14 +80,18 @@ function Get-Win32Account {
         [hashtable]$LogMsgCache = $Global:LogMessages,
 
         # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
-        [CimSession]$CimSession
+        [CimSession]$CimSession,
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug'
 
     )
     begin {
 
         $LogParams = @{
             ThisHostname = $ThisHostname
-            Type         = 'Debug'
+            Type         = $DebugOutputStream
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }

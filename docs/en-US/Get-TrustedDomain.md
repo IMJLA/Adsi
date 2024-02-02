@@ -14,6 +14,7 @@ Returns a dictionary of trusted domains by the current computer
 
 ```
 Get-TrustedDomain [[-ThisHostname] <Object>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
+ [[-DebugOutputStream] <String>]
 ```
 
 ## DESCRIPTION
@@ -33,6 +34,21 @@ Get-TrustedDomain
 Get the trusted domains of the current computer
 
 ## PARAMETERS
+
+### -DebugOutputStream
+Output stream to send the log messages to
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: Debug
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -LogMsgCache
 Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
