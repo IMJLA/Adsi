@@ -94,7 +94,7 @@ function Expand-IdentityReference {
             WhoAmI       = $WhoAmI
         }
 
-        #Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
+        Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
 
         # Get the SID of the current domain
         $CurrentDomain = (Get-CurrentDomain)
@@ -141,6 +141,7 @@ function Expand-IdentityReference {
                     ThisHostname        = $ThisHostname
                     LogMsgCache         = $LogMsgCache
                     WhoAmI              = $WhoAmI
+                    DebugOutputStream   = $DebugOutputStream
                 }
                 $SearchDirectoryParams = @{
                     DirectoryEntryCache = $DirectoryEntryCache
@@ -148,6 +149,7 @@ function Expand-IdentityReference {
                     ThisHostname        = $ThisHostname
                     LogMsgCache         = $LogMsgCache
                     WhoAmI              = $WhoAmI
+                    DebugOutputStream   = $DebugOutputStream
                 }
 
                 $StartingIdentityName = $ThisIdentity.Name

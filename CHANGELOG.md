@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.23] - 2024-02-02 - add more debugoutputstream usage to expand-identityreference
+
 ## [4.0.22] - 2024-02-02 - implement DebugOutputStream param
 
 ## [4.0.21] - 2024-01-31 - rename resolve-ace3 back to resolve-ace

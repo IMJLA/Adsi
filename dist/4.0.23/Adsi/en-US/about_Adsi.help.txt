@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.21
+Help Version: 4.0.22
 Locale: en-US
 ---
 
@@ -42,12 +42,12 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](docs/en-US/ConvertTo-DomainNetBIOS.md)
 
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-ThisHostName] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
+ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-ThisHostName] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [ConvertTo-DomainSidString](docs/en-US/ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>] [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](docs/en-US/ConvertTo-Fqdn.md)
@@ -76,7 +76,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 
 ### [Find-LocalAdsiServerSid](docs/en-US/Find-LocalAdsiServerSid.md)
 
-Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
+Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [Get-ADSIGroup](docs/en-US/Get-ADSIGroup.md)
@@ -96,7 +96,7 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-ParentDomainDnsName](docs/en-US/Get-ParentDomainDnsName.md)
 
-Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-CimSession] <CimSession>]
+Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>]
 
 
 ### [Get-TrustedDomain](docs/en-US/Get-TrustedDomain.md)
@@ -107,7 +107,7 @@ Use CIM to get well-known SIDs
 
 ### [Get-Win32UserAccount](docs/en-US/Get-Win32UserAccount.md)
 
-Get-Win32UserAccount [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
+Get-Win32UserAccount [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [Get-WinNTGroupMember](docs/en-US/Get-WinNTGroupMember.md)
@@ -118,7 +118,7 @@ Invoke a member method of a ComObject [__ComObject]
 
 ### [New-AdsiServerCimSession](docs/en-US/New-AdsiServerCimSession.md)
 
-New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
+New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [New-FakeDirectoryEntry](docs/en-US/New-FakeDirectoryEntry.md)

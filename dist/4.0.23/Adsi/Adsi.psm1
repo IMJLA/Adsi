@@ -1331,7 +1331,7 @@ function Expand-IdentityReference {
             WhoAmI       = $WhoAmI
         }
 
-        #Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
+        Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
 
         # Get the SID of the current domain
         $CurrentDomain = (Get-CurrentDomain)
@@ -1378,6 +1378,7 @@ function Expand-IdentityReference {
                     ThisHostname        = $ThisHostname
                     LogMsgCache         = $LogMsgCache
                     WhoAmI              = $WhoAmI
+                    DebugOutputStream   = $DebugOutputStream
                 }
                 $SearchDirectoryParams = @{
                     DirectoryEntryCache = $DirectoryEntryCache
@@ -1385,6 +1386,7 @@ function Expand-IdentityReference {
                     ThisHostname        = $ThisHostname
                     LogMsgCache         = $LogMsgCache
                     WhoAmI              = $WhoAmI
+                    DebugOutputStream   = $DebugOutputStream
                 }
 
                 $StartingIdentityName = $ThisIdentity.Name
@@ -4548,6 +4550,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
