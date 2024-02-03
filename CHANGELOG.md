@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.25] - 2024-02-02 - add debug output to expand-identityreference
+
 ## [4.0.24] - 2024-02-02 - add debug output to expand-identityreference
 
 ## [4.0.23] - 2024-02-02 - add more debugoutputstream usage to expand-identityreference

@@ -1334,13 +1334,12 @@ function Expand-IdentityReference {
         Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
 
         # Get the SID of the current domain
-        Write-LogMsg @LogParams -Text 'Get-CurrentDomain'
+        Write-LogMsg @LogParams -Text '$CurrentDomain = Get-CurrentDomain'
         $CurrentDomain = Get-CurrentDomain
 
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
+        Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
         [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
-
-        #$i = 0
 
     }
 
@@ -1353,16 +1352,7 @@ function Expand-IdentityReference {
             }
 
             $ThisIdentityGroup = $ThisIdentity.Group
-
-            #$i++
-            #Calculate the completion percentage, and format it to show 0 decimal places
-            #$percentage = "{0:N0}" -f (($i / ($AccessControlEntry.Count)) * 100)
-
-            #Display the progress bar
-            #$status = $percentage + "% - Using ADSI to get info on NTFS IdentityReference $i of " + $AccessControlEntry.Count + ": " + $ThisIdentity.Name
-            #Write-LogMsg @LogParams -Text "Status: $status"
-
-            #Write-Progress -Activity ("Unique IdentityReferences: " + $AccessControlEntry.Count) -Status $status -PercentComplete $percentage
+            Write-LogMsg @LogParams -Text "Using ADSI to get info on NTFS IdentityReference $i of $($AccessControlEntry.Count)`: $($ThisIdentity.Name)"
 
             if ($null -eq $IdentityReferenceCache[$ThisIdentity.Name]) {
 
@@ -1371,7 +1361,6 @@ function Expand-IdentityReference {
                 $DomainDN = $null
                 $DirectoryEntry = $null
                 $Members = $null
-                $ObjectType = $null
 
                 $GetDirectoryEntryParams = @{
                     DirectoryEntryCache = $DirectoryEntryCache
@@ -4551,6 +4540,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
