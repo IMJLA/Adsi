@@ -97,7 +97,8 @@ function Expand-IdentityReference {
         Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
 
         # Get the SID of the current domain
-        $CurrentDomain = (Get-CurrentDomain)
+        Write-LogMsg @LogParams -Text 'Get-CurrentDomain'
+        $CurrentDomain = Get-CurrentDomain
 
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
