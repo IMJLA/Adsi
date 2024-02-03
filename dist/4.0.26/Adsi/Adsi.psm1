@@ -1331,8 +1331,6 @@ function Expand-IdentityReference {
             WhoAmI       = $WhoAmI
         }
 
-        Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
-
         # Get the SID of the current domain
         Write-LogMsg @LogParams -Text '$CurrentDomain = Get-CurrentDomain'
         $CurrentDomain = Get-CurrentDomain
@@ -1352,7 +1350,6 @@ function Expand-IdentityReference {
             }
 
             $ThisIdentityGroup = $ThisIdentity.Group
-            Write-LogMsg @LogParams -Text "Using ADSI to get info on NTFS IdentityReference $i of $($AccessControlEntry.Count)`: $($ThisIdentity.Name)"
 
             if ($null -eq $IdentityReferenceCache[$ThisIdentity.Name]) {
 
@@ -4540,6 +4537,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

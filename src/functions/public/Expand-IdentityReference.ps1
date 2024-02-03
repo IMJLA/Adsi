@@ -94,8 +94,6 @@ function Expand-IdentityReference {
             WhoAmI       = $WhoAmI
         }
 
-        Write-LogMsg @LogParams -Text "$(($AccessControlEntry | Measure).Count) unique IdentityReferences found in the $(($AccessControlEntry | Measure).Count) ACEs"
-
         # Get the SID of the current domain
         Write-LogMsg @LogParams -Text '$CurrentDomain = Get-CurrentDomain'
         $CurrentDomain = Get-CurrentDomain
@@ -115,7 +113,6 @@ function Expand-IdentityReference {
             }
 
             $ThisIdentityGroup = $ThisIdentity.Group
-            Write-LogMsg @LogParams -Text "Using ADSI to get info on NTFS IdentityReference $i of $($AccessControlEntry.Count)`: $($ThisIdentity.Name)"
 
             if ($null -eq $IdentityReferenceCache[$ThisIdentity.Name]) {
 
