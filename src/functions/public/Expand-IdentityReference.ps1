@@ -182,8 +182,9 @@ function Expand-IdentityReference {
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
-                        Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be resolved against its directory"
-                        Write-LogMsg @LogParams -Type Warning -Text " # $($_.Exception.Message) for '$StartingIdentityName"
+                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be resolved against its directory: $($_.Exception.Message)"
+                        $LogParams['Type'] = $DebugOutputStream
                     }
 
                 } elseif (
@@ -229,8 +230,9 @@ function Expand-IdentityReference {
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
-                        Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be resolved against its directory"
-                        Write-LogMsg @LogParams -Type Warning -Text " # $($_.Exception.Message) for '$StartingIdentityName'"
+                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be resolved against its director. Error: $($_.Exception.Message.Trim())"
+                        $LogParams['Type'] = $DebugOutputStream
                     }
 
                 } else {
@@ -265,8 +267,9 @@ function Expand-IdentityReference {
                         try {
                             $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
-                            Write-LogMsg @LogParams -Type Warning -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting"
-                            Write-LogMsg @LogParams -Type Warning -Text "$_"
+                            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                            Write-LogMsg @LogParams -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
+                            $LogParams['Type'] = $DebugOutputStream
                         }
                         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
@@ -319,7 +322,9 @@ function Expand-IdentityReference {
                         try {
                             $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
-                            Write-LogMsg @LogParams -Type Warning -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$StartingIdentityName'. Error: $($_.Exception.Message.Trim())"
+                            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                            Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$StartingIdentityName'. Error: $($_.Exception.Message.Trim())"
+                            $LogParams['Type'] = $DebugOutputStream
                         }
                     }
                 }
@@ -388,7 +393,9 @@ function Expand-IdentityReference {
 
                     }
                 } else {
-                    Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be matched to a DirectoryEntry"
+                    $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be matched to a DirectoryEntry"
+                    $LogParams['Type'] = $DebugOutputStream
                 }
 
                 Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers $PropertiesToAdd

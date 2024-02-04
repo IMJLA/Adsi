@@ -858,7 +858,9 @@ function ConvertTo-DomainSidString {
     if ($DomainSid) {
         return $DomainSid
     } else {
-        Write-LogMsg @LogParams -Type Warning -Text " # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
+        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+        Write-LogMsg @LogParams -Text " # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
+        $LogParams['Type'] = $DebugOutputStream
     }
 
 }
@@ -1419,8 +1421,9 @@ function Expand-IdentityReference {
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
-                        Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be resolved against its directory"
-                        Write-LogMsg @LogParams -Type Warning -Text " # $($_.Exception.Message) for '$StartingIdentityName"
+                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be resolved against its directory: $($_.Exception.Message)"
+                        $LogParams['Type'] = $DebugOutputStream
                     }
 
                 } elseif (
@@ -1466,8 +1469,9 @@ function Expand-IdentityReference {
                     try {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
-                        Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be resolved against its directory"
-                        Write-LogMsg @LogParams -Type Warning -Text " # $($_.Exception.Message) for '$StartingIdentityName'"
+                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be resolved against its director. Error: $($_.Exception.Message.Trim())"
+                        $LogParams['Type'] = $DebugOutputStream
                     }
 
                 } else {
@@ -1502,8 +1506,9 @@ function Expand-IdentityReference {
                         try {
                             $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
-                            Write-LogMsg @LogParams -Type Warning -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting"
-                            Write-LogMsg @LogParams -Type Warning -Text "$_"
+                            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                            Write-LogMsg @LogParams -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
+                            $LogParams['Type'] = $DebugOutputStream
                         }
                         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
@@ -1556,7 +1561,9 @@ function Expand-IdentityReference {
                         try {
                             $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
-                            Write-LogMsg @LogParams -Type Warning -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$StartingIdentityName'. Error: $($_.Exception.Message.Trim())"
+                            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                            Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$StartingIdentityName'. Error: $($_.Exception.Message.Trim())"
+                            $LogParams['Type'] = $DebugOutputStream
                         }
                     }
                 }
@@ -1625,7 +1632,9 @@ function Expand-IdentityReference {
 
                     }
                 } else {
-                    Write-LogMsg @LogParams -Type Warning -Text " # '$StartingIdentityName' could not be matched to a DirectoryEntry"
+                    $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be matched to a DirectoryEntry"
+                    $LogParams['Type'] = $DebugOutputStream
                 }
 
                 Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers $PropertiesToAdd
@@ -1727,7 +1736,9 @@ function Expand-WinNTGroupMember {
         ForEach ($ThisEntry in $DirectoryEntry) {
 
             if (!($ThisEntry.Properties)) {
-                Write-LogMsg @LogParams -Type Warning -Text "'$ThisEntry' has no properties"
+                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                Write-LogMsg @LogParams -Text "'$ThisEntry' has no properties"
+                $LogParams['Type'] = $DebugOutputStream
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 Write-LogMsg @LogParams -Text "'$($ThisEntry.Path)' is an ADSI group"
@@ -2852,12 +2863,13 @@ function Get-DirectoryEntry {
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
 
         } catch {
-            Write-LogMsg @LogParams -Type Warning -Text "'$DirectoryPath' could not be retrieved."
+            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
 
             # Ensure that the error message appears on 1 line
             # Use .Trim() to remove leading and trailing whitespace
             # Use -replace to remove an errant line break in the following specific error I encountered: The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
-            Write-LogMsg @LogParams -Type Warning -Text "'$($_.Exception.Message.Trim() -replace '\s"',' "')"
+            Write-LogMsg @LogParams -Text "'$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim() -replace '\s"',' "')"
+
             return
         }
     }
@@ -4370,8 +4382,9 @@ function Resolve-IdentityReference {
                 $DirectoryEntry = Search-Directory -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $SearchPath -Filter "(samaccountname=$Name)" -PropertiesToLoad @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title') -DomainsByNetbios $DomainsByNetbios
                 $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LoggingParams).SidString
             } catch {
-                Write-LogMsg @LogParams -Type Warning -Text "'$IdentityReference' could not be resolved against its directory"
-                Write-LogMsg @LogParams -Type Warning -Text $_.Exception.Message
+                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                Write-LogMsg @LogParams -Text "'$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message)"
+                $LogParams['Type'] = $DebugOutputStream
             }
         }
 
@@ -4537,6 +4550,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-IdentityReference','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

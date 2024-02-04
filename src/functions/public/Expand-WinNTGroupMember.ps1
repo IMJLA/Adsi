@@ -81,7 +81,9 @@ function Expand-WinNTGroupMember {
         ForEach ($ThisEntry in $DirectoryEntry) {
 
             if (!($ThisEntry.Properties)) {
-                Write-LogMsg @LogParams -Type Warning -Text "'$ThisEntry' has no properties"
+                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                Write-LogMsg @LogParams -Text "'$ThisEntry' has no properties"
+                $LogParams['Type'] = $DebugOutputStream
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 Write-LogMsg @LogParams -Text "'$($ThisEntry.Path)' is an ADSI group"

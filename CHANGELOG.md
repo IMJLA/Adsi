@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.28] - 2024-02-03 - ps 5.1 workaround
+
 ## [4.0.27] - 2024-02-03 - commented ps5.1-incompatible class attribute
 
 ## [4.0.26] - 2024-02-02 - cleaner debug output expand-identityreference
