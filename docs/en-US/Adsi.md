@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.28
+Help Version: 4.0.29
 Locale: en-US
 ---
 
@@ -19,6 +19,9 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ### [ConvertFrom-DirectoryEntry](ConvertFrom-DirectoryEntry.md)
 Convert a DirectoryEntry to a PSCustomObject
+
+### [ConvertFrom-IdentityReferenceResolved](ConvertFrom-IdentityReferenceResolved.md)
+Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
 
 ### [ConvertFrom-PropertyValueCollectionToString](ConvertFrom-PropertyValueCollectionToString.md)
 Convert a PropertyValueCollection to a string
@@ -66,7 +69,7 @@ Convert a SID from a string to binary format (byte array)
 Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
 
 ### [Expand-IdentityReference](Expand-IdentityReference.md)
-Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
+{{ Fill in the Description }}
 
 ### [Expand-WinNTGroupMember](Expand-WinNTGroupMember.md)
 Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access

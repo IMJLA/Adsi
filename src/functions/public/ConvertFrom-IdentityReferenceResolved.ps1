@@ -1,4 +1,4 @@
-function Expand-IdentityReference {
+function ConvertFrom-IdentityReferenceResolved {
     <#
         .SYNOPSIS
         Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
@@ -6,7 +6,7 @@ function Expand-IdentityReference {
         Recursively retrieves group members and detailed information about them
         Use caching to reduce duplicate directory queries
         .INPUTS
-        [System.Object]$AccessControlEntry
+        [System.Object]$IdentityReference
         .OUTPUTS
         [System.Object] The input object is returned with additional properties added:
             DirectoryEntry
@@ -19,7 +19,7 @@ function Expand-IdentityReference {
         (Get-Acl).Access |
         Resolve-IdentityReference |
         Group-Object -Property IdentityReferenceResolved |
-        Expand-IdentityReference
+        ConvertFrom-IdentityReferenceResolved
 
         Incomplete example but it shows the chain of functions to generate the expected input for this
     #>
@@ -29,7 +29,7 @@ function Expand-IdentityReference {
         # The NTFS AccessControlEntry object(s), grouped by their IdentityReference property
         # TODO: Use System.Security.Principal.NTAccount instead
         [Parameter(ValueFromPipeline)]
-        [System.Object[]]$AccessControlEntry,
+        [System.Object[]]$IdentityReference,
 
         # Do not get group members
         [switch]$NoGroupMembers,
@@ -106,7 +106,7 @@ function Expand-IdentityReference {
 
     process {
 
-        ForEach ($ThisIdentity in $AccessControlEntry) {
+        ForEach ($ThisIdentity in $IdentityReference) {
 
             if (-not $ThisIdentity) {
                 continue
@@ -146,7 +146,7 @@ function Expand-IdentityReference {
 
                 if (
                     $null -ne $SamaccountnameOrSid -and
-                    @($ThisIdentity.Group.AdsiProvider)[0] -eq 'LDAP'
+                    @($ThisIdentityGroup.AdsiProvider)[0] -eq 'LDAP'
                 ) {
                     Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a domain security principal"
 
