@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.30] - 2024-02-04 - update comments and debug output
+
 ## [4.0.29] - 2024-02-04 - rename expand-identityreference to convertfrom-identityreferenceresolved
 
 ## [4.0.28] - 2024-02-03 - ps 5.1 workaround

@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.29
+Help Version: 4.0.30
 Locale: en-US
 ---
 
@@ -67,9 +67,6 @@ Convert a SID from a string to binary format (byte array)
 
 ### [Expand-AdsiGroupMember](Expand-AdsiGroupMember.md)
 Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
-
-### [Expand-IdentityReference](Expand-IdentityReference.md)
-{{ Fill in the Description }}
 
 ### [Expand-WinNTGroupMember](Expand-WinNTGroupMember.md)
 Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
