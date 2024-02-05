@@ -35,6 +35,9 @@ function Get-AdsiGroup {
         # Properties of the group members to retrieve
         [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
 
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
+
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -72,6 +75,7 @@ function Get-AdsiGroup {
         [hashtable]$LogMsgCache = $Global:LogMessages
 
     )
+
     $GroupParams = @{
         DirectoryPath       = $DirectoryPath
         PropertiesToLoad    = $PropertiesToLoad
@@ -92,6 +96,7 @@ function Get-AdsiGroup {
         ThisHostName        = $ThisHostName
         ThisFqdn            = $ThisFqdn
         LogMsgCache         = $LogMsgCache
+        CimCache            = $CimCache
         WhoAmI              = $WhoAmI
     }
 

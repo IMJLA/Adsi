@@ -17,14 +17,15 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>]
  [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>]
  [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] [-LogMsgCache <Hashtable>]
- [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-CimCache <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
 ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>]
  [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [-ThisFqdn <String>]
- [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-DebugOutputStream <String>]
+ [-WhoAmI <String>] [-LogMsgCache <Hashtable>] [-CimCache <Hashtable>] [-DebugOutputStream <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -43,6 +44,21 @@ ad.contoso.com
 Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
 
 ## PARAMETERS
+
+### -CimCache
+Cache of CIM sessions and instances to reduce connections and queries
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DebugOutputStream
 Output stream to send the log messages to

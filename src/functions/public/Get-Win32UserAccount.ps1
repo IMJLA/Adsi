@@ -1,6 +1,12 @@
 function Get-Win32UserAccount {
+
     param (
+
+        # Name of the computer to query via CIM
         [string]$ComputerName,
+
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
 
         <#
         Hostname of the computer running this function.
@@ -34,17 +40,32 @@ function Get-Win32UserAccount {
         WhoAmI       = $WhoAmI
     }
 
+    $CimParams = @{
+        CimCache          = $CimCache
+        ComputerName      = $ThisHostName
+        DebugOutputStream = $DebugOutputStream
+        LogMsgCache       = $LogMsgCache
+        ThisFqdn          = $ThisFqdn
+        ThisHostname      = $ThisHostname
+        WhoAmI            = $WhoAmI
+    }
+
+    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
+    Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" @CimParams
+
+    <#
     if (
         $ComputerName -eq $ThisHostname -or
         $ComputerName -eq "$ThisHostname." -or
         $ComputerName -eq $ThisFqdn
     ) {
-        Write-LogMsg @LogParams -Text "Get-CimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-        Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'"
+        #Write-LogMsg @LogParams -Text "Get-CimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
+        #Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'"
     } else {
         Write-LogMsg @LogParams -Text "Get-CimInstance -ComputerName $ComputerName -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
         # If an Active Directory domain is targeted there are no local accounts and CIM connectivity is not expected
         # Suppress errors and return nothing in that case
         Get-CimInstance -ComputerName $ComputerName -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" -ErrorAction SilentlyContinue
     }
+    #>
 }

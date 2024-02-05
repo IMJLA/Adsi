@@ -135,6 +135,9 @@ function Resolve-Ace {
         # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
         [hashtable]$LogMsgCache = $Global:LogMessages,
 
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
+
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug'
@@ -212,7 +215,7 @@ function Resolve-Ace {
                     }
                     if (-not $ThisServerDns) {
                         $ThisServerDn = ConvertTo-DistinguishedName -Domain $DomainNetBios -DomainsByNetbios $DomainsByNetbios @LoggingParams
-                        $ThisServerDns = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisFqdn $ThisFqdn @LoggingParams
+                        $ThisServerDns = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                     }
                 }
             }
@@ -235,6 +238,7 @@ function Resolve-Ace {
                 ThisFqdn               = $ThisFqdn
                 LogMsgCache            = $LogMsgCache
                 WhoAmI                 = $WhoAmI
+                CimCache               = $CimCache
             }
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
             Write-LogMsg @LogParams -Text " # ADSI server is '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)' for '$IdentityReference'"
@@ -278,6 +282,7 @@ function Resolve-Ace {
                 ThisHostName           = $ThisHostName
                 ThisFqdn               = $ThisFqdn
                 LogMsgCache            = $LogMsgCache
+                CimCache               = $CimCache
                 WhoAmI                 = $WhoAmI
             }
             Write-LogMsg @LogParams -Text "Resolve-IdentityReference -IdentityReference '$IdentityReference'..."

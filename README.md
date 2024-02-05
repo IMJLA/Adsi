@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.31
+Help Version: 4.0.32
 Locale: en-US
 ---
 
@@ -50,7 +50,7 @@ ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-D
 
 ### [ConvertTo-DomainSidString](docs/en-US/ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>] [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>] [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](docs/en-US/ConvertTo-Fqdn.md)
@@ -76,7 +76,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 
 ### [Find-LocalAdsiServerSid](docs/en-US/Find-LocalAdsiServerSid.md)
 
-Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
+Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [Get-ADSIGroup](docs/en-US/Get-ADSIGroup.md)
@@ -107,7 +107,7 @@ Use CIM to get well-known SIDs
 
 ### [Get-Win32UserAccount](docs/en-US/Get-Win32UserAccount.md)
 
-Get-Win32UserAccount [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
+Get-Win32UserAccount [[-ComputerName] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [Get-WinNTGroupMember](docs/en-US/Get-WinNTGroupMember.md)

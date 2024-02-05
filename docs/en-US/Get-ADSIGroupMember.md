@@ -16,7 +16,7 @@ Get members of a group from the LDAP provider
 Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-NoRecurse] [-PrimaryGroupOnly]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [-NoRecurse] [-PrimaryGroupOnly]
  [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -35,6 +35,21 @@ Get members of the domain Administrators group
 
 ## PARAMETERS
 
+### -CimCache
+Cache of CIM sessions and instances to reduce connections and queries
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 13
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DebugOutputStream
 Output stream to send the log messages to
 
@@ -44,7 +59,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 14
 Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -14,7 +14,7 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 
 ```
 Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -36,6 +36,21 @@ Add the domain FQDN to a single LDAP directory path
 
 ## PARAMETERS
 
+### -CimCache
+Cache of CIM sessions and instances to reduce connections and queries
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DebugOutputStream
 Output stream to send the log messages to
 
@@ -45,7 +60,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 7
 Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False

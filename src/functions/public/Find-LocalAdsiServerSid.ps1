@@ -1,6 +1,12 @@
 function Find-LocalAdsiServerSid {
+
     param (
+
+        # Name of the computer to query via CIM
         [string]$ComputerName,
+
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
 
         <#
         Hostname of the computer running this function.
@@ -35,14 +41,22 @@ function Find-LocalAdsiServerSid {
         WhoAmI       = $WhoAmI
     }
 
-    $LoggingParams = @{
-        ThisHostname = $ThisHostname
-        LogMsgCache  = $LogMsgCache
-        WhoAmI       = $WhoAmI
+    $CimParams = @{
+        CimCache          = $CimCache
+        ComputerName      = $ThisHostName
+        DebugOutputStream = $DebugOutputStream
+        LogMsgCache       = $LogMsgCache
+        ThisFqdn          = $ThisFqdn
+        ThisHostname      = $ThisHostname
+        WhoAmI            = $WhoAmI
     }
 
-    Write-LogMsg @LogParams -Text "Get-Win32UserAccount -ComputerName '$ComputerName'"
-    $Win32UserAccounts = Get-Win32UserAccount -ComputerName $ComputerName -ThisFqdn $ThisFqdn @LoggingParams
+    #Write-LogMsg @LogParams -Text "Get-Win32UserAccount -ComputerName '$ComputerName'"
+    #$Win32UserAccounts = Get-Win32UserAccount -ComputerName $ComputerName -ThisFqdn $ThisFqdn @LoggingParams
+
+    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
+    $Win32UserAccounts = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" @CimParams
+
     if (-not $Win32UserAccounts) {
         return
     }

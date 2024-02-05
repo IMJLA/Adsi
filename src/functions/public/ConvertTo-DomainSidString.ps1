@@ -1,4 +1,5 @@
 function ConvertTo-DomainSidString {
+
     param (
 
         # Domain DNS name to convert to the domain's SID
@@ -29,6 +30,9 @@ function ConvertTo-DomainSidString {
         Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
         #>
         [string]$AdsiProvider,
+
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
 
         <#
         Hostname of the computer running this function.
@@ -87,12 +91,12 @@ function ConvertTo-DomainSidString {
         } catch {
             Write-LogMsg @LogParams -Text " # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
             Write-LogMsg @LogParams -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
-            $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName-ThisFqdn $ThisFqdn @LoggingParams
+            $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
             return $DomainSid
         }
     } else {
         Write-LogMsg @LogParams -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
-        $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LoggingParams
+        $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
         return $DomainSid
     }
 
