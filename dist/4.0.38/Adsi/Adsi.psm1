@@ -2483,7 +2483,9 @@ function Get-AdsiServer {
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        [switch]$RemoveCimSession
 
     )
     begin {
@@ -2748,8 +2750,6 @@ function Get-AdsiServer {
                     WinCapabilityEnterpriseAuthenticationSid             16                                           S-1-15-3-8
                     WinCapabilityRemovableStorageSid                     16                                           S-1-15-3-10
             #>
-            Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainFqdn' -ThisFqdn '$ThisFqdn'"
-            #$Win32Accounts = Get-Win32Account -ComputerName $DomainFqdn -ThisFqdn $ThisFqdn -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue @LoggingParams
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' @CimParams @LoggingParams
 
@@ -2781,8 +2781,8 @@ function Get-AdsiServer {
             }
             Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
 
-            Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$DomainNetBIOS'"
-            $CimSession = New-AdsiServerCimSession -ComputerName $DomainNetBIOS -ThisFqdn $ThisFqdn @LoggingParams
+            Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios'"
+            $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
 
             Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName' # for '$DomainNetbios'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainDnsName @LoggingParams
@@ -2795,19 +2795,19 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' # for '$DomainNetbios'"
                 $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
             } else {
-                $ParentDomainDnsName = Get-ParentDomainDnsName -DomainsByNetbios $DomainNetBIOS -CimSession $CimSession -ThisFqdn $ThisFqdn @LoggingParams
+                $ParentDomainDnsName = Get-ParentDomainDnsName -DomainsByNetbios $DomainNetBIOS -CimSession $CimSession -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                 $DomainDnsName = "$DomainNetBIOS.$ParentDomainDnsName"
             }
 
             Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -AdsiProvider '$AdsiProvider' -ThisFqdn '$ThisFqdn' # for '$DomainNetbios'"
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -ThisFqdn $ThisFqdn -CimCache $CimCache @CacheParams @LoggingParams
 
-            #Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn' # for '$DomainNetbios'"
-            #$Win32Accounts = Get-Win32Account -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn -Win32AccountsBySID $Win32AccountsBySID -CimSession $CimSession -ErrorAction SilentlyContinue @LoggingParams
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Account' # for '$DomainNetbios'"
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' @CimParams @LoggingParams
 
-            Remove-CimSession -CimSession $CimSession
+            if ($RemoveCimSession) {
+                Remove-CimSession -CimSession $CimSession
+            }
 
             ForEach ($Acct in $Win32Accounts) {
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
@@ -3118,6 +3118,9 @@ function Get-ParentDomainDnsName {
         # NetBIOS name of the domain whose parent domain DNS to return
         [string]$DomainNetbios,
 
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
+
         <#
         Hostname of the computer running this function.
 
@@ -3143,7 +3146,10 @@ function Get-ParentDomainDnsName {
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        [switch]$RemoveCimSession
+
     )
 
     $LogParams = @{
@@ -3154,13 +3160,12 @@ function Get-ParentDomainDnsName {
     }
 
     if (-not $CimSession) {
-        Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$DomainNetbios'"
-        $CimSession = New-AdsiServerCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn @LoggingParams
-        $RemoveCimSession = $true
+        Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios'"
+        $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
     }
 
-    Write-LogMsg @LogParams -Text "(Get-CimInstance -CimSession `$CimSession -ClassName CIM_ComputerSystem).domain # for '$DomainNetbios'"
-    $ParentDomainDnsName = (Get-CimInstance -CimSession $CimSession -ClassName CIM_ComputerSystem).domain
+    Write-LogMsg @LogParams -Text "((Get-CachedCimInstance -ComputerName '$DomainNetbios' -ClassName CIM_ComputerSystem -ThisFqdn '$ThisFqdn').domain # for '$DomainNetbios'"
+    $ParentDomainDnsName = (Get-CachedCimInstance -ComputerName $DomainNetbios -ClassName CIM_ComputerSystem -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams).domain
 
     if ($ParentDomainDnsName -eq 'WORKGROUP' -or $null -eq $ParentDomainDnsName) {
         # For workgroup computers there is no parent domain DNS (workgroups operate on NetBIOS)
@@ -3243,213 +3248,6 @@ function Get-TrustedDomain {
             }
         }
     }
-}
-function Get-Win32Account {
-    <#
-        .SYNOPSIS
-        Use CIM to get well-known SIDs
-        .DESCRIPTION
-        Use WinRM to query the CIM namespace root/cimv2 for instances of the Win32_Account class
-        .INPUTS
-        [System.String]$ComputerName
-        .OUTPUTS
-        [Microsoft.Management.Infrastructure.CimInstance] for each instance of the Win32_Account class in the root/cimv2 namespace
-        .EXAMPLE
-        Get-Win32Account
-
-        Get the well-known SIDs on the current computer
-        .EXAMPLE
-        Get-Win32Account -CimServerName 'server123'
-
-        Get the well-known SIDs on the remote computer 'server123'
-    #>
-    [CmdletBinding()]
-    [OutputType([Microsoft.Management.Infrastructure.CimInstance])]
-    param (
-
-        # Name or address of the computer whose Win32_Account instances to return
-        [Parameter(ValueFromPipeline)]
-        [string[]]$ComputerName,
-
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known directory servers to reduce duplicate queries
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
-        <#
-        Dictionary to cache directory entries to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
-
-        # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
-        [CimSession]$CimSession,
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
-
-    )
-    begin {
-
-        $LogParams = @{
-            ThisHostname = $ThisHostname
-            Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
-            WhoAmI       = $WhoAmI
-        }
-
-        $LoggingParams = @{
-            ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
-            WhoAmI       = $WhoAmI
-        }
-
-        $AdsiServersWhoseWin32AccountsExistInCache = $Win32AccountsBySID.Keys |
-        ForEach-Object { ($_ -split '\\')[0] } |
-        Sort-Object -Unique
-    }
-    process {
-        ForEach ($ThisServer in $ComputerName) {
-            if (
-                $ThisServer -eq 'localhost' -or
-                $ThisServer -eq '127.0.0.1' -or
-                [string]::IsNullOrEmpty($ThisServer)
-            ) {
-                $ThisServer = $ThisHostName
-            }
-            # Return matching objects from the cache if possible rather than performing a CIM query
-            # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
-            if ($AdsiServersWhoseWin32AccountsExistInCache -contains $ThisServer) {
-                $Win32AccountsBySID.Keys |
-                ForEach-Object {
-                    if ($_ -like "$ThisServer\*") {
-                        $Win32AccountsBySID[$_]
-                    }
-                }
-            } else {
-
-                if (-not $CimSession) {
-                    Write-LogMsg @LogParams -Text "New-AdsiServerCimSession -ComputerName '$ThisServer'"
-                    $CimSession = New-AdsiServerCimSession -ComputerName $ThisServer -ThisFqdn $ThisFqdn @LoggingParams
-                    $RemoveCimSession = $true
-                }
-
-                Write-LogMsg @LogParams -Text "Get-CimInstance -ClassName Win32_Account -CimSession `$CimSession # For '$ThisServer'"
-                Get-CimInstance -ClassName Win32_Account -CimSession $CimSession
-
-                if ($RemoveCimSession) {
-                    Remove-CimSession -CimSession $CimSession
-                }
-
-            }
-        }
-    }
-}
-function Get-Win32UserAccount {
-
-    param (
-
-        # Name of the computer to query via CIM
-        [string]$ComputerName,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
-    )
-
-    $LogParams = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
-        WhoAmI       = $WhoAmI
-    }
-
-    $CimParams = @{
-        CimCache          = $CimCache
-        ComputerName      = $ThisHostName
-        DebugOutputStream = $DebugOutputStream
-        LogMsgCache       = $LogMsgCache
-        ThisFqdn          = $ThisFqdn
-        ThisHostname      = $ThisHostname
-        WhoAmI            = $WhoAmI
-    }
-
-    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-    Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" @CimParams
-
-    <#
-    if (
-        $ComputerName -eq $ThisHostname -or
-        $ComputerName -eq "$ThisHostname." -or
-        $ComputerName -eq $ThisFqdn
-    ) {
-        #Write-LogMsg @LogParams -Text "Get-CimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-        #Get-CimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'"
-    } else {
-        Write-LogMsg @LogParams -Text "Get-CimInstance -ComputerName $ComputerName -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-        # If an Active Directory domain is targeted there are no local accounts and CIM connectivity is not expected
-        # Suppress errors and return nothing in that case
-        Get-CimInstance -ComputerName $ComputerName -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" -ErrorAction SilentlyContinue
-    }
-    #>
 }
 function Get-WinNTGroupMember {
     <#
@@ -3722,60 +3520,6 @@ function Invoke-ComObject {
         $Invoke = "GetProperty"
     }
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
-}
-function New-AdsiServerCimSession {
-    param (
-
-        # Name of the computer to start a CIM session on
-        [string]$ComputerName,
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
-    )
-
-    $LogParams = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
-        WhoAmI       = $WhoAmI
-    }
-
-
-    if (
-        $ComputerName -eq $ThisHostName -or
-        $ComputerName -eq 'localhost' -or
-        $ComputerName -eq '127.0.0.1' -or
-        $ComputerName -eq $ThisFqdn -or
-        [string]::IsNullOrEmpty($ComputerName)
-    ) {
-        Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession # for '$ComputerName'"
-        New-CimSession
-    } else {
-        Write-LogMsg @LogParams -Text "`$CimSession = New-CimSession -ComputerName '$ComputerName'"
-        New-CimSession -ComputerName $ComputerName
-    }
-
 }
 function New-FakeDirectoryEntry {
 
@@ -4840,7 +4584,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

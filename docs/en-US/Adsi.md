@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.37
+Help Version: 4.0.38
 Locale: en-US
 ---
 
@@ -96,19 +96,17 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-ParentDomainDnsName](Get-ParentDomainDnsName.md)
 
-Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>]
+Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>] [-RemoveCimSession]
 
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
 
 ### [Get-Win32Account](Get-Win32Account.md)
-Use CIM to get well-known SIDs
+{{ Fill in the Description }}
 
 ### [Get-Win32UserAccount](Get-Win32UserAccount.md)
-
-Get-Win32UserAccount [[-ComputerName] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
-
+{{ Fill in the Description }}
 
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)
 Get members of a group from the WinNT provider
@@ -117,9 +115,7 @@ Get members of a group from the WinNT provider
 Invoke a member method of a ComObject [__ComObject]
 
 ### [New-AdsiServerCimSession](New-AdsiServerCimSession.md)
-
-New-AdsiServerCimSession [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
-
+{{ Fill in the Description }}
 
 ### [New-FakeDirectoryEntry](New-FakeDirectoryEntry.md)
 

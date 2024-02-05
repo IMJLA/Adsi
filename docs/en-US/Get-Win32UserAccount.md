@@ -23,7 +23,7 @@ Get-Win32UserAccount [[-ComputerName] <String>] [[-CimCache] <Hashtable>] [[-Thi
 ## EXAMPLES
 
 ### Example 1
-```powershell
+```
 PS C:\> {{ Add example code here }}
 ```
 
@@ -140,7 +140,6 @@ Accept wildcard characters: False
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
 ### System.Object
