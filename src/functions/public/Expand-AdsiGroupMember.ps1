@@ -144,7 +144,13 @@ function Expand-AdsiGroupMember {
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
                     $Domain = $DomainsBySid[$DomainSid]
 
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @CacheParams @LogginParams
+                    $GetDirectoryEntryParams = @{
+                        ThisFqdn          = $ThisFqdn
+                        CimCache          = $CimCache
+                        DebugOutputStream = $DebugOutputStream
+                    }
+
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @GetDirectoryEntryParams @CacheParams @LogginParams
 
                     try {
                         $null = $Principal.RefreshCache($PropertiesToLoad)

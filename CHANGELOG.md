@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.36] - 2024-02-05 - add cim caching to get-directoryentry and search-directory
+
 ## [4.0.35] - 2024-02-05 - bugfix missing .SID property before LastIndexOf method
 
 ## [4.0.34] - 2024-02-05 - more cim caching

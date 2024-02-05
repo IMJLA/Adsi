@@ -34,15 +34,15 @@ function ConvertFrom-IdentityReferenceResolved {
         # Do not get group members
         [switch]$NoGroupMembers,
 
+        # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
+        [hashtable]$IdentityReferenceCache = ([hashtable]::Synchronized(@{})),
+
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
-        # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
-        [hashtable]$IdentityReferenceCache = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -128,18 +128,23 @@ function ConvertFrom-IdentityReferenceResolved {
                 $GetDirectoryEntryParams = @{
                     DirectoryEntryCache = $DirectoryEntryCache
                     DomainsByNetbios    = $DomainsByNetbios
+                    ThisFqdn            = $ThisFqdn
                     ThisHostname        = $ThisHostname
+                    CimCache            = $CimCache
                     LogMsgCache         = $LogMsgCache
                     WhoAmI              = $WhoAmI
                     DebugOutputStream   = $DebugOutputStream
                 }
+
                 $SearchDirectoryParams = @{
+                    CimCache            = $CimCache
+                    DebugOutputStream   = $DebugOutputStream
                     DirectoryEntryCache = $DirectoryEntryCache
                     DomainsByNetbios    = $DomainsByNetbios
-                    ThisHostname        = $ThisHostname
                     LogMsgCache         = $LogMsgCache
+                    ThisFqdn            = $ThisFqdn
+                    ThisHostname        = $ThisHostname
                     WhoAmI              = $WhoAmI
-                    DebugOutputStream   = $DebugOutputStream
                 }
 
                 $StartingIdentityName = $ThisIdentity.Name

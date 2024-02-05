@@ -37,6 +37,9 @@ function Search-Directory {
         # Scope of the search
         [string]$SearchScope = 'subtree',
 
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
+
         <#
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
         Uses a thread-safe hashtable by default
@@ -44,6 +47,13 @@ function Search-Directory {
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
 
         <#
         Hostname of the computer running this function.
@@ -77,6 +87,8 @@ function Search-Directory {
         ThisHostname        = $ThisHostname
         LogMsgCache         = $LogMsgCache
         WhoAmI              = $WhoAmI
+        CimCache            = $CimCache
+        ThisFqdn            = $ThisFqdn
     }
 
     if ($Credential) {
@@ -84,7 +96,18 @@ function Search-Directory {
     }
 
     if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {
-        $Workgroup = (Get-CimInstance -ClassName Win32_ComputerSystem).Workgroup
+        $CimParams = @{
+            CimCache          = $CimCache
+            ComputerName      = $ThisFqdn
+            DebugOutputStream = $DebugOutputStream
+            ThisFqdn          = $ThisFqdn
+        }
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+        $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' @CimParams @LoggingParams).Workgroup
         $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
     }
     $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath

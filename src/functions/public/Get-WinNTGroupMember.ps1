@@ -136,6 +136,8 @@ function Get-WinNTGroupMember {
                     DomainsByNetbios    = $DomainsByNetbios
                     LogMsgCache         = $LogMsgCache
                     WhoAmI              = $WhoAmI
+                    CimCache            = $CimCache
+                    ThisFqdn            = $ThisFqdn
                 }
                 ForEach ($DirectoryMember in $DirectoryMembers) {
                     # The IADsGroup::Members method returns ComObjects

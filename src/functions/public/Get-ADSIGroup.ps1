@@ -86,7 +86,11 @@ function Get-AdsiGroup {
         ThisHostname        = $ThisHostname
         LogMsgCache         = $LogMsgCache
         WhoAmI              = $WhoAmI
+        ThisFqdn            = $ThisFqdn
+        CimCache            = $CimCache
+        DebugOutputStream   = $DebugOutputStream
     }
+
     $GroupMemberParams = @{
         PropertiesToLoad    = $PropertiesToLoad
         DirectoryEntryCache = $DirectoryEntryCache
