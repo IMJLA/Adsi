@@ -14,21 +14,67 @@ function Get-CurrentDomain {
 
         Get the domain of the current computer
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
+    param (
+
+        # Name of the computer to query via CIM
+        [string]$ComputerName,
+
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages,
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug'
+
+    )
     $Obj = [adsi]::new()
     try { $null = $Obj.RefreshCache('objectSid') } catch {
+
         # Assume local computer/workgroup, use CIM rather than ADSI
-        # TODO: Make this more efficient.  CIM Sessions, pass in hostname via param, etc.
-        $ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
-        $AdminAccount = Get-CimInstance -ClassName Win32_UserAccount -Filter "LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'"
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+        $SID = Find-LocalAdsiServerSid -ComputerName $ComputerName -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams |
+        ConvertTo-SidByteArray
+
         $Obj = [PSCustomObject]@{
             ObjectSid         = [PSCustomObject]@{
-                Value = $AdminAccount.Sid.Substring(0, $AdminAccount.Sid.LastIndexOf('-')) | ConvertTo-SidByteArray
+                Value = $Sid
             }
             DistinguishedName = [PSCustomObject]@{
-                Value = "DC=$(& HOSTNAME.EXE)"
+                Value = "DC=$ComputerName"
             }
         }
+
     }
+
     return $Obj
+
 }

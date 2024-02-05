@@ -467,7 +467,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         # Get the SID of the current domain
         Write-LogMsg @LogParams -Text '$CurrentDomain = Get-CurrentDomain'
-        $CurrentDomain = Get-CurrentDomain
+        $CurrentDomain = Get-CurrentDomain -ComputerName $ThisFqdn -CimCache $CimCache -DebugOutputStream $DebugOutputStream -ThisFqdn $ThisFqdn @LoggingParams
 
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
@@ -1924,17 +1924,15 @@ function Find-LocalAdsiServerSid {
         WhoAmI            = $WhoAmI
     }
 
-    #Write-LogMsg @LogParams -Text "Get-Win32UserAccount -ComputerName '$ComputerName'"
-    #$Win32UserAccounts = Get-Win32UserAccount -ComputerName $ComputerName -ThisFqdn $ThisFqdn @LoggingParams
+    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$ComputerName' -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'`""
+    $LocalAdminAccount = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'" @CimParams
 
-    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-    $Win32UserAccounts = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" @CimParams
-
-    if (-not $Win32UserAccounts) {
+    if (-not $LocalAdminAccount) {
         return
     }
-    [string]$LocalAccountSID = @($Win32UserAccounts.SID)[0]
-    return $LocalAccountSID.Substring(0, $LocalAccountSID.LastIndexOf("-"))
+
+    return $LocalAdminAccount.SID.Substring(0, $LocalAdminAccount.LastIndexOf("-"))
+
 }
 function Get-AdsiGroup {
     <#
@@ -2731,23 +2729,69 @@ function Get-CurrentDomain {
 
         Get the domain of the current computer
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
+    param (
+
+        # Name of the computer to query via CIM
+        [string]$ComputerName,
+
+        # Cache of CIM sessions and instances to reduce connections and queries
+        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+        [hashtable]$LogMsgCache = $Global:LogMessages,
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug'
+
+    )
     $Obj = [adsi]::new()
     try { $null = $Obj.RefreshCache('objectSid') } catch {
+
         # Assume local computer/workgroup, use CIM rather than ADSI
-        # TODO: Make this more efficient.  CIM Sessions, pass in hostname via param, etc.
-        $ComputerSystem = Get-CimInstance -ClassName Win32_ComputerSystem
-        $AdminAccount = Get-CimInstance -ClassName Win32_UserAccount -Filter "LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'"
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogMsgCache  = $LogMsgCache
+            WhoAmI       = $WhoAmI
+        }
+
+        $SID = Find-LocalAdsiServerSid -ComputerName $ComputerName -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams |
+        ConvertTo-SidByteArray
+
         $Obj = [PSCustomObject]@{
             ObjectSid         = [PSCustomObject]@{
-                Value = $AdminAccount.Sid.Substring(0, $AdminAccount.Sid.LastIndexOf('-')) | ConvertTo-SidByteArray
+                Value = $Sid
             }
             DistinguishedName = [PSCustomObject]@{
-                Value = "DC=$(& HOSTNAME.EXE)"
+                Value = "DC=$ComputerName"
             }
         }
+
     }
+
     return $Obj
+
 }
 function Get-DirectoryEntry {
     <#
@@ -4629,6 +4673,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

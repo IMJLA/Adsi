@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.34] - 2024-02-05 - more cim caching
+
 ## [4.0.33] - 2024-02-04 - implement cim caching
 
 ## [4.0.32] - 2024-02-04 - working on cim caching

@@ -99,7 +99,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         # Get the SID of the current domain
         Write-LogMsg @LogParams -Text '$CurrentDomain = Get-CurrentDomain'
-        $CurrentDomain = Get-CurrentDomain
+        $CurrentDomain = Get-CurrentDomain -ComputerName $ThisFqdn -CimCache $CimCache -DebugOutputStream $DebugOutputStream -ThisFqdn $ThisFqdn @LoggingParams
 
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'

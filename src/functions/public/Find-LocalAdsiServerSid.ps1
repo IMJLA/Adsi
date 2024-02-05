@@ -51,15 +51,13 @@ function Find-LocalAdsiServerSid {
         WhoAmI            = $WhoAmI
     }
 
-    #Write-LogMsg @LogParams -Text "Get-Win32UserAccount -ComputerName '$ComputerName'"
-    #$Win32UserAccounts = Get-Win32UserAccount -ComputerName $ComputerName -ThisFqdn $ThisFqdn @LoggingParams
+    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$ComputerName' -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'`""
+    $LocalAdminAccount = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'" @CimParams
 
-    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'`""
-    $Win32UserAccounts = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True'" @CimParams
-
-    if (-not $Win32UserAccounts) {
+    if (-not $LocalAdminAccount) {
         return
     }
-    [string]$LocalAccountSID = @($Win32UserAccounts.SID)[0]
-    return $LocalAccountSID.Substring(0, $LocalAccountSID.LastIndexOf("-"))
+
+    return $LocalAdminAccount.SID.Substring(0, $LocalAdminAccount.LastIndexOf("-"))
+
 }
