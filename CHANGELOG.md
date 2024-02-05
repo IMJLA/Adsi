@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.31] - 2024-02-04 - cleanup whitespace
+
 ## [4.0.30] - 2024-02-04 - update comments and debug output
 
 ## [4.0.29] - 2024-02-04 - rename expand-identityreference to convertfrom-identityreferenceresolved

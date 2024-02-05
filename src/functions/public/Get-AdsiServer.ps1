@@ -100,9 +100,9 @@ function Get-AdsiServer {
 
     }
     process {
-        
+
         ForEach ($DomainFqdn in $Fqdn) {
-            
+
             $OutputObject = $DomainsByFqdn[$DomainFqdn]
             if ($OutputObject) {
                 Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFqdn'"
