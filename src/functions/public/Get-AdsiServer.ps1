@@ -101,6 +101,13 @@ function Get-AdsiServer {
             DomainsBySid        = $DomainsBySid
         }
 
+        $CimParams = @{
+            CimCache          = $CimCache
+            ComputerName      = $ThisHostName
+            DebugOutputStream = $DebugOutputStream
+            ThisFqdn          = $ThisFqdn
+        }
+
     }
     process {
 
@@ -334,8 +341,10 @@ function Get-AdsiServer {
                     WinCapabilityEnterpriseAuthenticationSid             16                                           S-1-15-3-8
                     WinCapabilityRemovableStorageSid                     16                                           S-1-15-3-10
             #>
-            Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainFqdn' -ThisFqdn '$ThisFqdn' -AdsiProvider '$AdsiProvider'"
-            $Win32Accounts = Get-Win32Account -ComputerName $DomainFqdn -ThisFqdn $ThisFqdn -AdsiProvider $AdsiProvider -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue @LoggingParams
+            Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainFqdn' -ThisFqdn '$ThisFqdn'"
+            #$Win32Accounts = Get-Win32Account -ComputerName $DomainFqdn -ThisFqdn $ThisFqdn -Win32AccountsBySID $Win32AccountsBySID -ErrorAction SilentlyContinue @LoggingParams
+            Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' @CimParams @LoggingParams
 
             ForEach ($Acct in $Win32Accounts) {
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
@@ -386,8 +395,10 @@ function Get-AdsiServer {
             Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -AdsiProvider '$AdsiProvider' -ThisFqdn '$ThisFqdn' # for '$DomainNetbios'"
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -ThisFqdn $ThisFqdn -CimCache $CimCache @CacheParams @LoggingParams
 
-            Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainDnsName' -AdsiProvider '$AdsiProvider' -ThisFqdn '$ThisFqdn' # for '$DomainNetbios'"
-            $Win32Accounts = Get-Win32Account -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn -AdsiProvider $AdsiProvider -Win32AccountsBySID $Win32AccountsBySID -CimSession $CimSession -ErrorAction SilentlyContinue @LoggingParams
+            #Write-LogMsg @LogParams -Text "Get-Win32Account -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn' # for '$DomainNetbios'"
+            #$Win32Accounts = Get-Win32Account -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn -Win32AccountsBySID $Win32AccountsBySID -CimSession $CimSession -ErrorAction SilentlyContinue @LoggingParams
+            Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Account' # for '$DomainNetbios'"
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' @CimParams @LoggingParams
 
             Remove-CimSession -CimSession $CimSession
 

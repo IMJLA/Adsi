@@ -16,9 +16,9 @@ Use CIM to get well-known SIDs
 Get-Win32Account [[-ComputerName] <String[]>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
- [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-AdsiProvider] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <String>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
+ [[-CimSession] <CimSession>] [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -41,25 +41,6 @@ Get-Win32Account -CimServerName 'server123'
 Get the well-known SIDs on the remote computer 'server123'
 
 ## PARAMETERS
-
-### -AdsiProvider
-AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
-
-This parameter can be used to reduce calls to Find-AdsiProvider
-
-Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 11
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### -AdsiServersByDns
 Cache of known directory servers to reduce duplicate queries
@@ -85,7 +66,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 14
+Position: 13
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -115,7 +96,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 15
+Position: 14
 Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -192,7 +173,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 12
 Default value: $Global:LogMessages
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -256,7 +237,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
+Position: 11
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False

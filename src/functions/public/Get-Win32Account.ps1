@@ -64,15 +64,6 @@ function Get-Win32Account {
         #>
         [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
 
-        <#
-        AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
-
-        This parameter can be used to reduce calls to Find-AdsiProvider
-
-        Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
-        #>
-        [string]$AdsiProvider,
-
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
@@ -114,9 +105,6 @@ function Get-Win32Account {
                 [string]::IsNullOrEmpty($ThisServer)
             ) {
                 $ThisServer = $ThisHostName
-            }
-            if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
-                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServer @LoggingParams
             }
             # Return matching objects from the cache if possible rather than performing a CIM query
             # The cache is based on the Caption of the Win32 accounts which conatins only NetBios names
