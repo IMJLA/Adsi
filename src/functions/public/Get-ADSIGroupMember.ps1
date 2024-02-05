@@ -172,17 +172,32 @@ function Get-AdsiGroupMember {
             Write-LogMsg @LogParams -Text " # '$($GroupMemberSearch.Count)' results for Search-Directory -DirectoryPath '$($SearchParameters['DirectoryPath'])' -Filter '$($SearchParameters['Filter'])'"
 
             if ($GroupMemberSearch.Count -gt 0) {
+
+                $DirectoryEntryParams = @{
+                    PropertiesToLoad  = $PropertiesToLoad
+                    DomainsByFqdn     = $DomainsByFqdn
+                    ThisFqdn          = $ThisFqdn
+                    CimCache          = $CimCache
+                    DebugOutputStream = $DebugOutputStream
+                }
+
                 $CurrentADGroupMembers = [System.Collections.Generic.List[System.DirectoryServices.DirectoryEntry]]::new()
 
                 $MembersThatAreGroups = $GroupMemberSearch |
                 Where-Object -FilterScript { $_.Properties['objectClass'] -contains 'group' }
 
+                $DirectoryEntryParams = @{
+                    PropertiesToLoad  = $PropertiesToLoad
+                    DomainsByFqdn     = $DomainsByFqdn
+                    ThisFqdn          = $ThisFqdn
+                    CimCache          = $CimCache
+                    DebugOutputStream = $DebugOutputStream
+                }
                 if ($MembersThatAreGroups.Count -gt 0) {
                     $FilterBuilder = [System.Text.StringBuilder]::new("(|")
 
-                    $MembersThatAreGroups |
-                    ForEach-Object {
-                        $null = $FilterBuilder.Append("(primaryGroupId=$($_.Properties['primaryGroupToken'])))")
+                    ForEach ($ThisMember in $MembersThatAreGroups) {
+                        $null = $FilterBuilder.Append("(primaryGroupId=$($ThisMember.Properties['primaryGroupToken'])))")
                     }
 
                     $null = $FilterBuilder.Append(")")
@@ -191,24 +206,23 @@ function Get-AdsiGroupMember {
                     Write-LogMsg @LogParams -Text "Search-Directory -DirectoryPath '$($SearchParameters['DirectoryPath'])' -Filter '$($SearchParameters['Filter'])'"
                     $PrimaryGroupMembers = Search-Directory @SearchParameters
 
-                    $PrimaryGroupMembers |
-                    ForEach-Object {
-                        $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $_.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+                    ForEach ($ThisMember in $PrimaryGroupMembers) {
+                        $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                         $DirectoryEntry = $null
                         Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'"
-                        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath -PropertiesToLoad $PropertiesToLoad -CimCache $CimCache -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
+
+                        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams @CacheParams @LoggingParams
                         if ($DirectoryEntry) {
                             $null = $CurrentADGroupMembers.Add($DirectoryEntry)
                         }
                     }
                 }
 
-                $GroupMemberSearch |
-                ForEach-Object {
-                    $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $_.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+                ForEach ($ThisMember in $GroupMemberSearch) {
+                    $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                     $DirectoryEntry = $null
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'"
-                    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath -PropertiesToLoad $PropertiesToLoad -CimCache $CimCache -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
+                    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams @CacheParams @LoggingParams
                     if ($DirectoryEntry) {
                         $null = $CurrentADGroupMembers.Add($DirectoryEntry)
                     }

@@ -177,25 +177,18 @@ function Get-WinNTGroupMember {
                         # The string is a partial LDAP filter, just the segments of the LDAP filter for each samAccountName
                         Write-LogMsg @LogParams -Text " # '$MemberName' is a domain security principal"
                         $MembersToGet["LDAP://$MemberDomainDn"] += "(samaccountname=$MemberName)"
-                        ##$MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
-                        ##$MemberParams['Filter'] = "(samaccountname=$MemberName)"
-                        ##$MemberDirectoryEntry = Search-Directory @MemberParams
                     } else {
                         # WinNT directories do not support searching so we will retrieve each member individually
                         # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
                         Write-LogMsg @LogParams -Text " # '$DirectoryPath' is a local security principal"
                         $MembersToGet['WinNTMembers'] += $DirectoryPath
-                        ##$MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
-
-                    ##Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
                 }
 
                 # Get and Expand the directory entries for the WinNT group members
-                $MembersToGet['WinNTMembers'] |
-                ForEach-Object {
-                    $MemberParams['DirectoryPath'] = $_
+                ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
+                    $MemberParams['DirectoryPath'] = $ThisMember
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'"
                     $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams

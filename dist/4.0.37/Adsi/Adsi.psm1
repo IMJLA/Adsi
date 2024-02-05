@@ -1199,12 +1199,6 @@ function ConvertTo-DomainNetBIOS {
         WhoAmI       = $WhoAmI
     }
 
-    $LoggingParams = @{
-        ThisHostname = $ThisHostname
-        LogMsgCache  = $LogMsgCache
-        WhoAmI       = $WhoAmI
-    }
-
     $DomainCacheResult = $DomainsByFqdn[$DomainFQDN]
     if ($DomainCacheResult) {
         Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
@@ -1342,14 +1336,11 @@ function ConvertTo-DomainSidString {
             DomainsByNetbios    = $DomainsByNetbios
             DomainsBySid        = $DomainsBySid
             ThisFqdn            = $ThisFqdn
-            ThisHostname        = $ThisHostname
             CimCache            = $CimCache
-            LogMsgCache         = $LogMsgCache
-            WhoAmI              = $WhoAmI
             DebugOutputStream   = $DebugOutputStream
         }
 
-        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" @GetDirectoryEntryParams
+        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" @GetDirectoryEntryParams @LoggingParams
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
@@ -1745,7 +1736,7 @@ function Expand-AdsiGroupMember {
                         DebugOutputStream = $DebugOutputStream
                     }
 
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @GetDirectoryEntryParams @CacheParams @LogginParams
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @GetDirectoryEntryParams @CacheParams @LoggingParams
 
                     try {
                         $null = $Principal.RefreshCache($PropertiesToLoad)
@@ -2161,7 +2152,7 @@ function Get-AdsiGroup {
             if ($GroupName) {
                 $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
             } else {
-                $GroupParams['Filter'] = "(objectClass=group)"
+                $GroupParams['Filter'] = '(objectClass=group)'
             }
             $GroupMemberParams['Group'] = Search-Directory @GroupParams
             $FullMembers = Get-AdsiGroupMember @GroupMemberParams
@@ -2345,17 +2336,32 @@ function Get-AdsiGroupMember {
             Write-LogMsg @LogParams -Text " # '$($GroupMemberSearch.Count)' results for Search-Directory -DirectoryPath '$($SearchParameters['DirectoryPath'])' -Filter '$($SearchParameters['Filter'])'"
 
             if ($GroupMemberSearch.Count -gt 0) {
+
+                $DirectoryEntryParams = @{
+                    PropertiesToLoad  = $PropertiesToLoad
+                    DomainsByFqdn     = $DomainsByFqdn
+                    ThisFqdn          = $ThisFqdn
+                    CimCache          = $CimCache
+                    DebugOutputStream = $DebugOutputStream
+                }
+
                 $CurrentADGroupMembers = [System.Collections.Generic.List[System.DirectoryServices.DirectoryEntry]]::new()
 
                 $MembersThatAreGroups = $GroupMemberSearch |
                 Where-Object -FilterScript { $_.Properties['objectClass'] -contains 'group' }
 
+                $DirectoryEntryParams = @{
+                    PropertiesToLoad  = $PropertiesToLoad
+                    DomainsByFqdn     = $DomainsByFqdn
+                    ThisFqdn          = $ThisFqdn
+                    CimCache          = $CimCache
+                    DebugOutputStream = $DebugOutputStream
+                }
                 if ($MembersThatAreGroups.Count -gt 0) {
                     $FilterBuilder = [System.Text.StringBuilder]::new("(|")
 
-                    $MembersThatAreGroups |
-                    ForEach-Object {
-                        $null = $FilterBuilder.Append("(primaryGroupId=$($_.Properties['primaryGroupToken'])))")
+                    ForEach ($ThisMember in $MembersThatAreGroups) {
+                        $null = $FilterBuilder.Append("(primaryGroupId=$($ThisMember.Properties['primaryGroupToken'])))")
                     }
 
                     $null = $FilterBuilder.Append(")")
@@ -2364,24 +2370,23 @@ function Get-AdsiGroupMember {
                     Write-LogMsg @LogParams -Text "Search-Directory -DirectoryPath '$($SearchParameters['DirectoryPath'])' -Filter '$($SearchParameters['Filter'])'"
                     $PrimaryGroupMembers = Search-Directory @SearchParameters
 
-                    $PrimaryGroupMembers |
-                    ForEach-Object {
-                        $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $_.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+                    ForEach ($ThisMember in $PrimaryGroupMembers) {
+                        $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                         $DirectoryEntry = $null
                         Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'"
-                        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath -PropertiesToLoad $PropertiesToLoad -CimCache $CimCache -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
+
+                        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams @CacheParams @LoggingParams
                         if ($DirectoryEntry) {
                             $null = $CurrentADGroupMembers.Add($DirectoryEntry)
                         }
                     }
                 }
 
-                $GroupMemberSearch |
-                ForEach-Object {
-                    $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $_.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+                ForEach ($ThisMember in $GroupMemberSearch) {
+                    $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                     $DirectoryEntry = $null
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'"
-                    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath -PropertiesToLoad $PropertiesToLoad -CimCache $CimCache -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
+                    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams @CacheParams @LoggingParams
                     if ($DirectoryEntry) {
                         $null = $CurrentADGroupMembers.Add($DirectoryEntry)
                     }
@@ -3625,25 +3630,18 @@ function Get-WinNTGroupMember {
                         # The string is a partial LDAP filter, just the segments of the LDAP filter for each samAccountName
                         Write-LogMsg @LogParams -Text " # '$MemberName' is a domain security principal"
                         $MembersToGet["LDAP://$MemberDomainDn"] += "(samaccountname=$MemberName)"
-                        ##$MemberParams['DirectoryPath'] = "LDAP://$MemberDomainDn"
-                        ##$MemberParams['Filter'] = "(samaccountname=$MemberName)"
-                        ##$MemberDirectoryEntry = Search-Directory @MemberParams
                     } else {
                         # WinNT directories do not support searching so we will retrieve each member individually
                         # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
                         Write-LogMsg @LogParams -Text " # '$DirectoryPath' is a local security principal"
                         $MembersToGet['WinNTMembers'] += $DirectoryPath
-                        ##$MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     }
-
-                    ##Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
                 }
 
                 # Get and Expand the directory entries for the WinNT group members
-                $MembersToGet['WinNTMembers'] |
-                ForEach-Object {
-                    $MemberParams['DirectoryPath'] = $_
+                ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
+                    $MemberParams['DirectoryPath'] = $ThisMember
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'"
                     $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
@@ -4843,6 +4841,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-Win32Account','Get-Win32UserAccount','Get-WinNTGroupMember','Invoke-ComObject','New-AdsiServerCimSession','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

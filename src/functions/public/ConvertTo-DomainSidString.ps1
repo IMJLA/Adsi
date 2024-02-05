@@ -91,14 +91,11 @@ function ConvertTo-DomainSidString {
             DomainsByNetbios    = $DomainsByNetbios
             DomainsBySid        = $DomainsBySid
             ThisFqdn            = $ThisFqdn
-            ThisHostname        = $ThisHostname
             CimCache            = $CimCache
-            LogMsgCache         = $LogMsgCache
-            WhoAmI              = $WhoAmI
             DebugOutputStream   = $DebugOutputStream
         }
 
-        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" @GetDirectoryEntryParams
+        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" @GetDirectoryEntryParams @LoggingParams
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {

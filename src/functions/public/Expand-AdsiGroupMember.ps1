@@ -150,7 +150,7 @@ function Expand-AdsiGroupMember {
                         DebugOutputStream = $DebugOutputStream
                     }
 
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @GetDirectoryEntryParams @CacheParams @LogginParams
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @GetDirectoryEntryParams @CacheParams @LoggingParams
 
                     try {
                         $null = $Principal.RefreshCache($PropertiesToLoad)

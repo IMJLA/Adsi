@@ -120,7 +120,7 @@ function Get-AdsiGroup {
             if ($GroupName) {
                 $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
             } else {
-                $GroupParams['Filter'] = "(objectClass=group)"
+                $GroupParams['Filter'] = '(objectClass=group)'
             }
             $GroupMemberParams['Group'] = Search-Directory @GroupParams
             $FullMembers = Get-AdsiGroupMember @GroupMemberParams

@@ -56,12 +56,6 @@ function ConvertTo-DomainNetBIOS {
         WhoAmI       = $WhoAmI
     }
 
-    $LoggingParams = @{
-        ThisHostname = $ThisHostname
-        LogMsgCache  = $LogMsgCache
-        WhoAmI       = $WhoAmI
-    }
-
     $DomainCacheResult = $DomainsByFqdn[$DomainFQDN]
     if ($DomainCacheResult) {
         Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
