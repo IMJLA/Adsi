@@ -58,6 +58,6 @@ function Find-LocalAdsiServerSid {
         return
     }
 
-    return $LocalAdminAccount.SID.Substring(0, $LocalAdminAccount.LastIndexOf("-"))
+    return $LocalAdminAccount.SID.Substring(0, $LocalAdminAccount.SID.LastIndexOf("-"))
 
 }
