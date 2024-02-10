@@ -672,7 +672,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>IdentityReferenceCache</maml:name>
+          <maml:name>ACEsByPrincipal</maml:name>
           <maml:description>
             <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
           </maml:description>
@@ -794,6 +794,18 @@ Path              : WinNT://localhost/Administrator</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>ACEsByPrincipal</maml:name>
+        <maml:description>
+          <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>CimCache</maml:name>
         <maml:description>
@@ -878,18 +890,6 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>IdentityReferenceCache</maml:name>
-        <maml:description>
-          <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
         <maml:name>LogMsgCache</maml:name>

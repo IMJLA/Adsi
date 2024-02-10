@@ -38,7 +38,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [hashtable]$ACEbyResolvedIDCache = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
-        [hashtable]$IdentityReferenceCache = ([hashtable]::Synchronized(@{})),
+        [hashtable]$ACEsByPrincipal = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -107,8 +107,6 @@ function ConvertFrom-IdentityReferenceResolved {
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
         [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
-        
-        pause
 
     }
 
@@ -123,7 +121,7 @@ function ConvertFrom-IdentityReferenceResolved {
             #    continue
             #}
 
-            if ($null -eq $IdentityReferenceCache[$ResolvedIdentityReferenceString]) {
+            if ($null -eq $ACEsByPrincipal[$ResolvedIdentityReferenceString]) {
 
                 Write-LogMsg @LogParams -Text " # IdentityReferenceCache miss for '$ResolvedIdentityReferenceString'"
 
@@ -412,12 +410,12 @@ function ConvertFrom-IdentityReferenceResolved {
                 }
 
                 Add-Member -InputObject $AccessControlEntries -Force -NotePropertyMembers $PropertiesToAdd
-                $IdentityReferenceCache[$ResolvedIdentityReferenceString] = $AccessControlEntries
+                $ACEsByPrincipal[$ResolvedIdentityReferenceString] = $AccessControlEntries
 
             } else {
                 Write-LogMsg @LogParams -Text " # IdentityReferenceCache hit for '$ResolvedIdentityReferenceString'"
-                $null = $IdentityReferenceCache[$ResolvedIdentityReferenceString].Add($AccessControlEntries)
-                $AccessControlEntries = $IdentityReferenceCache[$ResolvedIdentityReferenceString]
+                $null = $ACEsByPrincipal[$ResolvedIdentityReferenceString].Add($AccessControlEntries)
+                $AccessControlEntries = $ACEsByPrincipal[$ResolvedIdentityReferenceString]
             }
 
             $AccessControlEntries
