@@ -107,6 +107,8 @@ function ConvertFrom-IdentityReferenceResolved {
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
         [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
+        
+        pause
 
     }
 
@@ -117,9 +119,9 @@ function ConvertFrom-IdentityReferenceResolved {
             $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
 
             # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
-            if (-not $AccessControlEntries) {
-                continue
-            }
+            #if (-not $AccessControlEntries) {
+            #    continue
+            #}
 
             if ($null -eq $IdentityReferenceCache[$ResolvedIdentityReferenceString]) {
 

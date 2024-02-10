@@ -475,6 +475,8 @@ function ConvertFrom-IdentityReferenceResolved {
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
         [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
+        
+        pause
 
     }
 
@@ -485,9 +487,9 @@ function ConvertFrom-IdentityReferenceResolved {
             $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
 
             # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
-            if (-not $AccessControlEntries) {
-                continue
-            }
+            #if (-not $AccessControlEntries) {
+            #    continue
+            #}
 
             if ($null -eq $IdentityReferenceCache[$ResolvedIdentityReferenceString]) {
 
@@ -4593,6 +4595,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 
