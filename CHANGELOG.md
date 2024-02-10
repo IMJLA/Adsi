@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.40] - 2024-02-10 - troubleshoot convertfrom-identityreferenceresolved
+
 ## [4.0.39] - 2024-02-10 - add caching to resolve-ace to avoid using group-object later
 
 ## [4.0.38] - 2024-02-05 - expanded cim caching

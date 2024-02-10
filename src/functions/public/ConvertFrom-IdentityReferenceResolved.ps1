@@ -100,7 +100,7 @@ function ConvertFrom-IdentityReferenceResolved {
             WhoAmI       = $WhoAmI
         }
 
-        # Get the SID of the current domain
+        # Get the SID of the current domain. TODO: THIS SHOULD BE PASSED IN AS A PARAMETER ALL THE WAY FROM THE PARENT SCRIPT (EXPORT-PERMISSION)
         Write-LogMsg @LogParams -Text '$CurrentDomain = Get-CurrentDomain'
         $CurrentDomain = Get-CurrentDomain -ComputerName $ThisFqdn -CimCache $CimCache -DebugOutputStream $DebugOutputStream -ThisFqdn $ThisFqdn @LoggingParams
 
@@ -114,12 +114,12 @@ function ConvertFrom-IdentityReferenceResolved {
 
         ForEach ($ResolvedIdentityReferenceString in $IdentityReference) {
 
-            $ThisIdentity = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
+            $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
 
             # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
-            #if (-not $ThisIdentity) {
-            #    continue
-            #}
+            if (-not $AccessControlEntries) {
+                continue
+            }
 
             if ($null -eq $IdentityReferenceCache[$ResolvedIdentityReferenceString]) {
 
@@ -151,24 +151,23 @@ function ConvertFrom-IdentityReferenceResolved {
                     WhoAmI              = $WhoAmI
                 }
 
-                $StartingIdentityName = $ResolvedIdentityReferenceString
-                $split = $StartingIdentityName.Split('\')
+                $split = $ResolvedIdentityReferenceString.Split('\')
                 $DomainNetBIOS = $split[0]
                 $SamaccountnameOrSid = $split[1]
 
                 if (
                     $null -ne $SamaccountnameOrSid -and
-                    @($ThisIdentity.AdsiProvider)[0] -eq 'LDAP'
+                    @($AccessControlEntries.AdsiProvider)[0] -eq 'LDAP'
                 ) {
-                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a domain security principal"
+                    Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' is a domain security principal"
 
                     $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
                     if ($DomainNetbiosCacheResult) {
-                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$ResolvedIdentityReferenceString'"
                         $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                         $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
                     } else {
-                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$ResolvedIdentityReferenceString'"
                         if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
                             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                         }
@@ -195,14 +194,14 @@ function ConvertFrom-IdentityReferenceResolved {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
                         $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be resolved against its directory: $($_.Exception.Message)"
+                        Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' could not be resolved against its directory: $($_.Exception.Message)"
                         $LogParams['Type'] = $DebugOutputStream
                     }
 
                 } elseif (
-                    $StartingIdentityName.Substring(0, $StartingIdentityName.LastIndexOf('-') + 1) -eq $CurrentDomainSID
+                    $ResolvedIdentityReferenceString.Substring(0, $ResolvedIdentityReferenceString.LastIndexOf('-') + 1) -eq $CurrentDomainSID
                 ) {
-                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is an unresolved SID from the current domain"
+                    Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' is an unresolved SID from the current domain"
 
                     # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
                     $DomainDN = $CurrentDomain.distinguishedName.Value
@@ -214,12 +213,12 @@ function ConvertFrom-IdentityReferenceResolved {
 
                     $DomainCrossReference = Search-Directory @SearchDirectoryParams
                     if ($DomainCrossReference.Properties ) {
-                        Write-LogMsg @LogParams -Text " # The domain '$DomainFQDN' is online for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # The domain '$DomainFQDN' is online for '$ResolvedIdentityReferenceString'"
                         [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
                         # TODO: The domain is online, so let's see if any domain trusts have issues?  Determine if SID is foreign security principal?
                         # TODO: What if the foreign security principal exists but the corresponding domain trust is down?  Don't want to recommend deletion of the ACE in that case.
                     }
-                    $SidObject = [System.Security.Principal.SecurityIdentifier]::new($StartingIdentityName)
+                    $SidObject = [System.Security.Principal.SecurityIdentifier]::new($ResolvedIdentityReferenceString)
                     $SidBytes = [byte[]]::new($SidObject.BinaryLength)
                     $null = $SidObject.GetBinaryForm($SidBytes, 0)
                     $ObjectSid = ConvertTo-HexStringRepresentationForLDAPFilterString -SIDByteArray $SidBytes
@@ -243,28 +242,28 @@ function ConvertFrom-IdentityReferenceResolved {
                         $DirectoryEntry = Search-Directory @SearchDirectoryParams
                     } catch {
                         $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be resolved against its director. Error: $($_.Exception.Message.Trim())"
+                        Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' could not be resolved against its directory. Error: $($_.Exception.Message.Trim())"
                         $LogParams['Type'] = $DebugOutputStream
                     }
 
                 } else {
 
-                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a local security principal or unresolved SID"
+                    Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' is a local security principal or unresolved SID"
 
-                    if ($null -eq $SamaccountnameOrSid) { $SamaccountnameOrSid = $StartingIdentityName }
+                    if ($null -eq $SamaccountnameOrSid) { $SamaccountnameOrSid = $ResolvedIdentityReferenceString }
 
                     if ($SamaccountnameOrSid -like "S-1-*") {
 
-                        Write-LogMsg @LogParams -Text "$($StartingIdentityName) is an unresolved SID"
+                        Write-LogMsg @LogParams -Text "$($ResolvedIdentityReferenceString) is an unresolved SID"
 
                         # The SID of the domain is the SID of the user minus the last block of numbers
                         $DomainSid = $SamaccountnameOrSid.Substring(0, $SamaccountnameOrSid.LastIndexOf("-"))
 
                         # Determine if SID belongs to current domain
                         if ($DomainSid -eq $CurrentDomainSID) {
-                            Write-LogMsg @LogParams -Text "$($StartingIdentityName) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
+                            Write-LogMsg @LogParams -Text "$($ResolvedIdentityReferenceString) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
                         } else {
-                            Write-LogMsg @LogParams -Text "$($StartingIdentityName) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
+                            Write-LogMsg @LogParams -Text "$($ResolvedIdentityReferenceString) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
                         }
 
                         # Lookup other information about the domain using its SID as the key
@@ -300,16 +299,16 @@ function ConvertFrom-IdentityReferenceResolved {
                             }
                         }
 
-                        $ThisIdentity = [pscustomobject]@{
-                            Count = $(($ThisIdentity | Measure-Object).Count)
+                        $AccessControlEntries = [pscustomobject]@{
+                            Count = $AccessControlEntries.Count
                             Name  = "$DomainNetBIOS\" + $AccountName
-                            Group = $ThisIdentity
+                            Group = $AccessControlEntries
                             # Unclear why this was filtered so I have removed it to see what happens
-                            #Group = $ThisIdentity | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $DomainNetBIOS } # Should be already Resolved to a UNC path so it reflects the server name
+                            #Group = $AccessControlEntries | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $DomainNetBIOS } # Should be already Resolved to a UNC path so it reflects the server name
                         }
 
                     } else {
-                        Write-LogMsg @LogParams -Text " # '$StartingIdentityName' is a local security principal"
+                        Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' is a local security principal"
                         $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
                         if ($DomainNetbiosCacheResult) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamaccountnameOrSid"
@@ -335,7 +334,7 @@ function ConvertFrom-IdentityReferenceResolved {
                             $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
                         } catch {
                             $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                            Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$StartingIdentityName'. Error: $($_.Exception.Message.Trim())"
+                            Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$ResolvedIdentityReferenceString'. Error: $($_.Exception.Message.Trim())"
                             $LogParams['Type'] = $DebugOutputStream
                         }
                     }
@@ -363,13 +362,13 @@ function ConvertFrom-IdentityReferenceResolved {
                             $PropertiesToAdd['SchemaClassName'] -eq 'group'
                         ) {
                             # Retrieve the members of groups from the LDAP provider
-                            Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$StartingIdentityName'"
+                            Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$ResolvedIdentityReferenceString'"
                             $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams).FullMembers
                         } else {
                             # Retrieve the members of groups from the WinNT provider
-                            Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$StartingIdentityName'"
+                            Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$ResolvedIdentityReferenceString'"
                             if ( $DirectoryEntry.SchemaClassName -eq 'group') {
-                                Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$StartingIdentityName'"
+                                Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$ResolvedIdentityReferenceString'"
                                 $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                             }
                         }
@@ -382,13 +381,13 @@ function ConvertFrom-IdentityReferenceResolved {
                                 if ($_.Domain) {
 
                                     Add-Member -InputObject $_ -Force -NotePropertyMembers @{
-                                        Group = $ThisIdentity
+                                        Group = $AccessControlEntries
                                     }
 
                                 } else {
 
                                     Add-Member -InputObject $_ -Force -NotePropertyMembers @{
-                                        Group  = $ThisIdentity
+                                        Group  = $AccessControlEntries
                                         Domain = [pscustomobject]@{
                                             Dns     = $DomainNetBIOS
                                             Netbios = $DomainNetBIOS
@@ -401,25 +400,25 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         $PropertiesToAdd['Members'] = $Members
-                        Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$StartingIdentityName'"
+                        Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$ResolvedIdentityReferenceString'"
 
                     }
                 } else {
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                    Write-LogMsg @LogParams -Text " # '$StartingIdentityName' could not be matched to a DirectoryEntry"
+                    Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' could not be matched to a DirectoryEntry"
                     $LogParams['Type'] = $DebugOutputStream
                 }
 
-                Add-Member -InputObject $ThisIdentity -Force -NotePropertyMembers $PropertiesToAdd
-                $IdentityReferenceCache[$StartingIdentityName] = $ThisIdentity
+                Add-Member -InputObject $AccessControlEntries -Force -NotePropertyMembers $PropertiesToAdd
+                $IdentityReferenceCache[$ResolvedIdentityReferenceString] = $AccessControlEntries
 
             } else {
                 Write-LogMsg @LogParams -Text " # IdentityReferenceCache hit for '$ResolvedIdentityReferenceString'"
-                $null = $IdentityReferenceCache[$ResolvedIdentityReferenceString].Add($ThisIdentity)
-                $ThisIdentity = $IdentityReferenceCache[$ResolvedIdentityReferenceString]
+                $null = $IdentityReferenceCache[$ResolvedIdentityReferenceString].Add($AccessControlEntries)
+                $AccessControlEntries = $IdentityReferenceCache[$ResolvedIdentityReferenceString]
             }
 
-            $ThisIdentity
+            $AccessControlEntries
 
         }
 
