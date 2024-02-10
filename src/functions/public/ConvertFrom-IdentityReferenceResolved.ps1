@@ -110,13 +110,6 @@ function ConvertFrom-IdentityReferenceResolved {
 
         ForEach ($ResolvedIdentityReferenceString in $IdentityReference) {
 
-            $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
-
-            # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
-            #if (-not $AccessControlEntries) {
-            #    continue
-            #}
-
             if ($null -eq $ACEsByPrincipal[$ResolvedIdentityReferenceString]) {
 
                 Write-LogMsg @LogParams -Text " # IdentityReferenceCache miss for '$ResolvedIdentityReferenceString'"
@@ -150,6 +143,13 @@ function ConvertFrom-IdentityReferenceResolved {
                 $split = $ResolvedIdentityReferenceString.Split('\')
                 $DomainNetBIOS = $split[0]
                 $SamaccountnameOrSid = $split[1]
+
+                $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
+
+                # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
+                #if (-not $AccessControlEntries) {
+                #    continue
+                #}
 
                 if (
                     $null -ne $SamaccountnameOrSid -and
@@ -334,6 +334,7 @@ function ConvertFrom-IdentityReferenceResolved {
                             $LogParams['Type'] = $DebugOutputStream
                         }
                     }
+
                 }
 
                 $PropertiesToAdd = @{
@@ -371,34 +372,36 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         # (Get-AdsiGroupMember).FullMembers or Get-WinNTGroupMember could return an array with null members so we must verify that is not true
                         if ($Members) {
-                            $Members |
-                            ForEach-Object {
 
-                                if ($_.Domain) {
+                            ForEach ($ThisMember in $Members) {
 
-                                    Add-Member -InputObject $_ -Force -NotePropertyMembers @{
+                                if ($ThisMember.Domain) {
+
+                                    Add-Member -InputObject $ThisMember -Force -NotePropertyMembers @{
                                         Group = $AccessControlEntries
                                     }
 
                                 } else {
 
-                                    Add-Member -InputObject $_ -Force -NotePropertyMembers @{
+                                    Add-Member -InputObject $ThisMember -Force -NotePropertyMembers @{
                                         Group  = $AccessControlEntries
                                         Domain = [pscustomobject]@{
                                             Dns     = $DomainNetBIOS
                                             Netbios = $DomainNetBIOS
-                                            Sid     = ($SamaccountnameOrSid -split '-') | Select-Object -Last 1
+                                            Sid     = @($SamaccountnameOrSid -split '-')[-1]
                                         }
                                     }
 
                                 }
+
                             }
+
                         }
-
-                        $PropertiesToAdd['Members'] = $Members
-                        Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$ResolvedIdentityReferenceString'"
-
                     }
+
+                    $PropertiesToAdd['Members'] = $Members
+                    Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$ResolvedIdentityReferenceString'"
+
                 } else {
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                     Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' could not be matched to a DirectoryEntry"
