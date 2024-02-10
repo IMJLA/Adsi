@@ -13,10 +13,11 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ## SYNTAX
 
 ```
-Resolve-Ace [[-InputObject] <PSObject[]>] [[-DirectoryEntryCache] <Hashtable>]
- [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
+Resolve-Ace [[-InputObject] <PSObject[]>] [[-ACEbyResolvedIDCache] <Hashtable>]
+ [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
+ [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
+ [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
+ [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -110,6 +111,21 @@ It provides no known benefit over the cross-platform equivalent \[System.Securit
 
 ## PARAMETERS
 
+### -ACEbyResolvedIDCache
+Cache of access control entries keyed by their resolved identities
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -CimCache
 Cache of CIM sessions and instances to reduce connections and queries
 
@@ -119,7 +135,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
+Position: 13
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -134,7 +150,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 14
 Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -151,7 +167,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 3
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -166,7 +182,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 8
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -181,7 +197,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 6
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -196,7 +212,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -226,7 +242,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: 12
 Default value: $Global:LogMessages
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -258,7 +274,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 10
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -275,7 +291,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 9
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -290,7 +306,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 11
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -305,7 +321,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -320,7 +336,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 4
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False

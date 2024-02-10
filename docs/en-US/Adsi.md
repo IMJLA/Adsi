@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.38
+Help Version: 4.0.39
 Locale: en-US
 ---
 
@@ -102,20 +102,11 @@ Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-CimCache] <hashtable>] [[
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
 
-### [Get-Win32Account](Get-Win32Account.md)
-{{ Fill in the Description }}
-
-### [Get-Win32UserAccount](Get-Win32UserAccount.md)
-{{ Fill in the Description }}
-
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)
 Get members of a group from the WinNT provider
 
 ### [Invoke-ComObject](Invoke-ComObject.md)
 Invoke a member method of a ComObject [__ComObject]
-
-### [New-AdsiServerCimSession](New-AdsiServerCimSession.md)
-{{ Fill in the Description }}
 
 ### [New-FakeDirectoryEntry](New-FakeDirectoryEntry.md)
 

@@ -95,11 +95,14 @@ function Resolve-Ace {
         )]
         [PSObject[]]$InputObject,
 
-        <#
-    Dictionary to cache directory entries to avoid redundant lookups
+        # Cache of access control entries keyed by their resolved identities
+        [hashtable]$ACEbyResolvedIDCache = ([hashtable]::Synchronized(@{})),
 
-    Defaults to an empty thread-safe hashtable
-    #>
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
@@ -163,6 +166,7 @@ function Resolve-Ace {
     process {
 
         $ACEPropertyNames = (Get-Member -InputObject $InputObject[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+
         ForEach ($ThisACE in $InputObject) {
 
             $IdentityReference = $ThisACE.IdentityReference.ToString()
@@ -184,9 +188,7 @@ function Resolve-Ace {
             switch -Wildcard ($IdentityReference) {
                 "S-1-*" {
                     # IdentityReference is a SID (Revision 1)
-                    Write-LogMsg @LogParams -Text "'$IdentityReference'.LastIndexOf('-')"
                     $IndexOfLastHyphen = $IdentityReference.LastIndexOf("-")
-                    Write-LogMsg @LogParams -Text "'$IdentityReference'.Substring(0, $IndexOfLastHyphen)"
                     $DomainSid = $IdentityReference.Substring(0, $IndexOfLastHyphen)
                     if ($DomainSid) {
                         $DomainCacheResult = $DomainsBySID[$DomainSid]
@@ -199,15 +201,9 @@ function Resolve-Ace {
                         }
                     }
                 }
-                "NT SERVICE\*" {
-                    $ThisServerDns = Find-ServerNameInPath -LiteralPath $LiteralPath -ThisFqdn $ThisFqdn
-                }
-                "BUILTIN\*" {
-                    $ThisServerDns = Find-ServerNameInPath -LiteralPath $LiteralPath -ThisFqdn $ThisFqdn
-                }
-                "NT AUTHORITY\*" {
-                    $ThisServerDns = Find-ServerNameInPath -LiteralPath $LiteralPath -ThisFqdn $ThisFqdn
-                }
+                "NT SERVICE\*" {}
+                "BUILTIN\*" {}
+                "NT AUTHORITY\*" {}
                 default {
                     $DomainNetBios = ($IdentityReference -split '\\')[0]
                     if ($DomainNetBios) {
@@ -221,15 +217,14 @@ function Resolve-Ace {
             }
 
             if (-not $ThisServerDns) {
-                # Bug: I think this will report incorrectly for a remote domain not in the cache (trust broken or something)
+                # TODO - Bug: I think this will report incorrectly for a remote domain not in the cache (trust broken or something)
+                Write-LogMsg @LogParams -Text "Find-ServerNameInPath -LiteralPath '$LiteralPath' -ThisFqdn '$ThisFqdn'"
                 $ThisServerDns = Find-ServerNameInPath -LiteralPath $LiteralPath -ThisFqdn $ThisFqdn
             }
-            Write-LogMsg @LogParams -Text " # Domain FQDN is '$ThisServerDns' for '$IdentityReference'"
 
             $GetAdsiServerParams = @{
                 Fqdn                   = $ThisServerDns
-                Win32AccountsBySID     = $Win32AccountsBySID
-                Win32AccountsByCaption = $Win32AccountsByCaption
+                CimCache               = $CimCache
                 DirectoryEntryCache    = $DirectoryEntryCache
                 DomainsByFqdn          = $DomainsByFqdn
                 DomainsByNetbios       = $DomainsByNetbios
@@ -238,37 +233,39 @@ function Resolve-Ace {
                 ThisFqdn               = $ThisFqdn
                 LogMsgCache            = $LogMsgCache
                 WhoAmI                 = $WhoAmI
-                CimCache               = $CimCache
+                Win32AccountsBySID     = $Win32AccountsBySID
+                Win32AccountsByCaption = $Win32AccountsByCaption
             }
+            Write-LogMsg @LogParams -Text "`$AdsiServer = Get-AdsiServer -Fqdn '$ThisServerDns'"
             $AdsiServer = Get-AdsiServer @GetAdsiServerParams
             Write-LogMsg @LogParams -Text " # ADSI server is '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)' for '$IdentityReference'"
+
+            <#
 
             if ([string]$DomainNetBios -eq '') {
                 $DomainNetBios = $AdsiServer.Netbios
             }
-
             Write-LogMsg @LogParams -Text " # Domain NetBIOS is '$DomainNetBios' for '$IdentityReference'"
 
-            <#
-        $AdsiProvider = $null
-        if (-not $DomainNetBios) {
-            $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
-            if ($DomainCacheResult) {
-                Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisServerDns'"
-                $DomainNetBios = $DomainCacheResult.Netbios
-                $AdsiProvider = $DomainCacheResult.AdsiProvider
-            } else {
-                Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$ThisServerDns'"
+            $AdsiProvider = $null
+            if (-not $DomainNetBios) {
+                $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
+                if ($DomainCacheResult) {
+                    Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisServerDns'"
+                    $DomainNetBios = $DomainCacheResult.Netbios
+                    $AdsiProvider = $DomainCacheResult.AdsiProvider
+                } else {
+                    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$ThisServerDns'"
+                }
             }
-        }
 
-        if (-not $DomainNetBios) {
-            if (-not $AdsiProvider) {
-                $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
+            if (-not $DomainNetBios) {
+                if (-not $AdsiProvider) {
+                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
+                }
+                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
             }
-            $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-        }
-        #>
+            #>
 
             $ResolveIdentityReferenceParams = @{
                 IdentityReference      = $IdentityReference
@@ -285,7 +282,7 @@ function Resolve-Ace {
                 CimCache               = $CimCache
                 WhoAmI                 = $WhoAmI
             }
-            Write-LogMsg @LogParams -Text "Resolve-IdentityReference -IdentityReference '$IdentityReference'..."
+            Write-LogMsg @LogParams -Text "Resolve-IdentityReference -IdentityReference '$IdentityReference' -AdsiServer `$AdsiServer..."
             $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
 
             # not sure if I should add a param to offer DNS instead of NetBIOS
@@ -300,7 +297,15 @@ function Resolve-Ace {
             ForEach ($ThisProperty in $ACEPropertyNames) {
                 $ObjectProperties[$ThisProperty] = $ThisACE.$ThisProperty
             }
-            [PSCustomObject]$ObjectProperties
+            $OutputObject = [PSCustomObject]$ObjectProperties
+
+            $Key = $OutputObject.IdentityReferenceResolved
+            $CacheResult = $ACEbyResolvedIDCache[$Key]
+            if (-not $CacheResult) {
+                $CacheResult = [System.Collections.Generic.List[object]]::new()
+            }
+            $CacheResult.Add($OutputObject)
+            $ACEbyResolvedIDCache[$Key] = $CacheResult
 
         }
 
