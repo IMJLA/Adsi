@@ -83,7 +83,7 @@ function ConvertFrom-IdentityReferenceResolved {
         # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
         [hashtable]$LogMsgCache = $Global:LogMessages,
 
-        # The current domain so its SID can be used
+        # The current domain
         # Can be passed as a parameter to reduce calls to Get-CurrentDomain
         [string]$CurrentDomain = (Get-CurrentDomain)
 

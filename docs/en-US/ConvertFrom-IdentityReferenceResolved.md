@@ -85,7 +85,7 @@ Accept wildcard characters: False
 ```
 
 ### -CurrentDomain
-The current domain so its SID can be used
+The current domain
 Can be passed as a parameter to reduce calls to Get-CurrentDomain
 
 ```yaml
