@@ -17,7 +17,8 @@ ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <Object[]>] [-NoGrou
  [[-ACEbyResolvedIDCache] <Hashtable>] [[-ACEsByPrincipal] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CurrentDomain] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -79,6 +80,22 @@ Aliases:
 Required: False
 Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CurrentDomain
+The current domain so its SID can be used
+Can be passed as a parameter to reduce calls to Get-CurrentDomain
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 14
+Default value: (Get-CurrentDomain)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

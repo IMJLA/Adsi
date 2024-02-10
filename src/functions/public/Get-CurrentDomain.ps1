@@ -51,7 +51,9 @@ function Get-CurrentDomain {
 
     )
     $Obj = [adsi]::new()
-    try { $null = $Obj.RefreshCache('objectSid') } catch {
+    try {
+        $null = $Obj.RefreshCache('objectSid')
+    } catch {
 
         # Assume local computer/workgroup, use CIM rather than ADSI
 
@@ -61,10 +63,11 @@ function Get-CurrentDomain {
             WhoAmI       = $WhoAmI
         }
 
-        $SID = Find-LocalAdsiServerSid -ComputerName $ComputerName -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams |
-        ConvertTo-SidByteArray
+        $SIDString = Find-LocalAdsiServerSid -ComputerName $ComputerName -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+        $SID = $SIDString | ConvertTo-SidByteArray
 
-        $Obj = [PSCustomObject]@{
+        $OutputProperties = @{
+            SIDString         = $SIDString
             ObjectSid         = [PSCustomObject]@{
                 Value = $Sid
             }
@@ -75,6 +78,24 @@ function Get-CurrentDomain {
 
     }
 
-    return $Obj
+    # Include specific desired properties
+    if (-not $OutputProperties) {
+        # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
+        Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
+        $OutputProperties = @{
+            SIDString = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
+        }
+
+        # Get any existing properties for inclusion later
+        $InputProperties = (Get-Member -InputObject $Obj[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+
+        # Include any existing properties found earlier
+        ForEach ($ThisProperty in $InputProperties) {
+            $OutputProperties[$ThisProperty] = $ThisPrincipal.$ThisProperty
+        }
+    }
+
+    # Output the object
+    [PSCustomObject]$OutputProperties
 
 }

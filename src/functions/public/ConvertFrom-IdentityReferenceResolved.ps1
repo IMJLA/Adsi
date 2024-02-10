@@ -81,7 +81,11 @@ function ConvertFrom-IdentityReferenceResolved {
         [string]$WhoAmI = (whoami.EXE),
 
         # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        [hashtable]$LogMsgCache = $Global:LogMessages,
+
+        # The current domain so its SID can be used
+        # Can be passed as a parameter to reduce calls to Get-CurrentDomain
+        [string]$CurrentDomain = (Get-CurrentDomain)
 
     )
 
@@ -99,14 +103,6 @@ function ConvertFrom-IdentityReferenceResolved {
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }
-
-        # Get the SID of the current domain. TODO: THIS SHOULD BE PASSED IN AS A PARAMETER ALL THE WAY FROM THE PARENT SCRIPT (EXPORT-PERMISSION)
-        Write-LogMsg @LogParams -Text '$CurrentDomain = Get-CurrentDomain'
-        $CurrentDomain = Get-CurrentDomain -ComputerName $ThisFqdn -CimCache $CimCache -DebugOutputStream $DebugOutputStream -ThisFqdn $ThisFqdn @LoggingParams
-
-        # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
-        Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
-        [string]$CurrentDomainSID = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
 
     }
 
@@ -199,7 +195,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     }
 
                 } elseif (
-                    $ResolvedIdentityReferenceString.Substring(0, $ResolvedIdentityReferenceString.LastIndexOf('-') + 1) -eq $CurrentDomainSID
+                    $ResolvedIdentityReferenceString.Substring(0, $ResolvedIdentityReferenceString.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
                 ) {
                     Write-LogMsg @LogParams -Text " # '$ResolvedIdentityReferenceString' is an unresolved SID from the current domain"
 
@@ -260,7 +256,7 @@ function ConvertFrom-IdentityReferenceResolved {
                         $DomainSid = $SamaccountnameOrSid.Substring(0, $SamaccountnameOrSid.LastIndexOf("-"))
 
                         # Determine if SID belongs to current domain
-                        if ($DomainSid -eq $CurrentDomainSID) {
+                        if ($DomainSid -eq $CurrentDomain.SIDString) {
                             Write-LogMsg @LogParams -Text "$($ResolvedIdentityReferenceString) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
                         } else {
                             Write-LogMsg @LogParams -Text "$($ResolvedIdentityReferenceString) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
