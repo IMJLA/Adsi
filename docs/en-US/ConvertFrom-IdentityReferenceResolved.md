@@ -14,7 +14,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <Object[]>] [-NoGroupMembers]
- [[-ACEbyResolvedIDCache] <Hashtable>] [[-ACEsByPrincipal] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-ACEbyResolvedIDCache] <Hashtable>] [[-PrincipalsByResolvedID] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CurrentDomain] <String>]
@@ -49,21 +49,6 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ACEsByPrincipal
-Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -219,6 +204,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PrincipalsByResolvedID
+Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -38,7 +38,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [hashtable]$ACEbyResolvedIDCache = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
-        [hashtable]$ACEsByPrincipal = ([hashtable]::Synchronized(@{})),
+        [hashtable]$PrincipalsByResolvedID = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -110,9 +110,16 @@ function ConvertFrom-IdentityReferenceResolved {
 
         ForEach ($ResolvedIdentityReferenceString in $IdentityReference) {
 
-            if ($null -eq $ACEsByPrincipal[$ResolvedIdentityReferenceString]) {
+            $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
 
-                Write-LogMsg @LogParams -Text " # IdentityReferenceCache miss for '$ResolvedIdentityReferenceString'"
+            # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
+            #if (-not $AccessControlEntries) {
+            #    continue
+            #}
+
+            if ($null -eq $PrincipalsByResolvedID[$ResolvedIdentityReferenceString]) {
+
+                Write-LogMsg @LogParams -Text " # AdsiPrincipalCache miss for '$ResolvedIdentityReferenceString'"
 
                 $DomainDN = $null
                 $DirectoryEntry = $null
@@ -143,12 +150,6 @@ function ConvertFrom-IdentityReferenceResolved {
                 $split = $ResolvedIdentityReferenceString.Split('\')
                 $DomainNetBIOS = $split[0]
                 $SamaccountnameOrSid = $split[1]
-                $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
-
-                # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
-                #if (-not $AccessControlEntries) {
-                #    continue
-                #}
 
                 if (
                     $null -ne $SamaccountnameOrSid -and
@@ -266,8 +267,10 @@ function ConvertFrom-IdentityReferenceResolved {
                         if ($DomainObject) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users,group"
                             $DomainNetBIOS = $DomainObject.Netbios
+                            $DomainDN = $DomainObject.DistinguishedName
                         } else {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/Users,group"
+                            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                         }
 
                         try {
@@ -292,14 +295,6 @@ function ConvertFrom-IdentityReferenceResolved {
                                     $AccountName = $DirectoryEntry.Properties['name']
                                 }
                             }
-                        }
-
-                        $AccessControlEntries = [pscustomobject]@{
-                            Count = $AccessControlEntries.Count
-                            Name  = "$DomainNetBIOS\" + $AccountName
-                            Group = $AccessControlEntries
-                            # Unclear why this was filtered so I have removed it to see what happens
-                            #Group = $AccessControlEntries | Where-Object -FilterScript { ($_.SourceAccessList.Path -split '\\')[2] -eq $DomainNetBIOS } # Should be already Resolved to a UNC path so it reflects the server name
                         }
 
                     } else {
@@ -337,9 +332,11 @@ function ConvertFrom-IdentityReferenceResolved {
                 }
 
                 $PropertiesToAdd = @{
+                    Name           = "$DomainNetBIOS\$AccountName"
                     DomainDn       = $DomainDn
                     DomainNetbios  = $DomainNetBIOS
                     DirectoryEntry = $DirectoryEntry
+                    Group          = $AccessControlEntries
                 }
                 if ($null -ne $DirectoryEntry) {
 
@@ -431,29 +428,14 @@ function ConvertFrom-IdentityReferenceResolved {
                     $LogParams['Type'] = $DebugOutputStream
                 }
 
-                # Get any existing properties for inclusion later
-                $InputProperties = (Get-Member -InputObject $AccessControlEntries[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
-                $AccessControlEntries = ForEach ($ACE in $AccessControlEntries) {
-
-                    # Include any existing properties found earlier
-                    ForEach ($ThisProperty in $InputProperties) {
-                        $PropertiesToAdd[$ThisProperty] = $ACE.$ThisProperty
-                    }
-
-                    # Output the object
-                    [PSCustomObject]$PropertiesToAdd
-
-                }
-
-                $ACEsByPrincipal[$ResolvedIdentityReferenceString] = $ACEsWithAdsiPrincipals
+                $PrincipalsByResolvedID[$ResolvedIdentityReferenceString] = [PSCustomObject]$PropertiesToAdd
 
             } else {
-                Write-LogMsg @LogParams -Text " # IdentityReferenceCache hit for '$ResolvedIdentityReferenceString'"
-                $null = $ACEsByPrincipal[$ResolvedIdentityReferenceString].Add($AccessControlEntries)
-                $AccessControlEntries = $ACEsByPrincipal[$ResolvedIdentityReferenceString]
-            }
 
-            $AccessControlEntries
+                Write-LogMsg @LogParams -Text " # AdsiPrincipalCache hit for '$ResolvedIdentityReferenceString'"
+                $null = $PrincipalsByResolvedID[$ResolvedIdentityReferenceString].AccessControlEntries.Add($AccessControlEntries)
+
+            }
 
         }
 
