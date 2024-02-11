@@ -96,7 +96,7 @@ function Resolve-Ace {
         [PSObject[]]$InputObject,
 
         # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEbyResolvedIDCache = ([hashtable]::Synchronized(@{})),
+        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -300,12 +300,12 @@ function Resolve-Ace {
             $OutputObject = [PSCustomObject]$ObjectProperties
 
             $Key = $OutputObject.IdentityReferenceResolved
-            $CacheResult = $ACEbyResolvedIDCache[$Key]
+            $CacheResult = $ACEsByResolvedID[$Key]
             if (-not $CacheResult) {
                 $CacheResult = [System.Collections.Generic.List[object]]::new()
             }
             $CacheResult.Add($OutputObject)
-            $ACEbyResolvedIDCache[$Key] = $CacheResult
+            $ACEsByResolvedID[$Key] = $CacheResult
 
         }
 

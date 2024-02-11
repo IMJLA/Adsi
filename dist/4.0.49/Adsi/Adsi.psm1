@@ -403,7 +403,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [switch]$NoGroupMembers,
 
         # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEbyResolvedIDCache = ([hashtable]::Synchronized(@{})),
+        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
         [hashtable]$PrincipalsByResolvedID = ([hashtable]::Synchronized(@{})),
@@ -478,7 +478,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         ForEach ($ResolvedIdentityReferenceString in $IdentityReference) {
 
-            $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
+            $AccessControlEntries = $ACEsByResolvedID[$ResolvedIdentityReferenceString]
 
             # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
             #if (-not $AccessControlEntries) {
@@ -3753,7 +3753,7 @@ function Resolve-Ace {
         [PSObject[]]$InputObject,
 
         # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEbyResolvedIDCache = ([hashtable]::Synchronized(@{})),
+        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -3957,12 +3957,12 @@ function Resolve-Ace {
             $OutputObject = [PSCustomObject]$ObjectProperties
 
             $Key = $OutputObject.IdentityReferenceResolved
-            $CacheResult = $ACEbyResolvedIDCache[$Key]
+            $CacheResult = $ACEsByResolvedID[$Key]
             if (-not $CacheResult) {
                 $CacheResult = [System.Collections.Generic.List[object]]::new()
             }
             $CacheResult.Add($OutputObject)
-            $ACEbyResolvedIDCache[$Key] = $CacheResult
+            $ACEsByResolvedID[$Key] = $CacheResult
 
         }
 
@@ -4631,6 +4631,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
 
 
 

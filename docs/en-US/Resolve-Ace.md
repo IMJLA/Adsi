@@ -13,7 +13,7 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ## SYNTAX
 
 ```
-Resolve-Ace [[-InputObject] <PSObject[]>] [[-ACEbyResolvedIDCache] <Hashtable>]
+Resolve-Ace [[-InputObject] <PSObject[]>] [[-ACEsByResolvedID] <Hashtable>]
  [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
  [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
@@ -111,7 +111,7 @@ It provides no known benefit over the cross-platform equivalent \[System.Securit
 
 ## PARAMETERS
 
-### -ACEbyResolvedIDCache
+### -ACEsByResolvedID
 Cache of access control entries keyed by their resolved identities
 
 ```yaml

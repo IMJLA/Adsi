@@ -672,7 +672,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <dev:defaultValue>(Get-CurrentDomain)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>ACEbyResolvedIDCache</maml:name>
+          <maml:name>ACEsByResolvedID</maml:name>
           <maml:description>
             <maml:para>Cache of access control entries keyed by their resolved identities</maml:para>
           </maml:description>
@@ -795,7 +795,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
     </command:syntax>
     <command:parameters>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>ACEbyResolvedIDCache</maml:name>
+        <maml:name>ACEsByResolvedID</maml:name>
         <maml:description>
           <maml:para>Cache of access control entries keyed by their resolved identities</maml:para>
         </maml:description>
@@ -8005,7 +8005,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>Debug</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>ACEbyResolvedIDCache</maml:name>
+          <maml:name>ACEsByResolvedID</maml:name>
           <maml:description>
             <maml:para>Cache of access control entries keyed by their resolved identities</maml:para>
           </maml:description>
@@ -8118,7 +8118,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     </command:syntax>
     <command:parameters>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>ACEbyResolvedIDCache</maml:name>
+        <maml:name>ACEsByResolvedID</maml:name>
         <maml:description>
           <maml:para>Cache of access control entries keyed by their resolved identities</maml:para>
         </maml:description>

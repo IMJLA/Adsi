@@ -35,7 +35,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [switch]$NoGroupMembers,
 
         # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEbyResolvedIDCache = ([hashtable]::Synchronized(@{})),
+        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
         [hashtable]$PrincipalsByResolvedID = ([hashtable]::Synchronized(@{})),
@@ -110,7 +110,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         ForEach ($ResolvedIdentityReferenceString in $IdentityReference) {
 
-            $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
+            $AccessControlEntries = $ACEsByResolvedID[$ResolvedIdentityReferenceString]
 
             # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
             #if (-not $AccessControlEntries) {
