@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.47] - 2024-02-10 - troubleshoot convertfrom-identityreferenceresolved
+
+## [4.0.46] - 2024-02-10 - troubleshoot convertfrom-identityreferenceresolved
+
 ## [4.0.45] - 2024-02-10 - troubleshoot convertfrom-identityreferenceresolved
 
 ## [4.0.44] - 2024-02-10 - update comment

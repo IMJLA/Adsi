@@ -511,7 +511,6 @@ function ConvertFrom-IdentityReferenceResolved {
                 $split = $ResolvedIdentityReferenceString.Split('\')
                 $DomainNetBIOS = $split[0]
                 $SamaccountnameOrSid = $split[1]
-
                 $AccessControlEntries = $ACEbyResolvedIDCache[$ResolvedIdentityReferenceString]
 
                 # Why is this needed?  Do not uncomment without adding comment indicating purpose.  Not expecting null objects, want to improve performance by skipping this check.
@@ -741,17 +740,30 @@ function ConvertFrom-IdentityReferenceResolved {
                         # (Get-AdsiGroupMember).FullMembers or Get-WinNTGroupMember could return an array with null members so we must verify that is not true
                         if ($Members) {
 
-                            ForEach ($ThisMember in $Members) {
+                            $GroupMembers = ForEach ($ThisMember in $Members) {
 
                                 if ($ThisMember.Domain) {
 
-                                    Add-Member -InputObject $ThisMember -Force -NotePropertyMembers @{
+                                    # Include specific desired properties
+                                    $OutputProperties = @{
                                         Group = $AccessControlEntries
                                     }
 
+                                    # Get any existing properties for inclusion later
+                                    $InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+
+                                    # Include any existing properties found earlier
+                                    ForEach ($ThisProperty in $InputProperties) {
+                                        $OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
+                                    }
+
+                                    # Output the object
+                                    [PSCustomObject]$OutputProperties
+
                                 } else {
 
-                                    Add-Member -InputObject $ThisMember -Force -NotePropertyMembers @{
+                                    # Include specific desired properties
+                                    $OutputProperties = @{
                                         Group  = $AccessControlEntries
                                         Domain = [pscustomobject]@{
                                             Dns     = $DomainNetBIOS
@@ -760,6 +772,17 @@ function ConvertFrom-IdentityReferenceResolved {
                                         }
                                     }
 
+                                    # Get any existing properties for inclusion later
+                                    $InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+
+                                    # Include any existing properties found earlier
+                                    ForEach ($ThisProperty in $InputProperties) {
+                                        $OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
+                                    }
+
+                                    # Output the object
+                                    [PSCustomObject]$OutputProperties
+
                                 }
 
                             }
@@ -767,8 +790,8 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
                     }
 
-                    $PropertiesToAdd['Members'] = $Members
-                    Write-LogMsg @LogParams -Text " # $($DirectoryEntry.Path) has $(($Members | Measure-Object).Count) members for '$ResolvedIdentityReferenceString'"
+                    $PropertiesToAdd['Members'] = $GroupMembers
+                    Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members for '$ResolvedIdentityReferenceString'"
 
                 } else {
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
@@ -776,8 +799,21 @@ function ConvertFrom-IdentityReferenceResolved {
                     $LogParams['Type'] = $DebugOutputStream
                 }
 
-                Add-Member -InputObject $AccessControlEntries -Force -NotePropertyMembers $PropertiesToAdd
-                $ACEsByPrincipal[$ResolvedIdentityReferenceString] = $AccessControlEntries
+                # Get any existing properties for inclusion later
+                $InputProperties = (Get-Member -InputObject $AccessControlEntries[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+                $AccessControlEntries = ForEach ($ACE in $AccessControlEntries) {
+
+                    # Include any existing properties found earlier
+                    ForEach ($ThisProperty in $InputProperties) {
+                        $PropertiesToAdd[$ThisProperty] = $ACE.$ThisProperty
+                    }
+
+                    # Output the object
+                    [PSCustomObject]$PropertiesToAdd
+
+                }
+
+                $ACEsByPrincipal[$ResolvedIdentityReferenceString] = $ACEsWithAdsiPrincipals
 
             } else {
                 Write-LogMsg @LogParams -Text " # IdentityReferenceCache hit for '$ResolvedIdentityReferenceString'"
@@ -4613,6 +4649,8 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-IdentityReference','Search-Directory')
+
+
 
 
 
