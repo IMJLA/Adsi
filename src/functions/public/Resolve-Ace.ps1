@@ -7,11 +7,11 @@ function Resolve-Ace {
     Resolve SID to NT account name and vise-versa
     Resolve well-known SIDs
     Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
-    Add these properties (IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved) to the object and return it
+    Add these properties (IdentityReferenceSID,IdentityReferenceResolved) to the object and return it
     .INPUTS
     [System.Security.AccessControl.AuthorizationRuleCollection]$ACE
     .OUTPUTS
-    [PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved, and AdsiProvider properties
+    [PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceResolved, and AdsiProvider properties
     .EXAMPLE
     Get-Acl |
     Expand-Acl |
@@ -291,8 +291,8 @@ function Resolve-Ace {
         AdsiProvider              = $AdsiServer.AdsiProvider
         AdsiServer                = $AdsiServer.Dns
         IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
-        IdentityReferenceName     = $ResolvedIdentityReference.IdentityReferenceUnresolved
         IdentityReferenceResolved = $ResolvedIdentityReference.IdentityReferenceNetBios
+        Path                      = $ItemPath
     }
     ForEach ($ThisProperty in $ACEPropertyName) {
         $ObjectProperties[$ThisProperty] = $ACE.$ThisProperty

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.52] - 2024-02-11 - bugfix resolve-ace and resolve-identityreference
+
 ## [4.0.51] - 2024-02-11 - bugfix resolve-acl
 
 ## [4.0.50] - 2024-02-11 - implement resolve-acl

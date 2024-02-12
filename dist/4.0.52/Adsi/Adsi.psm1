@@ -3664,11 +3664,11 @@ function Resolve-Ace {
     Resolve SID to NT account name and vise-versa
     Resolve well-known SIDs
     Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
-    Add these properties (IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved) to the object and return it
+    Add these properties (IdentityReferenceSID,IdentityReferenceResolved) to the object and return it
     .INPUTS
     [System.Security.AccessControl.AuthorizationRuleCollection]$ACE
     .OUTPUTS
-    [PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved, and AdsiProvider properties
+    [PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceResolved, and AdsiProvider properties
     .EXAMPLE
     Get-Acl |
     Expand-Acl |
@@ -3948,8 +3948,8 @@ function Resolve-Ace {
         AdsiProvider              = $AdsiServer.AdsiProvider
         AdsiServer                = $AdsiServer.Dns
         IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
-        IdentityReferenceName     = $ResolvedIdentityReference.IdentityReferenceUnresolved
         IdentityReferenceResolved = $ResolvedIdentityReference.IdentityReferenceNetBios
+        Path                      = $ItemPath
     }
     ForEach ($ThisProperty in $ACEPropertyName) {
         $ObjectProperties[$ThisProperty] = $ACE.$ThisProperty
@@ -4263,13 +4263,11 @@ function Resolve-IdentityReference {
         #IdentityReference is a SID, and has been cached from this server
         Write-LogMsg @LogParams -Text " # Win32_Account SID cache hit for '$ServerNetBIOS\$IdentityReference'"
         return [PSCustomObject]@{
-            IdentityReferenceOriginal   = $IdentityReference
-            # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
-            IdentityReferenceUnresolved = $null # Could parse SID to get this?
-            SIDString                   = $CacheResult.SID
-            IdentityReferenceNetBios    = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
+            IdentityReference        = $IdentityReference
+            SIDString                = $CacheResult.SID
+            IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
             # PS 7 more efficient IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase)
-            IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
         Write-LogMsg @LogParams -Text " # Win32_Account SID cache miss for '$ServerNetBIOS\$IdentityReference'"
@@ -4301,13 +4299,11 @@ function Resolve-IdentityReference {
             }
 
             return [PSCustomObject]@{
-                IdentityReferenceOriginal   = $IdentityReference
-                # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
-                IdentityReferenceUnresolved = $IdentityReference
-                SIDString                   = $CacheResult.SID
-                IdentityReferenceNetBios    = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
+                IdentityReference        = $IdentityReference
+                SIDString                = $CacheResult.SID
+                IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
                 # PS 7 more efficient IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase)
-                IdentityReferenceDns        = "$DomainDns\$($CacheResult.Name)"
+                IdentityReferenceDns     = "$DomainDns\$($CacheResult.Name)"
             }
         } else {
             Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
@@ -4318,13 +4314,11 @@ function Resolve-IdentityReference {
         # IdentityReference is an NT Account Name without a \, and has been cached from this server
         Write-LogMsg @LogParams -Text " # Win32_Account caption cache hit for '$ServerNetBIOS\$IdentityReference'"
         return [PSCustomObject]@{
-            IdentityReferenceOriginal   = $IdentityReference
-            # IdentityReferenceNameUnresolved below is not available, the Win32_Account instances in the cache are already resolved to the NetBios domain names
-            IdentityReferenceUnresolved = $null
-            SIDString                   = $CacheResult.SID
-            IdentityReferenceNetBios    = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
+            IdentityReference        = $IdentityReference
+            SIDString                = $CacheResult.SID
+            IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
             # PS 7 more efficient IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase)
-            IdentityReferenceDns        = "$($AdsiServer.Dns)\$($CacheResult.Name)"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
     } else {
         Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$IdentityReference'"
@@ -4408,12 +4402,11 @@ function Resolve-IdentityReference {
                 $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
             } else {
                 $Resolved = [PSCustomObject]@{
-                    IdentityReferenceOriginal   = $IdentityReference
-                    IdentityReferenceUnresolved = $IdentityReference
-                    SIDString                   = $IdentityReference
-                    IdentityReferenceNetBios    = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
+                    IdentityReference        = $IdentityReference
+                    SIDString                = $IdentityReference
+                    IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
                     #IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase) # PS 7 more efficient
-                    IdentityReferenceDns        = "$DomainDns\$IdentityReference"
+                    IdentityReferenceDns     = "$DomainDns\$IdentityReference"
                 }
             }
 
@@ -4459,11 +4452,10 @@ function Resolve-IdentityReference {
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
-                IdentityReferenceOriginal   = $IdentityReference
-                IdentityReferenceUnresolved = $IdentityReference
-                SIDString                   = $SIDString
-                IdentityReferenceNetBios    = $Caption
-                IdentityReferenceDns        = "$DomainDns\$Name"
+                IdentityReference        = $IdentityReference
+                SIDString                = $SIDString
+                IdentityReferenceNetBios = $Caption
+                IdentityReferenceDns     = "$DomainDns\$Name"
             }
         }
         "APPLICATION PACKAGE AUTHORITY\*" {
@@ -4522,11 +4514,10 @@ function Resolve-IdentityReference {
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
-                IdentityReferenceOriginal   = $IdentityReference
-                IdentityReferenceUnresolved = $IdentityReference
-                SIDString                   = $SIDString
-                IdentityReferenceNetBios    = $Caption
-                IdentityReferenceDns        = "$DomainDns\$Name"
+                IdentityReference        = $IdentityReference
+                SIDString                = $SIDString
+                IdentityReferenceNetBios = $Caption
+                IdentityReferenceDns     = "$DomainDns\$Name"
             }
         }
         "BUILTIN\*" {
@@ -4550,11 +4541,10 @@ function Resolve-IdentityReference {
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
-                IdentityReferenceOriginal   = $IdentityReference
-                IdentityReferenceUnresolved = $IdentityReference
-                SIDString                   = $SIDString
-                IdentityReferenceNetBios    = $Caption
-                IdentityReferenceDns        = "$DomainDns\$Name"
+                IdentityReference        = $IdentityReference
+                SIDString                = $SIDString
+                IdentityReferenceNetBios = $Caption
+                IdentityReferenceDns     = "$DomainDns\$Name"
             }
         }
     }
@@ -4638,11 +4628,10 @@ function Resolve-IdentityReference {
         }
 
         return [PSCustomObject]@{
-            IdentityReferenceOriginal   = $IdentityReference
-            IdentityReferenceUnresolved = $IdentityReference
-            SIDString                   = $SIDString
-            IdentityReferenceNetBios    = "$DomainNetBios\$Name" -replace "^$ThisHostname\\", "$ThisHostname\"
-            IdentityReferenceDns        = "$DomainDns\$Name"
+            IdentityReference        = $IdentityReference
+            SIDString                = $SIDString
+            IdentityReferenceNetBios = "$DomainNetBios\$Name" -replace "^$ThisHostname\\", "$ThisHostname\"
+            IdentityReferenceDns     = "$DomainDns\$Name"
         }
 
     }
@@ -4801,6 +4790,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 

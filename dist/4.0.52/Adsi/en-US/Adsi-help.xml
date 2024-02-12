@@ -7926,7 +7926,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Based on the IdentityReference proprety of each Access Control Entry: Resolve SID to NT account name and vise-versa Resolve well-known SIDs Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name Add these properties (IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved) to the object and return it</maml:para>
+      <maml:para>Based on the IdentityReference proprety of each Access Control Entry: Resolve SID to NT account name and vise-versa Resolve well-known SIDs Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name Add these properties (IdentityReferenceSID,IdentityReferenceResolved) to the object and return it</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8386,7 +8386,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved, and AdsiProvider properties</maml:name>
+          <maml:name>[PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceResolved, and AdsiProvider properties</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>

@@ -26,7 +26,7 @@ Based on the IdentityReference proprety of each Access Control Entry:
 Resolve SID to NT account name and vise-versa
 Resolve well-known SIDs
 Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
-Add these properties (IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved) to the object and return it
+Add these properties (IdentityReferenceSID,IdentityReferenceResolved) to the object and return it
 
 ## EXAMPLES
 
@@ -395,7 +395,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### [System.Security.AccessControl.AuthorizationRuleCollection]$ACE
 ## OUTPUTS
 
-### [PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceName,IdentityReferenceResolved, and AdsiProvider properties
+### [PSCustomObject] Original object plus IdentityReferenceSID,IdentityReferenceResolved, and AdsiProvider properties
 ## NOTES
 Dependencies:
     Get-DirectoryEntry
