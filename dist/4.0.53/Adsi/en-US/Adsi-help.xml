@@ -602,9 +602,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:description>
             <maml:para>The NTFS AccessControlEntry object(s), grouped by their IdentityReference property TODO: Use System.Security.Principal.NTAccount instead</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Object[]</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
-            <maml:name>System.Object[]</maml:name>
+            <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
@@ -896,9 +896,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
         <maml:description>
           <maml:para>The NTFS AccessControlEntry object(s), grouped by their IdentityReference property TODO: Use System.Security.Principal.NTAccount instead</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Object[]</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
-          <maml:name>System.Object[]</maml:name>
+          <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>

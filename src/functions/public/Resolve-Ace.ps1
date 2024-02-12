@@ -171,10 +171,9 @@ function Resolve-Ace {
     }
 
     $IdentityReference = $ACE.IdentityReference.ToString()
-
-    if ([string]::IsNullOrEmpty($IdentityReference)) {
-        continue
-    }
+    #if ([string]::IsNullOrEmpty($IdentityReference)) {
+    #    continue
+    #}
 
     $ThisServerDns = $null
     $DomainNetBios = $null
@@ -187,6 +186,7 @@ function Resolve-Ace {
     #}
 
     switch -Wildcard ($IdentityReference) {
+
         "S-1-*" {
             # IdentityReference is a SID (Revision 1)
             $IndexOfLastHyphen = $IdentityReference.LastIndexOf("-")

@@ -13,7 +13,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ## SYNTAX
 
 ```
-ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <Object[]>] [-NoGroupMembers]
+ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
  [[-ACEsByResolvedID] <Hashtable>] [[-PrincipalsByResolvedID] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
@@ -167,7 +167,7 @@ The NTFS AccessControlEntry object(s), grouped by their IdentityReference proper
 TODO: Use System.Security.Principal.NTAccount instead
 
 ```yaml
-Type: System.Object[]
+Type: System.String
 Parameter Sets: (All)
 Aliases:
 
