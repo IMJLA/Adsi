@@ -161,7 +161,7 @@ function Resolve-Acl {
 
     $ACL = $ACLsByPath[$ItemPath]
 
-    if ($ACL.Owner) {
+    if ($ACL.Owner.IdentityReference) {
         Write-LogMsg -Text "Resolve-Ace -ACE $($ACL.Owner) -ACEPropertyName @('$($ACEPropertyName -join "','")') @PSBoundParameters" @LogParams
         Resolve-Ace -ACE $ACL.Owner @PSBoundParameters
     }
