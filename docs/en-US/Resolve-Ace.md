@@ -13,11 +13,11 @@ Use ADSI to lookup info about IdentityReferences from Authorization Rule Collect
 ## SYNTAX
 
 ```
-Resolve-Ace [[-ACE] <Object>] [[-ACLsByPath] <Hashtable>] [[-ItemPath] <Object>]
- [[-ACEsByResolvedID] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-Win32AccountsBySID] <Hashtable>]
- [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
+Resolve-Ace [[-ACE] <Object>] [[-ACLsByPath] <Hashtable>] [[-ItemPath] <Object>] [[-ACEsByGUID] <Hashtable>]
+ [[-AceGUIDsByResolvedID] <Hashtable>] [[-AceGUIDsByPath] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>]
+ [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
+ [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-ACEPropertyName] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -126,6 +126,36 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### -AceGUIDsByPath
+Cache of access control entry GUIDs keyed by their paths
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AceGUIDsByResolvedID
+Cache of access control entry GUIDs keyed by their resolved identities
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ACEPropertyName
 {{ Fill ACEPropertyName Description }}
 
@@ -135,14 +165,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 17
+Position: 19
 Default value: (Get-Member -InputObject $ACE -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ACEsByResolvedID
-Cache of access control entries keyed by their resolved identities
+### -ACEsByGUID
+Cache of access control entries keyed by GUID generated in this function
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -180,7 +210,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 15
+Position: 17
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -195,7 +225,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 16
+Position: 18
 Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -212,7 +242,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -227,7 +257,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 12
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -242,7 +272,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 10
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -257,7 +287,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 11
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -287,7 +317,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 14
+Position: 16
 Default value: $Global:LogMessages
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -319,7 +349,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
+Position: 14
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -336,7 +366,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: 13
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -351,7 +381,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 15
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -366,7 +396,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 9
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -381,7 +411,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 8
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False

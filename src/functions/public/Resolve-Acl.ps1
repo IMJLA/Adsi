@@ -98,8 +98,14 @@ function Resolve-Acl {
         # Cache of access control lists keyed by path
         [hashtable]$ACLsByPath = [hashtable]::Synchronized(@{}),
 
-        # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
+        # Cache of access control entries keyed by GUID generated in this function
+        [hashtable]$ACEsByGUID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of access control entry GUIDs keyed by their resolved identities
+        [hashtable]$AceGUIDsByResolvedID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of access control entry GUIDs keyed by their paths
+        [hashtable]$AceGUIDsByPath = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups

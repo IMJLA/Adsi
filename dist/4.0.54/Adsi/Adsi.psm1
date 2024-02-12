@@ -3730,8 +3730,14 @@ function Resolve-Ace {
         )]
         [object]$ItemPath,
 
-        # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
+        # Cache of access control entries keyed by GUID generated in this function
+        [hashtable]$ACEsByGUID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of access control entry GUIDs keyed by their resolved identities
+        [hashtable]$AceGUIDsByResolvedID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of access control entry GUIDs keyed by their paths
+        [hashtable]$AceGUIDsByPath = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -3912,7 +3918,7 @@ function Resolve-Ace {
     Write-LogMsg @LogParams -Text "Resolve-IdentityReference -IdentityReference '$IdentityReference' -AdsiServer `$AdsiServer # ADSI server '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)'"
     $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
 
-    # not sure if I should add a param to offer DNS instead of NetBIOS
+    # TODO: add a param to offer DNS instead of or in addition to NetBIOS
 
     $ObjectProperties = @{
         AdsiProvider              = $AdsiServer.AdsiProvider
@@ -3926,13 +3932,29 @@ function Resolve-Ace {
     }
     $OutputObject = [PSCustomObject]$ObjectProperties
 
-    $Key = $OutputObject.IdentityReferenceResolved
-    $CacheResult = $ACEsByResolvedID[$Key]
-    if (-not $CacheResult) {
-        $CacheResult = [System.Collections.Generic.List[object]]::new()
+    $Guid = [guid]::NewGuid()
+    $ACEs = $ACEsByGUID[$Guid]
+    if (-not $ACEs) {
+        $ACEs = [System.Collections.Generic.List[object]]::new()
     }
-    $CacheResult.Add($OutputObject)
-    $ACEsByResolvedID[$Key] = $CacheResult
+    $ACEs.Add($OutputObject)
+    $ACEsByGUID[$Guid] = $ACEs
+
+    $Key = $OutputObject.IdentityReferenceResolved
+    $AceGuids = $AceGUIDsByResolvedID[$Key]
+    if (-not $AceGuids) {
+        $AceGuids = [System.Collections.Generic.List[object]]::new()
+    }
+    $AceGuids.Add($Guid)
+    $AceGUIDsByResolvedID[$Key] = $AceGuids
+
+    $Key = $OutputObject.Path
+    $AceGuids = $AceGUIDsByPath[$Key]
+    if (-not $AceGuids) {
+        $AceGuids = [System.Collections.Generic.List[object]]::new()
+    }
+    $AceGuids.Add($Guid)
+    $AceGUIDsByPath[$Key] = $AceGuids
 
 }
 function Resolve-Acl {
@@ -4035,8 +4057,14 @@ function Resolve-Acl {
         # Cache of access control lists keyed by path
         [hashtable]$ACLsByPath = [hashtable]::Synchronized(@{}),
 
-        # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
+        # Cache of access control entries keyed by GUID generated in this function
+        [hashtable]$ACEsByGUID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of access control entry GUIDs keyed by their resolved identities
+        [hashtable]$AceGUIDsByResolvedID = ([hashtable]::Synchronized(@{})),
+
+        # Cache of access control entry GUIDs keyed by their paths
+        [hashtable]$AceGUIDsByPath = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -4760,6 +4788,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 
