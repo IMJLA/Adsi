@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.49
+Help Version: 4.0.50
 Locale: en-US
 ---
 
@@ -114,6 +114,9 @@ New-FakeDirectoryEntry [[-DirectoryPath] <string>]
 
 
 ### [Resolve-Ace](docs/en-US/Resolve-Ace.md)
+Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
+
+### [Resolve-Acl](docs/en-US/Resolve-Acl.md)
 Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
 
 ### [Resolve-IdentityReference](docs/en-US/Resolve-IdentityReference.md)
