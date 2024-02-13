@@ -380,9 +380,9 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         if ($ThisMember.sAmAccountName) {
-                            $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisObject.sAmAccountName)"
+                            $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.sAmAccountName)"
                         } else {
-                            $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisObject.Name)"
+                            $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                         }
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
 
