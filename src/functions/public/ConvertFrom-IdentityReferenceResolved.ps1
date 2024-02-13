@@ -395,6 +395,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                         $PrincipalsByResolvedID[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
+                        $ACEsByResolvedID[$ResolvedAccountName] = $AccessControlEntries
                         $ResolvedAccountName
 
                     }

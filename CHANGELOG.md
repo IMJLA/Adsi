@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.58] - 2024-02-12 - bugfix convertfrom-identityreferenceresolved missing update ace cache for group members
+
 ## [4.0.57] - 2024-02-12 - code cleanup
 
 ## [4.0.56] - 2024-02-12 - bugfix convertfrom-identityreferenceresolved
