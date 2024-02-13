@@ -688,7 +688,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     }
                 }
             }
-            $PropertiesToAdd['Name'] = "$DomainNetBIOS\$AccountName"
+            $PropertiesToAdd['ResolvedAccountName'] = "$DomainNetBIOS\$AccountName"
 
             # WinNT objects have a SchemaClassName property which is a string
             # LDAP objects have an objectClass property which is an ordered list of strings, the last being the class name of the object instance
@@ -726,17 +726,6 @@ function ConvertFrom-IdentityReferenceResolved {
                             # Include specific desired properties
                             $OutputProperties = @{}
 
-                            # Get any existing properties for inclusion later
-                            $InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
-
-                            # Include any existing properties found earlier
-                            ForEach ($ThisProperty in $InputProperties) {
-                                $OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
-                            }
-
-                            # Output the object
-                            [PSCustomObject]$OutputProperties
-
                         } else {
 
                             # Include specific desired properties
@@ -748,31 +737,44 @@ function ConvertFrom-IdentityReferenceResolved {
                                 }
                             }
 
-                            # Get any existing properties for inclusion later
-                            $InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
-
-                            # Include any existing properties found earlier
-                            ForEach ($ThisProperty in $InputProperties) {
-                                $OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
-                            }
-
-                            # Output the object
-                            [PSCustomObject]$OutputProperties
-
                         }
+
+                        # Get any existing properties for inclusion later
+                        $InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+
+                        # Include any existing properties found earlier
+                        ForEach ($ThisProperty in $InputProperties) {
+                            $OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
+                        }
+
+                        if ($ThisMember.sAmAccountName) {
+                            $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisObject.sAmAccountName)"
+                        } else {
+                            $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisObject.Name)"
+                        }
+                        $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
+
+
+                        $PrincipalsByResolvedID[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
+
+                        # Output the object
+                        $ResolvedAccountName
 
                     }
 
                 }
+
             }
 
             $PropertiesToAdd['Members'] = $GroupMembers
             Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members for '$IdentityReference'"
 
         } else {
+
             $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
             Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be matched to a DirectoryEntry"
             $LogParams['Type'] = $DebugOutputStream
+
         }
 
         $PrincipalsByResolvedID[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
@@ -3943,7 +3945,7 @@ function Resolve-Ace {
     $Key = $OutputObject.IdentityReferenceResolved
     $AceGuids = $AceGUIDsByResolvedID[$Key]
     if (-not $AceGuids) {
-        $AceGuids = [System.Collections.Generic.List[object]]::new()
+        $AceGuids = [System.Collections.Generic.List[guid]]::new()
     }
     $AceGuids.Add($Guid)
     $AceGUIDsByResolvedID[$Key] = $AceGuids
@@ -3951,7 +3953,7 @@ function Resolve-Ace {
     $Key = $OutputObject.Path
     $AceGuids = $AceGUIDsByPath[$Key]
     if (-not $AceGuids) {
-        $AceGuids = [System.Collections.Generic.List[object]]::new()
+        $AceGuids = [System.Collections.Generic.List[guid]]::new()
     }
     $AceGuids.Add($Guid)
     $AceGUIDsByPath[$Key] = $AceGuids
@@ -4788,6 +4790,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 

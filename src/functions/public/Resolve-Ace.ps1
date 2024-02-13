@@ -316,7 +316,7 @@ function Resolve-Ace {
     $Key = $OutputObject.IdentityReferenceResolved
     $AceGuids = $AceGUIDsByResolvedID[$Key]
     if (-not $AceGuids) {
-        $AceGuids = [System.Collections.Generic.List[object]]::new()
+        $AceGuids = [System.Collections.Generic.List[guid]]::new()
     }
     $AceGuids.Add($Guid)
     $AceGUIDsByResolvedID[$Key] = $AceGuids
@@ -324,7 +324,7 @@ function Resolve-Ace {
     $Key = $OutputObject.Path
     $AceGuids = $AceGUIDsByPath[$Key]
     if (-not $AceGuids) {
-        $AceGuids = [System.Collections.Generic.List[object]]::new()
+        $AceGuids = [System.Collections.Generic.List[guid]]::new()
     }
     $AceGuids.Add($Guid)
     $AceGUIDsByPath[$Key] = $AceGuids
