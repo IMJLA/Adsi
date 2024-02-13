@@ -615,6 +615,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 # Lookup other information about the domain using its SID as the key
                 $DomainObject = $DomainsBySID[$DomainSid]
+
                 if ($DomainObject) {
                     $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users,group"
                     $DomainNetBIOS = $DomainObject.Netbios
@@ -631,19 +632,23 @@ function ConvertFrom-IdentityReferenceResolved {
                     Write-LogMsg @LogParams -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
                     $LogParams['Type'] = $DebugOutputStream
                 }
+
                 $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
                 $DirectoryEntry = $MembersOfUsersGroup |
                 Where-Object -FilterScript { ($SamaccountnameOrSid -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
 
             } else {
+
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
                 $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+
                 if ($DomainNetbiosCacheResult) {
                     $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamaccountnameOrSid"
                 } else {
                     $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamaccountnameOrSid"
                 }
+
                 $GetDirectoryEntryParams['PropertiesToLoad'] = @(
                     'members',
                     'objectClass',
@@ -659,6 +664,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     'Title',
                     'primaryGroupToken'
                 )
+
                 try {
                     $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
                 } catch {
@@ -666,6 +672,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
                     $LogParams['Type'] = $DebugOutputStream
                 }
+
             }
 
         }
@@ -675,6 +682,7 @@ function ConvertFrom-IdentityReferenceResolved {
             DomainNetbios  = $DomainNetBIOS
             DirectoryEntry = $DirectoryEntry
         }
+
         if ($null -ne $DirectoryEntry) {
 
             if ($DirectoryEntry.Name) {
@@ -752,12 +760,9 @@ function ConvertFrom-IdentityReferenceResolved {
                         } else {
                             $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                         }
+
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
-
-
                         $PrincipalsByResolvedID[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
-
-                        # Output the object
                         $ResolvedAccountName
 
                     }
@@ -4790,6 +4795,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 
