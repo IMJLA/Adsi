@@ -8682,6 +8682,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           </dev:type>
           <dev:defaultValue>(Get-Member -InputObject $ItemPath -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="19" aliases="none">
+          <maml:name>InheritanceFlagResolved</maml:name>
+          <maml:description>
+            <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String[]</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>ACLsByPath</maml:name>
           <maml:description>
@@ -8926,6 +8938,18 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
           <maml:uri />
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="19" aliases="none">
+        <maml:name>InheritanceFlagResolved</maml:name>
+        <maml:description>
+          <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>ItemPath</maml:name>

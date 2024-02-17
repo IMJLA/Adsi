@@ -296,8 +296,11 @@ function Resolve-Ace {
     $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
 
     # TODO: add a param to offer DNS instead of or in addition to NetBIOS
-
+    
+    $Scope = $InheritanceFlagResolved[$ACE.InheritanceFlags]
+        
     $ObjectProperties = @{
+        Access                    = "$($ACE.ACEAccessControlType) $FileSystemRights $Scope"
         AdsiProvider              = $AdsiServer.AdsiProvider
         AdsiServer                = $AdsiServer.Dns
         IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
@@ -306,6 +309,7 @@ function Resolve-Ace {
         SourceOfAccess            = $Source
         PSTypeName                = 'Permission.AccessControlEntry'
     }
+
     ForEach ($ThisProperty in $ACEPropertyName) {
         $ObjectProperties[$ThisProperty] = $ACE.$ThisProperty
     }

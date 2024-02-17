@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.74] - 2024-02-17 - add inheritance flag resolution
+
+## [4.0.73] - 2024-02-17 - add inheritance flag resolution
+
+## [4.0.72] - 2024-02-17 - add inheritance flag resolution
+
+## [4.0.71] - 2024-02-17 - add inheritance flag resolution
+
 ## [4.0.70] - 2024-02-17 - bugfix WinNT vs LDAP differentiation in ConvertFrom-IdentityReferenceResolved
 
 ## [4.0.69] - 2024-02-17 - eliminate get-directoryentryproperty

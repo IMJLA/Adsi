@@ -3952,8 +3952,11 @@ function Resolve-Ace {
     $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
 
     # TODO: add a param to offer DNS instead of or in addition to NetBIOS
-
+    
+    $Scope = $InheritanceFlagResolved[$ACE.InheritanceFlags]
+        
     $ObjectProperties = @{
+        Access                    = "$($ACE.ACEAccessControlType) $FileSystemRights $Scope"
         AdsiProvider              = $AdsiServer.AdsiProvider
         AdsiServer                = $AdsiServer.Dns
         IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
@@ -3962,6 +3965,7 @@ function Resolve-Ace {
         SourceOfAccess            = $Source
         PSTypeName                = 'Permission.AccessControlEntry'
     }
+
     ForEach ($ThisProperty in $ACEPropertyName) {
         $ObjectProperties[$ThisProperty] = $ACE.$ThisProperty
     }
@@ -4148,7 +4152,10 @@ function Resolve-Acl {
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
-        [string[]]$ACEPropertyName = (Get-Member -InputObject $ItemPath -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        [string[]]$ACEPropertyName = (Get-Member -InputObject $ItemPath -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name,
+
+        # String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum
+        [string[]]$InheritanceFlagResolved
 
     )
 
@@ -4823,6 +4830,10 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
+
+
+
 
 
 

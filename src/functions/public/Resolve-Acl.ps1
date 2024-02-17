@@ -154,7 +154,10 @@ function Resolve-Acl {
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
-        [string[]]$ACEPropertyName = (Get-Member -InputObject $ItemPath -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        [string[]]$ACEPropertyName = (Get-Member -InputObject $ItemPath -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name,
+
+        # String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum
+        [string[]]$InheritanceFlagResolved
 
     )
 
