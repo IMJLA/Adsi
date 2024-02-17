@@ -336,6 +336,7 @@ function ConvertFrom-IdentityReferenceResolved {
             # WinNT objects have a SchemaClassName property which is a string
             # LDAP objects have an objectClass property which is an ordered list of strings, the last being the class name of the object instance
             # ToDo: LDAP objects may have SchemaClassName too.  When/why?  Should I just request it always in the list of properties?
+            # ToDo: Actually I should create an AdsiObjectType property of my own or something...don't expose the dependency
             if (-not $DirectoryEntry.SchemaClassName) {
                 $PropertiesToAdd['SchemaClassName'] = @($DirectoryEntry.Properties['objectClass'])[-1] #untested but should work, last value should be the correct one https://learn.microsoft.com/en-us/windows/win32/ad/retrieving-the-objectclass-property
             }
@@ -345,7 +346,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 if (
                     # WinNT DirectoryEntries do not contain an objectClass property
                     # If this property exists it is an LDAP DirectoryEntry rather than WinNT
-                    $PropertiesToAdd['SchemaClassName'] -eq 'group'
+                    $PropertiesToAdd.ContainsKey('objectClass')
                 ) {
                     # Retrieve the members of groups from the LDAP provider
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$IdentityReference'"

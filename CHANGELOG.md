@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.70] - 2024-02-17 - bugfix WinNT vs LDAP differentiation in ConvertFrom-IdentityReferenceResolved
+
 ## [4.0.69] - 2024-02-17 - eliminate get-directoryentryproperty
 
 ## [4.0.68] - 2024-02-17 - add position back we need it
