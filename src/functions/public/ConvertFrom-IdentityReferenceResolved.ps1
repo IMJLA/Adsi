@@ -316,15 +316,8 @@ function ConvertFrom-IdentityReferenceResolved {
         
 
         if ($null -ne $DirectoryEntry) {
-
-            if ($DirectoryEntry.GetType().FullName -eq 'System.DirectoryServices.DirectoryEntry') {
-                $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
-            } else {
-                Write-Warning $DirectoryEntry.GetType().FullName
-                Write-Warning $($DirectoryEntry | fl * | Out-string)
-                
-                pause
-            }
+            
+            $null = Get-DirectoryEntryProperty $DirectoryEntry -PropertyDictionary $PropertiesToAdd
             
             if ($DirectoryEntry.Name) {
                 $AccountName = $DirectoryEntry.Name

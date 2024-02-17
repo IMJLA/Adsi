@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.65] - 2024-02-17 - remove debug
+
 ## [4.0.64] - 2024-02-17 - added ability to handle multiple input types to get-directoryentryproperty
 
 ## [4.0.63] - 2024-02-17 - added ability to handle multiple input types to get-directoryentryproperty
