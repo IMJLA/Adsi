@@ -310,10 +310,11 @@ function ConvertFrom-IdentityReferenceResolved {
         }
 
         $PropertiesToAdd = @{
-            DomainDn       = $DomainDn
-            DomainNetbios  = $DomainNetBIOS
-            DirectoryEntry = $DirectoryEntry
+            DomainDn      = $DomainDn
+            DomainNetbios = $DomainNetBIOS
         }
+
+        $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
 
         if ($null -ne $DirectoryEntry) {
 

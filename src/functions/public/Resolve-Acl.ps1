@@ -169,12 +169,12 @@ function Resolve-Acl {
 
     if ($ACL.Owner.IdentityReference) {
         Write-LogMsg -Text "Resolve-Ace -ACE $($ACL.Owner) -ACEPropertyName @('$($ACEPropertyName -join "','")') @PSBoundParameters" @LogParams
-        Resolve-Ace -ACE $ACL.Owner @PSBoundParameters
+        Resolve-Ace -ACE $ACL.Owner -Source 'Ownership' @PSBoundParameters
     }
 
     ForEach ($ACE in $ACL.Access) {
         Write-LogMsg -Text "Resolve-Ace -ACE $ACE -ACEPropertyName @('$($ACEPropertyName -join "','")') @PSBoundParameters" @LogParams
-        Resolve-Ace -ACE $ACE @PSBoundParameters
+        Resolve-Ace -ACE $ACE -Source 'Discretionary Access Control List' @PSBoundParameters
     }
 
 }

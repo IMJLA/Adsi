@@ -19,25 +19,40 @@ function ConvertFrom-SearchResult {
 
     process {
         ForEach ($ThisSearchResult in $SearchResult) {
-            $ObjectWithProperties = $ThisSearchResult |
-            Select-Object -Property *
+            #$ObjectWithProperties = $ThisSearchResult |
+            #Select-Object -Property *
+            #
+            #$ObjectNoteProperties = $ObjectWithProperties |
+            #Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
+            #
+            #$ThisObject = @{}
+            #
+            ## Enumerate the keys of the ResultPropertyCollection
+            #ForEach ($ThisProperty in $ThisSearchResult.Properties.Keys) {
+            #   $ThisObject = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
+            #}
+            #
+            ## We will allow any existing properties to override members of the ResultPropertyCollection
+            #ForEach ($ThisObjProperty in $ObjectNoteProperties) {
+            #    $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+            #}
+            #
+            #[PSCustomObject]$ThisObject
 
-            $ObjectNoteProperties = $ObjectWithProperties |
-            Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
-
-            $ThisObject = @{}
+            $OutputObject = @{}
 
             # Enumerate the keys of the ResultPropertyCollection
             ForEach ($ThisProperty in $ThisSearchResult.Properties.Keys) {
-                $ThisObject = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
+                $null = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
             }
 
             # We will allow any existing properties to override members of the ResultPropertyCollection
-            ForEach ($ThisObjProperty in $ObjectNoteProperties) {
-                $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+            ForEach ($ThisProperty in ($ThisSearchResult | Get-Member -View All -MemberType Property).Name) {
+                $null = ConvertTo-SimpleProperty -InputObject $ThisSearchResult -Property $ThisProperty -PropertyDictionary $OutputObject
             }
 
-            [PSCustomObject]$ThisObject
+            [PSCustomObject]$OutputObject
+
         }
     }
 }

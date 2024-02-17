@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.59] - 2024-02-17 - add get-directoryentryproperty in convertfrom-identityreferenceresolved
+
 ## [4.0.58] - 2024-02-12 - bugfix convertfrom-identityreferenceresolved missing update ace cache for group members
 
 ## [4.0.57] - 2024-02-12 - code cleanup

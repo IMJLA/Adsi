@@ -5,16 +5,16 @@ online version:
 schema: 2.0.0
 ---
 
-# ConvertFrom-DirectoryEntry
+# Get-DirectoryEntryProperty
 
 ## SYNOPSIS
-Convert a DirectoryEntry to a PSCustomObject
+Fill a hashtable with the properties of a DirectoryEntry
 
 ## SYNTAX
 
 ```
-ConvertFrom-DirectoryEntry [[-DirectoryEntry] <DirectoryEntry[]>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+Get-DirectoryEntryProperty [[-DirectoryEntry] <DirectoryEntry>] [-PropertyTable <Hashtable>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -36,7 +36,7 @@ PS C:\> {{ Add example code here }}
 {{ Fill DirectoryEntry Description }}
 
 ```yaml
-Type: System.DirectoryServices.DirectoryEntry[]
+Type: System.DirectoryServices.DirectoryEntry
 Parameter Sets: (All)
 Aliases:
 
@@ -58,6 +58,21 @@ Aliases: proga
 Required: False
 Position: Named
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PropertyTable
+{{ Fill PropertyTable Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: @{}
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

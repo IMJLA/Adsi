@@ -343,27 +343,29 @@ function ConvertFrom-DirectoryEntry {
 
     param (
         [Parameter(
-            Position = 0,
-            ValueFromPipeline
+            Position = 0
         )]
         [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
     )
+    ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
+        #$ObjectWithProperties = $ThisDirectoryEntry |
+        #Select-Object -Property *
 
-    process {
-        ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
-            $ObjectWithProperties = $ThisDirectoryEntry |
-            Select-Object -Property *
+        #$ObjectNoteProperties = $ObjectWithProperties |
+        #Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
+        #
+        #$ThisObject = @{}
+        #ForEach ($ThisObjProperty in $ObjectNoteProperties) {
+        #    $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+        #}
+        #
+        #[PSCustomObject]$ThisObject
 
-            $ObjectNoteProperties = $ObjectWithProperties |
-            Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
-
-            $ThisObject = @{}
-            ForEach ($ThisObjProperty in $ObjectNoteProperties) {
-                $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
-            }
-
-            [PSCustomObject]$ThisObject
+        $OutputObject = @{}
+        ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+            $null = ConvertTo-SimpleProperty -InputObject $ThisDirectoryEntry -Property $Prop -PropertyDictionary $OutputObject
         }
+        [PSCustomObject]$OutputObject
     }
 }
 function ConvertFrom-IdentityReferenceResolved {
@@ -678,10 +680,11 @@ function ConvertFrom-IdentityReferenceResolved {
         }
 
         $PropertiesToAdd = @{
-            DomainDn       = $DomainDn
-            DomainNetbios  = $DomainNetBIOS
-            DirectoryEntry = $DirectoryEntry
+            DomainDn      = $DomainDn
+            DomainNetbios = $DomainNetBIOS
         }
+
+        $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
 
         if ($null -ne $DirectoryEntry) {
 
@@ -865,25 +868,40 @@ function ConvertFrom-SearchResult {
 
     process {
         ForEach ($ThisSearchResult in $SearchResult) {
-            $ObjectWithProperties = $ThisSearchResult |
-            Select-Object -Property *
+            #$ObjectWithProperties = $ThisSearchResult |
+            #Select-Object -Property *
+            #
+            #$ObjectNoteProperties = $ObjectWithProperties |
+            #Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
+            #
+            #$ThisObject = @{}
+            #
+            ## Enumerate the keys of the ResultPropertyCollection
+            #ForEach ($ThisProperty in $ThisSearchResult.Properties.Keys) {
+            #   $ThisObject = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
+            #}
+            #
+            ## We will allow any existing properties to override members of the ResultPropertyCollection
+            #ForEach ($ThisObjProperty in $ObjectNoteProperties) {
+            #    $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+            #}
+            #
+            #[PSCustomObject]$ThisObject
 
-            $ObjectNoteProperties = $ObjectWithProperties |
-            Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
-
-            $ThisObject = @{}
+            $OutputObject = @{}
 
             # Enumerate the keys of the ResultPropertyCollection
             ForEach ($ThisProperty in $ThisSearchResult.Properties.Keys) {
-                $ThisObject = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
+                $null = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
             }
 
             # We will allow any existing properties to override members of the ResultPropertyCollection
-            ForEach ($ThisObjProperty in $ObjectNoteProperties) {
-                $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+            ForEach ($ThisProperty in ($ThisSearchResult | Get-Member -View All -MemberType Property).Name) {
+                $null = ConvertTo-SimpleProperty -InputObject $ThisSearchResult -Property $ThisProperty -PropertyDictionary $OutputObject
             }
 
-            [PSCustomObject]$ThisObject
+            [PSCustomObject]$OutputObject
+
         }
     }
 }
@@ -3131,6 +3149,31 @@ function Get-DirectoryEntry {
     return $DirectoryEntry
 
 }
+function Get-DirectoryEntryProperty {
+    <#
+    .SYNOPSIS
+    Fill a hashtable with the properties of a DirectoryEntry
+    .DESCRIPTION
+    Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
+    This obfuscates the troublesome PropertyCollection and PropertyValueCollection and Hashtable aspects of working with ADSI
+    .NOTES
+    # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of DirectoryEntry to see how to get those properties
+    #>
+
+    param (
+        [Parameter(
+            Position = 0
+        )]
+        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry,
+
+        [hashtable]$PropertyTable = @{}
+    )
+
+    ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+        $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertyTable
+    }
+
+}
 function Get-ParentDomainDnsName {
     param (
 
@@ -3794,7 +3837,11 @@ function Resolve-Ace {
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
-        [string[]]$ACEPropertyName = (Get-Member -InputObject $ACE -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        [string[]]$ACEPropertyName = (Get-Member -InputObject $ACE -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name,
+
+        # Will be set as the Source property of the output object.
+        # Intended to reflect permissions resulting from Ownership rather than Discretionary Access Lists
+        [string]$Source
 
     )
 
@@ -3934,6 +3981,8 @@ function Resolve-Ace {
         IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
         IdentityReferenceResolved = $ResolvedIdentityReference.IdentityReferenceNetBios
         Path                      = $ItemPath
+        SourceOfAccess            = $Source
+        PSTypeName                = 'Permission.AccessControlEntry'
     }
     ForEach ($ThisProperty in $ACEPropertyName) {
         $ObjectProperties[$ThisProperty] = $ACE.$ThisProperty
@@ -4136,12 +4185,12 @@ function Resolve-Acl {
 
     if ($ACL.Owner.IdentityReference) {
         Write-LogMsg -Text "Resolve-Ace -ACE $($ACL.Owner) -ACEPropertyName @('$($ACEPropertyName -join "','")') @PSBoundParameters" @LogParams
-        Resolve-Ace -ACE $ACL.Owner @PSBoundParameters
+        Resolve-Ace -ACE $ACL.Owner -Source 'Ownership' @PSBoundParameters
     }
 
     ForEach ($ACE in $ACL.Access) {
         Write-LogMsg -Text "Resolve-Ace -ACE $ACE -ACEPropertyName @('$($ACEPropertyName -join "','")') @PSBoundParameters" @LogParams
-        Resolve-Ace -ACE $ACE @PSBoundParameters
+        Resolve-Ace -ACE $ACE -Source 'Discretionary Access Control List' @PSBoundParameters
     }
 
 }
@@ -4795,7 +4844,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-DirectoryEntryProperty','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 

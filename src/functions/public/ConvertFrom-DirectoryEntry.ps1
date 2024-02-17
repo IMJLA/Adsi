@@ -11,26 +11,28 @@ function ConvertFrom-DirectoryEntry {
 
     param (
         [Parameter(
-            Position = 0,
-            ValueFromPipeline
+            Position = 0
         )]
         [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
     )
+    ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
+        #$ObjectWithProperties = $ThisDirectoryEntry |
+        #Select-Object -Property *
 
-    process {
-        ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
-            $ObjectWithProperties = $ThisDirectoryEntry |
-            Select-Object -Property *
+        #$ObjectNoteProperties = $ObjectWithProperties |
+        #Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
+        #
+        #$ThisObject = @{}
+        #ForEach ($ThisObjProperty in $ObjectNoteProperties) {
+        #    $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
+        #}
+        #
+        #[PSCustomObject]$ThisObject
 
-            $ObjectNoteProperties = $ObjectWithProperties |
-            Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
-
-            $ThisObject = @{}
-            ForEach ($ThisObjProperty in $ObjectNoteProperties) {
-                $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
-            }
-
-            [PSCustomObject]$ThisObject
+        $OutputObject = @{}
+        ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+            $null = ConvertTo-SimpleProperty -InputObject $ThisDirectoryEntry -Property $Prop -PropertyDictionary $OutputObject
         }
+        [PSCustomObject]$OutputObject
     }
 }

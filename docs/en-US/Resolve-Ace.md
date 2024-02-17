@@ -18,7 +18,7 @@ Resolve-Ace [[-ACE] <Object>] [[-ACLsByPath] <Hashtable>] [[-ItemPath] <Object>]
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
- [[-ACEPropertyName] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-ACEPropertyName] <String[]>] [[-Source] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -333,6 +333,22 @@ Aliases: proga
 
 Required: False
 Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Source
+Will be set as the Source property of the output object.
+Intended to reflect permissions resulting from Ownership rather than Discretionary Access Lists
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 20
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
