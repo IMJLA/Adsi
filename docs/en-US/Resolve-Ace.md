@@ -304,7 +304,7 @@ Aliases:
 
 Required: False
 Position: 21
-Default value: None
+Default value: @('this folder but not subfolders','this folder and subfolders','this folder and files, but not subfolders','this folder, subfolders, and files')
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

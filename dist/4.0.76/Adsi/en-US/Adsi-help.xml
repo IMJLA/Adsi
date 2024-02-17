@@ -8099,7 +8099,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>@('this folder but not subfolders','this folder and subfolders','this folder and files, but not subfolders','this folder, subfolders, and files')</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="3" aliases="none">
           <maml:name>ItemPath</maml:name>
@@ -8356,7 +8356,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>@('this folder but not subfolders','this folder and subfolders','this folder and files, but not subfolders','this folder, subfolders, and files')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="3" aliases="none">
         <maml:name>ItemPath</maml:name>

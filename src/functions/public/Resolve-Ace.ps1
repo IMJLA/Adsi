@@ -166,7 +166,8 @@ function Resolve-Ace {
         [string]$Source,
 
         # String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum
-        [string[]]$InheritanceFlagResolved
+        # Forced to use a single line as a workaround to a PlatyPS bug
+        [string[]]$InheritanceFlagResolved = @('this folder but not subfolders','this folder and subfolders','this folder and files, but not subfolders','this folder, subfolders, and files')
 
     )
 
