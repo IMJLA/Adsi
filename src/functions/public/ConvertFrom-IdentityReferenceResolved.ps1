@@ -317,7 +317,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -ne $DirectoryEntry) {
             
-            # Rely on positional arguments to have PowerShell identify ParameterSet based on object type
+            # Rely on PowerShell to identify ParameterSet based on object type
             $null = Get-DirectoryEntryProperty $DirectoryEntry -PropertyDictionary $PropertiesToAdd
             
             if ($DirectoryEntry.Name) {

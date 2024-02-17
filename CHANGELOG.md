@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.67] - 2024-02-17 - remove param position
+
 ## [4.0.66] - 2024-02-17 - bugfix positional args when calling get-directoryentryproperty
 
 ## [4.0.65] - 2024-02-17 - remove debug
