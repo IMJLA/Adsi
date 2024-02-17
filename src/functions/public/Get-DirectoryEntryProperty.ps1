@@ -12,12 +12,14 @@ function Get-DirectoryEntryProperty {
     param (
 
         [Parameter(
-            ParameterSetName = 'DirectoryEntry'
+            ParameterSetName = 'DirectoryEntry',
+            Position = 0
         )]
         [System.DirectoryServices.DirectoryEntry]$DirectoryEntry,
 
         [Parameter(
-            ParameterSetName = 'PSCustomObject'
+            ParameterSetName = 'PSCustomObject',
+            Position = 0
         )]
         [System.Management.Automation.PSCustomObject]$PSCustomObject,
 

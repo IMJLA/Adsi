@@ -14,13 +14,13 @@ Fill a hashtable with the properties of a DirectoryEntry
 
 ### DirectoryEntry
 ```
-Get-DirectoryEntryProperty [-DirectoryEntry <DirectoryEntry>] [-PropertyDictionary <Hashtable>]
+Get-DirectoryEntryProperty [[-DirectoryEntry] <DirectoryEntry>] [-PropertyDictionary <Hashtable>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### PSCustomObject
 ```
-Get-DirectoryEntryProperty [-PSCustomObject <PSCustomObject>] [-PropertyDictionary <Hashtable>]
+Get-DirectoryEntryProperty [[-PSCustomObject] <PSCustomObject>] [-PropertyDictionary <Hashtable>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -48,7 +48,7 @@ Parameter Sets: DirectoryEntry
 Aliases:
 
 Required: False
-Position: Named
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -93,7 +93,7 @@ Parameter Sets: PSCustomObject
 Aliases:
 
 Required: False
-Position: Named
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
