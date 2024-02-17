@@ -321,6 +321,8 @@ function ConvertFrom-IdentityReferenceResolved {
                 $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
             } else {
                 Write-Warning $DirectoryEntry.GetType().FullName
+                Write-Warning $($DirectoryEntry | fl * | Out-string)
+                
                 pause
             }
             

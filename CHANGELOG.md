@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.61] - 2024-02-17 - troubleshoot convertfrom-identityreferenceresolved
+
 ## [4.0.60] - 2024-02-17 - troubleshoot convertfrom-identityreferenceresolved
 
 ## [4.0.59] - 2024-02-17 - add get-directoryentryproperty in convertfrom-identityreferenceresolved
