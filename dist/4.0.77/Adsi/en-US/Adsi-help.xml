@@ -8092,7 +8092,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="21" aliases="none">
           <maml:name>InheritanceFlagResolved</maml:name>
           <maml:description>
-            <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum</maml:para>
+            <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum Parameter default value is on a single line as a workaround to a PlatyPS bug</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
@@ -8349,7 +8349,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="21" aliases="none">
         <maml:name>InheritanceFlagResolved</maml:name>
         <maml:description>
-          <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum</maml:para>
+          <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum Parameter default value is on a single line as a workaround to a PlatyPS bug</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
@@ -8709,14 +8709,14 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="19" aliases="none">
           <maml:name>InheritanceFlagResolved</maml:name>
           <maml:description>
-            <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum</maml:para>
+            <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum Parameter default value is on a single line as a workaround to a PlatyPS bug</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
             <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>@('this folder but not subfolders','this folder and subfolders','this folder and files, but not subfolders','this folder, subfolders, and files')</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>ACLsByPath</maml:name>
@@ -8966,14 +8966,14 @@ $FileSecurity = [System.IO.FileSystemAclExtensions]::GetAccessControl($Directory
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="19" aliases="none">
         <maml:name>InheritanceFlagResolved</maml:name>
         <maml:description>
-          <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum</maml:para>
+          <maml:para>String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum Parameter default value is on a single line as a workaround to a PlatyPS bug</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
           <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>@('this folder but not subfolders','this folder and subfolders','this folder and files, but not subfolders','this folder, subfolders, and files')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>ItemPath</maml:name>

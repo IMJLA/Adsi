@@ -281,6 +281,7 @@ Accept wildcard characters: False
 
 ### -InheritanceFlagResolved
 String translations indexed by value in the \[System.Security.AccessControl.InheritanceFlags\] enum
+Parameter default value is on a single line as a workaround to a PlatyPS bug
 
 ```yaml
 Type: System.String[]
@@ -289,7 +290,7 @@ Aliases:
 
 Required: False
 Position: 19
-Default value: None
+Default value: @('this folder but not subfolders','this folder and subfolders','this folder and files, but not subfolders','this folder, subfolders, and files')
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

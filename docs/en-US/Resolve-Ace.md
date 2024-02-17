@@ -296,6 +296,7 @@ Accept wildcard characters: False
 
 ### -InheritanceFlagResolved
 String translations indexed by value in the \[System.Security.AccessControl.InheritanceFlags\] enum
+Parameter default value is on a single line as a workaround to a PlatyPS bug
 
 ```yaml
 Type: System.String[]
