@@ -14,12 +14,14 @@ function Get-DirectoryEntryProperty {
             Position = 0
         )]
         [System.DirectoryServices.DirectoryEntry]$DirectoryEntry,
+        
+        
 
-        [hashtable]$PropertyTable = @{}
+        [hashtable]$PropertyDictionary = @{}
     )
 
     ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
-        $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertyTable
+        $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertyDictionary
     }
 
 }

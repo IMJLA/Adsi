@@ -13,7 +13,7 @@ Fill a hashtable with the properties of a DirectoryEntry
 ## SYNTAX
 
 ```
-Get-DirectoryEntryProperty [[-DirectoryEntry] <DirectoryEntry>] [-PropertyTable <Hashtable>]
+Get-DirectoryEntryProperty [[-DirectoryEntry] <DirectoryEntry>] [-PropertyDictionary <Hashtable>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -62,8 +62,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PropertyTable
-{{ Fill PropertyTable Description }}
+### -PropertyDictionary
+{{ Fill PropertyDictionary Description }}
 
 ```yaml
 Type: System.Collections.Hashtable
