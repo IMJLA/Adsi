@@ -687,7 +687,8 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -ne $DirectoryEntry) {
             
-            $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
+            # Rely on positional arguments to have PowerShell identify ParameterSet based on object type
+            $null = Get-DirectoryEntryProperty $DirectoryEntry -PropertyDictionary $PropertiesToAdd
             
             if ($DirectoryEntry.Name) {
                 $AccountName = $DirectoryEntry.Name
@@ -4859,6 +4860,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-DirectoryEntryProperty','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 
