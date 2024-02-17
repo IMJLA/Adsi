@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.78] - 2024-02-17 - bugfix access property
+
 ## [4.0.77] - 2024-02-17 - use single-line param as workaround for platyps bug
 
 ## [4.0.76] - 2024-02-17 - force single-lineparam as workaround for platyps bug

@@ -304,7 +304,7 @@ function Resolve-Ace {
     $Scope = $InheritanceFlagResolved[$ACE.InheritanceFlags]
         
     $ObjectProperties = @{
-        Access                    = "$($ACE.ACEAccessControlType) $FileSystemRights $Scope"
+        Access                    = "$($ACE.AccessControlType) $($ACE.FileSystemRights) $Scope"
         AdsiProvider              = $AdsiServer.AdsiProvider
         AdsiServer                = $AdsiServer.Dns
         IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
