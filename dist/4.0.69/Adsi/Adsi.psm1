@@ -682,13 +682,13 @@ function ConvertFrom-IdentityReferenceResolved {
         $PropertiesToAdd = @{
             DomainDn      = $DomainDn
             DomainNetbios = $DomainNetBIOS
-        }
-        
+        }        
 
         if ($null -ne $DirectoryEntry) {
             
-            # Use an argument instead of a named parameter. Rely on PowerShell to identify ParameterSet based on object type.
-            $null = Get-DirectoryEntryProperty $DirectoryEntry -PropertyDictionary $PropertiesToAdd
+            ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+                $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertiesToAdd
+            }
             
             if ($DirectoryEntry.Name) {
                 $AccountName = $DirectoryEntry.Name
@@ -3151,44 +3151,6 @@ function Get-DirectoryEntry {
     return $DirectoryEntry
 
 }
-function Get-DirectoryEntryProperty {
-    <#
-    .SYNOPSIS
-    Fill a hashtable with the properties of a DirectoryEntry
-    .DESCRIPTION
-    Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
-    This obfuscates the troublesome PropertyCollection and PropertyValueCollection and Hashtable aspects of working with ADSI
-    .NOTES
-    # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of DirectoryEntry to see how to get those properties
-    #>
-
-    param (
-
-        [Parameter(
-            ParameterSetName = 'DirectoryEntry',
-            Position = 0
-        )]
-        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry,
-
-        [Parameter(
-            ParameterSetName = 'PSCustomObject',
-            Position = 0
-        )]
-        [System.Management.Automation.PSCustomObject]$PSCustomObject,
-
-        [hashtable]$PropertyDictionary = @{}
-    )
-
-    if ($PSBoundParameters.ContainsKey('DirectoryEntry')) {
-        $Entry = $DirectoryEntry
-    } else {
-        $Entry = $PSCustomObject
-    }
-    ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
-        $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertyDictionary
-    }
-
-}
 function Get-ParentDomainDnsName {
     param (
 
@@ -4859,7 +4821,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-DirectoryEntryProperty','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 

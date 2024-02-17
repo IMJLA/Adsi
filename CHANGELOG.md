@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.69] - 2024-02-17 - eliminate get-directoryentryproperty
+
 ## [4.0.68] - 2024-02-17 - add position back we need it
 
 ## [4.0.67] - 2024-02-17 - remove param position
