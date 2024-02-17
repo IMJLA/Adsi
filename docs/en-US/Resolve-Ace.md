@@ -18,7 +18,8 @@ Resolve-Ace [[-ACE] <Object>] [[-ACLsByPath] <Hashtable>] [[-ItemPath] <Object>]
  [[-Win32AccountsBySID] <Hashtable>] [[-Win32AccountsByCaption] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
- [[-ACEPropertyName] <String[]>] [[-Source] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-ACEPropertyName] <String[]>] [[-Source] <String>] [[-InheritanceFlagResolved] <String[]>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -289,6 +290,21 @@ Aliases:
 Required: False
 Position: 11
 Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -InheritanceFlagResolved
+String translations indexed by value in the \[System.Security.AccessControl.InheritanceFlags\] enum
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 21
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

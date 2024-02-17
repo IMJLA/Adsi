@@ -163,7 +163,10 @@ function Resolve-Ace {
 
         # Will be set as the Source property of the output object.
         # Intended to reflect permissions resulting from Ownership rather than Discretionary Access Lists
-        [string]$Source
+        [string]$Source,
+
+        # String translations indexed by value in the [System.Security.AccessControl.InheritanceFlags] enum
+        [string[]]$InheritanceFlagResolved
 
     )
 
