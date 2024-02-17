@@ -313,11 +313,17 @@ function ConvertFrom-IdentityReferenceResolved {
             DomainDn      = $DomainDn
             DomainNetbios = $DomainNetBIOS
         }
-
-        $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
+        
 
         if ($null -ne $DirectoryEntry) {
 
+            if ($DirectoryEntry.GetType().FullName -eq 'System.DirectoryServices.DirectoryEntry') {
+                $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
+            } else {
+                Write-Warning $DirectoryEntry.GetType().FullName
+                pause
+            }
+            
             if ($DirectoryEntry.Name) {
                 $AccountName = $DirectoryEntry.Name
             } else {

@@ -683,11 +683,17 @@ function ConvertFrom-IdentityReferenceResolved {
             DomainDn      = $DomainDn
             DomainNetbios = $DomainNetBIOS
         }
-
-        $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
+        
 
         if ($null -ne $DirectoryEntry) {
 
+            if ($DirectoryEntry.GetType().FullName -eq 'System.DirectoryServices.DirectoryEntry') {
+                $null = Get-DirectoryEntryProperty -DirectoryEntry $DirectoryEntry -PropertyDictionary $PropertiesToAdd
+            } else {
+                Write-Warning $DirectoryEntry.GetType().FullName
+                pause
+            }
+            
             if ($DirectoryEntry.Name) {
                 $AccountName = $DirectoryEntry.Name
             } else {
@@ -4845,6 +4851,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-DirectoryEntryProperty','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 
