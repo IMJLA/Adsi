@@ -10,16 +10,27 @@ function Get-DirectoryEntryProperty {
     #>
 
     param (
+
         [Parameter(
+            ParameterSetName = 'DirectoryEntry',
             Position = 0
         )]
         [System.DirectoryServices.DirectoryEntry]$DirectoryEntry,
-        
-        
+
+        [Parameter(
+            ParameterSetName = 'PSCustomObject',
+            Position = 0
+        )]
+        [System.Management.Automation.PSCustomObject]$PSCustomObject,
 
         [hashtable]$PropertyDictionary = @{}
     )
 
+    if ($PSBoundParameters.ContainsKey('DirectoryEntry')) {
+        $Entry = $DirectoryEntry
+    } else {
+        $Entry = $PSCustomObject
+    }
     ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
         $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertyDictionary
     }

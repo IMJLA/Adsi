@@ -12,8 +12,15 @@ Fill a hashtable with the properties of a DirectoryEntry
 
 ## SYNTAX
 
+### DirectoryEntry
 ```
 Get-DirectoryEntryProperty [[-DirectoryEntry] <DirectoryEntry>] [-PropertyDictionary <Hashtable>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```
+
+### PSCustomObject
+```
+Get-DirectoryEntryProperty [[-PSCustomObject] <PSCustomObject>] [-PropertyDictionary <Hashtable>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -37,7 +44,7 @@ PS C:\> {{ Add example code here }}
 
 ```yaml
 Type: System.DirectoryServices.DirectoryEntry
-Parameter Sets: (All)
+Parameter Sets: DirectoryEntry
 Aliases:
 
 Required: False
@@ -73,6 +80,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: @{}
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PSCustomObject
+{{ Fill PSCustomObject Description }}
+
+```yaml
+Type: System.Management.Automation.PSCustomObject
+Parameter Sets: PSCustomObject
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
