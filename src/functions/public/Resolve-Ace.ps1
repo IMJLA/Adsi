@@ -247,7 +247,7 @@ function Resolve-Ace {
     
     $OutputObject = [PSCustomObject]$ObjectProperties
     $Guid = [guid]::NewGuid()    
-    Add-CacheItem -Cache $ACEsByGUID -Key $Guid -Value $OutputObject -Type [object]
+    Add-CacheItem -Cache $ACEsByGUID -Key $Guid -Value $OutputObject -Type ([object])
     $Type = [guid]
     Add-CacheItem -Cache $AceGUIDsByResolvedID -Key $OutputObject.IdentityReferenceResolved -Value $Guid -Type $Type
     Add-CacheItem -Cache $AceGUIDsByPath -Key $OutputObject.Path -Value $Guid -Type $Type

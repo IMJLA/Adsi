@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.82] - 2024-02-18 - powershell dark magic was converting [object] to a string instead of a type. wrapped in parens as workaround
+
 ## [4.0.81] - 2024-02-18 - implement resolve-identityreferencedomaindns
 
 ## [4.0.80] - 2024-02-18 - comment updates
