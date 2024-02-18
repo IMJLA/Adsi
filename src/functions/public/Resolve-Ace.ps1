@@ -185,19 +185,8 @@ function Resolve-Ace {
     }
 
     $IdentityReference = $ACE.IdentityReference.ToString()
-    #if ([string]::IsNullOrEmpty($IdentityReference)) {
-    #    continue
-    #}
-
     $ThisServerDns = $null
     $DomainNetBios = $null
-
-    # Remove the PsProvider prefix from the path string
-    #if (-not [string]::IsNullOrEmpty($ACE.SourceAccessList.Path)) {
-    #    $LiteralPath = $ACE.SourceAccessList.Path -replace [regex]::escape("$($ACE.SourceAccessList.PsProvider)::"), ''
-    #} else {
-    #    $LiteralPath = $LiteralPath -replace [regex]::escape("$($ACE.SourceAccessList.PsProvider)::"), ''
-    #}
 
     switch -Wildcard ($IdentityReference) {
 
@@ -244,42 +233,13 @@ function Resolve-Ace {
         DomainsByFqdn          = $DomainsByFqdn
         DomainsByNetbios       = $DomainsByNetbios
         DomainsBySid           = $DomainsBySid
-        ThisHostName           = $ThisHostName
         ThisFqdn               = $ThisFqdn
-        LogMsgCache            = $LogMsgCache
-        WhoAmI                 = $WhoAmI
         Win32AccountsBySID     = $Win32AccountsBySID
         Win32AccountsByCaption = $Win32AccountsByCaption
     }
-    Write-LogMsg @LogParams -Text "`$AdsiServer = Get-AdsiServer -Fqdn '$ThisServerDns'"
-    $AdsiServer = Get-AdsiServer @GetAdsiServerParams
 
-    <#
-
-            if ([string]$DomainNetBios -eq '') {
-                $DomainNetBios = $AdsiServer.Netbios
-            }
-            Write-LogMsg @LogParams -Text " # Domain NetBIOS is '$DomainNetBios' for '$IdentityReference'"
-
-            $AdsiProvider = $null
-            if (-not $DomainNetBios) {
-                $DomainCacheResult = $DomainsByFqdn[$ThisServerDns]
-                if ($DomainCacheResult) {
-                    Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisServerDns'"
-                    $DomainNetBios = $DomainCacheResult.Netbios
-                    $AdsiProvider = $DomainCacheResult.AdsiProvider
-                } else {
-                    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$ThisServerDns'"
-                }
-            }
-
-            if (-not $DomainNetBios) {
-                if (-not $AdsiProvider) {
-                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisServerDns
-                }
-                $DomainNetBios = ConvertTo-DomainNetBIOS -DomainFQDN $ThisServerDns -AdsiProvider $AdsiProvider -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid
-            }
-            #>
+    Write-LogMsg @LogParams -Text "`$AdsiServer = Get-AdsiServer -Fqdn '$ThisServerDns' -ThisFqdn '$ThisFqdn'"
+    $AdsiServer = Get-AdsiServer @GetAdsiServerParams @LoggingParams
 
     $ResolveIdentityReferenceParams = @{
         IdentityReference      = $IdentityReference
@@ -290,21 +250,17 @@ function Resolve-Ace {
         DomainsBySID           = $DomainsBySID
         DomainsByNetbios       = $DomainsByNetbios
         DomainsByFqdn          = $DomainsByFqdn
-        ThisHostName           = $ThisHostName
         ThisFqdn               = $ThisFqdn
-        LogMsgCache            = $LogMsgCache
         CimCache               = $CimCache
-        WhoAmI                 = $WhoAmI
     }
+
     Write-LogMsg @LogParams -Text "Resolve-IdentityReference -IdentityReference '$IdentityReference' -AdsiServer `$AdsiServer # ADSI server '$($AdsiServer.AdsiProvider)://$($AdsiServer.Dns)'"
-    $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams
+    $ResolvedIdentityReference = Resolve-IdentityReference @ResolveIdentityReferenceParams @LoggingParams
 
     # TODO: add a param to offer DNS instead of or in addition to NetBIOS
-    
-    $Scope = $InheritanceFlagResolved[$ACE.InheritanceFlags]
         
     $ObjectProperties = @{
-        Access                    = "$($ACE.AccessControlType) $($ACE.FileSystemRights) $Scope"
+        Access                    = "$($ACE.AccessControlType) $($ACE.FileSystemRights) $($InheritanceFlagResolved[$ACE.InheritanceFlags])"
         AdsiProvider              = $AdsiServer.AdsiProvider
         AdsiServer                = $AdsiServer.Dns
         IdentityReferenceSID      = $ResolvedIdentityReference.SIDString
@@ -317,9 +273,15 @@ function Resolve-Ace {
     ForEach ($ThisProperty in $ACEPropertyName) {
         $ObjectProperties[$ThisProperty] = $ACE.$ThisProperty
     }
+    
     $OutputObject = [PSCustomObject]$ObjectProperties
-
-    $Guid = [guid]::NewGuid()
+    $Guid = [guid]::NewGuid()    
+    Add-CacheItem -Cache $ACEsByGUID -Key $Guid -Value $OutputObject -Type [object]
+    $Type = [guid]
+    Add-CacheItem -Cache $AceGUIDsByResolvedID -Key $OutputObject.IdentityReferenceResolved -Value $Guid -Type $Type
+    Add-CacheItem -Cache $AceGUIDsByPath -Key $OutputObject.Path -Value $Guid -Type $Type
+    
+    <#
     $ACEs = $ACEsByGUID[$Guid]
     if (-not $ACEs) {
         $ACEs = [System.Collections.Generic.List[object]]::new()
@@ -342,5 +304,6 @@ function Resolve-Ace {
     }
     $AceGuids.Add($Guid)
     $AceGUIDsByPath[$Key] = $AceGuids
+    #>
 
 }
