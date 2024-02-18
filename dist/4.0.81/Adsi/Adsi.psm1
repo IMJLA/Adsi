@@ -3840,47 +3840,18 @@ function Resolve-Ace {
         WhoAmI       = $WhoAmI
     }
 
-    $IdentityReference = $ACE.IdentityReference.ToString()
-    $DomainDNS = $null
-    $DomainNetBIOS = $null
-
-    switch -Wildcard ($IdentityReference) {
-
-        "S-1-*" {
-            # IdentityReference is a SID (Revision 1)
-            $IndexOfLastHyphen = $IdentityReference.LastIndexOf("-")
-            $DomainSid = $IdentityReference.Substring(0, $IndexOfLastHyphen)
-            if ($DomainSid) {
-                $DomainCacheResult = $DomainsBySID[$DomainSid]
-                if ($DomainCacheResult) {
-                    Write-LogMsg @LogParams -Text " # Domain SID cache hit for '$DomainSid' for '$IdentityReference'"
-                    $DomainDNS = $DomainCacheResult.Dns
-                    $DomainNetBIOS = $DomainCacheResult.Netbios
-                } else {
-                    Write-LogMsg @LogParams -Text " # Domain SID cache miss for '$DomainSid' for '$IdentityReference'"
-                }
-            }
-        }
-        "NT SERVICE\*" {}
-        "BUILTIN\*" {}
-        "NT AUTHORITY\*" {}
-        default {
-            $DomainNetBIOS = ($IdentityReference -split '\\')[0]
-            if ($DomainNetBIOS) {
-                $DomainDNS = $DomainsByNetbios[$DomainNetBIOS].Dns #Doesn't work for BUILTIN, etc.
-            }
-            if (-not $DomainDNS) {
-                $ThisServerDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
-                $DomainDNS = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
-            }
-        }
+    $IdentityReference = $ACE.IdentityReference #.ToString()
+    
+    $ResolveDomainDNSParams = @{
+        IdentityReference = $IdentityReference
+        ItemPath          = $ItemPath
+        DomainsByNetBIOS  = $DomainsByNetbios
+        DomainsBySid      = $DomainsBySid
+        ThisFqdn          = $ThisFqdn
+        CimCache          = $CimCache
     }
-
-    if (-not $DomainDNS) {
-        # TODO - Bug: I think this will report incorrectly for a remote domain not in the cache (trust broken or something)
-        Write-LogMsg @LogParams -Text "Find-ServerNameInPath -LiteralPath '$ItemPath' -ThisFqdn '$ThisFqdn'"
-        $DomainDNS = Find-ServerNameInPath -LiteralPath $ItemPath -ThisFqdn $ThisFqdn
-    }
+    
+    $DomainDNS = Resolve-IdentityReferenceDomainDNS @ResolveDomainDNSParams @LoggingParams
 
     $GetAdsiServerParams = @{
         Fqdn                   = $DomainDNS
@@ -4798,6 +4769,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-Ace','Resolve-Acl','Resolve-IdentityReference','Search-Directory')
+
 
 
 
