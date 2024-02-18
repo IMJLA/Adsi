@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.80] - 2024-02-18 - comment updates
+
 ## [4.0.79] - 2024-02-18 - implement add-cacheitem
 
 ## [4.0.78] - 2024-02-17 - bugfix access property

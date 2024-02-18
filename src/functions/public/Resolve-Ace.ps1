@@ -185,8 +185,8 @@ function Resolve-Ace {
     }
 
     $IdentityReference = $ACE.IdentityReference.ToString()
-    $ThisServerDns = $null
-    $DomainNetBios = $null
+    $DomainDNS = $null
+    $DomainNetBIOS = $null
 
     switch -Wildcard ($IdentityReference) {
 
@@ -198,8 +198,8 @@ function Resolve-Ace {
                 $DomainCacheResult = $DomainsBySID[$DomainSid]
                 if ($DomainCacheResult) {
                     Write-LogMsg @LogParams -Text " # Domain SID cache hit for '$DomainSid' for '$IdentityReference'"
-                    $ThisServerDns = $DomainCacheResult.Dns
-                    $DomainNetBios = $DomainCacheResult.Netbios
+                    $DomainDNS = $DomainCacheResult.Dns
+                    $DomainNetBIOS = $DomainCacheResult.Netbios
                 } else {
                     Write-LogMsg @LogParams -Text " # Domain SID cache miss for '$DomainSid' for '$IdentityReference'"
                 }
@@ -209,25 +209,25 @@ function Resolve-Ace {
         "BUILTIN\*" {}
         "NT AUTHORITY\*" {}
         default {
-            $DomainNetBios = ($IdentityReference -split '\\')[0]
-            if ($DomainNetBios) {
-                $ThisServerDns = $DomainsByNetbios[$DomainNetBios].Dns #Doesn't work for BUILTIN, etc.
+            $DomainNetBIOS = ($IdentityReference -split '\\')[0]
+            if ($DomainNetBIOS) {
+                $DomainDNS = $DomainsByNetbios[$DomainNetBIOS].Dns #Doesn't work for BUILTIN, etc.
             }
-            if (-not $ThisServerDns) {
-                $ThisServerDn = ConvertTo-DistinguishedName -Domain $DomainNetBios -DomainsByNetbios $DomainsByNetbios @LoggingParams
-                $ThisServerDns = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+            if (-not $DomainDNS) {
+                $ThisServerDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
+                $DomainDNS = ConvertTo-Fqdn -DistinguishedName $ThisServerDn -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
             }
         }
     }
 
-    if (-not $ThisServerDns) {
+    if (-not $DomainDNS) {
         # TODO - Bug: I think this will report incorrectly for a remote domain not in the cache (trust broken or something)
         Write-LogMsg @LogParams -Text "Find-ServerNameInPath -LiteralPath '$ItemPath' -ThisFqdn '$ThisFqdn'"
-        $ThisServerDns = Find-ServerNameInPath -LiteralPath $ItemPath -ThisFqdn $ThisFqdn
+        $DomainDNS = Find-ServerNameInPath -LiteralPath $ItemPath -ThisFqdn $ThisFqdn
     }
 
     $GetAdsiServerParams = @{
-        Fqdn                   = $ThisServerDns
+        Fqdn                   = $DomainDNS
         CimCache               = $CimCache
         DirectoryEntryCache    = $DirectoryEntryCache
         DomainsByFqdn          = $DomainsByFqdn
@@ -238,7 +238,7 @@ function Resolve-Ace {
         Win32AccountsByCaption = $Win32AccountsByCaption
     }
 
-    Write-LogMsg @LogParams -Text "`$AdsiServer = Get-AdsiServer -Fqdn '$ThisServerDns' -ThisFqdn '$ThisFqdn'"
+    Write-LogMsg @LogParams -Text "`$AdsiServer = Get-AdsiServer -Fqdn '$DomainDNS' -ThisFqdn '$ThisFqdn'"
     $AdsiServer = Get-AdsiServer @GetAdsiServerParams @LoggingParams
 
     $ResolveIdentityReferenceParams = @{
