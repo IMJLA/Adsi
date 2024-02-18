@@ -94,22 +94,12 @@ function Resolve-IdentityReference {
         LogMsgCache  = $LogMsgCache
         WhoAmI       = $WhoAmI
     }
-    
+
     $GetDirectoryEntryParams = @{
         DirectoryEntryCache = $DirectoryEntryCache
         DomainsByNetbios    = $DomainsByNetbios
         DomainsBySid        = $DomainsBySid
     }
-
-    # Populate the caches of known domains if they are currently empty (not sure if this is required so commenting it out for now)
-    #if (($DomainsByFqdn.Keys.Count + $DomainsByNetBios.Keys.Count + $DomainsBySid.Keys.Count) -lt 1) {
-    #    $null = Get-TrustedDomainInfo -DirectoryEntryCache $DirectoryEntryCache -DomainsBySID $DomainsBySid -DomainsByNetbios $DomainsByNetbios -DomainsByFqdn $DomainsByFqdn
-    #}
-
-    # Populate the caches of known domains if they are currently empty (not sure if this is required so commenting it out for now)
-    #if (($DomainsByFqdn.Keys.Count + $DomainsByNetBios.Keys.Count + $DomainsBySid.Keys.Count) -lt 1) {
-    #    $null = Get-TrustedDomainInfo -DirectoryEntryCache $DirectoryEntryCache -DomainsBySID $DomainsBySid -DomainsByNetbios $DomainsByNetbios -DomainsByFqdn $DomainsByFqdn
-    #}
 
     $ServerNetBIOS = $AdsiServer.Netbios
 
@@ -222,7 +212,10 @@ function Resolve-IdentityReference {
                         Domain  = $ServerNetBIOS
                         Name    = $split[1]
                     }
+
+                    Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
                     $Win32AccountsByCaption[$Caption] = $Win32Acct
+                    Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$IdentityReference' to the Win32_Account SID cache"
                     $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"] = $Win32Acct
 
                 } else {
@@ -307,7 +300,10 @@ function Resolve-IdentityReference {
                 Domain  = $ServerNetBIOS
                 Name    = $Name
             }
+
+            Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $Win32AccountsByCaption[$Caption] = $Win32Acct
+            Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
@@ -369,7 +365,10 @@ function Resolve-IdentityReference {
                 Domain  = $ServerNetBIOS
                 Name    = $Name
             }
+
+            Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $Win32AccountsByCaption[$Caption] = $Win32Acct
+            Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
@@ -396,7 +395,10 @@ function Resolve-IdentityReference {
                 Domain  = $ServerNetBIOS
                 Name    = $Name
             }
+
+            Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $Win32AccountsByCaption[$Caption] = $Win32Acct
+            Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{

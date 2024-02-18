@@ -312,14 +312,14 @@ function ConvertFrom-IdentityReferenceResolved {
         $PropertiesToAdd = @{
             DomainDn      = $DomainDn
             DomainNetbios = $DomainNetBIOS
-        }        
+        }
 
         if ($null -ne $DirectoryEntry) {
-            
+
             ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertiesToAdd
             }
-            
+
             if ($DirectoryEntry.Name) {
                 $AccountName = $DirectoryEntry.Name
             } else {

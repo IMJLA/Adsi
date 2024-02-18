@@ -4,7 +4,7 @@ function New-FakeDirectoryEntry {
     Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
     The WinNT provider only throws an error if you try to retrieve certain accounts/identities
     #>
-    
+
     param (
         [string]$DirectoryPath
     )
@@ -86,6 +86,7 @@ function New-FakeDirectoryEntry {
         SchemaEntry     = $SchemaEntry
         Properties      = $Properties
     }
+
     Add-Member -InputObject $Object -Name RefreshCache -MemberType ScriptMethod -Value {}
     Add-Member -InputObject $Object -Name Invoke -MemberType ScriptMethod -Value {}
     return $Object

@@ -116,14 +116,16 @@ function Get-AdsiServer {
         ForEach ($DomainFqdn in $Fqdn) {
 
             $OutputObject = $DomainsByFqdn[$DomainFqdn]
+
             if ($OutputObject) {
+
                 Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFqdn'"
                 $OutputObject
                 continue
-            }
-            Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFqdn'"
 
-            Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn'"
+            }
+
+            Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' # Domain FQDN cache miss for '$DomainFqdn'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn @LoggingParams
             $CacheParams['AdsiProvider'] = $AdsiProvider
 
@@ -166,9 +168,9 @@ function Get-AdsiServer {
                 BUILTIN                        S-1-5-32
 
 
-             # PS 5.1 returns fewer results than PS 7.4
-                PS C:\Users\Owner> ForEach ($SidType in [System.Security.Principal.WellKnownSidType].GetEnumNames()) {$var = [System.Security.Principal.WellKnownSidType]::$SidType; [System.Security.Principal.SecurityIdentifier]::new($var,$LogonDomainSid) |Add-Member -PassThru -NotePropertyMembers @{'WellKnownSidType' = $SidType}}
+            PS C:\Users\Owner> ForEach ($SidType in [System.Security.Principal.WellKnownSidType].GetEnumNames()) {$var = [System.Security.Principal.WellKnownSidType]::$SidType; [System.Security.Principal.SecurityIdentifier]::new($var,$LogonDomainSid) |Add-Member -PassThru -NotePropertyMembers @{'WellKnownSidType' = $SidType}}
 
+                # PS 5.1 returns fewer results than PS 7.4
                     WellKnownSidType                          BinaryLength AccountDomainSid                          Value
                     ----------------                          ------------ ----------------                          -----
                     NullSid                                             12                                           S-1-0-0
@@ -241,9 +243,7 @@ function Get-AdsiServer {
                     WinBuiltinTerminalServerLicenseServersSid           16                                           S-1-5-32-561
                     MaxDefined                                          16                                           S-1-5-32-561
 
-            # PS 7 returns more results
-                PS C:\Users\Owner> ForEach ($SidType in [System.Security.Principal.WellKnownSidType].GetEnumNames()) {$var = [System.Security.Principal.WellKnownSidType]::$SidType; [System.Security.Principal.SecurityIdentifier]::new($var,$LogonDomainSid) |Add-Member -PassThru -NotePropertyMembers @{'WellKnownSidType' = $SidType}}
-
+                # PS 7 returns more results
                     WellKnownSidType                           BinaryLength AccountDomainSid                          Value
                     ----------------                           ------------ ----------------                          -----
                     NullSid                                              12                                           S-1-0-0
@@ -343,12 +343,17 @@ function Get-AdsiServer {
                     WinCapabilityEnterpriseAuthenticationSid             16                                           S-1-15-3-8
                     WinCapabilityRemovableStorageSid                     16                                           S-1-15-3-10
             #>
+
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' @CimParams @LoggingParams
 
             ForEach ($Acct in $Win32Accounts) {
+
+                Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $Win32AccountsByCaption[$Acct.Caption] = $Acct
+
             }
 
             $OutputObject = [PSCustomObject]@{
@@ -359,22 +364,27 @@ function Get-AdsiServer {
                 AdsiProvider      = $AdsiProvider
                 Win32Accounts     = $Win32Accounts
             }
+
             $DomainsBySid[$OutputObject.Sid] = $OutputObject
             $DomainsByNetbios[$OutputObject.Netbios] = $OutputObject
             $DomainsByFqdn[$DomainFqdn] = $OutputObject
             $OutputObject
+
         }
 
         ForEach ($DomainNetbios in $Netbios) {
+
             $OutputObject = $DomainsByNetbios[$DomainNetbios]
+
             if ($OutputObject) {
+
                 Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
                 $OutputObject
                 continue
-            }
-            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
 
-            Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios'"
+            }
+
+            Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' # Domain NetBIOS cache hit for '$DomainNetbios'"
             $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
 
             Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName' # for '$DomainNetbios'"
@@ -385,11 +395,15 @@ function Get-AdsiServer {
             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
 
             if ($DomainDn) {
+
                 Write-LogMsg @LogParams -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' # for '$DomainNetbios'"
                 $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+
             } else {
+
                 $ParentDomainDnsName = Get-ParentDomainDnsName -DomainsByNetbios $DomainNetBIOS -CimSession $CimSession -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                 $DomainDnsName = "$DomainNetBIOS.$ParentDomainDnsName"
+
             }
 
             Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -AdsiProvider '$AdsiProvider' -ThisFqdn '$ThisFqdn' # for '$DomainNetbios'"
@@ -403,8 +417,12 @@ function Get-AdsiServer {
             }
 
             ForEach ($Acct in $Win32Accounts) {
+
+                Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $Win32AccountsByCaption[$Acct.Caption] = $Acct
+
             }
 
             $OutputObject = [PSCustomObject]@{
@@ -415,10 +433,14 @@ function Get-AdsiServer {
                 AdsiProvider      = $AdsiProvider
                 Win32Accounts     = $Win32Accounts
             }
+
             $DomainsBySid[$OutputObject.Sid] = $OutputObject
             $DomainsByNetbios[$OutputObject.Netbios] = $OutputObject
             $DomainsByFqdn[$OutputObject.Dns] = $OutputObject
             $OutputObject
+
         }
+
     }
+
 }
