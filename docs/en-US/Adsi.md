@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.82
+Help Version: 4.0.83
 Locale: en-US
 ---
 
@@ -112,12 +112,6 @@ Invoke a member method of a ComObject [__ComObject]
 
 New-FakeDirectoryEntry [[-DirectoryPath] <string>]
 
-
-### [Resolve-Ace](Resolve-Ace.md)
-Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
-
-### [Resolve-Acl](Resolve-Acl.md)
-Use ADSI to lookup info about IdentityReferences from Authorization Rule Collections that came from Discretionary Access Control Lists
 
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)
 Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
