@@ -341,16 +341,6 @@ function Get-AdsiServer {
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
 
-            ForEach ($Acct in $Win32Accounts) {
-
-                Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache for '$($Acct.Domain)'"
-                $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
-
-                Write-LogMsg @LogParams -Text " # Add '$($Acct.SID)' to the Win32_Account SID cache for '$($Acct.Domain)'"
-                $CimCache[$Acct.Domain]['Win32_AccountBySID'][$Acct.SID] = $Acct
-
-            }
-
             $OutputObject = [PSCustomObject]@{
                 DistinguishedName = $DomainDn
                 Dns               = $DomainFqdn
@@ -409,16 +399,6 @@ function Get-AdsiServer {
 
             if ($RemoveCimSession) {
                 Remove-CimSession -CimSession $CimSession
-            }
-
-            ForEach ($Acct in $Win32Accounts) {
-
-                Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the 'Win32_AccountByCaption' cache for '$($Acct.Domain)'"
-                $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
-
-                Write-LogMsg @LogParams -Text " # Add '$($Acct.SID)' to the 'Win32_AccountBySID' cache for '$($Acct.Domain)'"
-                $CimCache[$Acct.Domain]['Win32_AccountBySID'][$Acct.SID] = $Acct
-
             }
 
             $OutputObject = [PSCustomObject]@{
