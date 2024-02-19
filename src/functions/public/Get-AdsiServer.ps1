@@ -345,7 +345,7 @@ function Get-AdsiServer {
             #>
 
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' @CimParams @LoggingParams
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption @CimParams @LoggingParams
 
             ForEach ($Acct in $Win32Accounts) {
 
@@ -410,7 +410,7 @@ function Get-AdsiServer {
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -ThisFqdn $ThisFqdn -CimCache $CimCache @CacheParams @LoggingParams
 
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Account' # for '$DomainNetbios'"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' @CimParams @LoggingParams
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption @CimParams @LoggingParams
 
             if ($RemoveCimSession) {
                 Remove-CimSession -CimSession $CimSession
