@@ -3750,31 +3750,6 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>ThisFqdn</maml:name>
-          <maml:description>
-            <maml:para>FQDN of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-          <maml:name>WhoAmI</maml:name>
-          <maml:description>
-            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>LogMsgCache</maml:name>
           <maml:description>
             <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -3786,7 +3761,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>CimCache</maml:name>
           <maml:description>
             <maml:para>Cache of CIM sessions and instances to reduce connections and queries</maml:para>
@@ -3798,7 +3773,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
           <maml:description>
             <maml:para>Output stream to send the log messages to</maml:para>
@@ -3823,30 +3798,6 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>(@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>Win32AccountsBySID</maml:name>
-          <maml:description>
-            <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>Win32AccountsByCaption</maml:name>
-          <maml:description>
-            <maml:para>Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again</maml:para>
@@ -3859,7 +3810,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3871,7 +3822,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3883,7 +3834,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3895,7 +3846,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>ThisHostName</maml:name>
           <maml:description>
             <maml:para>Hostname of the computer running this function.</maml:para>
@@ -3907,6 +3858,31 @@ ad.contoso.com</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+          <maml:name>ThisFqdn</maml:name>
+          <maml:description>
+            <maml:para>FQDN of the computer running this function.</maml:para>
+            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
           <maml:name>ProgressAction</maml:name>
@@ -3923,7 +3899,7 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
         <maml:name>CimCache</maml:name>
         <maml:description>
           <maml:para>Cache of CIM sessions and instances to reduce connections and queries</maml:para>
@@ -3935,7 +3911,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
         <maml:name>DebugOutputStream</maml:name>
         <maml:description>
           <maml:para>Output stream to send the log messages to</maml:para>
@@ -3959,7 +3935,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't need to be retrieved from the directory again</maml:para>
@@ -3972,7 +3948,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3984,7 +3960,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3996,7 +3972,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4008,7 +3984,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>LogMsgCache</maml:name>
         <maml:description>
           <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -4044,7 +4020,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>(@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
           <maml:para>FQDN of the computer running this function.</maml:para>
@@ -4057,7 +4033,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>Hostname of the computer running this function.</maml:para>
@@ -4070,7 +4046,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
           <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -4081,30 +4057,6 @@ ad.contoso.com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>Win32AccountsByCaption</maml:name>
-        <maml:description>
-          <maml:para>Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>Win32AccountsBySID</maml:name>
-        <maml:description>
-          <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -5344,31 +5296,6 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>ThisFqdn</maml:name>
-          <maml:description>
-            <maml:para>FQDN of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-          <maml:name>WhoAmI</maml:name>
-          <maml:description>
-            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>LogMsgCache</maml:name>
           <maml:description>
             <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -5380,7 +5307,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>CimCache</maml:name>
           <maml:description>
             <maml:para>Cache of CIM sessions and instances to reduce connections and queries</maml:para>
@@ -5392,7 +5319,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
           <maml:description>
             <maml:para>Output stream to send the log messages to</maml:para>
@@ -5417,30 +5344,6 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>Win32AccountsBySID</maml:name>
-          <maml:description>
-            <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>Win32AccountsByCaption</maml:name>
-          <maml:description>
-            <maml:para>Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
             <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
@@ -5452,7 +5355,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5464,7 +5367,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5476,7 +5379,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5488,7 +5391,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>ThisHostName</maml:name>
           <maml:description>
             <maml:para>Hostname of the computer running this function.</maml:para>
@@ -5500,6 +5403,31 @@ ad.contoso.com</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+          <maml:name>ThisFqdn</maml:name>
+          <maml:description>
+            <maml:para>FQDN of the computer running this function.</maml:para>
+            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>WhoAmI</maml:name>
+          <maml:description>
+            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>NoRecurse</maml:name>
@@ -5540,7 +5468,7 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
         <maml:name>CimCache</maml:name>
         <maml:description>
           <maml:para>Cache of CIM sessions and instances to reduce connections and queries</maml:para>
@@ -5552,7 +5480,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
         <maml:name>DebugOutputStream</maml:name>
         <maml:description>
           <maml:para>Output stream to send the log messages to</maml:para>
@@ -5564,7 +5492,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
           <maml:para>Hashtable containing cached directory entries so they don't have to be retrieved from the directory again Uses a thread-safe hashtable by default</maml:para>
@@ -5576,7 +5504,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5588,7 +5516,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5600,7 +5528,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5624,7 +5552,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>LogMsgCache</maml:name>
         <maml:description>
           <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -5686,7 +5614,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
           <maml:para>FQDN of the computer running this function.</maml:para>
@@ -5699,7 +5627,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>Hostname of the computer running this function.</maml:para>
@@ -5712,7 +5640,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
           <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -5723,30 +5651,6 @@ ad.contoso.com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>Win32AccountsByCaption</maml:name>
-        <maml:description>
-          <maml:para>Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>Win32AccountsBySID</maml:name>
-        <maml:description>
-          <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -5813,19 +5717,6 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>ThisFqdn</maml:name>
-          <maml:description>
-            <maml:para>FQDN of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>WhoAmI</maml:name>
           <maml:description>
             <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -5837,7 +5728,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>LogMsgCache</maml:name>
           <maml:description>
             <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -5849,7 +5740,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
           <maml:description>
             <maml:para>Output stream to send the log messages to</maml:para>
@@ -5886,18 +5777,6 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>Win32AccountsBySID</maml:name>
-          <maml:description>
-            <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DirectoryEntryCache</maml:name>
           <maml:description>
             <maml:para>Dictionary to cache directory entries to avoid redundant lookups</maml:para>
@@ -5910,7 +5789,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5922,7 +5801,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5934,7 +5813,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values</maml:para>
@@ -5946,7 +5825,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>ThisHostName</maml:name>
           <maml:description>
             <maml:para>Hostname of the computer running this function.</maml:para>
@@ -5958,6 +5837,19 @@ ad.contoso.com</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>ThisFqdn</maml:name>
+          <maml:description>
+            <maml:para>FQDN of the computer running this function.</maml:para>
+            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
           <maml:name>ProgressAction</maml:name>
@@ -5997,7 +5889,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
         <maml:name>DebugOutputStream</maml:name>
         <maml:description>
           <maml:para>Output stream to send the log messages to</maml:para>
@@ -6009,7 +5901,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DirectoryEntryCache</maml:name>
         <maml:description>
           <maml:para>Dictionary to cache directory entries to avoid redundant lookups</maml:para>
@@ -6022,7 +5914,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values</maml:para>
@@ -6034,7 +5926,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6046,7 +5938,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6070,7 +5962,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
         <maml:name>LogMsgCache</maml:name>
         <maml:description>
           <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -6118,7 +6010,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
           <maml:para>FQDN of the computer running this function.</maml:para>
@@ -6131,7 +6023,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>Hostname of the computer running this function.</maml:para>
@@ -6144,7 +6036,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
           <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -6155,18 +6047,6 @@ ad.contoso.com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>Win32AccountsBySID</maml:name>
-        <maml:description>
-          <maml:para>Cache of known Win32_Account instances keyed by domain and SID</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -7920,19 +7800,6 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>ThisFqdn</maml:name>
-          <maml:description>
-            <maml:para>FQDN of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>WhoAmI</maml:name>
           <maml:description>
             <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -7944,7 +7811,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>LogMsgCache</maml:name>
           <maml:description>
             <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -7956,7 +7823,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>CimCache</maml:name>
           <maml:description>
             <maml:para>Cache of CIM sessions and instances to reduce connections and queries</maml:para>
@@ -7968,7 +7835,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
           <maml:description>
             <maml:para>Output stream to send the log messages to</maml:para>
@@ -8006,18 +7873,6 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>Win32AccountsBySID</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill Win32AccountsBySID Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>AdsiServersByDns</maml:name>
           <maml:description>
             <maml:para>Dictionary to cache known servers to avoid redundant lookups</maml:para>
@@ -8030,7 +7885,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8042,7 +7897,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8054,7 +7909,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8066,7 +7921,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>ThisHostName</maml:name>
           <maml:description>
             <maml:para>Hostname of the computer running this function.</maml:para>
@@ -8078,6 +7933,19 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+          <maml:name>ThisFqdn</maml:name>
+          <maml:description>
+            <maml:para>FQDN of the computer running this function.</maml:para>
+            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
           <maml:name>ProgressAction</maml:name>
@@ -8106,7 +7974,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>AdsiServersByDns</maml:name>
         <maml:description>
           <maml:para>Dictionary to cache known servers to avoid redundant lookups</maml:para>
@@ -8119,7 +7987,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
         <maml:name>CimCache</maml:name>
         <maml:description>
           <maml:para>Cache of CIM sessions and instances to reduce connections and queries</maml:para>
@@ -8131,7 +7999,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
         <maml:name>DebugOutputStream</maml:name>
         <maml:description>
           <maml:para>Output stream to send the log messages to</maml:para>
@@ -8156,7 +8024,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8168,7 +8036,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8180,7 +8048,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8204,7 +8072,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
         <maml:name>LogMsgCache</maml:name>
         <maml:description>
           <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
@@ -8228,7 +8096,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>ThisFqdn</maml:name>
         <maml:description>
           <maml:para>FQDN of the computer running this function.</maml:para>
@@ -8241,7 +8109,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>ThisHostName</maml:name>
         <maml:description>
           <maml:para>Hostname of the computer running this function.</maml:para>
@@ -8254,7 +8122,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
           <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
@@ -8265,18 +8133,6 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>Win32AccountsBySID</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill Win32AccountsBySID Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>

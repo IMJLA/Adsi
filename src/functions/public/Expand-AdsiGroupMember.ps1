@@ -24,12 +24,6 @@ function Expand-AdsiGroupMember {
         # Properties of the group members to retrieve
         [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
 
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
         <#
         Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
 
@@ -95,14 +89,12 @@ function Expand-AdsiGroupMember {
             $DomainsBySid = ([hashtable]::Synchronized(@{}))
 
             $GetAdsiServerParams = @{
-                Win32AccountsBySID     = $Win32AccountsBySID
-                Win32AccountsByCaption = $Win32AccountsByCaption
-                DirectoryEntryCache    = $DirectoryEntryCache
-                DomainsByNetbios       = $DomainsByNetbios
-                DomainsBySid           = $DomainsBySid
-                DomainsByFqdn          = $DomainsByFqdn
-                ThisFqdn               = $ThisFqdn
-                CimCache               = $CimCache
+                DirectoryEntryCache = $DirectoryEntryCache
+                DomainsByNetbios    = $DomainsByNetbios
+                DomainsBySid        = $DomainsBySid
+                DomainsByFqdn       = $DomainsByFqdn
+                ThisFqdn            = $ThisFqdn
+                CimCache            = $CimCache
             }
 
             Get-TrustedDomain |

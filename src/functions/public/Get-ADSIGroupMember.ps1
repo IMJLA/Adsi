@@ -24,12 +24,6 @@ function Get-AdsiGroupMember {
         # Properties of the group members to find in the directory
         [string[]]$PropertiesToLoad,
 
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
         <#
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
         Uses a thread-safe hashtable by default
@@ -234,7 +228,7 @@ function Get-AdsiGroupMember {
 
             Write-LogMsg @LogParams -Text "$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
 
-            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -CimCache $CimCache -Win32AccountsBySID $Win32AccountsBySID -Win32AccountsByCaption $Win32AccountsByCaption -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
+            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
 
             Add-Member -InputObject $ThisGroup -MemberType NoteProperty -Name FullMembers -Value $ProcessedGroupMembers -Force -PassThru
 

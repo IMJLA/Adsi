@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.91] - 2024-02-18 - remove win32accountsbysid
+
 ## [4.0.90] - 2024-02-18 - update cache key name
 
 ## [4.0.89] - 2024-02-18 - remove win32accountsbycaption from resolve-identityreferece and get-adsiserver

@@ -1648,12 +1648,6 @@ function Expand-AdsiGroupMember {
         # Properties of the group members to retrieve
         [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
 
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
         <#
         Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
 
@@ -1719,14 +1713,12 @@ function Expand-AdsiGroupMember {
             $DomainsBySid = ([hashtable]::Synchronized(@{}))
 
             $GetAdsiServerParams = @{
-                Win32AccountsBySID     = $Win32AccountsBySID
-                Win32AccountsByCaption = $Win32AccountsByCaption
-                DirectoryEntryCache    = $DirectoryEntryCache
-                DomainsByNetbios       = $DomainsByNetbios
-                DomainsBySid           = $DomainsBySid
-                DomainsByFqdn          = $DomainsByFqdn
-                ThisFqdn               = $ThisFqdn
-                CimCache               = $CimCache
+                DirectoryEntryCache = $DirectoryEntryCache
+                DomainsByNetbios    = $DomainsByNetbios
+                DomainsBySid        = $DomainsBySid
+                DomainsByFqdn       = $DomainsByFqdn
+                ThisFqdn            = $ThisFqdn
+                CimCache            = $CimCache
             }
 
             Get-TrustedDomain |
@@ -2226,12 +2218,6 @@ function Get-AdsiGroupMember {
         # Properties of the group members to find in the directory
         [string[]]$PropertiesToLoad,
 
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
         <#
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
         Uses a thread-safe hashtable by default
@@ -2436,7 +2422,7 @@ function Get-AdsiGroupMember {
 
             Write-LogMsg @LogParams -Text "$($ThisGroup.Properties.name) has $(($CurrentADGroupMembers | Measure-Object).Count) members"
 
-            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -CimCache $CimCache -Win32AccountsBySID $Win32AccountsBySID -Win32AccountsByCaption $Win32AccountsByCaption -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
+            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
 
             Add-Member -InputObject $ThisGroup -MemberType NoteProperty -Name FullMembers -Value $ProcessedGroupMembers -Force -PassThru
 
@@ -2476,9 +2462,6 @@ function Get-AdsiServer {
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
 
         <#
         Dictionary to cache directory entries to avoid redundant lookups
@@ -2787,12 +2770,12 @@ function Get-AdsiServer {
             #>
 
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption @CimParams @LoggingParams
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption, SID @CimParams @LoggingParams
 
             ForEach ($Acct in $Win32Accounts) {
 
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
-                $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                $CimCache[$Acct.Domain]['Win32_AccountBySID']["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
 
@@ -2861,7 +2844,7 @@ function Get-AdsiServer {
             ForEach ($Acct in $Win32Accounts) {
 
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
-                $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                $CimCache[$Acct.Domain]['Win32_AccountBySID']["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
 
@@ -3728,8 +3711,6 @@ function Resolve-IdentityReference {
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
         <#
         Dictionary to cache known servers to avoid redundant lookups
 
@@ -3798,9 +3779,9 @@ function Resolve-IdentityReference {
 
     # Many Well-Known SIDs cannot be translated with the Translate method
     # Instead we have used CIM to collect information on instances of the Win32_Account class from the AdsiServer
-    # This has been done by Get-AdsiServer and it updated the Win32AccountsBySID and Win32_AccountsByCaption caches
+    # This has been done by Get-AdsiServer and it updated the Win32_AccountBySID and Win32_AccountByCaption caches
     # Search the caches now
-    $CacheResult = $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"]
+    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$IdentityReference"]
 
     if ($CacheResult) {
 
@@ -3902,6 +3883,7 @@ function Resolve-IdentityReference {
             Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
             $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
             $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+            Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
 
             # The SID of the domain is everything up to (but not including) the last hyphen
             $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
@@ -3939,7 +3921,7 @@ function Resolve-IdentityReference {
                     Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
                     $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
                     Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$IdentityReference' to the Win32_Account SID cache"
-                    $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"] = $Win32Acct
+                    $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$IdentityReference"] = $Win32Acct
 
                 } else {
                     $DomainNetBIOS = $DomainFromSplit
@@ -3957,7 +3939,6 @@ function Resolve-IdentityReference {
             } else {
 
                 Write-LogMsg @LogParams -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS'"
-                Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
             }
@@ -3970,7 +3951,6 @@ function Resolve-IdentityReference {
                 $ResolveIdentityReferenceParams = @{
                     IdentityReference   = $NTAccount
                     AdsiServer          = $AdsiServer
-                    Win32AccountsBySID  = $Win32AccountsBySID
                     AdsiServersByDns    = $AdsiServersByDns
                     DirectoryEntryCache = $DirectoryEntryCache
                     DomainsBySID        = $DomainsBySID
@@ -4039,7 +4019,7 @@ function Resolve-IdentityReference {
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
-            $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
                 IdentityReference        = $IdentityReference
@@ -4104,7 +4084,7 @@ function Resolve-IdentityReference {
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
-            $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
                 IdentityReference        = $IdentityReference
@@ -4134,7 +4114,7 @@ function Resolve-IdentityReference {
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
-            $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
             return [PSCustomObject]@{
                 IdentityReference        = $IdentityReference
@@ -4386,6 +4366,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

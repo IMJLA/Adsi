@@ -32,9 +32,6 @@ function Get-AdsiServer {
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
 
-        # Cache of known Win32_Account instances keyed by domain and SID
-        [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
-
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -342,12 +339,12 @@ function Get-AdsiServer {
             #>
 
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption @CimParams @LoggingParams
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption, SID @CimParams @LoggingParams
 
             ForEach ($Acct in $Win32Accounts) {
 
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
-                $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                $CimCache[$Acct.Domain]['Win32_AccountBySID']["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
 
@@ -416,7 +413,7 @@ function Get-AdsiServer {
             ForEach ($Acct in $Win32Accounts) {
 
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
-                $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                $CimCache[$Acct.Domain]['Win32_AccountBySID']["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
 
