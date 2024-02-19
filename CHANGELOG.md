@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.93] - 2024-02-18 - change win_32accountbysid cache key to be pure sid string with no nt domain prefix
+
 ## [4.0.92] - 2024-02-18 - implement cachebyproperty param when calling get-cachedciminstance from get-adsiserver
 
 ## [4.0.91] - 2024-02-18 - remove win32accountsbysid

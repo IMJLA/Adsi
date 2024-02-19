@@ -100,10 +100,10 @@ function Resolve-IdentityReference {
     $ServerNetBIOS = $AdsiServer.Netbios
 
     # Many Well-Known SIDs cannot be translated with the Translate method
-    # Instead we have used CIM to collect information on instances of the Win32_Account class from the AdsiServer
-    # This has been done by Get-AdsiServer and it updated the Win32_AccountBySID and Win32_AccountByCaption caches
+    # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server
+    # and update the Win32_AccountBySID and Win32_AccountByCaption caches
     # Search the caches now
-    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$IdentityReference"]
+    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference]
 
     if ($CacheResult) {
 
@@ -243,7 +243,7 @@ function Resolve-IdentityReference {
                     Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
                     $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
                     Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$IdentityReference' to the Win32_Account SID cache"
-                    $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$IdentityReference"] = $Win32Acct
+                    $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
 
                 } else {
                     $DomainNetBIOS = $DomainFromSplit
@@ -341,7 +341,7 @@ function Resolve-IdentityReference {
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
-            $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$SIDString"] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
 
             return [PSCustomObject]@{
                 IdentityReference        = $IdentityReference
@@ -406,7 +406,7 @@ function Resolve-IdentityReference {
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
-            $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$SIDString"] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
 
             return [PSCustomObject]@{
                 IdentityReference        = $IdentityReference
@@ -436,7 +436,7 @@ function Resolve-IdentityReference {
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
             $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
-            $CimCache[$ServerNetBIOS]['Win32_AccountBySID']["$ServerNetBIOS\$SIDString"] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
 
             return [PSCustomObject]@{
                 IdentityReference        = $IdentityReference

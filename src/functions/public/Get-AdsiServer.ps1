@@ -343,10 +343,11 @@ function Get-AdsiServer {
 
             ForEach ($Acct in $Win32Accounts) {
 
-                Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
-                $CimCache[$Acct.Domain]['Win32_AccountBySID']["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
+
+                Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
+                $CimCache[$Acct.Domain]['Win32_AccountBySID'][$Acct.SID] = $Acct
 
             }
 
@@ -413,7 +414,7 @@ function Get-AdsiServer {
             ForEach ($Acct in $Win32Accounts) {
 
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
-                $CimCache[$Acct.Domain]['Win32_AccountBySID']["$($Acct.Domain)\$($Acct.SID)"] = $Acct
+                $CimCache[$Acct.Domain]['Win32_AccountBySID'][$Acct.SID] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
                 $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
 
