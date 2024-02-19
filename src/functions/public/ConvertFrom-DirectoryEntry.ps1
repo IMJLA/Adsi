@@ -30,7 +30,7 @@ function ConvertFrom-DirectoryEntry {
         #[PSCustomObject]$ThisObject
 
         $OutputObject = @{}
-        ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+        ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
             $null = ConvertTo-SimpleProperty -InputObject $ThisDirectoryEntry -Property $Prop -PropertyDictionary $OutputObject
         }
         [PSCustomObject]$OutputObject

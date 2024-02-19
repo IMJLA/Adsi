@@ -340,7 +340,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -ne $DirectoryEntry) {
 
-            ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+            ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertiesToAdd
             }
 

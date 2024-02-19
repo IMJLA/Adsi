@@ -362,7 +362,7 @@ function ConvertFrom-DirectoryEntry {
         #[PSCustomObject]$ThisObject
 
         $OutputObject = @{}
-        ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+        ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
             $null = ConvertTo-SimpleProperty -InputObject $ThisDirectoryEntry -Property $Prop -PropertyDictionary $OutputObject
         }
         [PSCustomObject]$OutputObject
@@ -710,7 +710,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -ne $DirectoryEntry) {
 
-            ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property).Name) {
+            ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertiesToAdd
             }
 
@@ -931,7 +931,7 @@ function ConvertFrom-SearchResult {
             }
 
             # We will allow any existing properties to override members of the ResultPropertyCollection
-            ForEach ($ThisProperty in ($ThisSearchResult | Get-Member -View All -MemberType Property).Name) {
+            ForEach ($ThisProperty in ($ThisSearchResult | Get-Member -View All -MemberType Property, NoteProperty).Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $ThisSearchResult -Property $ThisProperty -PropertyDictionary $OutputObject
             }
 
@@ -4371,6 +4371,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
