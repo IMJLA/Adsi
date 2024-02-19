@@ -2794,7 +2794,7 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
+                $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
 
             }
 
@@ -2863,7 +2863,7 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
+                $CimCache[$Acct.Domain]['Win32_AccountByCaption'][$Acct.Caption] = $Acct
 
             }
 
@@ -3827,7 +3827,7 @@ function Resolve-IdentityReference {
         # A Win32_Account's Caption property is a NetBIOS-resolved IdentityReference
         # NT Authority\SYSTEM would be SERVER123\SYSTEM as a Win32_Account on a server with hostname server123
         # This could also match on a domain account since those can be returned as Win32_Account, not sure if that will be a bug or what
-        $CacheResult = $CimCache[$ServerNetBIOS]['Win32_Account']["$ServerNetBIOS\$Name"]
+        $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountByCaption']["$ServerNetBIOS\$Name"]
 
         if ($CacheResult) {
 
@@ -3866,7 +3866,7 @@ function Resolve-IdentityReference {
 
     }
 
-    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_Account']["$ServerNetBIOS\$IdentityReference"]
+    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountByCaption']["$ServerNetBIOS\$IdentityReference"]
 
     if ($CacheResult) {
 
@@ -3937,7 +3937,7 @@ function Resolve-IdentityReference {
                     }
 
                     Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-                    $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
+                    $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
                     Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$IdentityReference' to the Win32_Account SID cache"
                     $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"] = $Win32Acct
 
@@ -4037,7 +4037,7 @@ function Resolve-IdentityReference {
             }
 
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-            $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
@@ -4102,7 +4102,7 @@ function Resolve-IdentityReference {
             }
 
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-            $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
@@ -4132,7 +4132,7 @@ function Resolve-IdentityReference {
             }
 
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-            $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
+            $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
 
@@ -4386,6 +4386,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
