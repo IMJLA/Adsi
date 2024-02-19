@@ -2797,7 +2797,8 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                $Win32AccountsByCaption[$Acct.Caption] = $Acct
+                #$Win32AccountsByCaption[$Acct.Caption] = $Acct
+                $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
 
             }
 
@@ -2866,7 +2867,8 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                $Win32AccountsByCaption[$Acct.Caption] = $Acct
+                #$Win32AccountsByCaption[$Acct.Caption] = $Acct
+                $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
 
             }
 
@@ -4392,6 +4394,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
