@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.95] - 2024-02-18 - update debug output
+
 ## [4.0.94] - 2024-02-18 - update debug output
 
 ## [4.0.93] - 2024-02-18 - change win_32accountbysid cache key to be pure sid string with no nt domain prefix
