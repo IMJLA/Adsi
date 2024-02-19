@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.88] - 2024-02-18 - replace win32accountsbycaption with cimcache in resolve-identityreferece
+
 ## [4.0.87] - 2024-02-18 - replace win32accountsbycaption with cimcache in get-adsiserver
 
 ## [4.0.86] - 2024-02-18 - bugix get-adsiserver
