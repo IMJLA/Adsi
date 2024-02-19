@@ -107,7 +107,7 @@ function Resolve-IdentityReference {
 
     if ($CacheResult) {
 
-        Write-LogMsg @LogParams -Text " # Win32_Account SID cache hit for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountBySID' cache hit for '$IdentityReference' on '$ServerNetBios'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
@@ -118,7 +118,7 @@ function Resolve-IdentityReference {
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # Win32_Account SID cache miss for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountBySID' cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
     $split = $IdentityReference.Split('\')
@@ -134,7 +134,7 @@ function Resolve-IdentityReference {
 
         if ($CacheResult) {
 
-            Write-LogMsg @LogParams -Text " # Win32_Account caption cache hit for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
+            Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache hit for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
 
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
                 $DomainDns = $AdsiServer.Dns
@@ -164,7 +164,7 @@ function Resolve-IdentityReference {
             }
 
         } else {
-            Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
+            Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
         }
 
     }
@@ -174,7 +174,7 @@ function Resolve-IdentityReference {
     if ($CacheResult) {
 
         # IdentityReference is an NT Account Name without a \, and has been cached from this server
-        Write-LogMsg @LogParams -Text " # Win32_Account caption cache hit for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache hit for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
@@ -185,7 +185,7 @@ function Resolve-IdentityReference {
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
     }
 
     # If no match was found in any cache, the path forward depends on the IdentityReference
@@ -303,6 +303,7 @@ function Resolve-IdentityReference {
             return $Resolved
 
         }
+
         "NT SERVICE\*" {
             # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
             if ($ServerNetBIOS -eq $ThisHostName) {
@@ -351,7 +352,9 @@ function Resolve-IdentityReference {
                 IdentityReferenceNetBios = $Caption
                 IdentityReferenceDns     = "$DomainDns\$Name"
             }
+
         }
+
         "APPLICATION PACKAGE AUTHORITY\*" {
 
             <#
@@ -417,7 +420,9 @@ function Resolve-IdentityReference {
                 IdentityReferenceNetBios = $Caption
                 IdentityReferenceDns     = "$DomainDns\$Name"
             }
+
         }
+
         "BUILTIN\*" {
             # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
             # But they may have real DirectoryEntry objects
@@ -449,6 +454,7 @@ function Resolve-IdentityReference {
                 IdentityReferenceDns     = "$DomainDns\$Name"
             }
         }
+
     }
 
     # The IdentityReference is an NTAccount

@@ -482,10 +482,7 @@ function ConvertFrom-IdentityReferenceResolved {
             DirectoryEntryCache = $DirectoryEntryCache
             DomainsByNetbios    = $DomainsByNetbios
             ThisFqdn            = $ThisFqdn
-            ThisHostname        = $ThisHostname
             CimCache            = $CimCache
-            LogMsgCache         = $LogMsgCache
-            WhoAmI              = $WhoAmI
             DebugOutputStream   = $DebugOutputStream
         }
 
@@ -494,10 +491,7 @@ function ConvertFrom-IdentityReferenceResolved {
             DebugOutputStream   = $DebugOutputStream
             DirectoryEntryCache = $DirectoryEntryCache
             DomainsByNetbios    = $DomainsByNetbios
-            LogMsgCache         = $LogMsgCache
             ThisFqdn            = $ThisFqdn
-            ThisHostname        = $ThisHostname
-            WhoAmI              = $WhoAmI
         }
 
         $split = $IdentityReference.Split('\')
@@ -549,9 +543,12 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
-
+            $Params = $SearchDirectoryParams.Keys | ForEach-Object {
+                "-$_ '$($SearchDirectoryParams[$_])'"
+            }
+            Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             try {
-                $DirectoryEntry = Search-Directory @SearchDirectoryParams
+                $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
             } catch {
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory: $($_.Exception.Message)"
@@ -571,7 +568,11 @@ function ConvertFrom-IdentityReferenceResolved {
             $SearchDirectoryParams['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
             $SearchDirectoryParams['PropertiesToLoad'] = 'netbiosname'
 
-            $DomainCrossReference = Search-Directory @SearchDirectoryParams
+            $Params = $SearchDirectoryParams.Keys | ForEach-Object {
+                "-$_ '$($SearchDirectoryParams[$_])'"
+            }
+            Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
+            $DomainCrossReference = Search-Directory @SearchDirectoryParams @LoggingParams
             if ($DomainCrossReference.Properties ) {
                 Write-LogMsg @LogParams -Text " # The domain '$DomainFQDN' is online for '$IdentityReference'"
                 [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
@@ -598,8 +599,12 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
+            $Params = $SearchDirectoryParams.Keys | ForEach-Object {
+                "-$_ '$($SearchDirectoryParams[$_])'"
+            }
+            Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             try {
-                $DirectoryEntry = Search-Directory @SearchDirectoryParams
+                $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
             } catch {
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message.Trim())"
@@ -638,8 +643,12 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                 }
 
+                $Params = $GetDirectoryEntryParams.Keys | ForEach-Object {
+                    "-$_ '$($GetDirectoryEntryParams[$_])'"
+                }
+                Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                 try {
-                    $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams
+                    $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                 } catch {
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                     Write-LogMsg @LogParams -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
@@ -678,8 +687,12 @@ function ConvertFrom-IdentityReferenceResolved {
                     'primaryGroupToken'
                 )
 
+                $Params = $GetDirectoryEntryParams.Keys | ForEach-Object {
+                    "-$_ '$($GetDirectoryEntryParams[$_])'"
+                }
+                Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                 try {
-                    $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
+                    $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                 } catch {
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                     Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
@@ -3767,7 +3780,7 @@ function Resolve-IdentityReference {
 
     if ($CacheResult) {
 
-        Write-LogMsg @LogParams -Text " # Win32_Account SID cache hit for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountBySID' cache hit for '$IdentityReference' on '$ServerNetBios'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
@@ -3778,7 +3791,7 @@ function Resolve-IdentityReference {
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # Win32_Account SID cache miss for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountBySID' cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
     $split = $IdentityReference.Split('\')
@@ -3794,7 +3807,7 @@ function Resolve-IdentityReference {
 
         if ($CacheResult) {
 
-            Write-LogMsg @LogParams -Text " # Win32_Account caption cache hit for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
+            Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache hit for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
 
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
                 $DomainDns = $AdsiServer.Dns
@@ -3824,7 +3837,7 @@ function Resolve-IdentityReference {
             }
 
         } else {
-            Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
+            Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
         }
 
     }
@@ -3834,7 +3847,7 @@ function Resolve-IdentityReference {
     if ($CacheResult) {
 
         # IdentityReference is an NT Account Name without a \, and has been cached from this server
-        Write-LogMsg @LogParams -Text " # Win32_Account caption cache hit for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache hit for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
@@ -3845,7 +3858,7 @@ function Resolve-IdentityReference {
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$IdentityReference'"
+        Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
     }
 
     # If no match was found in any cache, the path forward depends on the IdentityReference
@@ -3963,6 +3976,7 @@ function Resolve-IdentityReference {
             return $Resolved
 
         }
+
         "NT SERVICE\*" {
             # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
             if ($ServerNetBIOS -eq $ThisHostName) {
@@ -4011,7 +4025,9 @@ function Resolve-IdentityReference {
                 IdentityReferenceNetBios = $Caption
                 IdentityReferenceDns     = "$DomainDns\$Name"
             }
+
         }
+
         "APPLICATION PACKAGE AUTHORITY\*" {
 
             <#
@@ -4077,7 +4093,9 @@ function Resolve-IdentityReference {
                 IdentityReferenceNetBios = $Caption
                 IdentityReferenceDns     = "$DomainDns\$Name"
             }
+
         }
+
         "BUILTIN\*" {
             # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
             # But they may have real DirectoryEntry objects
@@ -4109,6 +4127,7 @@ function Resolve-IdentityReference {
                 IdentityReferenceDns     = "$DomainDns\$Name"
             }
         }
+
     }
 
     # The IdentityReference is an NTAccount
@@ -4352,6 +4371,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

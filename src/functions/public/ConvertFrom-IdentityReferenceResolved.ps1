@@ -112,10 +112,7 @@ function ConvertFrom-IdentityReferenceResolved {
             DirectoryEntryCache = $DirectoryEntryCache
             DomainsByNetbios    = $DomainsByNetbios
             ThisFqdn            = $ThisFqdn
-            ThisHostname        = $ThisHostname
             CimCache            = $CimCache
-            LogMsgCache         = $LogMsgCache
-            WhoAmI              = $WhoAmI
             DebugOutputStream   = $DebugOutputStream
         }
 
@@ -124,10 +121,7 @@ function ConvertFrom-IdentityReferenceResolved {
             DebugOutputStream   = $DebugOutputStream
             DirectoryEntryCache = $DirectoryEntryCache
             DomainsByNetbios    = $DomainsByNetbios
-            LogMsgCache         = $LogMsgCache
             ThisFqdn            = $ThisFqdn
-            ThisHostname        = $ThisHostname
-            WhoAmI              = $WhoAmI
         }
 
         $split = $IdentityReference.Split('\')
@@ -179,9 +173,12 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
-
+            $Params = $SearchDirectoryParams.Keys | ForEach-Object {
+                "-$_ '$($SearchDirectoryParams[$_])'"
+            }
+            Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             try {
-                $DirectoryEntry = Search-Directory @SearchDirectoryParams
+                $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
             } catch {
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory: $($_.Exception.Message)"
@@ -201,7 +198,11 @@ function ConvertFrom-IdentityReferenceResolved {
             $SearchDirectoryParams['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
             $SearchDirectoryParams['PropertiesToLoad'] = 'netbiosname'
 
-            $DomainCrossReference = Search-Directory @SearchDirectoryParams
+            $Params = $SearchDirectoryParams.Keys | ForEach-Object {
+                "-$_ '$($SearchDirectoryParams[$_])'"
+            }
+            Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
+            $DomainCrossReference = Search-Directory @SearchDirectoryParams @LoggingParams
             if ($DomainCrossReference.Properties ) {
                 Write-LogMsg @LogParams -Text " # The domain '$DomainFQDN' is online for '$IdentityReference'"
                 [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
@@ -228,8 +229,12 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
+            $Params = $SearchDirectoryParams.Keys | ForEach-Object {
+                "-$_ '$($SearchDirectoryParams[$_])'"
+            }
+            Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             try {
-                $DirectoryEntry = Search-Directory @SearchDirectoryParams
+                $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
             } catch {
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message.Trim())"
@@ -268,8 +273,12 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                 }
 
+                $Params = $GetDirectoryEntryParams.Keys | ForEach-Object {
+                    "-$_ '$($GetDirectoryEntryParams[$_])'"
+                }
+                Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                 try {
-                    $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams
+                    $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                 } catch {
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                     Write-LogMsg @LogParams -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
@@ -308,8 +317,12 @@ function ConvertFrom-IdentityReferenceResolved {
                     'primaryGroupToken'
                 )
 
+                $Params = $GetDirectoryEntryParams.Keys | ForEach-Object {
+                    "-$_ '$($GetDirectoryEntryParams[$_])'"
+                }
+                Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                 try {
-                    $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams
+                    $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                 } catch {
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                     Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
