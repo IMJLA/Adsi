@@ -318,7 +318,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 )
 
                 $Params = $GetDirectoryEntryParams.Keys | ForEach-Object {
-                    "-$_ '$($GetDirectoryEntryParams[$_])'"
+                    "-$_ $($GetDirectoryEntryParams[$_])"
                 }
                 Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                 try {

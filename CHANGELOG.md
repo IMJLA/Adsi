@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.98] - 2024-02-18 - debug output
+
 ## [4.0.97] - 2024-02-18 - debug output
 
 ## [4.0.96] - 2024-02-18 - remove redundant cache updates
