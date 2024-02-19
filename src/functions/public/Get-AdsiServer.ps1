@@ -35,9 +35,6 @@ function Get-AdsiServer {
         # Cache of known Win32_Account instances keyed by domain and SID
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
 
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -352,7 +349,6 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                #$Win32AccountsByCaption[$Acct.Caption] = $Acct
                 $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
 
             }
@@ -422,7 +418,6 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                #$Win32AccountsByCaption[$Acct.Caption] = $Acct
                 $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
 
             }

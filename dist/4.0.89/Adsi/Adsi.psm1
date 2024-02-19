@@ -2480,9 +2480,6 @@ function Get-AdsiServer {
         # Cache of known Win32_Account instances keyed by domain and SID
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
 
-        # Cache of known Win32_Account instances keyed by domain (e.g. CONTOSO) and Caption (NTAccount name e.g. CONTOSO\User1)
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
@@ -2797,7 +2794,6 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                #$Win32AccountsByCaption[$Acct.Caption] = $Acct
                 $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
 
             }
@@ -2867,7 +2863,6 @@ function Get-AdsiServer {
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Domain)\$($Acct.SID)' to the Win32_Account SID cache"
                 $Win32AccountsBySID["$($Acct.Domain)\$($Acct.SID)"] = $Acct
                 Write-LogMsg @LogParams -Text " # Add '$($Acct.Caption)' to the Win32_Account caption cache"
-                #$Win32AccountsByCaption[$Acct.Caption] = $Acct
                 $CimCache[$Acct.Domain]['Win32_Account'][$Acct.Caption] = $Acct
 
             }
@@ -3735,8 +3730,6 @@ function Resolve-IdentityReference {
 
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
 
-        [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
-
         <#
         Dictionary to cache known servers to avoid redundant lookups
 
@@ -3805,7 +3798,7 @@ function Resolve-IdentityReference {
 
     # Many Well-Known SIDs cannot be translated with the Translate method
     # Instead we have used CIM to collect information on instances of the Win32_Account class from the AdsiServer
-    # This has been done by Get-AdsiServer and it updated the Win32AccountsBySID and Win32AccountsByCaption caches
+    # This has been done by Get-AdsiServer and it updated the Win32AccountsBySID and Win32_AccountsByCaption caches
     # Search the caches now
     $CacheResult = $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"]
 
@@ -3834,7 +3827,6 @@ function Resolve-IdentityReference {
         # A Win32_Account's Caption property is a NetBIOS-resolved IdentityReference
         # NT Authority\SYSTEM would be SERVER123\SYSTEM as a Win32_Account on a server with hostname server123
         # This could also match on a domain account since those can be returned as Win32_Account, not sure if that will be a bug or what
-        #$CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$Name"]
         $CacheResult = $CimCache[$ServerNetBIOS]['Win32_Account']["$ServerNetBIOS\$Name"]
 
         if ($CacheResult) {
@@ -3874,7 +3866,6 @@ function Resolve-IdentityReference {
 
     }
 
-    #$CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$IdentityReference"]
     $CacheResult = $CimCache[$ServerNetBIOS]['Win32_Account']["$ServerNetBIOS\$IdentityReference"]
 
     if ($CacheResult) {
@@ -3946,7 +3937,6 @@ function Resolve-IdentityReference {
                     }
 
                     Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-                    #$Win32AccountsByCaption[$Caption] = $Win32Acct
                     $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
                     Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$IdentityReference' to the Win32_Account SID cache"
                     $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"] = $Win32Acct
@@ -3978,20 +3968,19 @@ function Resolve-IdentityReference {
 
                 # Recursively call this function to resolve the new IdentityReference we have
                 $ResolveIdentityReferenceParams = @{
-                    IdentityReference      = $NTAccount
-                    AdsiServer             = $AdsiServer
-                    Win32AccountsBySID     = $Win32AccountsBySID
-                    Win32AccountsByCaption = $Win32AccountsByCaption
-                    AdsiServersByDns       = $AdsiServersByDns
-                    DirectoryEntryCache    = $DirectoryEntryCache
-                    DomainsBySID           = $DomainsBySID
-                    DomainsByNetbios       = $DomainsByNetbios
-                    DomainsByFqdn          = $DomainsByFqdn
-                    ThisHostName           = $ThisHostName
-                    ThisFqdn               = $ThisFqdn
-                    LogMsgCache            = $LogMsgCache
-                    CimCache               = $CimCache
-                    WhoAmI                 = $WhoAmI
+                    IdentityReference   = $NTAccount
+                    AdsiServer          = $AdsiServer
+                    Win32AccountsBySID  = $Win32AccountsBySID
+                    AdsiServersByDns    = $AdsiServersByDns
+                    DirectoryEntryCache = $DirectoryEntryCache
+                    DomainsBySID        = $DomainsBySID
+                    DomainsByNetbios    = $DomainsByNetbios
+                    DomainsByFqdn       = $DomainsByFqdn
+                    ThisHostName        = $ThisHostName
+                    ThisFqdn            = $ThisFqdn
+                    LogMsgCache         = $LogMsgCache
+                    CimCache            = $CimCache
+                    WhoAmI              = $WhoAmI
                 }
 
                 $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
@@ -4048,7 +4037,6 @@ function Resolve-IdentityReference {
             }
 
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-            #$Win32AccountsByCaption[$Caption] = $Win32Acct
             $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
@@ -4114,7 +4102,6 @@ function Resolve-IdentityReference {
             }
 
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-            #$Win32AccountsByCaption[$Caption] = $Win32Acct
             $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
@@ -4145,7 +4132,6 @@ function Resolve-IdentityReference {
             }
 
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
-            #$Win32AccountsByCaption[$Caption] = $Win32Acct
             $CimCache[$ServerNetBIOS]['Win32_Account'][$Caption] = $Win32Acct
             Write-LogMsg @LogParams -Text " # Add '$ServerNetBIOS\$SIDString' to the Win32_Account SID cache"
             $Win32AccountsBySID["$ServerNetBIOS\$SIDString"] = $Win32Acct
@@ -4400,6 +4386,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
