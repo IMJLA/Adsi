@@ -107,7 +107,7 @@ function Search-Directory {
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }
-        $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' @CimParams @LoggingParams).Workgroup
+        $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
         $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
     }
     $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath

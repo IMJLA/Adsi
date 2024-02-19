@@ -135,26 +135,36 @@ function ConvertFrom-IdentityReferenceResolved {
         $SamaccountnameOrSid = $split[1]
 
         if (
+
             $null -ne $SamaccountnameOrSid -and
             @($AccessControlEntries.AdsiProvider)[0] -eq 'LDAP'
-        ) {
-            Write-LogMsg @LogParams -Text " # '$IdentityReference' is a domain security principal"
 
+        ) {
+
+            Write-LogMsg @LogParams -Text " # '$IdentityReference' is a domain security principal"
             $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+
             if ($DomainNetbiosCacheResult) {
+
                 Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$IdentityReference'"
                 $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                 $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
+
             } else {
+
                 Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
+
                 if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
                     $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                 }
+
                 $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainNetBIOS" -ThisFqdn $ThisFqdn -CimCache $CimCache @LogParams
+
             }
 
             # Search the domain for the principal
             $SearchDirectoryParams['Filter'] = "(samaccountname=$SamaccountnameOrSid)"
+
             $SearchDirectoryParams['PropertiesToLoad'] = @(
                 'objectClass',
                 'objectSid',
@@ -169,6 +179,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
+
             try {
                 $DirectoryEntry = Search-Directory @SearchDirectoryParams
             } catch {
@@ -344,20 +355,28 @@ function ConvertFrom-IdentityReferenceResolved {
             if ($NoGroupMembers -eq $false) {
 
                 if (
+
                     # WinNT DirectoryEntries do not contain an objectClass property
                     # If this property exists it is an LDAP DirectoryEntry rather than WinNT
                     $PropertiesToAdd.ContainsKey('objectClass')
+
                 ) {
                     # Retrieve the members of groups from the LDAP provider
+
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$IdentityReference'"
                     $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams).FullMembers
+
                 } else {
-                    # Retrieve the members of groups from the WinNT provider
+
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$IdentityReference'"
+
                     if ( $DirectoryEntry.SchemaClassName -eq 'group') {
+
                         Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$IdentityReference'"
                         $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+
                     }
+
                 }
 
                 # (Get-AdsiGroupMember).FullMembers or Get-WinNTGroupMember could return an array with null members so we must verify that is not true

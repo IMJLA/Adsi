@@ -8340,7 +8340,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[PSCustomObject] with UnresolvedIdentityReference and SIDString properties (each strings)</maml:name>
+          <maml:name>[PSCustomObject] with IdentityReferenceNetBios,IdentityReferenceDns, and SIDString properties (each strings)</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>

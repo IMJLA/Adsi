@@ -144,7 +144,7 @@ function Get-DirectoryEntry {
                     DebugOutputStream = $DebugOutputStream
                     ThisFqdn          = $ThisFqdn
                 }
-                $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' @CimParams @LoggingParams).Workgroup
+                $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
 
                 $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
                 Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"

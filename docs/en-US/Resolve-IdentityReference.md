@@ -295,7 +295,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### [PSCustomObject] with UnresolvedIdentityReference and SIDString properties (each strings)
+### [PSCustomObject] with IdentityReferenceNetBios,IdentityReferenceDns, and SIDString properties (each strings)
 ## NOTES
 
 ## RELATED LINKS

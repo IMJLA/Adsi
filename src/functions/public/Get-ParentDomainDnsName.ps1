@@ -51,7 +51,7 @@ function Get-ParentDomainDnsName {
     }
 
     Write-LogMsg @LogParams -Text "((Get-CachedCimInstance -ComputerName '$DomainNetbios' -ClassName CIM_ComputerSystem -ThisFqdn '$ThisFqdn').domain # for '$DomainNetbios'"
-    $ParentDomainDnsName = (Get-CachedCimInstance -ComputerName $DomainNetbios -ClassName CIM_ComputerSystem -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams).domain
+    $ParentDomainDnsName = (Get-CachedCimInstance -ComputerName $DomainNetbios -ClassName CIM_ComputerSystem -ThisFqdn $ThisFqdn -KeyProperty Name -CimCache $CimCache @LoggingParams).domain
 
     if ($ParentDomainDnsName -eq 'WORKGROUP' -or $null -eq $ParentDomainDnsName) {
         # For workgroup computers there is no parent domain DNS (workgroups operate on NetBIOS)

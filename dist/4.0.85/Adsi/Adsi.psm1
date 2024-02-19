@@ -505,26 +505,36 @@ function ConvertFrom-IdentityReferenceResolved {
         $SamaccountnameOrSid = $split[1]
 
         if (
+
             $null -ne $SamaccountnameOrSid -and
             @($AccessControlEntries.AdsiProvider)[0] -eq 'LDAP'
-        ) {
-            Write-LogMsg @LogParams -Text " # '$IdentityReference' is a domain security principal"
 
+        ) {
+
+            Write-LogMsg @LogParams -Text " # '$IdentityReference' is a domain security principal"
             $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+
             if ($DomainNetbiosCacheResult) {
+
                 Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$IdentityReference'"
                 $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                 $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
+
             } else {
+
                 Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
+
                 if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
                     $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                 }
+
                 $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainNetBIOS" -ThisFqdn $ThisFqdn -CimCache $CimCache @LogParams
+
             }
 
             # Search the domain for the principal
             $SearchDirectoryParams['Filter'] = "(samaccountname=$SamaccountnameOrSid)"
+
             $SearchDirectoryParams['PropertiesToLoad'] = @(
                 'objectClass',
                 'objectSid',
@@ -539,6 +549,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
+
             try {
                 $DirectoryEntry = Search-Directory @SearchDirectoryParams
             } catch {
@@ -714,20 +725,28 @@ function ConvertFrom-IdentityReferenceResolved {
             if ($NoGroupMembers -eq $false) {
 
                 if (
+
                     # WinNT DirectoryEntries do not contain an objectClass property
                     # If this property exists it is an LDAP DirectoryEntry rather than WinNT
                     $PropertiesToAdd.ContainsKey('objectClass')
+
                 ) {
                     # Retrieve the members of groups from the LDAP provider
+
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$IdentityReference'"
                     $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams).FullMembers
+
                 } else {
-                    # Retrieve the members of groups from the WinNT provider
+
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$IdentityReference'"
+
                     if ( $DirectoryEntry.SchemaClassName -eq 'group') {
+
                         Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$IdentityReference'"
                         $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+
                     }
+
                 }
 
                 # (Get-AdsiGroupMember).FullMembers or Get-WinNTGroupMember could return an array with null members so we must verify that is not true
@@ -2040,7 +2059,7 @@ function Find-LocalAdsiServerSid {
     }
 
     Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$ComputerName' -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'`""
-    $LocalAdminAccount = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'" @CimParams
+    $LocalAdminAccount = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'" -KeyProperty SID @CimParams
 
     if (-not $LocalAdminAccount) {
         return
@@ -3117,7 +3136,7 @@ function Get-DirectoryEntry {
                     DebugOutputStream = $DebugOutputStream
                     ThisFqdn          = $ThisFqdn
                 }
-                $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' @CimParams @LoggingParams).Workgroup
+                $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
 
                 $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
                 Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
@@ -3227,7 +3246,7 @@ function Get-ParentDomainDnsName {
     }
 
     Write-LogMsg @LogParams -Text "((Get-CachedCimInstance -ComputerName '$DomainNetbios' -ClassName CIM_ComputerSystem -ThisFqdn '$ThisFqdn').domain # for '$DomainNetbios'"
-    $ParentDomainDnsName = (Get-CachedCimInstance -ComputerName $DomainNetbios -ClassName CIM_ComputerSystem -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams).domain
+    $ParentDomainDnsName = (Get-CachedCimInstance -ComputerName $DomainNetbios -ClassName CIM_ComputerSystem -ThisFqdn $ThisFqdn -KeyProperty Name -CimCache $CimCache @LoggingParams).domain
 
     if ($ParentDomainDnsName -eq 'WORKGROUP' -or $null -eq $ParentDomainDnsName) {
         # For workgroup computers there is no parent domain DNS (workgroups operate on NetBIOS)
@@ -3689,7 +3708,7 @@ function Resolve-IdentityReference {
     .INPUTS
     None. Pipeline input is not accepted.
     .OUTPUTS
-    [PSCustomObject] with UnresolvedIdentityReference and SIDString properties (each strings)
+    [PSCustomObject] with IdentityReferenceNetBios,IdentityReferenceDns, and SIDString properties (each strings)
     .EXAMPLE
     Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')
 
@@ -3706,10 +3725,10 @@ function Resolve-IdentityReference {
         [PSObject]$AdsiServer,
 
         <#
-    Dictionary to cache directory entries to avoid redundant lookups
+        Dictionary to cache directory entries to avoid redundant lookups
 
-    Defaults to an empty thread-safe hashtable
-    #>
+        Defaults to an empty thread-safe hashtable
+        #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
         [hashtable]$Win32AccountsBySID = ([hashtable]::Synchronized(@{})),
@@ -3717,10 +3736,10 @@ function Resolve-IdentityReference {
         [hashtable]$Win32AccountsByCaption = ([hashtable]::Synchronized(@{})),
 
         <#
-    Dictionary to cache known servers to avoid redundant lookups
+        Dictionary to cache known servers to avoid redundant lookups
 
-    Defaults to an empty thread-safe hashtable
-    #>
+        Defaults to an empty thread-safe hashtable
+        #>
         [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
@@ -3733,17 +3752,17 @@ function Resolve-IdentityReference {
         [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
 
         <#
-    Hostname of the computer running this function.
+        Hostname of the computer running this function.
 
-    Can be provided as a string to avoid calls to HOSTNAME.EXE
-    #>
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
         [string]$ThisHostName = (HOSTNAME.EXE),
 
         <#
-    FQDN of the computer running this function.
+        FQDN of the computer running this function.
 
-    Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-    #>
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
         [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
 
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
@@ -3787,43 +3806,55 @@ function Resolve-IdentityReference {
     # This has been done by Get-AdsiServer and it updated the Win32AccountsBySID and Win32AccountsByCaption caches
     # Search the caches now
     $CacheResult = $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"]
+
     if ($CacheResult) {
-        #IdentityReference is a SID, and has been cached from this server
+
         Write-LogMsg @LogParams -Text " # Win32_Account SID cache hit for '$ServerNetBIOS\$IdentityReference'"
+
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
             SIDString                = $CacheResult.SID
             IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
-            # PS 7 more efficient IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase)
+            #IdentityReferenceNetBios = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase) # PS 7 more efficient
             IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
+
     } else {
         Write-LogMsg @LogParams -Text " # Win32_Account SID cache miss for '$ServerNetBIOS\$IdentityReference'"
     }
+
     $split = $IdentityReference.Split('\')
-    # $DomainNetBIOS = $split[0] # This line doesn't need to execute but is a handy reminder what is on the first side of the split
     $DomainNetBIOS = $ServerNetBIOS
     $Name = $split[1]
+
     if ($Name) {
-        # Win32_Account provides a NetBIOS-resolved IdentityReference
+
+        # A Win32_Account's Caption property is a NetBIOS-resolved IdentityReference
         # NT Authority\SYSTEM would be SERVER123\SYSTEM as a Win32_Account on a server with hostname server123
         # This could also match on a domain account since those can be returned as Win32_Account, not sure if that will be a bug or what
         $CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$Name"]
+
         if ($CacheResult) {
-            # IdentityReference is an NT Account Name, and has been cached from this server
+
             Write-LogMsg @LogParams -Text " # Win32_Account caption cache hit for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
+
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
                 $DomainDns = $AdsiServer.Dns
             }
             if (-not $DomainDns) {
+
                 $DomainCacheResult = $DomainsByNetbios[$CacheResult.Domain]
+
                 if ($DomainCacheResult) {
                     $DomainDns = $DomainCacheResult.Dns
                 }
+
             }
             if (-not $DomainDns) {
+
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                 $DomainDn = $DomainsByNetbios[$DomainNetBIOS].DistinguishedName
+
             }
 
             return [PSCustomObject]@{
@@ -3833,14 +3864,20 @@ function Resolve-IdentityReference {
                 # PS 7 more efficient IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase)
                 IdentityReferenceDns     = "$DomainDns\$($CacheResult.Name)"
             }
+
         } else {
             Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$ServerNetBIOS\$Name'"
         }
+
     }
+
     $CacheResult = $Win32AccountsByCaption["$ServerNetBIOS\$IdentityReference"]
+
     if ($CacheResult) {
+
         # IdentityReference is an NT Account Name without a \, and has been cached from this server
         Write-LogMsg @LogParams -Text " # Win32_Account caption cache hit for '$ServerNetBIOS\$IdentityReference'"
+
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
             SIDString                = $CacheResult.SID
@@ -3848,48 +3885,60 @@ function Resolve-IdentityReference {
             # PS 7 more efficient IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase)
             IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
+
     } else {
         Write-LogMsg @LogParams -Text " # Win32_Account caption cache miss for '$ServerNetBIOS\$IdentityReference'"
     }
 
     # If no match was found in any cache, the path forward depends on the IdentityReference
     switch -Wildcard ($IdentityReference) {
+
         "S-1-*" {
+
             # IdentityReference is a Revision 1 SID
+
             <#
-        Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
-            This .Net method makes it impossible to redirect the error stream directly
-            Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-            I don't understand exactly why
-            The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
-        #>
+            Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
+                This .Net method makes it impossible to redirect the error stream directly
+                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+                I don't understand exactly why
+                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
+            #>
             Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
             $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
-            $UnresolvedIdentityReference = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+            $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 
             # The SID of the domain is everything up to (but not including) the last hyphen
             $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
 
             # Search the cache of domains, first by SID, then by NetBIOS name
             $DomainCacheResult = $DomainsBySID[$DomainSid]
+
             if ($DomainCacheResult) {
                 Write-LogMsg @LogParams -Text " # Domain SID cache hit for '$DomainSid'"
             } else {
+
                 Write-LogMsg @LogParams -Text " # Domain SID cache miss for '$DomainSid'"
-                $split = $UnresolvedIdentityReference -split '\\'
+                $split = $NTAccount -split '\\'
+                $DomainFromSplit = $split[0]
+
                 if (
-                    $split[0].Contains(' ') -or
-                    $split[0].Contains('BUILTIN\')
+
+                    $DomainFromSplit.Contains(' ') -or
+                    $DomainFromSplit.Contains('BUILTIN\')
+
                 ) {
+
+                    $NameFromSplit = $split[1]
                     $DomainNetBIOS = $ServerNetBIOS
-                    $Caption = "$ServerNetBIOS\$($split[1])"
+                    $Caption = "$ServerNetBIOS\$NameFromSplit"
 
                     # Update the caches
                     $Win32Acct = [PSCustomObject]@{
                         SID     = $IdentityReference
                         Caption = $Caption
                         Domain  = $ServerNetBIOS
-                        Name    = $split[1]
+                        Name    = $NameFromSplit
                     }
 
                     Write-LogMsg @LogParams -Text " # Add '$Caption' to the Win32_Account caption cache"
@@ -3898,24 +3947,33 @@ function Resolve-IdentityReference {
                     $Win32AccountsBySID["$ServerNetBIOS\$IdentityReference"] = $Win32Acct
 
                 } else {
-                    $DomainNetBIOS = $split[0]
+                    $DomainNetBIOS = $DomainFromSplit
                 }
+
                 $DomainCacheResult = $DomainsByNetbios[$split[0]]
+
             }
+
             if ($DomainCacheResult) {
+
                 $DomainNetBIOS = $DomainCacheResult.Netbios
                 $DomainDns = $DomainCacheResult.Dns
+
             } else {
+
                 Write-LogMsg @LogParams -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS'"
-                Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$UnresolvedIdentityReference'"
+                Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+
             }
+
             $AdsiServer = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
-            if ($UnresolvedIdentityReference) {
+            if ($NTAccount) {
+
                 # Recursively call this function to resolve the new IdentityReference we have
                 $ResolveIdentityReferenceParams = @{
-                    IdentityReference      = $UnresolvedIdentityReference
+                    IdentityReference      = $NTAccount
                     AdsiServer             = $AdsiServer
                     Win32AccountsBySID     = $Win32AccountsBySID
                     Win32AccountsByCaption = $Win32AccountsByCaption
@@ -3930,8 +3988,11 @@ function Resolve-IdentityReference {
                     CimCache               = $CimCache
                     WhoAmI                 = $WhoAmI
                 }
+
                 $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams
+
             } else {
+
                 $Resolved = [PSCustomObject]@{
                     IdentityReference        = $IdentityReference
                     SIDString                = $IdentityReference
@@ -3939,6 +4000,7 @@ function Resolve-IdentityReference {
                     #IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase) # PS 7 more efficient
                     IdentityReferenceDns     = "$DomainDns\$IdentityReference"
                 }
+
             }
 
             return $Resolved
@@ -4285,7 +4347,7 @@ function Search-Directory {
             LogMsgCache  = $LogMsgCache
             WhoAmI       = $WhoAmI
         }
-        $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' @CimParams @LoggingParams).Workgroup
+        $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
         $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
     }
     $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath
@@ -4330,6 +4392,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
