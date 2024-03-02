@@ -420,7 +420,8 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         # Include any existing properties found earlier
                         ForEach ($ThisProperty in $InputProperties) {
-                            $OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
+                            #$OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
+                            $null = ConvertTo-SimpleProperty -InputObject $ThisMember -Property $ThisProperty -PropertyDictionary $OutputProperties
                         }
 
                         if ($ThisMember.sAmAccountName) {
