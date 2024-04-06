@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.102] - 2024-04-06 - implement cim port checking before attempting adsi connection
+
 ## [4.0.101] - 2024-03-02 - add feature to convertfrom-identityreferenceresolved to call convertto-simpleproperty for member directoryentry properties
 
 ## [4.0.100] - 2024-02-19 - comment updates
