@@ -144,7 +144,10 @@ function Resolve-IdentityReference {
                 $DomainCacheResult = $DomainsByNetbios[$CacheResult.Domain]
 
                 if ($DomainCacheResult) {
+                    Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$($CacheResult.Domain)'"
                     $DomainDns = $DomainCacheResult.Dns
+                } else {
+                    Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$($CacheResult.Domain)'"
                 }
 
             }
