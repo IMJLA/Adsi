@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.105] - 2024-04-07 - comment-based help spacing
+
 ## [4.0.104] - 2024-04-06 - log cache misses
 
 ## [4.0.103] - 2024-04-06 - remove regex

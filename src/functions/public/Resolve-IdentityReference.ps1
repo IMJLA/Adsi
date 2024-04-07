@@ -15,7 +15,7 @@ function Resolve-IdentityReference {
     Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')
 
     Get information about the local Administrator account
-#>
+    #>
     [OutputType([PSCustomObject])]
     param (
         # IdentityReference from an Access Control Entry
