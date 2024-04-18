@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.107] - 2024-04-17 - make find-adsiprovider lazy and fast
+
 ## [4.0.106] - 2024-04-17 - speed up get-currentdomain with CIM first
 
 ## [4.0.105] - 2024-04-07 - comment-based help spacing
