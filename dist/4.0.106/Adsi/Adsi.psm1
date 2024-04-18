@@ -2945,20 +2945,23 @@ function Get-CurrentDomain {
         [string]$DebugOutputStream = 'Debug'
 
     )
-    $Obj = [adsi]::new()
-    try {
-        $null = $Obj.RefreshCache('objectSid')
-    } catch {
 
-        # Assume local computer/workgroup, use CIM rather than ADSI
+    $CimParams = @{
+        CimCache          = $CimCache
+        ComputerName      = $ComputerName
+        DebugOutputStream = $DebugOutputStream
+        LogMsgCache       = $LogMsgCache
+        ThisFqdn          = $ThisFqdn
+        ThisHostname      = $ThisHostname
+        WhoAmI            = $WhoAmI
+    }
 
-        $LoggingParams = @{
-            ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
-            WhoAmI       = $WhoAmI
-        }
+    $Comp = Get-CachedCimInstance -ClassName Win32_ComputerSystem -KeyProperty Name @CimParams
 
-        $SIDString = Find-LocalAdsiServerSid -ComputerName $ComputerName -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+    if ($Comp.Domain -eq 'WORKGROUP') {
+
+        # Use CIM to find the domain
+        $SIDString = Find-LocalAdsiServerSid @CimParams
         $SID = $SIDString | ConvertTo-SidByteArray
 
         $OutputProperties = @{
@@ -2971,10 +2974,13 @@ function Get-CurrentDomain {
             }
         }
 
-    }
+    } else {
 
-    # Include specific desired properties
-    if (-not $OutputProperties) {
+        # Use ADSI to find the domain
+
+        $CurrentDomain = [adsi]::new()
+        $null = $CurrentDomain.RefreshCache('objectSid')
+
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
         $OutputProperties = @{
@@ -2982,16 +2988,17 @@ function Get-CurrentDomain {
         }
 
         # Get any existing properties for inclusion later
-        $InputProperties = (Get-Member -InputObject $Obj[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        $InputProperties = (Get-Member -InputObject $CurrentDomain[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
 
         # Include any existing properties found earlier
         ForEach ($ThisProperty in $InputProperties) {
             $OutputProperties[$ThisProperty] = $ThisPrincipal.$ThisProperty
         }
+
     }
 
     # Output the object
-    [PSCustomObject]$OutputProperties
+    return [PSCustomObject]$OutputProperties
 
 }
 function Get-DirectoryEntry {
@@ -4409,6 +4416,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
