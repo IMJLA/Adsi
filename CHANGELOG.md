@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.109] - 2024-04-22 - force new build and module reinstall
+
 ## [4.0.108] - 2024-04-22 - replace LogMsgCache with LogBuffer
 
 ## [4.0.107] - 2024-04-17 - make find-adsiprovider lazy and fast
