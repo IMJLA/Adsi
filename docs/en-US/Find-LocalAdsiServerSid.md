@@ -14,7 +14,7 @@ schema: 2.0.0
 
 ```
 Find-LocalAdsiServerSid [[-ComputerName] <String>] [[-CimCache] <Hashtable>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
 ```
 
 ## DESCRIPTION
@@ -77,8 +77,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-{{ Fill LogMsgCache Description }}
+### -LogBuffer
+{{ Fill LogBuffer Description }}
 
 ```yaml
 Type: System.Collections.Hashtable

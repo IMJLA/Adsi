@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.107
+Help Version: 4.0.108
 Locale: en-US
 ---
 
@@ -34,7 +34,7 @@ Convert a SearchResult to a PSCustomObject
 
 ### [ConvertFrom-SidString](ConvertFrom-SidString.md)
 
-ConvertFrom-SidString [[-SID] <string>] [[-DebugOutputStream] <string>] [[-CimCache] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>]
+ConvertFrom-SidString [[-SID] <string>] [[-DebugOutputStream] <string>] [[-CimCache] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogBuffer] <hashtable>]
 
 
 ### [ConvertTo-DecStringRepresentation](ConvertTo-DecStringRepresentation.md)
@@ -45,12 +45,12 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
 
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-CimCache] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-ThisFqdn] <string>] [[-ThisHostName] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
+ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-CimCache] <hashtable>] [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-ThisFqdn] <string>] [[-ThisHostName] <string>] [[-WhoAmI] <string>] [[-LogBuffer] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>] [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-DirectoryEntryCache] <hashtable>] [[-DomainsByNetbios] <hashtable>] [[-DomainsBySid] <hashtable>] [[-DomainsByFqdn] <hashtable>] [[-AdsiProvider] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogBuffer] <hashtable>] [[-DebugOutputStream] <string>] [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
@@ -76,7 +76,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 
 ### [Find-LocalAdsiServerSid](Find-LocalAdsiServerSid.md)
 
-Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-DebugOutputStream] <string>]
+Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogBuffer] <hashtable>] [[-DebugOutputStream] <string>]
 
 
 ### [Get-ADSIGroup](Get-ADSIGroup.md)
@@ -96,7 +96,7 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-ParentDomainDnsName](Get-ParentDomainDnsName.md)
 
-Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogMsgCache] <hashtable>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>] [-RemoveCimSession]
+Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogBuffer] <hashtable>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>] [-RemoveCimSession]
 
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)

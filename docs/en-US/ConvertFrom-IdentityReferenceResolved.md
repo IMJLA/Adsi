@@ -17,7 +17,7 @@ ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupM
  [[-ACEsByResolvedID] <Hashtable>] [[-PrincipalsByResolvedID] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CurrentDomain] <String>]
+ [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CurrentDomain] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -178,8 +178,8 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -188,7 +188,7 @@ Aliases:
 
 Required: False
 Position: 13
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

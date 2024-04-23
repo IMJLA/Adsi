@@ -14,7 +14,7 @@ Determine whether a directory server is an LDAP or a WinNT server
 
 ```
 Find-AdsiProvider [[-AdsiServer] <String[]>] [[-ThisFqdn] <String>] [[-ThisHostName] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -84,8 +84,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -94,7 +94,7 @@ Aliases:
 
 Required: False
 Position: 5
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

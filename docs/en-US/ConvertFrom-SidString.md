@@ -16,7 +16,7 @@ schema: 2.0.0
 ConvertFrom-SidString [[-SID] <String>] [[-DebugOutputStream] <String>] [[-CimCache] <Hashtable>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>]
+ [[-LogBuffer] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -124,8 +124,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-{{ Fill LogMsgCache Description }}
+### -LogBuffer
+{{ Fill LogBuffer Description }}
 
 ```yaml
 Type: System.Collections.Hashtable

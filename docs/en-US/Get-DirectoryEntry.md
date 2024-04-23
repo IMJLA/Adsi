@@ -16,7 +16,7 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>]
+ [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
@@ -153,8 +153,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -163,7 +163,7 @@ Aliases:
 
 Required: False
 Position: 11
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

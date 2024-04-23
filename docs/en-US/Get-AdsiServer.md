@@ -16,7 +16,7 @@ Get information about a directory server including the ADSI provider it hosts an
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-CimCache] <Hashtable>]
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>] [-RemoveCimSession]
+ [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-RemoveCimSession]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -149,8 +149,8 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -159,7 +159,7 @@ Aliases:
 
 Required: False
 Position: 11
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

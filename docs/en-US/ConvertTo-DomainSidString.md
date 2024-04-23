@@ -16,7 +16,7 @@ schema: 2.0.0
 ConvertTo-DomainSidString [-DomainDnsName] <String> [[-DirectoryEntryCache] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
  [[-AdsiProvider] <String>] [[-CimCache] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -155,8 +155,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-{{ Fill LogMsgCache Description }}
+### -LogBuffer
+{{ Fill LogBuffer Description }}
 
 ```yaml
 Type: System.Collections.Hashtable

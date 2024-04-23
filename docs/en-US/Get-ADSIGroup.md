@@ -16,7 +16,7 @@ Get the directory entries for a group and its members using ADSI
 Get-AdsiGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesToLoad] <String[]>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
+ [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -150,8 +150,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -160,7 +160,7 @@ Aliases:
 
 Required: False
 Position: 12
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

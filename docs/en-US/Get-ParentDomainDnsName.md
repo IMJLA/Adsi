@@ -14,7 +14,7 @@ schema: 2.0.0
 
 ```
 Get-ParentDomainDnsName [[-DomainNetbios] <String>] [[-CimCache] <Hashtable>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-CimSession] <CimSession>]
+ [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimSession] <CimSession>]
  [[-DebugOutputStream] <String>] [-RemoveCimSession]
 ```
 
@@ -93,8 +93,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-{{ Fill LogMsgCache Description }}
+### -LogBuffer
+{{ Fill LogBuffer Description }}
 
 ```yaml
 Type: System.Collections.Hashtable

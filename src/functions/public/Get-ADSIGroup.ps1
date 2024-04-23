@@ -71,8 +71,8 @@ function Get-AdsiGroup {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{}))
 
     )
 
@@ -84,7 +84,7 @@ function Get-AdsiGroup {
         DomainsByNetbios    = $DomainsByNetbios
         DomainsBySid        = $DomainsBySid
         ThisHostname        = $ThisHostname
-        LogMsgCache         = $LogMsgCache
+        LogBuffer         = $LogBuffer
         WhoAmI              = $WhoAmI
         ThisFqdn            = $ThisFqdn
         CimCache            = $CimCache
@@ -99,7 +99,7 @@ function Get-AdsiGroup {
         DomainsBySid        = $DomainsBySid
         ThisHostName        = $ThisHostName
         ThisFqdn            = $ThisFqdn
-        LogMsgCache         = $LogMsgCache
+        LogBuffer         = $LogBuffer
         CimCache            = $CimCache
         WhoAmI              = $WhoAmI
     }

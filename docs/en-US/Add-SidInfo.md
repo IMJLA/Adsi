@@ -14,7 +14,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ```
 Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>]
- [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -81,8 +81,8 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -91,7 +91,7 @@ Aliases:
 
 Required: False
 Position: 5
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

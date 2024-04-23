@@ -45,8 +45,8 @@ function ConvertFrom-SidString {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{}))
     )
 
     $GetDirectoryEntryParams = @{
@@ -55,7 +55,7 @@ function ConvertFrom-SidString {
         ThisFqdn            = $ThisFqdn
         ThisHostname        = $ThisHostname
         CimCache            = $CimCache
-        LogMsgCache         = $LogMsgCache
+        LogBuffer         = $LogBuffer
         WhoAmI              = $WhoAmI
         DebugOutputStream   = $DebugOutputStream
     }

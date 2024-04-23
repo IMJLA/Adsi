@@ -66,16 +66,16 @@
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>CimCache</maml:name>
@@ -153,16 +153,16 @@
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -317,16 +317,16 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
@@ -392,16 +392,16 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -630,16 +630,16 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
           <maml:name>CurrentDomain</maml:name>
@@ -886,16 +886,16 @@ Path              : WinNT://localhost/Administrator</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>NoGroupMembers</maml:name>
@@ -1373,9 +1373,9 @@ ForEach-Object {
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+            <maml:para>{{ Fill LogBuffer Description }}</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
@@ -1556,9 +1556,9 @@ ForEach-Object {
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          <maml:para>{{ Fill LogBuffer Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
@@ -1821,16 +1821,16 @@ ForEach-Object {
           <dev:defaultValue>ADS_NAME_TYPE_NT4</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>OutputType</maml:name>
@@ -1947,16 +1947,16 @@ ForEach-Object {
           <dev:defaultValue>ADS_NAME_TYPE_NT4</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>OutputType</maml:name>
@@ -2097,16 +2097,16 @@ ForEach-Object {
         <dev:defaultValue>ADS_NAME_TYPE_NT4</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>OutputType</maml:name>
@@ -2235,9 +2235,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+            <maml:para>{{ Fill LogBuffer Description }}</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
@@ -2467,9 +2467,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          <maml:para>{{ Fill LogBuffer Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
@@ -2591,9 +2591,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+            <maml:para>{{ Fill LogBuffer Description }}</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
@@ -2835,9 +2835,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          <maml:para>{{ Fill LogBuffer Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
@@ -3032,16 +3032,16 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
           <maml:name>ProgressAction</maml:name>
@@ -3170,16 +3170,16 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
           <maml:name>NetBIOS</maml:name>
@@ -3332,16 +3332,16 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
         <maml:name>NetBIOS</maml:name>
@@ -3732,16 +3732,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>CimCache</maml:name>
@@ -3967,16 +3967,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -4105,16 +4105,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
@@ -4328,16 +4328,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -4492,16 +4492,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>CimCache</maml:name>
@@ -4579,16 +4579,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -4784,9 +4784,9 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+            <maml:para>{{ Fill LogBuffer Description }}</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
@@ -4860,9 +4860,9 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          <maml:para>{{ Fill LogBuffer Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
@@ -4997,16 +4997,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>GroupName</maml:name>
@@ -5195,16 +5195,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
@@ -5328,16 +5328,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>CimCache</maml:name>
@@ -5585,16 +5585,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>NoRecurse</maml:name>
@@ -5761,16 +5761,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
@@ -5995,16 +5995,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Netbios</maml:name>
@@ -6202,16 +6202,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
@@ -6265,16 +6265,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>ThisFqdn</maml:name>
@@ -6391,16 +6391,16 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
@@ -6612,16 +6612,16 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -6817,9 +6817,9 @@ Path              : WinNT://ComputerName</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+            <maml:para>{{ Fill LogBuffer Description }}</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
@@ -6928,9 +6928,9 @@ Path              : WinNT://ComputerName</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>{{ Fill LogMsgCache Description }}</maml:para>
+          <maml:para>{{ Fill LogBuffer Description }}</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
@@ -7065,16 +7065,16 @@ Path              : WinNT://ComputerName</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
@@ -7104,16 +7104,16 @@ Path              : WinNT://ComputerName</dev:code>
         <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>ThisHostname</maml:name>
@@ -7205,16 +7205,16 @@ Path              : WinNT://ComputerName</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
           <maml:name>CimCache</maml:name>
@@ -7440,16 +7440,16 @@ Path              : WinNT://ComputerName</dev:code>
         <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -7844,16 +7844,16 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
           <maml:name>CimCache</maml:name>
@@ -8105,16 +8105,16 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -8269,16 +8269,16 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
-          <maml:name>LogMsgCache</maml:name>
+          <maml:name>LogBuffer</maml:name>
           <maml:description>
-            <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+            <maml:para>Log messages which have not yet been written to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
           <maml:name>DebugOutputStream</maml:name>
@@ -8476,16 +8476,16 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
-        <maml:name>LogMsgCache</maml:name>
+        <maml:name>LogBuffer</maml:name>
         <maml:description>
-          <maml:para>Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)</maml:para>
+          <maml:para>Log messages which have not yet been written to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>$Global:LogMessages</dev:defaultValue>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PageSize</maml:name>

@@ -16,7 +16,7 @@ Use Active Directory Service Interfaces to search an LDAP directory
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
  [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>] [[-SearchScope] <String>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-ThisFqdn] <String>] [[-ThisHostName] <String>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
+ [[-ThisFqdn] <String>] [[-ThisHostName] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>]
  [[-DebugOutputStream] <String>]
 ```
 
@@ -142,8 +142,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -152,7 +152,7 @@ Aliases:
 
 Required: False
 Position: 13
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

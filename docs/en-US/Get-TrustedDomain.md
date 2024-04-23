@@ -13,7 +13,7 @@ Returns a dictionary of trusted domains by the current computer
 ## SYNTAX
 
 ```
-Get-TrustedDomain [[-ThisHostname] <Object>] [[-WhoAmI] <String>] [[-LogMsgCache] <Hashtable>]
+Get-TrustedDomain [[-ThisHostname] <Object>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>]
  [[-DebugOutputStream] <String>]
 ```
 
@@ -50,8 +50,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogMsgCache
-Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
+### -LogBuffer
+Log messages which have not yet been written to disk
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -60,7 +60,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value: $Global:LogMessages
+Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

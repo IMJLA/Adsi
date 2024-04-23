@@ -135,8 +135,8 @@ function Add-DomainFqdnToLdapPath {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
@@ -152,14 +152,14 @@ function Add-DomainFqdnToLdapPath {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
         #>
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -241,8 +241,8 @@ function Add-SidInfo {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -254,7 +254,7 @@ function Add-SidInfo {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -446,8 +446,8 @@ function ConvertFrom-IdentityReferenceResolved {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # The current domain
         # Can be passed as a parameter to reduce calls to Get-CurrentDomain
@@ -458,13 +458,13 @@ function ConvertFrom-IdentityReferenceResolved {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -984,8 +984,8 @@ function ConvertFrom-SidString {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{}))
     )
 
     $GetDirectoryEntryParams = @{
@@ -994,7 +994,7 @@ function ConvertFrom-SidString {
         ThisFqdn            = $ThisFqdn
         ThisHostname        = $ThisHostname
         CimCache            = $CimCache
-        LogMsgCache         = $LogMsgCache
+        LogBuffer         = $LogBuffer
         WhoAmI              = $WhoAmI
         DebugOutputStream   = $DebugOutputStream
     }
@@ -1094,8 +1094,8 @@ function ConvertTo-DistinguishedName {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -1107,13 +1107,13 @@ function ConvertTo-DistinguishedName {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -1231,8 +1231,8 @@ function ConvertTo-DomainNetBIOS {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -1243,7 +1243,7 @@ function ConvertTo-DomainNetBIOS {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -1264,7 +1264,7 @@ function ConvertTo-DomainNetBIOS {
             ThisFqdn            = $ThisFqdn
             ThisHostname        = $ThisHostname
             CimCache            = $CimCache
-            LogMsgCache         = $LogMsgCache
+            LogBuffer         = $LogBuffer
             WhoAmI              = $WhoAmI
             DebugOutputStream   = $DebugOutputStream
         }
@@ -1344,8 +1344,8 @@ function ConvertTo-DomainSidString {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -1356,13 +1356,13 @@ function ConvertTo-DomainSidString {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -1494,8 +1494,8 @@ function ConvertTo-Fqdn {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
@@ -1510,13 +1510,13 @@ function ConvertTo-Fqdn {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -1691,8 +1691,8 @@ function Expand-AdsiGroupMember {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
@@ -1707,13 +1707,13 @@ function Expand-AdsiGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -1864,8 +1864,8 @@ function Expand-WinNTGroupMember {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -1877,13 +1877,13 @@ function Expand-WinNTGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -1970,8 +1970,8 @@ function Find-AdsiProvider {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
@@ -1986,12 +1986,12 @@ function Find-AdsiProvider {
         #$LogParams = @{
         #    ThisHostname = $ThisHostname
         #    Type         = $DebugOutputStream
-        #    LogMsgCache  = $LogMsgCache
+        #    LogBuffer  = $LogBuffer
         #    WhoAmI       = $WhoAmI
         #}
 
         $LoggingParams = @{
-            LogMsgCache       = $LogMsgCache
+            LogBuffer         = $LogBuffer
             ThisHostname      = $ThisHostname
             DebugOutputStream = $DebugOutputStream
             WhoAmI            = $WhoAmI
@@ -2066,8 +2066,8 @@ function Find-LocalAdsiServerSid {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -2078,7 +2078,7 @@ function Find-LocalAdsiServerSid {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -2086,7 +2086,7 @@ function Find-LocalAdsiServerSid {
         CimCache          = $CimCache
         ComputerName      = $ThisHostName
         DebugOutputStream = $DebugOutputStream
-        LogMsgCache       = $LogMsgCache
+        LogBuffer       = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -2175,8 +2175,8 @@ function Get-AdsiGroup {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{}))
 
     )
 
@@ -2188,7 +2188,7 @@ function Get-AdsiGroup {
         DomainsByNetbios    = $DomainsByNetbios
         DomainsBySid        = $DomainsBySid
         ThisHostname        = $ThisHostname
-        LogMsgCache         = $LogMsgCache
+        LogBuffer         = $LogBuffer
         WhoAmI              = $WhoAmI
         ThisFqdn            = $ThisFqdn
         CimCache            = $CimCache
@@ -2203,7 +2203,7 @@ function Get-AdsiGroup {
         DomainsBySid        = $DomainsBySid
         ThisHostName        = $ThisHostName
         ThisFqdn            = $ThisFqdn
-        LogMsgCache         = $LogMsgCache
+        LogBuffer         = $LogBuffer
         CimCache            = $CimCache
         WhoAmI              = $WhoAmI
     }
@@ -2292,8 +2292,8 @@ function Get-AdsiGroupMember {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
@@ -2322,13 +2322,13 @@ function Get-AdsiGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -2538,8 +2538,8 @@ function Get-AdsiServer {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -2553,13 +2553,13 @@ function Get-AdsiServer {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -2937,8 +2937,8 @@ function Get-CurrentDomain {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -2950,7 +2950,7 @@ function Get-CurrentDomain {
         CimCache          = $CimCache
         ComputerName      = $ComputerName
         DebugOutputStream = $DebugOutputStream
-        LogMsgCache       = $LogMsgCache
+        LogBuffer       = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -3076,8 +3076,8 @@ function Get-DirectoryEntry {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -3088,13 +3088,13 @@ function Get-DirectoryEntry {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3230,8 +3230,8 @@ function Get-ParentDomainDnsName {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
         [CimSession]$CimSession,
@@ -3247,7 +3247,7 @@ function Get-ParentDomainDnsName {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3307,8 +3307,8 @@ function Get-TrustedDomain {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -3319,7 +3319,7 @@ function Get-TrustedDomain {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer    = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3400,8 +3400,8 @@ function Get-WinNTGroupMember {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
@@ -3416,13 +3416,13 @@ function Get-WinNTGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -3477,7 +3477,7 @@ function Get-WinNTGroupMember {
                     DirectoryEntryCache = $DirectoryEntryCache
                     PropertiesToLoad    = $PropertiesToLoad
                     DomainsByNetbios    = $DomainsByNetbios
-                    LogMsgCache         = $LogMsgCache
+                    LogBuffer         = $LogBuffer
                     WhoAmI              = $WhoAmI
                     CimCache            = $CimCache
                     ThisFqdn            = $ThisFqdn
@@ -3775,8 +3775,8 @@ function Resolve-IdentityReference {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Cache of CIM sessions and instances to reduce connections and queries
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
@@ -3790,13 +3790,13 @@ function Resolve-IdentityReference {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3993,7 +3993,7 @@ function Resolve-IdentityReference {
                     DomainsByFqdn       = $DomainsByFqdn
                     ThisHostName        = $ThisHostName
                     ThisFqdn            = $ThisFqdn
-                    LogMsgCache         = $LogMsgCache
+                    LogBuffer         = $LogBuffer
                     CimCache            = $CimCache
                     WhoAmI              = $WhoAmI
                 }
@@ -4329,8 +4329,8 @@ function Search-Directory {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Dictionary of log messages for Write-LogMsg (can be thread-safe if a synchronized hashtable is provided)
-        [hashtable]$LogMsgCache = $Global:LogMessages,
+        # Log messages which have not yet been written to disk
+        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -4341,7 +4341,7 @@ function Search-Directory {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogMsgCache  = $LogMsgCache
+        LogBuffer  = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -4349,7 +4349,7 @@ function Search-Directory {
         DirectoryEntryCache = $DirectoryEntryCache
         DomainsByNetbios    = $DomainsByNetbios
         ThisHostname        = $ThisHostname
-        LogMsgCache         = $LogMsgCache
+        LogBuffer         = $LogBuffer
         WhoAmI              = $WhoAmI
         CimCache            = $CimCache
         ThisFqdn            = $ThisFqdn
@@ -4368,7 +4368,7 @@ function Search-Directory {
         }
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogMsgCache  = $LogMsgCache
+            LogBuffer  = $LogBuffer
             WhoAmI       = $WhoAmI
         }
         $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
@@ -4416,6 +4416,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
