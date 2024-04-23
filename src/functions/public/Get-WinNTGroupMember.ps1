@@ -73,13 +73,13 @@ function Get-WinNTGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -134,7 +134,7 @@ function Get-WinNTGroupMember {
                     DirectoryEntryCache = $DirectoryEntryCache
                     PropertiesToLoad    = $PropertiesToLoad
                     DomainsByNetbios    = $DomainsByNetbios
-                    LogBuffer         = $LogBuffer
+                    LogBuffer           = $LogBuffer
                     WhoAmI              = $WhoAmI
                     CimCache            = $CimCache
                     ThisFqdn            = $ThisFqdn

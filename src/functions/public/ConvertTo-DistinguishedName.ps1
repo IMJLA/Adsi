@@ -75,13 +75,13 @@ function ConvertTo-DistinguishedName {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 

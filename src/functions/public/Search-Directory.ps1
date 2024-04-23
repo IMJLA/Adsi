@@ -77,7 +77,7 @@ function Search-Directory {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -85,7 +85,7 @@ function Search-Directory {
         DirectoryEntryCache = $DirectoryEntryCache
         DomainsByNetbios    = $DomainsByNetbios
         ThisHostname        = $ThisHostname
-        LogBuffer         = $LogBuffer
+        LogBuffer           = $LogBuffer
         WhoAmI              = $WhoAmI
         CimCache            = $CimCache
         ThisFqdn            = $ThisFqdn
@@ -104,7 +104,7 @@ function Search-Directory {
         }
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
         $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup

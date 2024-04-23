@@ -254,7 +254,7 @@ function Add-SidInfo {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -458,13 +458,13 @@ function ConvertFrom-IdentityReferenceResolved {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogBuffer  = $LogBuffer
+        LogBuffer    = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -1107,13 +1107,13 @@ function ConvertTo-DistinguishedName {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -1243,7 +1243,7 @@ function ConvertTo-DomainNetBIOS {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -1264,7 +1264,7 @@ function ConvertTo-DomainNetBIOS {
             ThisFqdn            = $ThisFqdn
             ThisHostname        = $ThisHostname
             CimCache            = $CimCache
-            LogBuffer         = $LogBuffer
+            LogBuffer           = $LogBuffer
             WhoAmI              = $WhoAmI
             DebugOutputStream   = $DebugOutputStream
         }
@@ -1356,13 +1356,13 @@ function ConvertTo-DomainSidString {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogBuffer  = $LogBuffer
+        LogBuffer    = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -1510,13 +1510,13 @@ function ConvertTo-Fqdn {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -1707,13 +1707,13 @@ function Expand-AdsiGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -1877,13 +1877,13 @@ function Expand-WinNTGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -2078,7 +2078,7 @@ function Find-LocalAdsiServerSid {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -2086,7 +2086,7 @@ function Find-LocalAdsiServerSid {
         CimCache          = $CimCache
         ComputerName      = $ThisHostName
         DebugOutputStream = $DebugOutputStream
-        LogBuffer       = $LogBuffer
+        LogBuffer         = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -2188,7 +2188,7 @@ function Get-AdsiGroup {
         DomainsByNetbios    = $DomainsByNetbios
         DomainsBySid        = $DomainsBySid
         ThisHostname        = $ThisHostname
-        LogBuffer         = $LogBuffer
+        LogBuffer           = $LogBuffer
         WhoAmI              = $WhoAmI
         ThisFqdn            = $ThisFqdn
         CimCache            = $CimCache
@@ -2203,7 +2203,7 @@ function Get-AdsiGroup {
         DomainsBySid        = $DomainsBySid
         ThisHostName        = $ThisHostName
         ThisFqdn            = $ThisFqdn
-        LogBuffer         = $LogBuffer
+        LogBuffer           = $LogBuffer
         CimCache            = $CimCache
         WhoAmI              = $WhoAmI
     }
@@ -2322,13 +2322,13 @@ function Get-AdsiGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -2553,13 +2553,13 @@ function Get-AdsiServer {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -3088,13 +3088,13 @@ function Get-DirectoryEntry {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogBuffer  = $LogBuffer
+        LogBuffer    = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3247,7 +3247,7 @@ function Get-ParentDomainDnsName {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3319,7 +3319,7 @@ function Get-TrustedDomain {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer    = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3416,13 +3416,13 @@ function Get-WinNTGroupMember {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -3477,7 +3477,7 @@ function Get-WinNTGroupMember {
                     DirectoryEntryCache = $DirectoryEntryCache
                     PropertiesToLoad    = $PropertiesToLoad
                     DomainsByNetbios    = $DomainsByNetbios
-                    LogBuffer         = $LogBuffer
+                    LogBuffer           = $LogBuffer
                     WhoAmI              = $WhoAmI
                     CimCache            = $CimCache
                     ThisFqdn            = $ThisFqdn
@@ -3790,13 +3790,13 @@ function Resolve-IdentityReference {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
-        LogBuffer  = $LogBuffer
+        LogBuffer    = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -3993,7 +3993,7 @@ function Resolve-IdentityReference {
                     DomainsByFqdn       = $DomainsByFqdn
                     ThisHostName        = $ThisHostName
                     ThisFqdn            = $ThisFqdn
-                    LogBuffer         = $LogBuffer
+                    LogBuffer           = $LogBuffer
                     CimCache            = $CimCache
                     WhoAmI              = $WhoAmI
                 }
@@ -4341,7 +4341,7 @@ function Search-Directory {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -4349,7 +4349,7 @@ function Search-Directory {
         DirectoryEntryCache = $DirectoryEntryCache
         DomainsByNetbios    = $DomainsByNetbios
         ThisHostname        = $ThisHostname
-        LogBuffer         = $LogBuffer
+        LogBuffer           = $LogBuffer
         WhoAmI              = $WhoAmI
         CimCache            = $CimCache
         ThisFqdn            = $ThisFqdn
@@ -4368,7 +4368,7 @@ function Search-Directory {
         }
         $LoggingParams = @{
             ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
+            LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
         }
         $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
@@ -4416,6 +4416,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

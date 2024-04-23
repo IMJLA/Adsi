@@ -37,7 +37,7 @@ function Find-LocalAdsiServerSid {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -45,7 +45,7 @@ function Find-LocalAdsiServerSid {
         CimCache          = $CimCache
         ComputerName      = $ThisHostName
         DebugOutputStream = $DebugOutputStream
-        LogBuffer       = $LogBuffer
+        LogBuffer         = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI

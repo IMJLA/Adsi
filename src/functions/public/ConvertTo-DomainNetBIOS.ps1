@@ -52,7 +52,7 @@ function ConvertTo-DomainNetBIOS {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        LogBuffer  = $LogBuffer
+        Buffer = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -73,7 +73,7 @@ function ConvertTo-DomainNetBIOS {
             ThisFqdn            = $ThisFqdn
             ThisHostname        = $ThisHostname
             CimCache            = $CimCache
-            LogBuffer         = $LogBuffer
+            LogBuffer           = $LogBuffer
             WhoAmI              = $WhoAmI
             DebugOutputStream   = $DebugOutputStream
         }

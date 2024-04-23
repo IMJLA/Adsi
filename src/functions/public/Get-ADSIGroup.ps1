@@ -84,7 +84,7 @@ function Get-AdsiGroup {
         DomainsByNetbios    = $DomainsByNetbios
         DomainsBySid        = $DomainsBySid
         ThisHostname        = $ThisHostname
-        LogBuffer         = $LogBuffer
+        LogBuffer           = $LogBuffer
         WhoAmI              = $WhoAmI
         ThisFqdn            = $ThisFqdn
         CimCache            = $CimCache
@@ -99,7 +99,7 @@ function Get-AdsiGroup {
         DomainsBySid        = $DomainsBySid
         ThisHostName        = $ThisHostName
         ThisFqdn            = $ThisFqdn
-        LogBuffer         = $LogBuffer
+        LogBuffer           = $LogBuffer
         CimCache            = $CimCache
         WhoAmI              = $WhoAmI
     }
