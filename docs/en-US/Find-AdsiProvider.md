@@ -13,9 +13,8 @@ Determine whether a directory server is an LDAP or a WinNT server
 ## SYNTAX
 
 ```
-Find-AdsiProvider [[-AdsiServer] <String[]>] [[-ThisFqdn] <String>] [[-ThisHostName] <String>]
+Find-AdsiProvider [[-AdsiServer] <String>] [[-ThisFqdn] <String>] [[-ThisHostName] <String>]
  [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -43,14 +42,14 @@ Find the ADSI provider of the AD domain 'ad.contoso.com'
 IP address or hostname of the directory server whose ADSI provider type to determine
 
 ```yaml
-Type: System.String[]
+Type: System.String
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 1
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -95,21 +94,6 @@ Aliases:
 Required: False
 Position: 5
 Default value: ([hashtable]::Synchronized(@{}))
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ProgressAction
-{{ Fill ProgressAction Description }}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -162,9 +146,6 @@ Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
-
-### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 

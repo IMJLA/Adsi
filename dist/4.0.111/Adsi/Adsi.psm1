@@ -1950,8 +1950,7 @@ function Find-AdsiProvider {
     param (
 
         # IP address or hostname of the directory server whose ADSI provider type to determine
-        [Parameter(ValueFromPipeline)]
-        [string[]]$AdsiServer,
+        [string]$AdsiServer,
 
         <#
         FQDN of the computer running this function.
@@ -1981,63 +1980,65 @@ function Find-AdsiProvider {
         [string]$DebugOutputStream = 'Debug'
 
     )
-    begin {
 
-        #$LogParams = @{
-        #    ThisHostname = $ThisHostname
-        #    Type         = $DebugOutputStream
-        #    LogBuffer  = $LogBuffer
-        #    WhoAmI       = $WhoAmI
+    $Log = @{
+        ThisHostname = $ThisHostname
+        Type         = $DebugOutputStream
+        Buffer       = $LogBuffer
+        WhoAmI       = $WhoAmI
+    }
+
+    $AdsiProvider = $null
+
+    $CommandParameters = @{
+        ComputerName      = $AdsiServer
+        Namespace         = 'ROOT/StandardCimv2'
+        Query             = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
+        KeyProperty       = 'LocalPort'
+        CimCache          = $CimCache
+        ThisFqdn          = $ThisFqdn
+        ErrorAction       = 'Ignore'
+        LogBuffer         = $LogBuffer
+        ThisHostname      = $ThisHostname
+        DebugOutputStream = $DebugOutputStream
+        WhoAmI            = $WhoAmI
+    }
+
+    Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
+
+    if (Get-CachedCimInstance @CommandParameters) {
+        #$AdsiPath = "LDAP://$AdsiServer"
+        #Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
+        #try {
+        #    $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
+        $AdsiProvider = 'LDAP'
+        #} catch { Write-LogMsg @LogParams -Text " # $AdsiServer did not respond to LDAP" }
+    }
+
+    if (!$AdsiProvider) {
+        #$AdsiPath = "WinNT://$AdsiServer"
+        #Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
+        #try {
+        #    $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
+        $AdsiProvider = 'WinNT'
+        #} catch {
+        #    Write-LogMsg @LogParams -Text " # $AdsiServer did not respond to WinNT"
         #}
-
-        $LoggingParams = @{
-            LogBuffer         = $LogBuffer
-            ThisHostname      = $ThisHostname
-            DebugOutputStream = $DebugOutputStream
-            WhoAmI            = $WhoAmI
-        }
-
     }
-    process {
+    #if (!$AdsiProvider) {
+    #    $AdsiPath = "LDAP://$AdsiServer"
+    #    Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
+    #    try {
+    #        $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
+    #        $AdsiProvider = 'LDAP'
+    #    } catch { Write-LogMsg @LogParams -Text " # $AdsiServer did not respond to LDAP" }
+    #}
+    #if (!$AdsiProvider) {
+    #    $AdsiProvider = 'none'
+    #}
 
-        ForEach ($ThisServer in $AdsiServer) {
+    return $AdsiProvider
 
-            $AdsiProvider = $null
-
-            if (
-                Get-CachedCimInstance -ComputerName $ThisServer -Namespace ROOT/StandardCimv2 -Query 'Select * From MSFT_NetTCPConnection Where LocalPort = 389' -KeyProperty LocalPort -CimCache $CimCache -ThisFqdn $ThisFqdn -ErrorAction Ignore @LoggingParams
-            ) {
-                #$AdsiPath = "LDAP://$ThisServer"
-                #Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
-                #try {
-                #    $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
-                $AdsiProvider = 'LDAP'
-                #} catch { Write-LogMsg @LogParams -Text " # $ThisServer did not respond to LDAP" }
-            }
-            if (!$AdsiProvider) {
-                #$AdsiPath = "WinNT://$ThisServer"
-                #Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
-                #try {
-                #    $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
-                $AdsiProvider = 'WinNT'
-                #} catch {
-                #    Write-LogMsg @LogParams -Text " # $ThisServer did not respond to WinNT"
-                #}
-            }
-            #if (!$AdsiProvider) {
-            #    $AdsiPath = "LDAP://$ThisServer"
-            #    Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
-            #    try {
-            #        $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
-            #        $AdsiProvider = 'LDAP'
-            #    } catch { Write-LogMsg @LogParams -Text " # $ThisServer did not respond to LDAP" }
-            #}
-            #if (!$AdsiProvider) {
-            #    $AdsiProvider = 'none'
-            #}
-        }
-        $AdsiProvider
-    }
 }
 function Find-LocalAdsiServerSid {
 
@@ -4416,6 +4417,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
