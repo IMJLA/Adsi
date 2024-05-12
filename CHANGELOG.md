@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.112] - 2024-05-12 - add logging and remove pipeline support
+
 ## [4.0.111] - 2024-05-12 - add logging and remove pipeline support
 
 ## [4.0.110] - 2024-04-22 - bugfix buffer vs logbuffer param name when calling write-logmsg

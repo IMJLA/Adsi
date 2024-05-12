@@ -71,11 +71,11 @@ function Find-AdsiProvider {
         Query             = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
         KeyProperty       = 'LocalPort'
         CimCache          = $CimCache
-        ThisFqdn          = $ThisFqdn
+        DebugOutputStream = $DebugOutputStream
         ErrorAction       = 'Ignore'
         LogBuffer         = $LogBuffer
+        ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
-        DebugOutputStream = $DebugOutputStream
         WhoAmI            = $WhoAmI
     }
 
