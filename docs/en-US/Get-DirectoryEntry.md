@@ -14,10 +14,10 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ```
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
- [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
+ [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>]
+ [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -85,7 +85,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
+Position: 13
 Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -123,6 +123,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -DomainsByFqdn
+Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+This is not actually used but is here so the parameter can be included in a splat shared with other functions
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DomainsByNetbios
 Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
@@ -132,7 +148,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 7
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -147,7 +163,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 8
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -162,7 +178,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: 12
 Default value: ([hashtable]::Synchronized(@{}))
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -209,7 +225,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 10
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -226,7 +242,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 9
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -241,7 +257,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 11
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False

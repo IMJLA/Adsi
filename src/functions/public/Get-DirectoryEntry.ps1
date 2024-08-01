@@ -50,6 +50,10 @@ function Get-DirectoryEntry {
         #>
         [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
 
+        # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        # This is not actually used but is here so the parameter can be included in a splat shared with other functions
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
 
