@@ -1785,6 +1785,18 @@ ForEach-Object {
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>DomainsByFqdn</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -1913,7 +1925,7 @@ ForEach-Object {
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
           <maml:name>DomainFQDN</maml:name>
           <maml:description>
-            <maml:para>NetBIOS name of the domain</maml:para>
+            <maml:para>FQDN of the domain</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
@@ -1921,6 +1933,18 @@ ForEach-Object {
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>DomainsByFqdn</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>InitType</maml:name>
@@ -2051,7 +2075,7 @@ ForEach-Object {
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
         <maml:name>DomainFQDN</maml:name>
         <maml:description>
-          <maml:para>NetBIOS name of the domain</maml:para>
+          <maml:para>FQDN of the domain</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
@@ -2059,6 +2083,18 @@ ForEach-Object {
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>DomainsByFqdn</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>

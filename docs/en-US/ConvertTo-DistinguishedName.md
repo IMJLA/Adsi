@@ -14,17 +14,17 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### NetBIOS
 ```
-ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-InitType <String>]
- [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>]
- [-WhoAmI <String>] [-LogBuffer <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <Hashtable>] [-DomainsByFqdn <Hashtable>]
+ [-InitType <String>] [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>]
+ [-ThisHostName <String>] [-WhoAmI <String>] [-LogBuffer <Hashtable>] [-DebugOutputStream <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### FQDN
 ```
-ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
- [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>] [-WhoAmI <String>]
- [-LogBuffer <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
+ConvertTo-DistinguishedName [-DomainsByFqdn <Hashtable>] -DomainFQDN <String[]> [-InitType <String>]
+ [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>] [-ThisHostName <String>]
+ [-WhoAmI <String>] [-LogBuffer <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
@@ -93,7 +93,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainFQDN
-NetBIOS name of the domain
+FQDN of the domain
 
 ```yaml
 Type: System.String[]
@@ -104,6 +104,21 @@ Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -DomainsByFqdn
+{{ Fill DomainsByFqdn Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: ([hashtable]::Synchronized(@{}))
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

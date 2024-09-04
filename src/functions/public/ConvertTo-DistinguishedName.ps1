@@ -23,8 +23,9 @@ function ConvertTo-DistinguishedName {
 
         [Parameter(ParameterSetName = 'NetBIOS')]
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
 
-        # NetBIOS name of the domain
+        # FQDN of the domain
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'FQDN')]
         [string[]]$DomainFQDN,
 
@@ -75,7 +76,7 @@ function ConvertTo-DistinguishedName {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            Buffer = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 

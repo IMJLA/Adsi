@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.114] - 2024-09-04 - bugfix remove erroneous+unnecessary computername from the cimparams splat for get-cachedciminstance
+
 ## [4.0.113] - 2024-08-01 - add DomainsByFqdn param to Get-DirectoryEntry
 
 ## [4.0.112] - 2024-05-12 - add logging and remove pipeline support

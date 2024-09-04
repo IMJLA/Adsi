@@ -99,7 +99,6 @@ function Get-AdsiServer {
 
         $CimParams = @{
             CimCache          = $CimCache
-            ComputerName      = $ThisFqdn
             DebugOutputStream = $DebugOutputStream
             ThisFqdn          = $ThisFqdn
         }
