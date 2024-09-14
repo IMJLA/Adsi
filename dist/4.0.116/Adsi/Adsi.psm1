@@ -539,8 +539,9 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
-            $Params = $SearchDirectoryParams.Keys | ForEach-Object {
-                "-$_ '$($SearchDirectoryParams[$_])'"
+            $Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
+                $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
+                "-$ParamName $ParamValue"
             }
             Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             try {
@@ -564,9 +565,9 @@ function ConvertFrom-IdentityReferenceResolved {
             $SearchDirectoryParams['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
             $SearchDirectoryParams['PropertiesToLoad'] = 'netbiosname'
 
-            $Params = ForEach ($Key in $SearchDirectoryParams.Keys) {
-                $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$Key]
-                "-$Key $ParamValue"
+            $Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
+                $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
+                "-$ParamName $ParamValue"
             }
             Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             $DomainCrossReference = Search-Directory @SearchDirectoryParams @LoggingParams
@@ -596,9 +597,9 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
-            $Params = ForEach ($Key in $SearchDirectoryParams.Keys) {
-                $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$Key]
-                "-$Key $ParamValue"
+            $Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
+                $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
+                "-$ParamName $ParamValue"
             }
             Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             try {
@@ -641,9 +642,9 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                 }
 
-                $Params = ForEach ($Key in $GetDirectoryEntryParams.Keys) {
-                    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$Key]
-                    "-$Key $ParamValue"
+                $Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
+                    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
+                    "-$ParamName $ParamValue"
                 }
                 Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                 try {
@@ -686,9 +687,9 @@ function ConvertFrom-IdentityReferenceResolved {
                     'primaryGroupToken'
                 )
 
-                $Params = ForEach ($Key in $GetDirectoryEntryParams.Keys) {
-                    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$Key]
-                    "-$Key $ParamValue"
+                $Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
+                    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
+                    "-$ParamName $ParamValue"
                 }
                 Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                 try {
@@ -4425,6 +4426,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
