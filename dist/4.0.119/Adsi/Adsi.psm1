@@ -404,7 +404,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
-        [hashtable]$PrincipalsByResolvedID = ([hashtable]::Synchronized(@{})),
+        [hashtable]$PrincipalById = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -470,7 +470,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
     $AccessControlEntries = $ACEsByResolvedID[$IdentityReference]
 
-    if ($null -eq $PrincipalsByResolvedID[$IdentityReference]) {
+    if ($null -eq $PrincipalById[$IdentityReference]) {
 
         Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
 
@@ -811,7 +811,7 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
-                        $PrincipalsByResolvedID[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
+                        $PrincipalById[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
                         $ACEsByResolvedID[$ResolvedAccountName] = $AccessControlEntries
                         $ResolvedAccountName
 
@@ -832,7 +832,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         }
 
-        $PrincipalsByResolvedID[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
+        $PrincipalById[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
 
     }
 
@@ -4435,6 +4435,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

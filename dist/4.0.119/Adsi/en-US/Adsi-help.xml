@@ -666,7 +666,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <dev:defaultValue>([hashtable]::Synchronized(@{}))</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>PrincipalsByResolvedID</maml:name>
+          <maml:name>PrincipalById</maml:name>
           <maml:description>
             <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
           </maml:description>
@@ -910,7 +910,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
         <dev:defaultValue>False</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>PrincipalsByResolvedID</maml:name>
+        <maml:name>PrincipalById</maml:name>
         <maml:description>
           <maml:para>Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries</maml:para>
         </maml:description>

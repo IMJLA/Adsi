@@ -38,7 +38,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
-        [hashtable]$PrincipalsByResolvedID = ([hashtable]::Synchronized(@{})),
+        [hashtable]$PrincipalById = ([hashtable]::Synchronized(@{})),
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
@@ -104,7 +104,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
     $AccessControlEntries = $ACEsByResolvedID[$IdentityReference]
 
-    if ($null -eq $PrincipalsByResolvedID[$IdentityReference]) {
+    if ($null -eq $PrincipalById[$IdentityReference]) {
 
         Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
 
@@ -445,7 +445,7 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
-                        $PrincipalsByResolvedID[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
+                        $PrincipalById[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
                         $ACEsByResolvedID[$ResolvedAccountName] = $AccessControlEntries
                         $ResolvedAccountName
 
@@ -466,7 +466,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         }
 
-        $PrincipalsByResolvedID[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
+        $PrincipalById[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
 
     }
 

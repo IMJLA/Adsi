@@ -14,7 +14,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
- [[-ACEsByResolvedID] <Hashtable>] [[-PrincipalsByResolvedID] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-ACEsByResolvedID] <Hashtable>] [[-PrincipalById] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CurrentDomain] <String>]
@@ -208,7 +208,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PrincipalsByResolvedID
+### -PrincipalById
 Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
 
 ```yaml
