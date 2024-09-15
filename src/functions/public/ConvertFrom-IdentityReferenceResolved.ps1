@@ -297,7 +297,13 @@ function ConvertFrom-IdentityReferenceResolved {
             } else {
 
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
-                $CimCacheResult = $CimCache[$DomainNetBIOS]['Win32_AccountsByCaption'][$IdentityReference]
+                $CimServer = $CimCache[$DomainNetBIOS]
+
+                if ($CimServer) {
+                    $CimCacheResult = $CimServer['Win32_AccountsByCaption'][$IdentityReference]
+                } else {
+                    Write-LogMsg @LogParams -Text " # CIM server cache miss for '$DomainNetBIOS'"
+                }
 
                 if ($CimCacheResult) {
                     $DirectoryEntry = $CimCacheResult

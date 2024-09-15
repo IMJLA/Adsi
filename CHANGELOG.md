@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.120] - 2024-09-14 - fixed CIM caching
+
 ## [4.0.119] - 2024-09-14 - update param name to match Permission module
 
 ## [4.0.118] - 2024-09-14 - update debug logging
