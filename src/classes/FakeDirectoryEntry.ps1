@@ -56,43 +56,43 @@ class FakeDirectoryEntry {
                 $This.SchemaClassName = 'group'
                 break
             }
-            '\/CREATOR OWNER$' {
+            '*/CREATOR OWNER$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
                 $This.Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '\/Everyone$' {
+            '*/Everyone$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-1-0'
                 $This.Description = "A group that includes all users; aka 'World'."
                 $This.SchemaClassName = 'group'
                 break
             }
-            '\/INTERACTIVE$' {
+            '*/INTERACTIVE$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
                 $This.Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
                 $This.SchemaClassName = 'group'
                 break
             }
-            '\/LOCAL SERVICE$' {
+            '*/LOCAL SERVICE$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-19'
                 $This.Description = 'A local service account'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '\/NETWORK SERVICE$' {
+            '*/NETWORK SERVICE$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-20'
                 $This.Description = 'A network service account'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '\/SYSTEM$' {
+            '*/SYSTEM$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
                 $This.Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '\/TrustedInstaller$' {
+            '*/TrustedInstaller$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
                 $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
                 $This.SchemaClassName = 'user'

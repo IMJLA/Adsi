@@ -45,43 +45,43 @@ function New-FakeDirectoryEntry {
             $SchemaClassName = 'group'
             break
         }
-        '\/CREATOR OWNER$' {
+        '*/CREATOR OWNER$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
             $Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
             $SchemaClassName = 'user'
             break
         }
-        '\/Everyone$' {
+        '*/Everyone$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-1-0'
             $Description = "A group that includes all users; aka 'World'."
             $SchemaClassName = 'group'
             break
         }
-        '\/INTERACTIVE$' {
+        '*/INTERACTIVE$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
             $Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
             $SchemaClassName = 'group'
             break
         }
-        '\/LOCAL SERVICE$' {
+        '*/LOCAL SERVICE$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-19'
             $Description = 'A local service account'
             $SchemaClassName = 'user'
             break
         }
-        '\/NETWORK SERVICE$' {
+        '*/NETWORK SERVICE$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-20'
             $Description = 'A network service account'
             $SchemaClassName = 'user'
             break
         }
-        '\/SYSTEM$' {
+        '*/SYSTEM$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
             $Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
             $SchemaClassName = 'user'
             break
         }
-        '\/TrustedInstaller$' {
+        '*/TrustedInstaller$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
             $Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
             $SchemaClassName = 'user'

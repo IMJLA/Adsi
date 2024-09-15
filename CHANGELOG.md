@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.128] - 2024-09-14 - wildcard bugfix (but still better than regex)
+
 ## [4.0.127] - 2024-09-14 - narrow the scope of the debug pause
 
 ## [4.0.126] - 2024-09-14 - move debug pause
