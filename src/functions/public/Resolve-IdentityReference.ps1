@@ -213,10 +213,9 @@ function Resolve-IdentityReference {
             try {
                 $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
             } catch {
-                $LogParams['Type'] = 'Warning'
+                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be translated from SID to NTAccount: $($_.Exception.Message)"
                 $LogParams['Type'] = $DebugOutputStream
-                pause
             }
             Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
 
@@ -497,10 +496,9 @@ function Resolve-IdentityReference {
         try {
             $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
         } catch {
-            $LogParams['Type'] = 'Warning'
+            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
             Write-LogMsg @LogParams -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)"
             $LogParams['Type'] = $DebugOutputStream
-            pause
         }
 
         if (-not $SIDString) {
@@ -511,10 +509,9 @@ function Resolve-IdentityReference {
             try {
                 $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
             } catch {
-                $LogParams['Type'] = 'Warning'
+                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$NTAccount' could not be translated from NTAccount to SID: $($_.Exception.Message)"
                 $LogParams['Type'] = $DebugOutputStream
-                pause
             }
         } else {
             $DomainNetBIOS = $ServerNetBIOS
