@@ -27,73 +27,73 @@ class FakeDirectoryEntry {
         $This.Path = $DirectoryPath
         $This.SchemaEntry = [System.DirectoryServices.DirectoryEntry]
         switch -Wildcard ($DirectoryPath) {
-            '*/ALL APPLICATION PACKAGES$' {
+            '*/ALL APPLICATION PACKAGES' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-1'
                 $This.Description = 'All applications running in an app package context. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
                 $This.SchemaClassName = 'group'
                 break
             }
-            '*/ALL RESTRICTED APPLICATION PACKAGES$' {
+            '*/ALL RESTRICTED APPLICATION PACKAGES' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
                 $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
                 $This.SchemaClassName = 'group'
                 break
             }
-            '*/ANONYMOUS LOGON$' {
+            '*/ANONYMOUS LOGON' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-7'
                 $This.Description = 'A user who has connected to the computer without supplying a user name and password. Not a member of Authenticated Users.'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '*/Authenticated Users$' {
+            '*/Authenticated Users' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
                 $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
                 $This.SchemaClassName = 'group'
                 break
             }
-            '*/CREATOR OWNER$' {
+            '*/CREATOR OWNER' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
                 $This.Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
                 $This.SchemaClassName = 'group'
                 break
             }
-            '*/CREATOR OWNER$' {
+            '*/CREATOR OWNER' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
                 $This.Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '*/Everyone$' {
+            '*/Everyone' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-1-0'
                 $This.Description = "A group that includes all users; aka 'World'."
                 $This.SchemaClassName = 'group'
                 break
             }
-            '*/INTERACTIVE$' {
+            '*/INTERACTIVE' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
                 $This.Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
                 $This.SchemaClassName = 'group'
                 break
             }
-            '*/LOCAL SERVICE$' {
+            '*/LOCAL SERVICE' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-19'
                 $This.Description = 'A local service account'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '*/NETWORK SERVICE$' {
+            '*/NETWORK SERVICE' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-20'
                 $This.Description = 'A network service account'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '*/SYSTEM$' {
+            '*/SYSTEM' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
                 $This.Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
                 $This.SchemaClassName = 'user'
                 break
             }
-            '*/TrustedInstaller$' {
+            '*/TrustedInstaller' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
                 $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
                 $This.SchemaClassName = 'user'
@@ -3679,73 +3679,73 @@ function New-FakeDirectoryEntry {
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
     switch -Wildcard ($DirectoryPath) {
-        '*/ALL APPLICATION PACKAGES$' {
+        '*/ALL APPLICATION PACKAGES' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-1'
             $Description = 'All applications running in an app package context. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
             $SchemaClassName = 'group'
             break
         }
-        '*/ALL RESTRICTED APPLICATION PACKAGES$' {
+        '*/ALL RESTRICTED APPLICATION PACKAGES' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
             $Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
             $SchemaClassName = 'group'
             break
         }
-        '*/ANONYMOUS LOGON$' {
+        '*/ANONYMOUS LOGON' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-7'
             $Description = 'A user who has connected to the computer without supplying a user name and password. Not a member of Authenticated Users.'
             $SchemaClassName = 'user'
             break
         }
-        '*/Authenticated Users$' {
+        '*/Authenticated Users' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
             $Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
             $SchemaClassName = 'group'
             break
         }
-        '*/CREATOR OWNER$' {
+        '*/CREATOR OWNER' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
             $Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
             $SchemaClassName = 'group'
             break
         }
-        '*/CREATOR OWNER$' {
+        '*/CREATOR OWNER' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
             $Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
             $SchemaClassName = 'user'
             break
         }
-        '*/Everyone$' {
+        '*/Everyone' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-1-0'
             $Description = "A group that includes all users; aka 'World'."
             $SchemaClassName = 'group'
             break
         }
-        '*/INTERACTIVE$' {
+        '*/INTERACTIVE' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
             $Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
             $SchemaClassName = 'group'
             break
         }
-        '*/LOCAL SERVICE$' {
+        '*/LOCAL SERVICE' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-19'
             $Description = 'A local service account'
             $SchemaClassName = 'user'
             break
         }
-        '*/NETWORK SERVICE$' {
+        '*/NETWORK SERVICE' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-20'
             $Description = 'A network service account'
             $SchemaClassName = 'user'
             break
         }
-        '*/SYSTEM$' {
+        '*/SYSTEM' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
             $Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
             $SchemaClassName = 'user'
             break
         }
-        '*/TrustedInstaller$' {
+        '*/TrustedInstaller' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
             $Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
             $SchemaClassName = 'user'
@@ -4485,6 +4485,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
