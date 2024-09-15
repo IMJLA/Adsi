@@ -171,8 +171,7 @@ function Get-DirectoryEntry {
 
     $KnownNames = @{}
     ForEach ($KnownSID in $KnownSIDs.Keys) {
-        $Known = $KnownSIDs[$KnownSID]
-        $KnownNames[$Known['Name']] = $Known
+        $KnownNames[$KnownSIDs[$KnownSID]] = $Known
     }
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
