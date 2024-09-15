@@ -69,7 +69,7 @@ function Add-SidInfo {
 
             if ($null -eq $Object) {
                 continue
-            } elseif ($Object.objectSid.Value ) {
+            } elseif ($Object.objectSid.Value) {
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
                 # The following exception occurred while retrieving the string representation for method "objectSid":
@@ -112,7 +112,7 @@ function Add-SidInfo {
                 #}
             }
             if (-not $DomainObject) {
-                pause
+                if (-not $SID) { pause }
                 # The SID of the domain is the SID of the user minus the last block of numbers
                 $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 

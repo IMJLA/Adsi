@@ -294,7 +294,7 @@ function Add-SidInfo {
 
             if ($null -eq $Object) {
                 continue
-            } elseif ($Object.objectSid.Value ) {
+            } elseif ($Object.objectSid.Value) {
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
                 # The following exception occurred while retrieving the string representation for method "objectSid":
@@ -337,7 +337,7 @@ function Add-SidInfo {
                 #}
             }
             if (-not $DomainObject) {
-                pause
+                if (-not $SID) { pause }
                 # The SID of the domain is the SID of the user minus the last block of numbers
                 $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 
@@ -4485,6 +4485,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

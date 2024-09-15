@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.127] - 2024-09-14 - narrow the scope of the debug pause
+
 ## [4.0.126] - 2024-09-14 - move debug pause
 
 ## [4.0.125] - 2024-09-14 - add debug pause
