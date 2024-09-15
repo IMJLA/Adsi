@@ -167,6 +167,21 @@ function Get-DirectoryEntry {
             'Name'            = 'TrustedInstaller'
             'SchemaClassName' = 'user'
         }
+        'S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122'  = @{
+            'Description'     = 'Windows Event Log service account'
+            'Name'            = 'EventLog'
+            'SchemaClassName' = 'user'
+        }
+        'S-1-5-80-242729624-280608522-2219052887-3187409060-2225943459'  = @{
+            'Description'     = 'Windows Cryptographic service account'
+            'Name'            = 'CryptSvc'
+            'SchemaClassName' = 'user'
+        }
+        'S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420' = @{
+            'Description'     = 'Windows Diagnostics service account'
+            'Name'            = 'WdiServiceHost'
+            'SchemaClassName' = 'user'
+        }
     }
 
     $KnownNames = @{}
