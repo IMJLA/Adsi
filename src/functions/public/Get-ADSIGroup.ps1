@@ -109,12 +109,14 @@ function Get-AdsiGroup {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
+            break
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
+            break
         }
         default {
             if ($GroupName) {

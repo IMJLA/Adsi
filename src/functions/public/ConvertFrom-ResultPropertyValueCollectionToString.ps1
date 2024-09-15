@@ -22,7 +22,7 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
     )
     $SubType = & { $ResultPropertyValueCollection.Value.GetType().FullName } 2>$null
     switch ($SubType) {
-        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $ResultPropertyValueCollection.Value }
+        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $ResultPropertyValueCollection.Value ; break }
         default { "$($ResultPropertyValueCollection.Value)" }
     }
 }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.124] - 2024-09-14 - add breaks to switch statements, add ANONYMOUS LOGON fake directoryentry
+
 ## [4.0.123] - 2024-09-14 - correct CIM cache key name
 
 ## [4.0.122] - 2024-09-14 - debug pause

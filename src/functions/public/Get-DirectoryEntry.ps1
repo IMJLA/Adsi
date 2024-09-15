@@ -106,35 +106,45 @@ function Get-DirectoryEntry {
             The WinNT provider only throws an error if you try to retrieve certain accounts/identities
             We will create own dummy objects instead of performing the query
             #>
-            '^WinNT:\/\/.*\/CREATOR OWNER$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/SYSTEM$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/INTERACTIVE$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/Authenticated Users$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/TrustedInstaller$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
             '^WinNT:\/\/.*\/ALL APPLICATION PACKAGES$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/ALL RESTRICTED APPLICATION PACKAGES$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/Authenticated Users$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/CREATOR OWNER$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/Everyone$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/INTERACTIVE$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/LOCAL SERVICE$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/NETWORK SERVICE$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/SYSTEM$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/TrustedInstaller$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
             # This is also invoked when DirectoryPath is null for any reason
@@ -164,6 +174,7 @@ function Get-DirectoryEntry {
 
                 $DirectoryEntry |
                 Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+                break
 
             }
             # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
@@ -175,6 +186,7 @@ function Get-DirectoryEntry {
                 } else {
                     $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
                 }
+                break
 
             }
 

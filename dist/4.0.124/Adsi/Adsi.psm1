@@ -26,57 +26,78 @@ class FakeDirectoryEntry {
         $This.Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
         $This.Path = $DirectoryPath
         $This.SchemaEntry = [System.DirectoryServices.DirectoryEntry]
-        switch -regex ($DirectoryPath) {
-
-            'CREATOR OWNER$' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
-                $This.Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-                $This.SchemaClassName = 'user'
-            }
-            'SYSTEM$' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
-                $This.Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-                $This.SchemaClassName = 'user'
-            }
-            'INTERACTIVE$' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
-                $This.Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-                $This.SchemaClassName = 'group'
-            }
-            'Authenticated Users$' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
-                $This.Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-                $This.SchemaClassName = 'group'
-            }
-            'TrustedInstaller$' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
-                $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
-                $This.SchemaClassName = 'user'
-            }
-            'ALL APPLICATION PACKAGES$' {
+        switch -Wildcard ($DirectoryPath) {
+            '*/ALL APPLICATION PACKAGES$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-1'
                 $This.Description = 'All applications running in an app package context. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
                 $This.SchemaClassName = 'group'
+                break
             }
-            'ALL RESTRICTED APPLICATION PACKAGES$' {
+            '*/ALL RESTRICTED APPLICATION PACKAGES$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
                 $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
                 $This.SchemaClassName = 'group'
+                break
             }
-            'Everyone$' {
+            '*/ANONYMOUS LOGON$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-7'
+                $This.Description = 'A user who has connected to the computer without supplying a user name and password. Not a member of Authenticated Users.'
+                $This.SchemaClassName = 'user'
+                break
+            }
+            '*/Authenticated Users$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
+                $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
+                $This.SchemaClassName = 'group'
+                break
+            }
+            '*/CREATOR OWNER$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
+                $This.Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
+                $This.SchemaClassName = 'group'
+                break
+            }
+            '\/CREATOR OWNER$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
+                $This.Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
+                $This.SchemaClassName = 'user'
+                break
+            }
+            '\/Everyone$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-1-0'
                 $This.Description = "A group that includes all users; aka 'World'."
                 $This.SchemaClassName = 'group'
+                break
             }
-            'LOCAL SERVICE$' {
+            '\/INTERACTIVE$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
+                $This.Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
+                $This.SchemaClassName = 'group'
+                break
+            }
+            '\/LOCAL SERVICE$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-19'
                 $This.Description = 'A local service account'
                 $This.SchemaClassName = 'user'
+                break
             }
-            'NETWORK SERVICE$' {
+            '\/NETWORK SERVICE$' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-20'
                 $This.Description = 'A network service account'
                 $This.SchemaClassName = 'user'
+                break
+            }
+            '\/SYSTEM$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
+                $This.Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
+                $This.SchemaClassName = 'user'
+                break
+            }
+            '\/TrustedInstaller$' {
+                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
+                $This.Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
+                $This.SchemaClassName = 'user'
+                break
             }
         }
 
@@ -492,11 +513,11 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $split = $IdentityReference.Split('\')
         $DomainNetBIOS = $split[0]
-        $SamaccountnameOrSid = $split[1]
+        $SamAccountNameOrSid = $split[1]
 
         if (
 
-            $null -ne $SamaccountnameOrSid -and
+            $null -ne $SamAccountNameOrSid -and
             @($AccessControlEntries.AdsiProvider)[0] -eq 'LDAP'
 
         ) {
@@ -523,7 +544,7 @@ function ConvertFrom-IdentityReferenceResolved {
             }
 
             # Search the domain for the principal
-            $SearchDirectoryParams['Filter'] = "(samaccountname=$SamaccountnameOrSid)"
+            $SearchDirectoryParams['Filter'] = "(samaccountname=$SamAccountNameOrSid)"
 
             $SearchDirectoryParams['PropertiesToLoad'] = @(
                 'objectClass',
@@ -614,14 +635,14 @@ function ConvertFrom-IdentityReferenceResolved {
 
             Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal or unresolved SID"
 
-            if ($null -eq $SamaccountnameOrSid) { $SamaccountnameOrSid = $IdentityReference }
+            if ($null -eq $SamAccountNameOrSid) { $SamAccountNameOrSid = $IdentityReference }
 
-            if ($SamaccountnameOrSid -like "S-1-*") {
+            if ($SamAccountNameOrSid -like "S-1-*") {
 
                 Write-LogMsg @LogParams -Text "$($IdentityReference) is an unresolved SID"
 
                 # The SID of the domain is the SID of the user minus the last block of numbers
-                $DomainSid = $SamaccountnameOrSid.Substring(0, $SamaccountnameOrSid.LastIndexOf("-"))
+                $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf("-"))
 
                 # Determine if SID belongs to current domain
                 if ($DomainSid -eq $CurrentDomain.SIDString) {
@@ -658,61 +679,46 @@ function ConvertFrom-IdentityReferenceResolved {
                 $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
                 $DirectoryEntry = $MembersOfUsersGroup |
-                Where-Object -FilterScript { ($SamaccountnameOrSid -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
+                Where-Object -FilterScript { ($SamAccountNameOrSid -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
 
             } else {
 
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
-                $CimServer = $CimCache[$DomainNetBIOS]
+                $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
 
-                if ($CimServer) {
-                    $CimCacheResult = $CimServer['Win32_AccountByCaption'][$IdentityReference]
+                if ($DomainNetbiosCacheResult) {
+                    $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"
                 } else {
-                    Write-LogMsg @LogParams -Text " # CIM server cache miss for '$DomainNetBIOS'"
+                    $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
                 }
 
-                if ($CimCacheResult) {
-                    $DirectoryEntry = $CimCacheResult
-                } else {
+                $GetDirectoryEntryParams['PropertiesToLoad'] = @(
+                    'members',
+                    'objectClass',
+                    'objectSid',
+                    'samAccountName',
+                    'distinguishedName',
+                    'name',
+                    'grouptype',
+                    'description',
+                    'managedby',
+                    'member',
+                    'Department',
+                    'Title',
+                    'primaryGroupToken'
+                )
 
-                    Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$IdentityReference' on '$DomainNetBIOS'"
-                    $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
-
-                    if ($DomainNetbiosCacheResult) {
-                        $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamaccountnameOrSid"
-                    } else {
-                        $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamaccountnameOrSid"
-                    }
-
-                    $GetDirectoryEntryParams['PropertiesToLoad'] = @(
-                        'members',
-                        'objectClass',
-                        'objectSid',
-                        'samAccountName',
-                        'distinguishedName',
-                        'name',
-                        'grouptype',
-                        'description',
-                        'managedby',
-                        'member',
-                        'Department',
-                        'Title',
-                        'primaryGroupToken'
-                    )
-
-                    $Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
-                        $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
-                        "-$ParamName $ParamValue"
-                    }
-                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
-                    try {
-                        $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
-                    } catch {
-                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
-                        $LogParams['Type'] = $DebugOutputStream
-                    }
-
+                $Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
+                    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
+                    "-$ParamName $ParamValue"
+                }
+                Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
+                try {
+                    $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
+                } catch {
+                    $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                    Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
+                    $LogParams['Type'] = $DebugOutputStream
                 }
 
             }
@@ -795,7 +801,7 @@ function ConvertFrom-IdentityReferenceResolved {
                                 Domain = [pscustomobject]@{
                                     Dns     = $DomainNetBIOS
                                     Netbios = $DomainNetBIOS
-                                    Sid     = @($SamaccountnameOrSid -split '-')[-1]
+                                    Sid     = @($SamAccountNameOrSid -split '-')[-1]
                                 }
                             }
 
@@ -867,7 +873,7 @@ function ConvertFrom-PropertyValueCollectionToString {
     )
     $SubType = & { $PropertyValueCollection.Value.GetType().FullName } 2>$null
     switch ($SubType) {
-        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $PropertyValueCollection.Value }
+        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $PropertyValueCollection.Value ; break }
         default { "$($PropertyValueCollection.Value)" }
     }
 }
@@ -895,7 +901,7 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
     )
     $SubType = & { $ResultPropertyValueCollection.Value.GetType().FullName } 2>$null
     switch ($SubType) {
-        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $ResultPropertyValueCollection.Value }
+        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $ResultPropertyValueCollection.Value ; break }
         default { "$($ResultPropertyValueCollection.Value)" }
     }
 }
@@ -2235,12 +2241,14 @@ function Get-AdsiGroup {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
+            break
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
+            break
         }
         default {
             if ($GroupName) {
@@ -3130,35 +3138,45 @@ function Get-DirectoryEntry {
             The WinNT provider only throws an error if you try to retrieve certain accounts/identities
             We will create own dummy objects instead of performing the query
             #>
-            '^WinNT:\/\/.*\/CREATOR OWNER$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/SYSTEM$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/INTERACTIVE$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/Authenticated Users$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
-            '^WinNT:\/\/.*\/TrustedInstaller$' {
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
-            }
             '^WinNT:\/\/.*\/ALL APPLICATION PACKAGES$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/ALL RESTRICTED APPLICATION PACKAGES$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/Authenticated Users$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/CREATOR OWNER$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/Everyone$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/INTERACTIVE$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/LOCAL SERVICE$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             '^WinNT:\/\/.*\/NETWORK SERVICE$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/SYSTEM$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
+            '^WinNT:\/\/.*\/TrustedInstaller$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
             }
             # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
             # This is also invoked when DirectoryPath is null for any reason
@@ -3188,6 +3206,7 @@ function Get-DirectoryEntry {
 
                 $DirectoryEntry |
                 Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+                break
 
             }
             # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
@@ -3199,6 +3218,7 @@ function Get-DirectoryEntry {
                 } else {
                     $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
                 }
+                break
 
             }
 
@@ -3653,59 +3673,79 @@ function New-FakeDirectoryEntry {
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
-    $Path = $DirectoryPath
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
-    switch -regex ($DirectoryPath) {
-
-        'CREATOR OWNER$' {
-            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
-            $Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-            $SchemaClassName = 'user'
-        }
-        'SYSTEM$' {
-            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
-            $Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-            $SchemaClassName = 'user'
-        }
-        'INTERACTIVE$' {
-            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
-            $Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-            $SchemaClassName = 'group'
-        }
-        'Authenticated Users$' {
-            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
-            $Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
-            $SchemaClassName = 'group'
-        }
-        'TrustedInstaller$' {
-            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
-            $Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
-            $SchemaClassName = 'user'
-        }
-        'ALL APPLICATION PACKAGES$' {
+    switch -Wildcard ($DirectoryPath) {
+        '*/ALL APPLICATION PACKAGES$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-1'
             $Description = 'All applications running in an app package context. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
             $SchemaClassName = 'group'
+            break
         }
-        'ALL RESTRICTED APPLICATION PACKAGES$' {
+        '*/ALL RESTRICTED APPLICATION PACKAGES$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
             $Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
             $SchemaClassName = 'group'
+            break
         }
-        'Everyone$' {
+        '*/ANONYMOUS LOGON$' {
+            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-7'
+            $Description = 'A user who has connected to the computer without supplying a user name and password. Not a member of Authenticated Users.'
+            $SchemaClassName = 'user'
+            break
+        }
+        '*/Authenticated Users$' {
+            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
+            $Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
+            $SchemaClassName = 'group'
+            break
+        }
+        '*/CREATOR OWNER$' {
+            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
+            $Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
+            $SchemaClassName = 'group'
+            break
+        }
+        '\/CREATOR OWNER$' {
+            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-3-0'
+            $Description = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
+            $SchemaClassName = 'user'
+            break
+        }
+        '\/Everyone$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-1-0'
             $Description = "A group that includes all users; aka 'World'."
             $SchemaClassName = 'group'
+            break
         }
-        'LOCAL SERVICE$' {
+        '\/INTERACTIVE$' {
+            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-4'
+            $Description = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
+            $SchemaClassName = 'group'
+            break
+        }
+        '\/LOCAL SERVICE$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-19'
             $Description = 'A local service account'
             $SchemaClassName = 'user'
+            break
         }
-        'NETWORK SERVICE$' {
+        '\/NETWORK SERVICE$' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-20'
             $Description = 'A network service account'
             $SchemaClassName = 'user'
+            break
+        }
+        '\/SYSTEM$' {
+            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-18'
+            $Description = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
+            $SchemaClassName = 'user'
+            break
+        }
+        '\/TrustedInstaller$' {
+            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
+            $Description = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
+            $SchemaClassName = 'user'
+            break
         }
     }
 
@@ -3722,7 +3762,7 @@ function New-FakeDirectoryEntry {
         objectSid       = $objectSid
         SchemaClassName = $SchemaClassName
         Parent          = $Parent
-        Path            = $Path
+        Path            = $DirectoryPath
         SchemaEntry     = $SchemaEntry
         Properties      = $Properties
     }
@@ -4441,6 +4481,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
