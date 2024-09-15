@@ -669,7 +669,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DirectoryEntry = $CimCacheResult
                 } else {
 
-                    Write-LogMsg @LogParams -Text " # CIM cache miss for '$IdentityReference'"
+                    Write-LogMsg @LogParams -Text " # Win32_AccountsByCaption CIM instance cache miss for '$IdentityReference' on '$DomainNetBIOS'"
                     $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
 
                     if ($DomainNetbiosCacheResult) {
@@ -3835,7 +3835,7 @@ function Resolve-IdentityReference {
 
     if ($CacheResult) {
 
-        Write-LogMsg @LogParams -Text " # 'Win32_AccountBySID' cache hit for '$IdentityReference' on '$ServerNetBios'"
+        Write-LogMsg @LogParams -Text " # Win32_AccountBySID CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
@@ -3846,7 +3846,7 @@ function Resolve-IdentityReference {
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # 'Win32_AccountBySID' cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+        Write-LogMsg @LogParams -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
     $split = $IdentityReference.Split('\')
@@ -3862,7 +3862,7 @@ function Resolve-IdentityReference {
 
         if ($CacheResult) {
 
-            Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache hit for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
+            Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
 
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
                 $DomainDns = $AdsiServer.Dns
@@ -3895,7 +3895,7 @@ function Resolve-IdentityReference {
             }
 
         } else {
-            Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
+            Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
         }
 
     }
@@ -3905,7 +3905,7 @@ function Resolve-IdentityReference {
     if ($CacheResult) {
 
         # IdentityReference is an NT Account Name without a \, and has been cached from this server
-        Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache hit for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
+        Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
@@ -3916,7 +3916,7 @@ function Resolve-IdentityReference {
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # 'Win32_AccountByCaption' cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
+        Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
     }
 
     # If no match was found in any cache, the path forward depends on the IdentityReference
@@ -4435,6 +4435,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

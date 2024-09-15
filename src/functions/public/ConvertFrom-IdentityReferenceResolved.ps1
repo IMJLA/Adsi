@@ -303,7 +303,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DirectoryEntry = $CimCacheResult
                 } else {
 
-                    Write-LogMsg @LogParams -Text " # CIM cache miss for '$IdentityReference'"
+                    Write-LogMsg @LogParams -Text " # Win32_AccountsByCaption CIM instance cache miss for '$IdentityReference' on '$DomainNetBIOS'"
                     $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
 
                     if ($DomainNetbiosCacheResult) {
