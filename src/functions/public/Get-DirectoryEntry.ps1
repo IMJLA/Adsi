@@ -219,33 +219,40 @@ function Get-DirectoryEntry {
             Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server'"
 
             $FakeDirectoryEntry = @{
-                'Description'     = $CimCacheResult.Description
-                'SchemaClassName' = $SidTypes[$CimCacheResult.SidType]
-                'SID'             = $CimCacheResult.SID
-                'DirectoryPath'   = $DirectoryPath
+                'Description'   = $CimCacheResult.Description
+                'SID'           = $CimCacheResult.SID
+                'DirectoryPath' = $DirectoryPath
             }
 
-            if ($CimCacheResult.Description -eq $ID) {
-                
-                pause
+            $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
 
-                $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
+            if ($SIDCacheResult) {
 
-                if ($SIDCacheResult) {
-                    $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
+                $FakeDirectoryEntry['SchemaClassName'] = $SIDCacheResult['SchemaClassName']
+
+            } else {
+
+                Write-LogMsg @LogParams -Text " # Known SIDs cache miss for '$($CimCacheResult.SID)'"
+                $NameCacheResult = $KnownNames[$AccountName]
+
+                if ($NameCacheResult) {
+                    $FakeDirectoryEntry['Description'] = $NameCacheResult['Description']
+                    $FakeDirectoryEntry['SchemaClassName'] = $NameCacheResult['SchemaClassName']
                 } else {
-
-                    Write-LogMsg @LogParams -Text " # Known SIDs cache miss for '$($CimCacheResult.SID)'"
-                    $NameCacheResult = $KnownNames[$AccountName]
-
-                    if ($NameCacheResult) {
-                        $FakeDirectoryEntry['Description'] = $NameCacheResult['Description']
-                    } else {
-                        Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
-                    }
-
+                    Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
                 }
 
+            }
+
+
+            if ($FakeDirectoryEntry['Description'] -eq $ID) {
+                if ($SIDCacheResult) {
+                    $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
+                }
+            }
+
+            if ($CimCacheResult.SidType) {
+                $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[$CimCacheResult.SidType]
             }
 
             $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry

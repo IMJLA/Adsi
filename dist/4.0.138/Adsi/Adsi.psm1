@@ -3249,33 +3249,40 @@ function Get-DirectoryEntry {
             Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server'"
 
             $FakeDirectoryEntry = @{
-                'Description'     = $CimCacheResult.Description
-                'SchemaClassName' = $SidTypes[$CimCacheResult.SidType]
-                'SID'             = $CimCacheResult.SID
-                'DirectoryPath'   = $DirectoryPath
+                'Description'   = $CimCacheResult.Description
+                'SID'           = $CimCacheResult.SID
+                'DirectoryPath' = $DirectoryPath
             }
 
-            if ($CimCacheResult.Description -eq $ID) {
-                
-                pause
+            $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
 
-                $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
+            if ($SIDCacheResult) {
 
-                if ($SIDCacheResult) {
-                    $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
+                $FakeDirectoryEntry['SchemaClassName'] = $SIDCacheResult['SchemaClassName']
+
+            } else {
+
+                Write-LogMsg @LogParams -Text " # Known SIDs cache miss for '$($CimCacheResult.SID)'"
+                $NameCacheResult = $KnownNames[$AccountName]
+
+                if ($NameCacheResult) {
+                    $FakeDirectoryEntry['Description'] = $NameCacheResult['Description']
+                    $FakeDirectoryEntry['SchemaClassName'] = $NameCacheResult['SchemaClassName']
                 } else {
-
-                    Write-LogMsg @LogParams -Text " # Known SIDs cache miss for '$($CimCacheResult.SID)'"
-                    $NameCacheResult = $KnownNames[$AccountName]
-
-                    if ($NameCacheResult) {
-                        $FakeDirectoryEntry['Description'] = $NameCacheResult['Description']
-                    } else {
-                        Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
-                    }
-
+                    Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
                 }
 
+            }
+
+
+            if ($FakeDirectoryEntry['Description'] -eq $ID) {
+                if ($SIDCacheResult) {
+                    $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
+                }
+            }
+
+            if ($CimCacheResult.SidType) {
+                $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[$CimCacheResult.SidType]
             }
 
             $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
@@ -4528,6 +4535,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
