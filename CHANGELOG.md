@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.122] - 2024-09-14 - debug pause
+
 ## [4.0.121] - 2024-09-14 - nullification
 
 ## [4.0.120] - 2024-09-14 - fixed CIM caching

@@ -301,6 +301,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 $CimServer = $CimCache[$DomainNetBIOS]
 
                 if ($CimServer) {
+                    pause
                     $CimCacheResult = $CimServer['Win32_AccountsByCaption'][$IdentityReference]
                 } else {
                     Write-LogMsg @LogParams -Text " # CIM server cache miss for '$DomainNetBIOS'"
