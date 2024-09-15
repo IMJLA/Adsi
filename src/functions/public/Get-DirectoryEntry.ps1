@@ -215,6 +215,7 @@ function Get-DirectoryEntry {
         $CimCacheResult = $CimServer['Win32_AccountByCaption'][$ID]
 
         if ($CimCacheResult) {
+
             Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server'"
 
             $FakeDirectoryEntry = @{
@@ -225,6 +226,8 @@ function Get-DirectoryEntry {
             }
 
             if ($CimCacheResult.Description -eq $ID) {
+                
+                pause
 
                 $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.137] - 2024-09-15 - add debug pause
+
 ## [4.0.136] - 2024-09-15 - add more previously-unknown built-in accounts
 
 ## [4.0.135] - 2024-09-14 - more efficient
