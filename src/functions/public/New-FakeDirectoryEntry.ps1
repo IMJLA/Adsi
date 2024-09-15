@@ -6,7 +6,9 @@ function New-FakeDirectoryEntry {
     #>
 
     param (
-        [string]$DirectoryPath
+        [string]$DirectoryPath,
+        [string]$SID,
+        [string]$Description
     )
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
@@ -14,6 +16,7 @@ function New-FakeDirectoryEntry {
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
+    $objectSid = ConvertTo-SidByteArray -SidString $SID
     switch -Wildcard ($DirectoryPath) {
         '*/ALL APPLICATION PACKAGES' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-1'
@@ -34,14 +37,8 @@ function New-FakeDirectoryEntry {
             break
         }
         '*/Authenticated Users' {
-            $objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
-            $Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
-            $SchemaClassName = 'group'
-            break
-        }
-        '*/CREATOR OWNER' {
             $objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
-            $Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
+            $Description = 'A group that includes all users and computers with identities that have been authenticated.'
             $SchemaClassName = 'group'
             break
         }

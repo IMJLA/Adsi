@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.131] - 2024-09-14 - implement cim caching for less reliance on hardcoding (but hardcoding not yet removed...safety blanket)
+
 ## [4.0.130] - 2024-09-14 - add support for NT AUTHORITY\ANONYMOUS LOGON
 
 ## [4.0.129] - 2024-09-14 - wildcard bugfix (but still better than regex)
