@@ -297,6 +297,7 @@ function ConvertFrom-IdentityReferenceResolved {
             } else {
 
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
+                $CimServer = $null
                 $CimServer = $CimCache[$DomainNetBIOS]
 
                 if ($CimServer) {
