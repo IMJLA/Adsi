@@ -114,6 +114,10 @@ function Get-DirectoryEntry {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
                 break
             }
+            '^WinNT:\/\/.*\/ANONYMOUS LOGON$' {
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
+                break
+            }
             '^WinNT:\/\/.*\/Authenticated Users$' {
                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath
                 break
