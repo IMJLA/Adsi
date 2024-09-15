@@ -663,12 +663,10 @@ function ConvertFrom-IdentityReferenceResolved {
             } else {
 
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
-                $CimServer = $null
                 $CimServer = $CimCache[$DomainNetBIOS]
 
                 if ($CimServer) {
-                    pause
-                    $CimCacheResult = $CimServer['Win32_AccountsByCaption'][$IdentityReference]
+                    $CimCacheResult = $CimServer['Win32_AccountByCaption'][$IdentityReference]
                 } else {
                     Write-LogMsg @LogParams -Text " # CIM server cache miss for '$DomainNetBIOS'"
                 }
@@ -677,7 +675,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DirectoryEntry = $CimCacheResult
                 } else {
 
-                    Write-LogMsg @LogParams -Text " # Win32_AccountsByCaption CIM instance cache miss for '$IdentityReference' on '$DomainNetBIOS'"
+                    Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$IdentityReference' on '$DomainNetBIOS'"
                     $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
 
                     if ($DomainNetbiosCacheResult) {
@@ -4443,6 +4441,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
