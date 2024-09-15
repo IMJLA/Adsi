@@ -367,6 +367,7 @@ function ConvertFrom-IdentityReferenceResolved {
             # ToDo: LDAP objects may have SchemaClassName too.  When/why?  Should I just request it always in the list of properties?
             # ToDo: Actually I should create an AdsiObjectType property of my own or something...don't expose the dependency
             if (-not $DirectoryEntry.SchemaClassName) {
+                pause
                 $PropertiesToAdd['SchemaClassName'] = @($DirectoryEntry.Properties['objectClass'])[-1] #untested but should work, last value should be the correct one https://learn.microsoft.com/en-us/windows/win32/ad/retrieving-the-objectclass-property
             }
 
