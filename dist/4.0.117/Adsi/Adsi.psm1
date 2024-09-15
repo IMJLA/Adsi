@@ -663,41 +663,50 @@ function ConvertFrom-IdentityReferenceResolved {
             } else {
 
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
-                $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+                $CimCacheResult = $CimCache[$DomainNetBIOS]['Win32_AccountsByCaption'][$IdentityReference]
 
-                if ($DomainNetbiosCacheResult) {
-                    $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamaccountnameOrSid"
+                if ($CimCacheResult) {
+                    $DirectoryEntry = $CimCacheResult
                 } else {
-                    $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamaccountnameOrSid"
-                }
 
-                $GetDirectoryEntryParams['PropertiesToLoad'] = @(
-                    'members',
-                    'objectClass',
-                    'objectSid',
-                    'samAccountName',
-                    'distinguishedName',
-                    'name',
-                    'grouptype',
-                    'description',
-                    'managedby',
-                    'member',
-                    'Department',
-                    'Title',
-                    'primaryGroupToken'
-                )
+                    Write-LogMsg @LogParams -Text " # CIM cache miss for '$IdentityReference'"
+                    $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
 
-                $Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
-                    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
-                    "-$ParamName $ParamValue"
-                }
-                Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
-                try {
-                    $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
-                } catch {
-                    $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                    Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
-                    $LogParams['Type'] = $DebugOutputStream
+                    if ($DomainNetbiosCacheResult) {
+                        $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamaccountnameOrSid"
+                    } else {
+                        $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamaccountnameOrSid"
+                    }
+
+                    $GetDirectoryEntryParams['PropertiesToLoad'] = @(
+                        'members',
+                        'objectClass',
+                        'objectSid',
+                        'samAccountName',
+                        'distinguishedName',
+                        'name',
+                        'grouptype',
+                        'description',
+                        'managedby',
+                        'member',
+                        'Department',
+                        'Title',
+                        'primaryGroupToken'
+                    )
+
+                    $Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
+                        $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
+                        "-$ParamName $ParamValue"
+                    }
+                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
+                    try {
+                        $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
+                    } catch {
+                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                        Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
+                        $LogParams['Type'] = $DebugOutputStream
+                    }
+
                 }
 
             }
@@ -4426,6 +4435,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
