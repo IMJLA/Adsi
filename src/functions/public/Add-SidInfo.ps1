@@ -45,16 +45,19 @@ function Add-SidInfo {
         [string]$DebugOutputStream = 'Debug'
 
     )
+    
+    <#
     begin {
 
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            Buffer = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
     }
+    #>
 
     process {
 
@@ -109,6 +112,7 @@ function Add-SidInfo {
                 #}
             }
             if (-not $DomainObject) {
+                pause
                 # The SID of the domain is the SID of the user minus the last block of numbers
                 $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 
