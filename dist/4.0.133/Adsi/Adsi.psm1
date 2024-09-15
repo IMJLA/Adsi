@@ -46,12 +46,6 @@ class FakeDirectoryEntry {
                 break
             }
             '*/Authenticated Users' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
-                $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
-                $This.SchemaClassName = 'group'
-                break
-            }
-            '*/CREATOR OWNER' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
                 $This.Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
                 $This.SchemaClassName = 'group'
@@ -3150,48 +3144,65 @@ function Get-DirectoryEntry {
     $KnownSIDs = @{
         'S-1-15-2-1'                                                     = @{
             'Description'     = 'All applications running in an app package context. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
+            'Name'            = 'ALL APPLICATION PACKAGES'
             'SchemaClassName' = 'group'
         }
         'S-1-15-2-2'                                                     = @{
             'Description'     = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
+            'Name'            = 'ALL RESTRICTED APPLICATION PACKAGES'
             'SchemaClassName' = 'group'
         }
         'S-1-15-7'                                                       = @{
             'Description'     = 'A user who has connected to the computer without supplying a user name and password. Not a member of Authenticated Users.'
+            'Name'            = 'ANONYMOUS LOGON'
             'SchemaClassName' = 'user'
         }
         'S-1-5-11'                                                       = @{
             'Description'     = 'A group that includes all users and computers with identities that have been authenticated.'
+            'Name'            = 'Authenticated Users'
             'SchemaClassName' = 'group'
         }
         'S-1-3-0'                                                        = @{
             'Description'     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
+            'Name'            = 'CREATOR OWNER'
             'SchemaClassName' = 'user'
         }
         'S-1-1-0'                                                        = @{
             'Description'     = "A group that includes all users; aka 'World'."
+            'Name'            = 'Everyone'
             'SchemaClassName' = 'group'
         }
         'S-1-5-4'                                                        = @{
             'Description'     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
+            'Name'            = 'INTERACTIVE'
             'SchemaClassName' = 'group'
         }
         'S-1-5-19'                                                       = @{
             'Description'     = 'A local service account'
+            'Name'            = 'LOCAL SERVICE'
             'SchemaClassName' = 'user'
         }
         'S-1-5-20'                                                       = @{
             'Description'     = 'A network service account'
+            'Name'            = 'NETWORK SERVICE'
             'SchemaClassName' = 'user'
         }
         'S-1-5-18'                                                       = @{
             'Description'     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
+            'Name'            = 'SYSTEM'
             'SchemaClassName' = 'computer'
         }
         'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464' = @{
             'Description'     = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
+            'Name'            = 'TrustedInstaller'
             'SchemaClassName' = 'user'
         }
+    }
+
+    $KnownNames = @{}
+    ForEach ($KnownSID in $KnownSIDs) {
+        $Known = $KnownSIDs[$KnownSID]
+        $KnownNames[$Known['Name']] = $Known
     }
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
@@ -3210,9 +3221,9 @@ function Get-DirectoryEntry {
     $CimServer = $CimCache[$Server]
 
     <#
-            The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-            We will create own dummy objects instead of performing the query
-            #>
+    The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+    We will create own dummy objects instead of performing the query
+    #>
     if ($CimServer) {
 
         Write-LogMsg @LogParams -Text " # CIM server cache hit for '$Server'"
@@ -3221,22 +3232,37 @@ function Get-DirectoryEntry {
 
         if ($CimCacheResult) {
             Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server'"
-            if ($CimCacheResult.Description -ne $ID) {
-                $FakeDirectoryEntry = @{
-                    'Description'     = $CimCacheResult.Description
-                    'SchemaClassName' = $SidTypes[$CimCacheResult.SidType]
-                }
-            } else {
-                $FakeDirectoryEntry = $KnownSIDs[$CimCacheResult.SID]
-                if (-not $FakeDirectoryEntry) {
-                    Write-LogMsg @LogParams -Text " # WARNING Known SIDs cache miss for '$($CimCacheResult.SID)'"
-                }
+
+            $FakeDirectoryEntry = @{
+                'Description'     = $CimCacheResult.Description
+                'SchemaClassName' = $SidTypes[$CimCacheResult.SidType]
+                'SID'             = $CimCacheResult.SID
+                'DirectoryPath'   = $DirectoryPath
             }
-            if ($FakeDirectoryEntry) {
-                $FakeDirectoryEntry['DirectoryPath'] = $DirectoryPath
-                $FakeDirectoryEntry['SID'] = $CimCacheResult.SID
-                $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
+
+            if ($CimCacheResult.Description -eq $ID) {
+
+                $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
+
+                if ($SIDCacheResult) {
+                    $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
+                } else {
+
+                    Write-LogMsg @LogParams -Text " # Known SIDs cache miss for '$($CimCacheResult.SID)'"
+                    $NameCacheResult = $KnownNames[$AccountName]
+
+                    if ($NameCacheResult) {
+                        $FakeDirectoryEntry['Description'] = $NameCacheResult['Description']
+                    } else {
+                        Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
+                    }
+
+                }
+
             }
+
+            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
+
         } else {
             Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server'"
         }
@@ -4485,6 +4511,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

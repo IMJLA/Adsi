@@ -45,12 +45,6 @@ class FakeDirectoryEntry {
                 break
             }
             '*/Authenticated Users' {
-                $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-15-2-2'
-                $This.Description = 'SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
-                $This.SchemaClassName = 'group'
-                break
-            }
-            '*/CREATOR OWNER' {
                 $This.objectSid = ConvertTo-SidByteArray -SidString 'S-1-5-11'
                 $This.Description = 'Any user who accesses the system through a sign-in process has the Authenticated Users identity.'
                 $This.SchemaClassName = 'group'
