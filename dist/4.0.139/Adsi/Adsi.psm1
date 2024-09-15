@@ -3827,6 +3827,7 @@ function New-FakeDirectoryEntry {
 
 }
 function Resolve-IdentityReference {
+
     <#
     .SYNOPSIS
     Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
@@ -3844,8 +3845,10 @@ function Resolve-IdentityReference {
 
     Get information about the local Administrator account
     #>
+
     [OutputType([PSCustomObject])]
     param (
+
         # IdentityReference from an Access Control Entry
         # Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)
         [Parameter(Mandatory)]
@@ -4035,7 +4038,14 @@ function Resolve-IdentityReference {
             #>
             Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
             $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
-            $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+            try {
+                $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+            } catch {
+                $LogParams['Type'] = 'Warning'
+                Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be translated from SID to NTAccount: $($_.Exception.Message)"
+                $LogParams['Type'] = $DebugOutputStream
+                pause
+            }
             Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
 
             # The SID of the domain is everything up to (but not including) the last hyphen
@@ -4312,14 +4322,28 @@ function Resolve-IdentityReference {
         # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
         Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
         $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
-        $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+        try {
+            $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+        } catch {
+            $LogParams['Type'] = 'Warning'
+            Write-LogMsg @LogParams -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)"
+            $LogParams['Type'] = $DebugOutputStream
+            pause
+        }
 
         if (-not $SIDString) {
             # Try to resolve the account against the domain indicated in its NT Account Name (which may or may not be the correct ADSI server for the account, it won't be if it's NT AUTHORITY\SYSTEM for example)
             Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name')"
             $NTAccount = [System.Security.Principal.NTAccount]::new($DomainNetBIOS, $Name)
             Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
-            $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+            try {
+                $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
+            } catch {
+                $LogParams['Type'] = 'Warning'
+                Write-LogMsg @LogParams -Text " # '$NTAccount' could not be translated from NTAccount to SID: $($_.Exception.Message)"
+                $LogParams['Type'] = $DebugOutputStream
+                pause
+            }
         } else {
             $DomainNetBIOS = $ServerNetBIOS
         }
@@ -4535,6 +4559,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
