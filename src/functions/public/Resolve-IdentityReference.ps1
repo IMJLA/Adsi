@@ -213,14 +213,38 @@ function Resolve-IdentityReference {
             try {
                 $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
             } catch {
-                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be translated from SID to NTAccount: $($_.Exception.Message)"
-                $LogParams['Type'] = $DebugOutputStream
+
+                $Start = $IdentityReference.Substring(0, 7)
+                switch ($Start) {
+                    'S-1-15-3' {
+
+                        $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
+                        $DomainSid = $AdsiServer.Sid
+                        $NTAccount = $AppCapability['NTAccount']
+
+                    }
+                    'S-1-15-2' {
+
+                        $DomainSid = $AdsiServer.Sid
+                        $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
+
+                    }
+                    default {
+
+                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                        Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
+                        $LogParams['Type'] = $DebugOutputStream
+
+                        # The SID of the domain is everything up to (but not including) the last hyphen
+                        $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+
+                    }
+                }
+
             }
             Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
 
-            # The SID of the domain is everything up to (but not including) the last hyphen
-            $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+
 
             # Search the cache of domains, first by SID, then by NetBIOS name
             $DomainCacheResult = $DomainsBySID[$DomainSid]
