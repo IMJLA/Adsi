@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.142] - 2024-09-19 - bugfix when AdsiServer was not passed
+
 ## [4.0.141] - 2024-09-19 - add error handling and additional detail for app container SIDs and app capability SIDs in Resolve-IdentityReference
 
 ## [4.0.140] - 2024-09-15 - remove debug pause

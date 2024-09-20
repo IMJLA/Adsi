@@ -115,8 +115,8 @@ function Resolve-IdentityReference {
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
             SIDString                = $CacheResult.SID
-            IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
-            #IdentityReferenceNetBios = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase) # PS 7 more efficient
+            IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # Correcting capitalization. Use of regex is required for ps 5.1 support
+            #IdentityReferenceNetBios = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase) # Correcting capitalization. PS 7 more efficient
             IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
 
@@ -219,13 +219,13 @@ function Resolve-IdentityReference {
                     'S-1-15-3' {
 
                         $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
-                        $DomainSid = $AdsiServer.Sid
+                        $DomainSid = $AdsiServer.SID
                         $NTAccount = $AppCapability['NTAccount']
 
                     }
                     'S-1-15-2' {
 
-                        $DomainSid = $AdsiServer.Sid
+                        $DomainSid = $AdsiServer.SID
                         $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
 
                     }
@@ -247,7 +247,9 @@ function Resolve-IdentityReference {
 
 
             # Search the cache of domains, first by SID, then by NetBIOS name
-            $DomainCacheResult = $DomainsBySID[$DomainSid]
+            if ($DomainSid) {
+                $DomainCacheResult = $DomainsBySID[$DomainSid]
+            }
 
             if ($DomainCacheResult) {
                 Write-LogMsg @LogParams -Text " # Domain SID cache hit for '$DomainSid'"
