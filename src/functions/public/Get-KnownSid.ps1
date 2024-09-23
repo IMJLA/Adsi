@@ -5,6 +5,18 @@ function Get-KnownSid {
     #https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
     param ([string]$SID)
     switch -regex ($SID) {
+        'S-1-15-2-' {
+            return @{
+                'Name'            = "App Container $SID"
+                'Description'     = "App Container $SID"
+                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\App Container $SID"
+                'SchemaClassName' = 'user'
+                'SID'             = $SID
+            }
+        }
+        'S-1-15-3-' {
+            return ConvertFrom-AppCapabilitySid -SID $IdentityReference
+        }
         'S-1-5-5-(?<Session>[^-]-[^-])' {
             return @{
                 'Name'            = 'Logon Session'

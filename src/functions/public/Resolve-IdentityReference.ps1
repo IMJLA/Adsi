@@ -285,34 +285,9 @@ function Resolve-IdentityReference {
 
             } catch {
 
-                $Start = $IdentityReference.Substring(0, 8)
-
-                switch ($Start) {
-
-                    'S-1-15-3' {
-
-                        $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
-                        $DomainSid = $AdsiServer.SID
-                        $NTAccount = $AppCapability['NTAccount']
-
-                    }
-
-                    'S-1-15-2' {
-
-                        $DomainSid = $AdsiServer.SID
-                        $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
-
-                    }
-
-                    default {
-
-                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
-                        $LogParams['Type'] = $DebugOutputStream
-
-                    }
-
-                }
+                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
+                $LogParams['Type'] = $DebugOutputStream
 
             }
 
