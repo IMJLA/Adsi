@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.147] - 2024-09-23 - now adding known sids to the cim cache
+
 ## [4.0.146] - 2024-09-23 - move convertfrom-appcapabilitysid usage from resolve-identityreference to get-knownsid
 
 ## [4.0.145] - 2024-09-23 - implement additional well-known SIDs and more efficient order of checking caches in Resolve-IdentityReference
