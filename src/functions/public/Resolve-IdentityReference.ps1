@@ -214,7 +214,7 @@ function Resolve-IdentityReference {
                 $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
             } catch {
 
-                $Start = $IdentityReference.Substring(0, 7)
+                $Start = $IdentityReference.Substring(0, 8)
                 switch ($Start) {
                     'S-1-15-3' {
 
