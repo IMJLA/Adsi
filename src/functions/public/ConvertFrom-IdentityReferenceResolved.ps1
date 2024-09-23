@@ -380,14 +380,13 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 ) {
                     # Retrieve the members of groups from the LDAP provider
-                    if ($DirectoryEntry.Path -eq 'WinNT://JLA-LoftHTPC/TestPopulatedGroup') { pause }
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$IdentityReference'"
                     $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams).FullMembers
 
                 } else {
 
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$IdentityReference'"
-
+                    if ($DirectoryEntry.Path -eq 'WinNT://JLA-LoftHTPC/TestPopulatedGroup') { pause }
                     if ( $DirectoryEntry.SchemaClassName -eq 'group') {
 
                         Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$IdentityReference'"

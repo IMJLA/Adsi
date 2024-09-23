@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.149] - 2024-09-23 - move debug pause
+
 ## [4.0.148] - 2024-09-23 - add debug pause
 
 ## [4.0.147] - 2024-09-23 - now adding known sids to the cim cache
