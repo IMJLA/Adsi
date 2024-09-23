@@ -88,19 +88,52 @@ function Resolve-IdentityReference {
         WhoAmI       = $WhoAmI
     }
 
-    $LoggingParams = @{
-        ThisHostname = $ThisHostname
-        LogBuffer    = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    $GetDirectoryEntryParams = @{
-        DirectoryEntryCache = $DirectoryEntryCache
-        DomainsByNetbios    = $DomainsByNetbios
-        DomainsBySid        = $DomainsBySid
-    }
-
     $ServerNetBIOS = $AdsiServer.Netbios
+    $KnownSIDs = Get-KnownSidHashTable
+    $CacheResult = $KnownSIDs[$IdentityReference]
+
+    if ($CacheResult) {
+
+        # IdentityReference is a well-known SID
+        Write-LogMsg @LogParams -Text " # Known SID cache hit for '$IdentityReference' on '$ServerNetBIOS'"
+
+        return [PSCustomObject]@{
+            IdentityReference        = $IdentityReference
+            SIDString                = $CacheResult['SID']
+            IdentityReferenceNetBios = $CacheResult['NTAccount'] -replace ".*\\", "$ServerNetBIOS\"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult['Name'])"
+        }
+
+    } else {
+        Write-LogMsg @LogParams -Text " # Known SID cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+    }
+
+    $KnownNTAccounts = @{}
+
+    ForEach ($KnownNTAccount in $KnownNTAccounts.Keys) {
+
+        $Known = $KnownNTAccounts[$KnownNTAccount]
+        $KnownNTAccounts[$Known['NTAccount']] = $Known
+
+    }
+
+    $CacheResult = $KnownNTAccounts[$IdentityReference]
+
+    if ($CacheResult) {
+
+        # IdentityReference is a well-known SID
+        Write-LogMsg @LogParams -Text " # Known NTAccount caption hit for '$IdentityReference' on '$ServerNetBIOS'"
+
+        return [PSCustomObject]@{
+            IdentityReference        = $IdentityReference
+            SIDString                = $CacheResult['SID']
+            IdentityReferenceNetBios = $CacheResult['NTAccount'] -replace ".*\\", "$ServerNetBIOS\"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult['Name'])"
+        }
+
+    } else {
+        Write-LogMsg @LogParams -Text " # Known NTAccount caption cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+    }
 
     # Many Well-Known SIDs cannot be translated with the Translate method
     # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server
@@ -124,6 +157,30 @@ function Resolve-IdentityReference {
         Write-LogMsg @LogParams -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
+    $Known = Get-KnownSid -SID $IdentityReference
+
+    if ($Known['Name'] -ne $IdentityReference) {
+
+        # IdentityReference is a capability SID
+        Write-LogMsg @LogParams -Text " # Capability SID pattern hit for '$IdentityReference' on '$ServerNetBIOS'"
+
+        return [PSCustomObject]@{
+            IdentityReference        = $IdentityReference
+            SIDString                = $Known['SID']
+            IdentityReferenceNetBios = $Known['NTAccount'] -replace ".*\\", "$ServerNetBIOS\"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($Known['Name'])"
+        }
+
+    } else {
+        Write-LogMsg @LogParams -Text " # Capability SID pattern miss for '$IdentityReference' on '$ServerNetBIOS'"
+    }
+
+    $LoggingParams = @{
+        ThisHostname = $ThisHostname
+        LogBuffer    = $LogBuffer
+        WhoAmI       = $WhoAmI
+    }
+
     $split = $IdentityReference.Split('\')
     $DomainNetBIOS = $ServerNetBIOS
     $Name = $split[1]
@@ -142,18 +199,22 @@ function Resolve-IdentityReference {
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
                 $DomainDns = $AdsiServer.Dns
             }
+
             if (-not $DomainDns) {
 
                 $DomainCacheResult = $DomainsByNetbios[$CacheResult.Domain]
 
                 if ($DomainCacheResult) {
+
                     Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$($CacheResult.Domain)'"
                     $DomainDns = $DomainCacheResult.Dns
+
                 } else {
                     Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$($CacheResult.Domain)'"
                 }
 
             }
+
             if (-not $DomainDns) {
 
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
@@ -165,7 +226,7 @@ function Resolve-IdentityReference {
                 IdentityReference        = $IdentityReference
                 SIDString                = $CacheResult.SID
                 IdentityReferenceNetBios = $CacheResult.Caption -replace "^$ThisHostname\\", "$ThisHostname\" # required for ps 5.1 support
-                # PS 7 more efficient IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase)
+                #IdentityReferenceNetBios    = $CacheResult.Caption.Replace("$ThisHostname\","$ThisHostname\",[System.StringComparison]::CurrentCultureIgnoreCase) # PS7 would be more efficient
                 IdentityReferenceDns     = "$DomainDns\$($CacheResult.Name)"
             }
 
@@ -194,6 +255,12 @@ function Resolve-IdentityReference {
         Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
     }
 
+    $GetDirectoryEntryParams = @{
+        DirectoryEntryCache = $DirectoryEntryCache
+        DomainsByNetbios    = $DomainsByNetbios
+        DomainsBySid        = $DomainsBySid
+    }
+
     # If no match was found in any cache, the path forward depends on the IdentityReference
     switch -Wildcard ($IdentityReference) {
 
@@ -201,63 +268,58 @@ function Resolve-IdentityReference {
 
             # IdentityReference is a Revision 1 SID
 
-            $KnownSIDs = Get-KnownSidHashTable
+            # The SID of the domain is everything up to (but not including) the last hyphen
+            $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+            Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+            $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 
-            $Known = $KnownSIDs[$IdentityReference]
-
-            if ($Known) {
-                $DomainSid = $Known['SID']
-                $NTAccount = $Known['NTAccount']
-            } else {
+            try {
 
                 <#
-                Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
                     This .Net method makes it impossible to redirect the error stream directly
                     Wrapping it in a scriptblock (which is then executed with &) fixes the problem
                     I don't understand exactly why
                     The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
                 #>
-                Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
-                $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
-                try {
-                    $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
-                } catch {
+                $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 
-                    $Start = $IdentityReference.Substring(0, 8)
-                    switch ($Start) {
-                        'S-1-15-3' {
+            } catch {
 
-                            $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
-                            $DomainSid = $AdsiServer.SID
-                            $NTAccount = $AppCapability['NTAccount']
+                $Start = $IdentityReference.Substring(0, 8)
 
-                        }
-                        'S-1-15-2' {
+                switch ($Start) {
 
-                            $DomainSid = $AdsiServer.SID
-                            $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
+                    'S-1-15-3' {
 
-                        }
-                        default {
+                        $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
+                        $DomainSid = $AdsiServer.SID
+                        $NTAccount = $AppCapability['NTAccount']
 
-                            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                            Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
-                            $LogParams['Type'] = $DebugOutputStream
+                    }
 
-                            # The SID of the domain is everything up to (but not including) the last hyphen
-                            $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+                    'S-1-15-2' {
 
-                        }
+                        $DomainSid = $AdsiServer.SID
+                        $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
+
+                    }
+
+                    default {
+
+                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                        Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
+                        $LogParams['Type'] = $DebugOutputStream
+
                     }
 
                 }
+
             }
+
             Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
 
             # Search the cache of domains, first by SID, then by NetBIOS name
-            if ($DomainSid) {
-                $DomainCacheResult = $DomainsBySID[$DomainSid]
-            }
+            $DomainCacheResult = $DomainsBySID[$DomainSid]
 
             if ($DomainCacheResult) {
                 Write-LogMsg @LogParams -Text " # Domain SID cache hit for '$DomainSid'"
@@ -351,20 +413,27 @@ function Resolve-IdentityReference {
         }
 
         "NT SERVICE\*" {
+
             # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
             if ($ServerNetBIOS -eq $ThisHostName) {
+
                 Write-LogMsg @LogParams -Text "sc.exe showsid $Name"
                 [string[]]$ScResult = & sc.exe showsid $Name
+
             } else {
+
                 Write-LogMsg @LogParams -Text "Invoke-Command -ComputerName $ServerNetBIOS -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $Name"
                 [string[]]$ScResult = Invoke-Command -ComputerName $ServerNetBIOS -ScriptBlock { & sc.exe showsid $args[0] } -ArgumentList $Name
+
             }
             $ScResultProps = @{}
 
             $ScResult |
             ForEach-Object {
+
                 $Prop, $Value = ($_ -split ':').Trim()
                 $ScResultProps[$Prop] = $Value
+
             }
 
             $SIDString = $ScResultProps['SERVICE SID']
@@ -372,9 +441,11 @@ function Resolve-IdentityReference {
             $Caption = $IdentityReference.Replace('NT SERVICE', $ServerNetBIOS)
 
             $DomainCacheResult = $DomainsByNetbios[$ServerNetBIOS]
+
             if ($DomainCacheResult) {
                 $DomainDns = $DomainCacheResult.Dns
             }
+
             if (-not $DomainDns) {
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
             }
@@ -420,11 +491,16 @@ function Resolve-IdentityReference {
             $KnownSIDs = Get-KnownSidHashTable
 
             $KnownCaptions = @{}
+
             ForEach ($KnownSID in $KnownSIDs.Keys) {
+
                 $Known = $KnownSIDs[$KnownSID]
                 $KnownCaptions[$Known['NTAccount']] = $Known
+
             }
+
             $Known = $KnownCaptions[$IdentityReference]
+
             if ($Known) {
                 $SIDString = $Known['SID']
             }
@@ -433,9 +509,11 @@ function Resolve-IdentityReference {
             $Caption = $IdentityReference.Replace('APPLICATION PACKAGE AUTHORITY', $ServerNetBIOS)
 
             $DomainCacheResult = $DomainsByNetbios[$ServerNetBIOS]
+
             if ($DomainCacheResult) {
                 $DomainDns = $DomainCacheResult.Dns
             }
+
             if (-not $DomainDns) {
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
             }
@@ -450,7 +528,6 @@ function Resolve-IdentityReference {
 
             Write-LogMsg @LogParams -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
             $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-
             Write-LogMsg @LogParams -Text " # Add '$SIDString' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
             $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
 
@@ -464,6 +541,7 @@ function Resolve-IdentityReference {
         }
 
         "BUILTIN\*" {
+
             # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
             # But they may have real DirectoryEntry objects
             # Try to find the DirectoryEntry object locally on the server
@@ -494,6 +572,7 @@ function Resolve-IdentityReference {
                 IdentityReferenceNetBios = $Caption
                 IdentityReferenceDns     = "$DomainDns\$Name"
             }
+
         }
 
     }
@@ -503,8 +582,11 @@ function Resolve-IdentityReference {
     # Start by determining the domain
 
     if (-not [string]::IsNullOrEmpty($DomainNetBIOS)) {
+
         $DomainNetBIOSCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+
         if (-not $DomainNetBIOSCacheResult) {
+
             Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$($DomainNetBIOS)'."
             $DomainNetBIOSCacheResult = Get-AdsiServer -Netbios $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
             $DomainsByNetbios[$DomainNetBIOS] = $DomainNetBIOSCacheResult
@@ -519,26 +601,34 @@ function Resolve-IdentityReference {
         # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
         Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
         $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
+
         try {
             $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
         } catch {
+
             $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
             Write-LogMsg @LogParams -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)"
             $LogParams['Type'] = $DebugOutputStream
+
         }
 
         if (-not $SIDString) {
+
             # Try to resolve the account against the domain indicated in its NT Account Name (which may or may not be the correct ADSI server for the account, it won't be if it's NT AUTHORITY\SYSTEM for example)
             Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name')"
             $NTAccount = [System.Security.Principal.NTAccount]::new($DomainNetBIOS, $Name)
             Write-LogMsg @LogParams -Text "[System.Security.Principal.NTAccount]::new('$DomainNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+
             try {
                 $SIDString = & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
             } catch {
+
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$NTAccount' could not be translated from NTAccount to SID: $($_.Exception.Message)"
                 $LogParams['Type'] = $DebugOutputStream
+
             }
+
         } else {
             $DomainNetBIOS = $ServerNetBIOS
         }
@@ -548,7 +638,9 @@ function Resolve-IdentityReference {
             # Try to resolve the account against the domain indicated in its NT Account Name
             # Add this domain to our list of known domains
             try {
+
                 $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn" -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+
                 $SearchParams = @{
                     CimCache            = $CimCache
                     DebugOutputStream   = $DebugOutputStream
@@ -559,12 +651,16 @@ function Resolve-IdentityReference {
                     PropertiesToLoad    = @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')
                     ThisFqdn            = $ThisFqdn
                 }
+
                 $DirectoryEntry = Search-Directory @SearchParams @LoggingParams
                 $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LoggingParams).SidString
+
             } catch {
+
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text "'$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message)"
                 $LogParams['Type'] = $DebugOutputStream
+
             }
 
         }
@@ -584,8 +680,10 @@ function Resolve-IdentityReference {
 
         # This covers unresolved SIDs for deleted accounts, broken domain trusts, etc.
         if ( '' -eq "$Name" ) {
+
             $Name = $IdentityReference
             Write-LogMsg @LogParams -Text " # An IdentityReference girl has no name ($Name)"
+
         } else {
             Write-LogMsg @LogParams -Text " # '$IdentityReference' is named '$Name'"
         }

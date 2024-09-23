@@ -174,7 +174,6 @@ function Get-DirectoryEntry {
 
             }
 
-
             if ($FakeDirectoryEntry['Description'] -eq $ID) {
                 if ($SIDCacheResult) {
                     $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
@@ -247,7 +246,6 @@ function Get-DirectoryEntry {
     }
 
     if ($null -eq $DirectoryEntryCache[$DirectoryPath]) {
-
         $DirectoryEntryCache[$DirectoryPath] = $DirectoryEntry
     } else {
         #Write-LogMsg @LogParams -Text "DirectoryEntryCache hit for '$DirectoryPath'"
@@ -255,11 +253,14 @@ function Get-DirectoryEntry {
     }
 
     if ($PropertiesToLoad) {
+
         try {
+
             # If the $DirectoryPath was invalid, this line will return an error
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
 
         } catch {
+
             $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
 
             # Ensure that the error message appears on 1 line
@@ -268,8 +269,11 @@ function Get-DirectoryEntry {
             Write-LogMsg @LogParams -Text "'$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim() -replace '\s"',' "')"
 
             return
+
         }
+
     }
+
     return $DirectoryEntry
 
 }

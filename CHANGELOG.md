@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.145] - 2024-09-23 - implement additional well-known SIDs and more efficient order of checking caches in Resolve-IdentityReference
+
 ## [4.0.144] - 2024-09-23 - move known sids to get-knownsidhashtable
 
 ## [4.0.143] - 2024-09-22 - bugfix incorrect # of chars in substring

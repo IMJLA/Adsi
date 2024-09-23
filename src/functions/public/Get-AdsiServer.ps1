@@ -160,7 +160,7 @@ function Get-AdsiServer {
                 NETWORK SERVICE                S-1-5-20
                 BUILTIN                        S-1-5-32
 
-
+            PS C:\Users\Owner> $logonDomainSid = 'S-1-5-21-1340649458-2707494813-4121304102'
             PS C:\Users\Owner> ForEach ($SidType in [System.Security.Principal.WellKnownSidType].GetEnumNames()) {$var = [System.Security.Principal.WellKnownSidType]::$SidType; [System.Security.Principal.SecurityIdentifier]::new($var,$LogonDomainSid) |Add-Member -PassThru -NotePropertyMembers @{'WellKnownSidType' = $SidType}}
 
                 # PS 5.1 returns fewer results than PS 7.4
