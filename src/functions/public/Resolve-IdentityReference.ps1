@@ -201,50 +201,58 @@ function Resolve-IdentityReference {
 
             # IdentityReference is a Revision 1 SID
 
-            <#
-            Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
-                This .Net method makes it impossible to redirect the error stream directly
-                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-                I don't understand exactly why
-                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
-            #>
-            Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
-            $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
-            try {
-                $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
-            } catch {
+            $KnownSIDs = Get-KnownSidHashTable
 
-                $Start = $IdentityReference.Substring(0, 8)
-                switch ($Start) {
-                    'S-1-15-3' {
+            $Known = $KnownSIDs[$IdentityReference]
 
-                        $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
-                        $DomainSid = $AdsiServer.SID
-                        $NTAccount = $AppCapability['NTAccount']
+            if ($Known) {
+                $DomainSid = $Known['SID']
+                $NTAccount = $Known['NTAccount']
+            } else {
 
+                <#
+                Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
+                    This .Net method makes it impossible to redirect the error stream directly
+                    Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+                    I don't understand exactly why
+                    The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
+                #>
+                Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+                $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
+                try {
+                    $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+                } catch {
+
+                    $Start = $IdentityReference.Substring(0, 8)
+                    switch ($Start) {
+                        'S-1-15-3' {
+
+                            $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
+                            $DomainSid = $AdsiServer.SID
+                            $NTAccount = $AppCapability['NTAccount']
+
+                        }
+                        'S-1-15-2' {
+
+                            $DomainSid = $AdsiServer.SID
+                            $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
+
+                        }
+                        default {
+
+                            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                            Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
+                            $LogParams['Type'] = $DebugOutputStream
+
+                            # The SID of the domain is everything up to (but not including) the last hyphen
+                            $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+
+                        }
                     }
-                    'S-1-15-2' {
 
-                        $DomainSid = $AdsiServer.SID
-                        $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
-
-                    }
-                    default {
-
-                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
-                        $LogParams['Type'] = $DebugOutputStream
-
-                        # The SID of the domain is everything up to (but not including) the last hyphen
-                        $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
-
-                    }
                 }
-
             }
             Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
-
-
 
             # Search the cache of domains, first by SID, then by NetBIOS name
             if ($DomainSid) {
@@ -409,25 +417,17 @@ function Resolve-IdentityReference {
                 APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
             So we will instead hardcode a map of SIDs
             #>
-            $KnownSIDs = @{ # https://learn.microsoft.com/en-us/windows/win32/secauthz/app-container-sid-constants
-                'APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES'                                                   = 'S-1-15-2-1'
-                'APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES'                                        = 'S-1-15-2-2'
+            $KnownSIDs = Get-KnownSidHashTable
 
-                # Capability SIDs introduced in Windows 8 https://learn.microsoft.com/en-us/windows/win32/secauthz/capability-sid-constants
-                'APPLICATION PACKAGE AUTHORITY\Your Internet connection'                                                   = 'S-1-15-3-1'
-                'APPLICATION PACKAGE AUTHORITY\Your Internet connection, including incoming connections from the Internet' = 'S-1-15-3-2'
-                'APPLICATION PACKAGE AUTHORITY\Your home or work networks'                                                 = 'S-1-15-3-3'
-                'APPLICATION PACKAGE AUTHORITY\Your pictures library'                                                      = 'S-1-15-3-4'
-                'APPLICATION PACKAGE AUTHORITY\Your videos library'                                                        = 'S-1-15-3-5'
-                'APPLICATION PACKAGE AUTHORITY\Your music library'                                                         = 'S-1-15-3-6'
-                'APPLICATION PACKAGE AUTHORITY\Your documents library'                                                     = 'S-1-15-3-7'
-                'APPLICATION PACKAGE AUTHORITY\Your Windows credentials'                                                   = 'S-1-15-3-8'
-                'APPLICATION PACKAGE AUTHORITY\Software and hardware certificates or a smart card'                         = 'S-1-15-3-9'
-                'APPLICATION PACKAGE AUTHORITY\Removable storage'                                                          = 'S-1-15-3-10'
-                'APPLICATION PACKAGE AUTHORITY\Your Appointments'                                                          = 'S-1-15-3-11'
-                'APPLICATION PACKAGE AUTHORITY\Your Contacts'                                                              = 'S-1-15-3-12'
+            $KnownCaptions = @{}
+            ForEach ($KnownSID in $KnownSIDs.Keys) {
+                $Known = $KnownSIDs[$KnownSID]
+                $KnownCaptions[$Known['NTAccount']] = $Known
             }
-            $SIDString = $KnownSIDs[$IdentityReference]
+            $Known = $KnownCaptions[$IdentityReference]
+            if ($Known) {
+                $SIDString = $Known['SID']
+            }
 
             #$Caption = $IdentityReference -replace 'APPLICATION PACKAGE AUTHORITY', $ServerNetBIOS -replace "^$ThisHostname\\", "$ThisHostname\"
             $Caption = $IdentityReference.Replace('APPLICATION PACKAGE AUTHORITY', $ServerNetBIOS)

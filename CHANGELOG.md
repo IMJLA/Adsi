@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.144] - 2024-09-23 - move known sids to get-knownsidhashtable
+
 ## [4.0.143] - 2024-09-22 - bugfix incorrect # of chars in substring
 
 ## [4.0.142] - 2024-09-19 - bugfix when AdsiServer was not passed

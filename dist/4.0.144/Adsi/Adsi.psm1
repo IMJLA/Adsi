@@ -3320,183 +3320,12 @@ function Get-DirectoryEntry {
         9 = 'computer' #'SidTypeComputer'
     }
 
-    $KnownSIDs = @{
-        <#
-        https://devblogs.microsoft.com/oldnewthing/20220502-00/?p=106550
-        SIDs of the form S-1-15-2-xxx are app container SIDs.
-        These SIDs are present in the token of apps running in an app container, and they encode the app container identity.
-        According to the rules for Mandatory Integrity Control, objects default to allowing write access only to medium integrity level (IL) or higher.
-        App containers run at low IL, so they by default don’t have write access to such objects.
-        An object can add access control entries (ACEs) to its access control list (ACL) to grant access to low IL.
-        There are a few security identifiers (SIDs) you may see when an object extends access to low IL.
-        #>
-        'S-1-15-2-1'                                                     = @{
-            'Description'     = 'All applications running in an app package context have this app container SID. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
-            'Name'            = 'ALL APPLICATION PACKAGES'
-            'SchemaClassName' = 'group'
-        }
-        'S-1-15-2-2'                                                     = @{
-            'Description'     = 'Some applications running in an app package context may have this app container SID. SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
-            'Name'            = 'ALL RESTRICTED APPLICATION PACKAGES'
-            'SchemaClassName' = 'group'
-        }
-        'S-1-15-7'                                                       = @{
-            'Description'     = 'A user who has connected to the computer without supplying a user name and password. Not a member of Authenticated Users.'
-            'Name'            = 'ANONYMOUS LOGON'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-5-11'                                                       = @{
-            'Description'     = 'A group that includes all users and computers with identities that have been authenticated.'
-            'Name'            = 'Authenticated Users'
-            'SchemaClassName' = 'group'
-        }
-        'S-1-3-0'                                                        = @{
-            'Description'     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
-            'Name'            = 'CREATOR OWNER'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-1-0'                                                        = @{
-            'Description'     = "A group that includes all users; aka 'World'."
-            'Name'            = 'Everyone'
-            'SchemaClassName' = 'group'
-        }
-        'S-1-5-4'                                                        = @{
-            'Description'     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
-            'Name'            = 'INTERACTIVE'
-            'SchemaClassName' = 'group'
-        }
-        'S-1-5-19'                                                       = @{
-            'Description'     = 'A local service account'
-            'Name'            = 'LOCAL SERVICE'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-5-20'                                                       = @{
-            'Description'     = 'A network service account'
-            'Name'            = 'NETWORK SERVICE'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-5-18'                                                       = @{
-            'Description'     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
-            'Name'            = 'SYSTEM'
-            'SchemaClassName' = 'computer'
-        }
-        'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464' = @{
-            'Description'     = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
-            'Name'            = 'TrustedInstaller'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122'  = @{
-            'Description'     = 'Windows Event Log service account'
-            'Name'            = 'EventLog'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-5-80-242729624-280608522-2219052887-3187409060-2225943459'  = @{
-            'Description'     = 'Windows Cryptographic service account'
-            'Name'            = 'CryptSvc'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420' = @{
-            'Description'     = 'Windows Diagnostics service account'
-            'Name'            = 'WdiServiceHost'
-            'SchemaClassName' = 'user'
-        }
-        <#
-        # https://devblogs.microsoft.com/oldnewthing/20220503-00/?p=106557
-        SIDs of the form S-1-15-3-xxx are app capability SIDs.
-        These SIDs are present in the token of apps running in an app container, and they encode the app capabilities possessed by the app.
-        The rules for Mandatory Integrity Control say that objects default to allowing write access only to medium integrity level (IL) or higher.
-        Granting access to these app capability SIDs permit access from apps running at low IL, provided they possess the matching capability.
-
-        Autogenerated
-        S-1-15-3-x1-x2-x3-x4	device capability
-        S-1-15-3-1024-x1-x2-x3-x4-x5-x6-x7-x8	app capability
-
-        You can sort of see how these assignments evolved.
-        At first, the capability RIDs were assigned by an assigned numbers authority, so anybody who wanted a capability had to apply for a number.
-        After about a dozen of these, the assigned numbers team (probably just one person) realized that this had the potential to become a real bottleneck, so they switched to an autogeneration mechanism, so that people who needed a capability SID could just generate their own.
-        For device capabilities, the four 32-bit decimal digits represent the 16 bytes of the device interface GUID.
-        Let’s decode this one: S-1-15-3-787448254-1207972858-3558633622-1059886964.
-
-        787448254	1207972858	3558633622	1059886964
-        0x2eef81be	0x480033fa	0xd41c7096	0x3f2c9774
-        be	81	ef	2e	fa	33	00	48	96	70	1c	d4	74	97	2c	3f
-        2eef81be	33fa	4800	96	70	1c	d4	74	97	2c	3f
-        {2eef81be-	33fa-	4800-	96	70-	1c	d4	74	97	2c	3f}
-
-        And we recognize {2eef81be-33fa-4800-9670-1cd474972c3f} as DEVINTERFACE_AUDIO_CAPTURE, so this is the microphone device capability.
-        For app capabilities, the eight 32-bit decimal numbers represent the 32 bytes of the SHA256 hash of the capability name.
-        You can programmatically generate these app capability SIDs by calling Derive­Capability­Sids­From­Name.
-        #>
-        'S-1-15-3-1'                                                     = @{
-            'Description'     = 'internetClient containerized app capability SID'
-            'Name'            = 'internetClient'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-2'                                                     = @{
-            'Description'     = 'internetClientServer containerized app capability SID'
-            'Name'            = 'internetClientServer'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-3'                                                     = @{
-            'Description'     = 'privateNetworkClientServer containerized app capability SID'
-            'Name'            = 'privateNetworkClientServer'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-4'                                                     = @{
-            'Description'     = 'picturesLibrary containerized app capability SID'
-            'Name'            = 'picturesLibrary'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-5'                                                     = @{
-            'Description'     = 'videosLibrary containerized app capability SID'
-            'Name'            = 'videosLibrary'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-6'                                                     = @{
-            'Description'     = 'musicLibrary containerized app capability SID'
-            'Name'            = 'musicLibrary'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-7'                                                     = @{
-            'Description'     = 'documentsLibrary containerized app capability SID'
-            'Name'            = 'documentsLibrary'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-8'                                                     = @{
-            'Description'     = 'enterpriseAuthentication containerized app capability SID'
-            'Name'            = 'enterpriseAuthentication'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-9'                                                     = @{
-            'Description'     = 'sharedUserCertificates containerized app capability SID'
-            'Name'            = 'sharedUserCertificates'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-10'                                                    = @{
-            'Description'     = 'removableStorage containerized app capability SID'
-            'Name'            = 'removableStorage'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-11'                                                    = @{
-            'Description'     = 'appointments containerized app capability SID'
-            'Name'            = 'appointments'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-12'                                                    = @{
-            'Description'     = 'contacts containerized app capability SID'
-            'Name'            = 'contacts'
-            'SchemaClassName' = 'user'
-        }
-        'S-1-15-3-4096'                                                  = @{
-            'Description'     = 'internetExplorer containerized app capability SID'
-            'Name'            = 'internetExplorer'
-            'SchemaClassName' = 'user'
-        }
-    }
+    $KnownSIDs = Get-KnownSidHashTable
 
     $KnownNames = @{}
     ForEach ($KnownSID in $KnownSIDs.Keys) {
-        $KnownNames[$KnownSIDs[$KnownSID]] = $Known
+        $Known = $KnownSIDs[$KnownSID]
+        $KnownNames[$Known['Name']] = $Known
     }
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
@@ -3652,6 +3481,239 @@ function Get-DirectoryEntry {
     }
     return $DirectoryEntry
 
+}
+function Get-KnownSidHashTable {
+    # Some of these cannot be translated using the [SecurityIdentifier]::Translate or [NTAccount]::Translate methods.
+    # Some of these cannot be retrieved using CIM or ADSI.
+    # Hardcoding them here allows avoiding queries that we know will fail.
+    return @{
+        <#
+        https://devblogs.microsoft.com/oldnewthing/20220502-00/?p=106550
+        SIDs of the form S-1-15-2-xxx are app container SIDs.
+        These SIDs are present in the token of apps running in an app container, and they encode the app container identity.
+        According to the rules for Mandatory Integrity Control, objects default to allowing write access only to medium integrity level (IL) or higher.
+        App containers run at low IL, so they by default don’t have write access to such objects.
+        An object can add access control entries (ACEs) to its access control list (ACL) to grant access to low IL.
+        There are a few security identifiers (SIDs) you may see when an object extends access to low IL.
+        #>
+        'S-1-15-2-1'                                                     = @{
+            'Description'     = 'All applications running in an app package context have this app container SID. SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE'
+            'Name'            = 'ALL APPLICATION PACKAGES'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-2-1'
+        }
+        'S-1-15-2-2'                                                     = @{
+            'Description'     = 'Some applications running in an app package context may have this app container SID. SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE'
+            'Name'            = 'ALL RESTRICTED APPLICATION PACKAGES'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-2-2'
+        }
+        <#
+        # https://devblogs.microsoft.com/oldnewthing/20220503-00/?p=106557
+        SIDs of the form S-1-15-3-xxx are app capability SIDs.
+        These SIDs are present in the token of apps running in an app container, and they encode the app capabilities possessed by the app.
+        The rules for Mandatory Integrity Control say that objects default to allowing write access only to medium integrity level (IL) or higher.
+        Granting access to these app capability SIDs permit access from apps running at low IL, provided they possess the matching capability.
+
+        Autogenerated
+        S-1-15-3-x1-x2-x3-x4	device capability
+        S-1-15-3-1024-x1-x2-x3-x4-x5-x6-x7-x8	app capability
+
+        You can sort of see how these assignments evolved.
+        At first, the capability RIDs were assigned by an assigned numbers authority, so anybody who wanted a capability had to apply for a number.
+        After about a dozen of these, the assigned numbers team (probably just one person) realized that this had the potential to become a real bottleneck, so they switched to an autogeneration mechanism, so that people who needed a capability SID could just generate their own.
+        For device capabilities, the four 32-bit decimal digits represent the 16 bytes of the device interface GUID.
+        Let’s decode this one: S-1-15-3-787448254-1207972858-3558633622-1059886964.
+
+        787448254	1207972858	3558633622	1059886964
+        0x2eef81be	0x480033fa	0xd41c7096	0x3f2c9774
+        be	81	ef	2e	fa	33	00	48	96	70	1c	d4	74	97	2c	3f
+        2eef81be	33fa	4800	96	70	1c	d4	74	97	2c	3f
+        {2eef81be-	33fa-	4800-	96	70-	1c	d4	74	97	2c	3f}
+
+        And we recognize {2eef81be-33fa-4800-9670-1cd474972c3f} as DEVINTERFACE_AUDIO_CAPTURE, so this is the microphone device capability.
+        For app capabilities, the eight 32-bit decimal numbers represent the 32 bytes of the SHA256 hash of the capability name.
+        You can programmatically generate these app capability SIDs by calling Derive­Capability­Sids­From­Name.
+        #>
+        'S-1-15-3-1'                                                     = @{
+            'Description'     = 'internetClient containerized app capability SID'
+            'Name'            = 'Your Internet connection'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your Internet connection'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-1'
+        }
+        'S-1-15-3-2'                                                     = @{
+            'Description'     = 'internetClientServer containerized app capability SID'
+            'Name'            = 'Your Internet connection, including incoming connections from the Internet'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your Internet connection, including incoming connections from the Internet'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-2'
+        }
+        'S-1-15-3-3'                                                     = @{
+            'Description'     = 'privateNetworkClientServer containerized app capability SID'
+            'Name'            = 'Your home or work networks'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your home or work networks'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-3'
+        }
+        'S-1-15-3-4'                                                     = @{
+            'Description'     = 'picturesLibrary containerized app capability SID'
+            'Name'            = 'Your pictures library'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your pictures library'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-4'
+        }
+        'S-1-15-3-5'                                                     = @{
+            'Description'     = 'videosLibrary containerized app capability SID'
+            'Name'            = 'Your videos library'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your videos library'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-5'
+        }
+        'S-1-15-3-6'                                                     = @{
+            'Description'     = 'musicLibrary containerized app capability SID'
+            'Name'            = 'Your music library'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your music library'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-6'
+        }
+        'S-1-15-3-7'                                                     = @{
+            'Description'     = 'documentsLibrary containerized app capability SID'
+            'Name'            = 'Your documents library'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your documents library'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-7'
+        }
+        'S-1-15-3-8'                                                     = @{
+            'Description'     = 'enterpriseAuthentication containerized app capability SID'
+            'Name'            = 'Your Windows credentials'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your Windows credentials'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-8'
+        }
+        'S-1-15-3-9'                                                     = @{
+            'Description'     = 'sharedUserCertificates containerized app capability SID'
+            'Name'            = 'Software and hardware certificates or a smart card'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Software and hardware certificates or a smart card'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-9'
+        }
+        'S-1-15-3-10'                                                    = @{
+            'Description'     = 'removableStorage containerized app capability SID'
+            'Name'            = 'Removable storage'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Removable storage'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-10'
+        }
+        'S-1-15-3-11'                                                    = @{
+            'Description'     = 'appointments containerized app capability SID'
+            'Name'            = 'Your Appointments'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your Appointments'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-11'
+        }
+        'S-1-15-3-12'                                                    = @{
+            'Description'     = 'contacts containerized app capability SID'
+            'Name'            = 'Your Contacts'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\Your Contacts'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-12'
+        }
+        'S-1-15-3-4096'                                                  = @{
+            'Description'     = 'internetExplorer containerized app capability SID'
+            'Name'            = 'internetExplorer'
+            'NTAccount'       = 'APPLICATION PACKAGE AUTHORITY\internetExplorer'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-15-3-4096'
+        }
+        <#Other known SIDs#>
+        'S-1-1-0'                                                        = @{
+            'Description'     = "A group that includes all users; aka 'World'."
+            'Name'            = 'Everyone'
+            'NTAccount'       = 'WORLD SID AUTHORITY\Everyone'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-1-0'
+        }
+        'S-1-3-0'                                                        = @{
+            'Description'     = 'A SID to be replaced by the SID of the user who creates a new object. This SID is used in inheritable ACEs.'
+            'Name'            = 'CREATOR OWNER'
+            'NTAccount'       = 'CREATOR SID AUTHORITY\CREATOR OWNER'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-3-0'
+        }
+        'S-1-5-4'                                                        = @{
+            'Description'     = 'Users who log on for interactive operation. This is a group identifier added to the token of a process when it was logged on interactively.'
+            'Name'            = 'INTERACTIVE'
+            'NTAccount'       = 'NT AUTHORITY\INTERACTIVE'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-5-4'
+        }
+        'S-1-5-7'                                                        = @{
+            'Description'     = 'A user who has connected to the computer without supplying a user name and password. Not a member of Authenticated Users.'
+            'Name'            = 'ANONYMOUS LOGON'
+            'NTAccount'       = 'NT AUTHORITY\ANONYMOUS LOGON'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-5-7'
+        }
+        'S-1-5-11'                                                       = @{
+            'Description'     = 'A group that includes all users and computers with identities that have been authenticated.'
+            'Name'            = 'Authenticated Users'
+            'NTAccount'       = 'NT AUTHORITY\Authenticated Users'
+            'SchemaClassName' = 'group'
+            'SID'             = 'S-1-5-11'
+        }
+        'S-1-5-18'                                                       = @{
+            'Description'     = 'By default, the SYSTEM account is granted Full Control permissions to all files on an NTFS volume'
+            'Name'            = 'SYSTEM'
+            'NTAccount'       = 'NT AUTHORITY\SYSTEM'
+            'SchemaClassName' = 'computer'
+            'SID'             = 'S-1-5-18'
+        }
+        'S-1-5-19'                                                       = @{
+            'Description'     = 'A local service account'
+            'Name'            = 'LOCAL SERVICE'
+            'NTAccount'       = 'NT AUTHORITY\LOCAL SERVICE'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-5-19'
+        }
+        'S-1-5-20'                                                       = @{
+            'Description'     = 'A network service account'
+            'Name'            = 'NETWORK SERVICE'
+            'NTAccount'       = 'NT AUTHORITY\NETWORK SERVICE'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-5-20'
+        }
+        'S-1-5-80-242729624-280608522-2219052887-3187409060-2225943459'  = @{
+            'Description'     = 'Windows Cryptographic service account'
+            'Name'            = 'CryptSvc'
+            'NTAccount'       = 'NT AUTHORITY\CryptSvc'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-5-80-242729624-280608522-2219052887-3187409060-2225943459'
+        }
+        'S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420' = @{
+            'Description'     = 'Windows Diagnostics service account'
+            'Name'            = 'WdiServiceHost'
+            'NTAccount'       = 'NT AUTHORITY\WdiServiceHost'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420'
+        }
+        'S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122'  = @{
+            'Description'     = 'Windows Event Log service account'
+            'Name'            = 'EventLog'
+            'NTAccount'       = 'NT AUTHORITY\EventLog'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122'
+        }
+        'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464' = @{
+            'Description'     = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
+            'Name'            = 'TrustedInstaller'
+            'NTAccount'       = 'NT AUTHORITY\TrustedInstaller'
+            'SchemaClassName' = 'user'
+            'SID'             = 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
+        }
+    }
 }
 function Get-ParentDomainDnsName {
     param (
@@ -4309,46 +4371,56 @@ function Resolve-IdentityReference {
 
             # IdentityReference is a Revision 1 SID
 
-            <#
-            Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
-                This .Net method makes it impossible to redirect the error stream directly
-                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-                I don't understand exactly why
-                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
-            #>
-            Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
-            $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
-            try {
-                $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
-            } catch {
+            $KnownSIDs = Get-KnownSidHashTable
 
-                $Start = $IdentityReference.Substring(0, 8)
-                switch ($Start) {
-                    'S-1-15-3' {
+            $Known = $KnownSIDs[$IdentityReference]
 
-                        $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
-                        $DomainSid = $AdsiServer.SID
-                        $NTAccount = $AppCapability['NTAccount']
+            if ($Known) {
+                $DomainSid = $Known['SID']
+                $NTAccount = $Known['NTAccount']
+            } else {
 
+                <#
+                Use the SecurityIdentifier.Translate() method to translate the SID to an NT Account name
+                    This .Net method makes it impossible to redirect the error stream directly
+                    Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+                    I don't understand exactly why
+                    The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
+                #>
+                Write-LogMsg @LogParams -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+                $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
+                try {
+                    $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+                } catch {
+
+                    $Start = $IdentityReference.Substring(0, 8)
+                    switch ($Start) {
+                        'S-1-15-3' {
+
+                            $AppCapability = ConvertFrom-AppCapabilitySid -SID $IdentityReference
+                            $DomainSid = $AdsiServer.SID
+                            $NTAccount = $AppCapability['NTAccount']
+
+                        }
+                        'S-1-15-2' {
+
+                            $DomainSid = $AdsiServer.SID
+                            $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
+
+                        }
+                        default {
+
+                            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                            Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
+                            $LogParams['Type'] = $DebugOutputStream
+
+                            # The SID of the domain is everything up to (but not including) the last hyphen
+                            $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+
+                        }
                     }
-                    'S-1-15-2' {
 
-                        $DomainSid = $AdsiServer.SID
-                        $NTAccount = "APPLICATION PACKAGE AUTHORITY\$IdentityReference"
-
-                    }
-                    default {
-
-                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
-                        $LogParams['Type'] = $DebugOutputStream
-
-                        # The SID of the domain is everything up to (but not including) the last hyphen
-                        $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
-
-                    }
                 }
-
             }
             Write-LogMsg @LogParams -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
 
@@ -4517,25 +4589,17 @@ function Resolve-IdentityReference {
                 APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
             So we will instead hardcode a map of SIDs
             #>
-            $KnownSIDs = @{ # https://learn.microsoft.com/en-us/windows/win32/secauthz/app-container-sid-constants
-                'APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES'                                                   = 'S-1-15-2-1'
-                'APPLICATION PACKAGE AUTHORITY\ALL RESTRICTED APPLICATION PACKAGES'                                        = 'S-1-15-2-2'
+            $KnownSIDs = Get-KnownSidHashTable
 
-                # Capability SIDs introduced in Windows 8 https://learn.microsoft.com/en-us/windows/win32/secauthz/capability-sid-constants
-                'APPLICATION PACKAGE AUTHORITY\Your Internet connection'                                                   = 'S-1-15-3-1'
-                'APPLICATION PACKAGE AUTHORITY\Your Internet connection, including incoming connections from the Internet' = 'S-1-15-3-2'
-                'APPLICATION PACKAGE AUTHORITY\Your home or work networks'                                                 = 'S-1-15-3-3'
-                'APPLICATION PACKAGE AUTHORITY\Your pictures library'                                                      = 'S-1-15-3-4'
-                'APPLICATION PACKAGE AUTHORITY\Your videos library'                                                        = 'S-1-15-3-5'
-                'APPLICATION PACKAGE AUTHORITY\Your music library'                                                         = 'S-1-15-3-6'
-                'APPLICATION PACKAGE AUTHORITY\Your documents library'                                                     = 'S-1-15-3-7'
-                'APPLICATION PACKAGE AUTHORITY\Your Windows credentials'                                                   = 'S-1-15-3-8'
-                'APPLICATION PACKAGE AUTHORITY\Software and hardware certificates or a smart card'                         = 'S-1-15-3-9'
-                'APPLICATION PACKAGE AUTHORITY\Removable storage'                                                          = 'S-1-15-3-10'
-                'APPLICATION PACKAGE AUTHORITY\Your Appointments'                                                          = 'S-1-15-3-11'
-                'APPLICATION PACKAGE AUTHORITY\Your Contacts'                                                              = 'S-1-15-3-12'
+            $KnownCaptions = @{}
+            ForEach ($KnownSID in $KnownSIDs.Keys) {
+                $Known = $KnownSIDs[$KnownSID]
+                $KnownCaptions[$Known['NTAccount']] = $Known
             }
-            $SIDString = $KnownSIDs[$IdentityReference]
+            $Known = $KnownCaptions[$IdentityReference]
+            if ($Known) {
+                $SIDString = $Known['SID']
+            }
 
             #$Caption = $IdentityReference -replace 'APPLICATION PACKAGE AUTHORITY', $ServerNetBIOS -replace "^$ThisHostname\\", "$ThisHostname\"
             $Caption = $IdentityReference.Replace('APPLICATION PACKAGE AUTHORITY', $ServerNetBIOS)
@@ -4861,7 +4925,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
