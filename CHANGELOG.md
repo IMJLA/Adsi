@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.153] - 2024-09-23 - bugfix sidtype to schemaclassname translation
+
 ## [4.0.152] - 2024-09-23 - i had prematurely removed the debug pause
 
 ## [4.0.151] - 2024-09-23 - spacing
