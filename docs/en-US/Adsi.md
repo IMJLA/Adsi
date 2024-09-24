@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.159
+Help Version: 4.0.160
 Locale: en-US
 ---
 
@@ -120,7 +120,7 @@ Invoke a member method of a ComObject [__ComObject]
 
 ### [New-FakeDirectoryEntry](New-FakeDirectoryEntry.md)
 
-New-FakeDirectoryEntry [[-DirectoryPath] <string>] [[-SID] <string>] [[-Description] <string>] [[-SchemaClassName] <string>] [[-Name] <string>] [[-NTAccount] <string>]
+New-FakeDirectoryEntry [[-DirectoryPath] <string>] [[-SID] <string>] [[-Description] <string>] [[-SchemaClassName] <string>] [[-NameAllowList] <hashtable>] [[-Name] <string>] [[-NTAccount] <string>]
 
 
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)

@@ -265,7 +265,7 @@ function Get-DirectoryEntry {
             # Ensure that the error message appears on 1 line
             # Use .Trim() to remove leading and trailing whitespace
             # Use -replace to remove an errant line break in the following specific error I encountered: The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
-            Write-LogMsg @LogParams -Text "'$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim() -replace '\s"',' "')"
+            Write-LogMsg @LogParams -Text " # '$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim().Replace('The following exception occurred while retrieving member "RefreshCache": ','').Replace('"',''))" # -replace '\s"',' "')"
 
             return
 

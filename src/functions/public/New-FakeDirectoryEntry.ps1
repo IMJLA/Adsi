@@ -10,6 +10,16 @@ function New-FakeDirectoryEntry {
         [string]$SID,
         [string]$Description,
         [string]$SchemaClassName,
+
+        # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
+        [hashtable]$NameAllowList = @{
+            'ALL APPLICATION PACKAGES'  = $null
+            'RDS Remote Access Servers' = $null
+            'NETWORK SERVICE'           = $null
+            'BATCH'                     = $null
+            'RESTRICTED'                = $null
+            'SERVICE'                   = $null
+        },
         [string]$Name, #unused but here for convenient splats
         [string]$NTAccount #unused but here for convenient splats
     )
@@ -17,6 +27,9 @@ function New-FakeDirectoryEntry {
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
+    if (-not $NameAllowList.ContainsKey($Name)) {
+        return
+    }
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
     $objectSid = ConvertTo-SidByteArray -SidString $SID

@@ -3499,7 +3499,7 @@ function Get-DirectoryEntry {
             # Ensure that the error message appears on 1 line
             # Use .Trim() to remove leading and trailing whitespace
             # Use -replace to remove an errant line break in the following specific error I encountered: The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
-            Write-LogMsg @LogParams -Text "'$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim() -replace '\s"',' "')"
+            Write-LogMsg @LogParams -Text " # '$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim().Replace('The following exception occurred while retrieving member "RefreshCache": ','').Replace('"',''))" # -replace '\s"',' "')"
 
             return
 
@@ -5030,6 +5030,16 @@ function New-FakeDirectoryEntry {
         [string]$SID,
         [string]$Description,
         [string]$SchemaClassName,
+
+        # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
+        [hashtable]$NameAllowList = @{
+            'ALL APPLICATION PACKAGES'  = $null
+            'RDS Remote Access Servers' = $null
+            'NETWORK SERVICE'           = $null
+            'BATCH'                     = $null
+            'RESTRICTED'                = $null
+            'SERVICE'                   = $null
+        },
         [string]$Name, #unused but here for convenient splats
         [string]$NTAccount #unused but here for convenient splats
     )
@@ -5037,6 +5047,9 @@ function New-FakeDirectoryEntry {
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
+    if (-not $NameAllowList.ContainsKey($Name)) {
+        return
+    }
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
     $objectSid = ConvertTo-SidByteArray -SidString $SID
@@ -5927,6 +5940,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

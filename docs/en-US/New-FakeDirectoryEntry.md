@@ -14,7 +14,7 @@ schema: 2.0.0
 
 ```
 New-FakeDirectoryEntry [[-DirectoryPath] <String>] [[-SID] <String>] [[-Description] <String>]
- [[-SchemaClassName] <String>] [[-Name] <String>] [[-NTAccount] <String>]
+ [[-SchemaClassName] <String>] [[-NameAllowList] <Hashtable>] [[-Name] <String>] [[-NTAccount] <String>]
 ```
 
 ## DESCRIPTION
@@ -70,6 +70,21 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+Position: 5
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -NameAllowList
+{{ Fill NameAllowList Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: 4
 Default value: None
 Accept pipeline input: False
@@ -85,7 +100,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
