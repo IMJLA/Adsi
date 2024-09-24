@@ -5001,18 +5001,22 @@ function New-FakeDirectoryEntry {
 
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
         [hashtable]$NameAllowList = @{
-            'ALL APPLICATION PACKAGES'  = $null
-            'Authenticated Users'       = $null
-            'BATCH'                     = $null
-            'CREATOR OWNER'             = $null
-            'INTERACTIVE'               = $null
-            'internetExplorer'          = $null
-            'LOCAL SERVICE'             = $null
-            'NETWORK SERVICE'           = $null
-            'RESTRICTED'                = $null
-            'SERVICE'                   = $null
-            'RDS Endpoint Servers'      = $null
-            'RDS Remote Access Servers' = $null
+            'ALL APPLICATION PACKAGES'            = $null
+            'ALL RESTRICTED APPLICATION PACKAGES' = $null
+            'Authenticated Users'                 = $null
+            'BATCH'                               = $null
+            'CREATOR OWNER'                       = $null
+            'Everyone'                            = $null
+            'INTERACTIVE'                         = $null
+            'internetExplorer'                    = $null
+            'LOCAL SERVICE'                       = $null
+            'NETWORK SERVICE'                     = $null
+            'RESTRICTED'                          = $null
+            'RDS Endpoint Servers'                = $null
+            'RDS Management Servers'              = $null
+            'RDS Remote Access Servers'           = $null
+            'SERVICE'                             = $null
+            'SYSTEM'                              = $null
         },
 
         # Unused but here for convenient splats
@@ -5919,6 +5923,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
