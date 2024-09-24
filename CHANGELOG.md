@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.158] - 2024-09-23 - bugfix treat all applicable sidtypes as groups
+
 ## [4.0.157] - 2024-09-23 - bugfix fake directory entry process
 
 ## [4.0.156] - 2024-09-23 - add debug pause
