@@ -127,6 +127,7 @@ function Get-DirectoryEntry {
     } else {
         $Server = $ParentPath
     }
+    if ($Server -ne 'JLA-LoftHTPC') { pause }
     $CimServer = $CimCache[$Server]
 
     <#
