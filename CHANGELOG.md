@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.167] - 2024-09-23 - add debug pause
+
 ## [4.0.166] - 2024-09-23 - add workgroup handling
 
 ## [4.0.165] - 2024-09-23 - replace tabs with spaces
