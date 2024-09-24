@@ -14,16 +14,17 @@ function New-FakeDirectoryEntry {
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
         [hashtable]$NameAllowList = @{
             'ALL APPLICATION PACKAGES'  = $null
-            'RDS Remote Access Servers' = $null
-            'NETWORK SERVICE'           = $null
+            'Authenticated Users'       = $null
             'BATCH'                     = $null
-            'RESTRICTED'                = $null
-            'SERVICE'                   = $null
+            'CREATOR OWNER'             = $null
+            'INTERACTIVE'               = $null
             'internetExplorer'          = $null
             'LOCAL SERVICE'             = $null
-            'INTERACTIVE'               = $null
-            'CREATOR OWNER'             = $null
+            'NETWORK SERVICE'           = $null
+            'RESTRICTED'                = $null
+            'SERVICE'                   = $null
             'RDS Endpoint Servers'      = $null
+            'RDS Remote Access Servers' = $null
         },
 
         # Unused but here for convenient splats

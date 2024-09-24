@@ -3361,9 +3361,13 @@ function Get-DirectoryEntry {
     $ParentDirectoryPath = $DirectoryPath.Substring(0, $LastSlashIndex)
     $FirstSlashIndex = $ParentDirectoryPath.IndexOf('/')
     $ParentPath = $ParentDirectoryPath.Substring($FirstSlashIndex + 2, $ParentDirectoryPath.Length - $FirstSlashIndex - 2)
-    if ($ParentPath.Contains('/')) {
-        $FirstSlashIndex = $ParentPath.IndexOf('/')
+    $FirstSlashIndex = $ParentPath.IndexOf('/')
+    if ($FirstSlashIndex -ne (-1)) {
         $Server = $ParentPath.Substring(0, $FirstSlashIndex)
+        if ($Server.Contains('WORKGROUP/')) {
+            $FirstSlashIndex = $Server.IndexOf('/')
+            $Server = $Server.Substring(0, $FirstSlashIndex)
+        }
     } else {
         $Server = $ParentPath
     }
@@ -4966,16 +4970,17 @@ function New-FakeDirectoryEntry {
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
         [hashtable]$NameAllowList = @{
             'ALL APPLICATION PACKAGES'  = $null
-            'RDS Remote Access Servers' = $null
-            'NETWORK SERVICE'           = $null
+            'Authenticated Users'       = $null
             'BATCH'                     = $null
-            'RESTRICTED'                = $null
-            'SERVICE'                   = $null
+            'CREATOR OWNER'             = $null
+            'INTERACTIVE'               = $null
             'internetExplorer'          = $null
             'LOCAL SERVICE'             = $null
-            'INTERACTIVE'               = $null
-            'CREATOR OWNER'             = $null
+            'NETWORK SERVICE'           = $null
+            'RESTRICTED'                = $null
+            'SERVICE'                   = $null
             'RDS Endpoint Servers'      = $null
+            'RDS Remote Access Servers' = $null
         },
 
         # Unused but here for convenient splats
@@ -5882,6 +5887,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
