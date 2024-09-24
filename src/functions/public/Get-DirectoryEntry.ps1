@@ -121,12 +121,12 @@ function Get-DirectoryEntry {
     if ($FirstSlashIndex -ne (-1)) {
         $Server = $ParentPath.Substring(0, $FirstSlashIndex)
         if ($Server.Equals('WORKGROUP')) {
+            $FirstSlashIndex = $ParentPath.IndexOf('/')
             $Server = $ParentPath.Substring($FirstSlashIndex + 1, $ParentPath.Length - $FirstSlashIndex - 1)
         }
     } else {
         $Server = $ParentPath
     }
-    if ($Server -ne 'JLA-LoftHTPC') { pause }
     $CimServer = $CimCache[$Server]
 
     <#
