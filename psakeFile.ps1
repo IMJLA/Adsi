@@ -1,3 +1,5 @@
+#TODO : Use Fixer 'Get-TextFilesList $pwd | ConvertTo-SpaceIndentation'.
+
 # Initialize the BuildHelpers environment variables here so they are usable in all child scopes including the psake properties block
 BuildHelpers\Set-BuildEnvironment -Force
 
