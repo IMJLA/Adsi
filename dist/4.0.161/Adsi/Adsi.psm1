@@ -5039,16 +5039,25 @@ function New-FakeDirectoryEntry {
             'BATCH'                     = $null
             'RESTRICTED'                = $null
             'SERVICE'                   = $null
+            'internetExplorer'          = $null
+            'LOCAL SERVICE'             = $null
+            'INTERACTIVE'               = $null
+            'CREATOR OWNER'             = $null
         },
-        [string]$Name, #unused but here for convenient splats
-        [string]$NTAccount #unused but here for convenient splats
+
+        # Unused but here for convenient splats
+        [string]$Name,
+
+        # Unused but here for convenient splats
+        [string]$NTAccount
+
     )
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
     if (-not $NameAllowList.ContainsKey($Name)) {
-        return
+        return $null
     }
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
@@ -5940,6 +5949,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

@@ -19,16 +19,25 @@ function New-FakeDirectoryEntry {
             'BATCH'                     = $null
             'RESTRICTED'                = $null
             'SERVICE'                   = $null
+            'internetExplorer'          = $null
+            'LOCAL SERVICE'             = $null
+            'INTERACTIVE'               = $null
+            'CREATOR OWNER'             = $null
         },
-        [string]$Name, #unused but here for convenient splats
-        [string]$NTAccount #unused but here for convenient splats
+
+        # Unused but here for convenient splats
+        [string]$Name,
+
+        # Unused but here for convenient splats
+        [string]$NTAccount
+
     )
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
     if (-not $NameAllowList.ContainsKey($Name)) {
-        return
+        return $null
     }
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
