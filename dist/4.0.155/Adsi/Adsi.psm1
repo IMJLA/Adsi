@@ -3389,6 +3389,10 @@ function Get-DirectoryEntry {
                 'DirectoryPath' = $DirectoryPath
             }
 
+            if ($CimCacheResult.SIDType) {
+                $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[$CimCacheResult.SIDType]
+            }
+
             $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
 
             if ($SIDCacheResult) {
@@ -3396,9 +3400,7 @@ function Get-DirectoryEntry {
                 Write-LogMsg @LogParams -Text " # Known SIDs cache hit for '$($CimCacheResult.SID)'"
                 $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
 
-                if ($CimCacheResult.SIDType) {
-                    $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[$CimCacheResult.SIDType]
-                } else {
+                if (-not $CimCacheResult.SIDType) {
                     $FakeDirectoryEntry['SchemaClassName'] = $SIDCacheResult['SchemaClassName']
                 }
 
@@ -3412,9 +3414,7 @@ function Get-DirectoryEntry {
                     Write-LogMsg @LogParams -Text " # Known Account Names cache hit for '$AccountName'"
                     $FakeDirectoryEntry['Description'] = $NameCacheResult['Description']
 
-                    if ($CimCacheResult.SIDType) {
-                        $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[$CimCacheResult.SIDType]
-                    } else {
+                    if (-not $CimCacheResult.SIDType) {
                         $FakeDirectoryEntry['SchemaClassName'] = $NameCacheResult['SchemaClassName']
                     }
 
@@ -5902,6 +5902,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
