@@ -184,6 +184,7 @@ function Get-WinNTGroupMember {
                         $MemberDomainNetbios = $Matches.Domain
 
                         if ($AuthoritiesToReplaceWithParentName.ContainsKey($MemberDomainNetbios)) {
+                            pause
                             $MemberDomainNetbios = $DirectoryEntry.Parent.Name
                         }
 

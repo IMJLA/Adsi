@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.170] - 2024-09-23 - add debug pause
+
 ## [4.0.169] - 2024-09-23 - replace invalid authorities in winnt principles
 
 ## [4.0.168] - 2024-09-23 - bugfix workgroup handling
