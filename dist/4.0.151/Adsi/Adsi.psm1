@@ -735,28 +735,35 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
+
             $Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
+
                 $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
                 "-$ParamName $ParamValue"
+
             }
+
             Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
+
             try {
                 $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
             } catch {
+
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory: $($_.Exception.Message)"
                 $LogParams['Type'] = $DebugOutputStream
+
             }
 
         } elseif (
             $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
         ) {
+
             Write-LogMsg @LogParams -Text " # '$IdentityReference' is an unresolved SID from the current domain"
 
             # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
             $DomainDN = $CurrentDomain.distinguishedName.Value
             $DomainFQDN = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
-
             $SearchDirectoryParams['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
             $SearchDirectoryParams['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
             $SearchDirectoryParams['PropertiesToLoad'] = 'netbiosname'
@@ -765,13 +772,17 @@ function ConvertFrom-IdentityReferenceResolved {
                 $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
                 "-$ParamName $ParamValue"
             }
+
             Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
             $DomainCrossReference = Search-Directory @SearchDirectoryParams @LoggingParams
+
             if ($DomainCrossReference.Properties ) {
+
                 Write-LogMsg @LogParams -Text " # The domain '$DomainFQDN' is online for '$IdentityReference'"
                 [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
                 # TODO: The domain is online, so let's see if any domain trusts have issues?  Determine if SID is foreign security principal?
                 # TODO: What if the foreign security principal exists but the corresponding domain trust is down?  Don't want to recommend deletion of the ACE in that case.
+
             }
             $SidObject = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
             $SidBytes = [byte[]]::new($SidObject.BinaryLength)
@@ -793,17 +804,24 @@ function ConvertFrom-IdentityReferenceResolved {
                 'Title',
                 'primaryGroupToken'
             )
+
             $Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
+
                 $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
                 "-$ParamName $ParamValue"
+
             }
+
             Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
+
             try {
                 $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
             } catch {
+
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message.Trim())"
                 $LogParams['Type'] = $DebugOutputStream
+
             }
 
         } else {
@@ -842,7 +860,9 @@ function ConvertFrom-IdentityReferenceResolved {
                     $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
                     "-$ParamName $ParamValue"
                 }
+
                 Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
+
                 try {
                     $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                 } catch {
@@ -887,13 +907,17 @@ function ConvertFrom-IdentityReferenceResolved {
                     $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
                     "-$ParamName $ParamValue"
                 }
+
                 Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
+
                 try {
                     $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                 } catch {
+
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                     Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
                     $LogParams['Type'] = $DebugOutputStream
+
                 }
 
             }
@@ -914,13 +938,17 @@ function ConvertFrom-IdentityReferenceResolved {
             if ($DirectoryEntry.Name) {
                 $AccountName = $DirectoryEntry.Name
             } else {
+
                 if ($DirectoryEntry.Properties) {
+
                     if ($DirectoryEntry.Properties['name'].Value) {
                         $AccountName = $DirectoryEntry.Properties['name'].Value
                     } else {
                         $AccountName = $DirectoryEntry.Properties['name']
                     }
+
                 }
+
             }
             $PropertiesToAdd['ResolvedAccountName'] = "$DomainNetBIOS\$AccountName"
 
@@ -941,6 +969,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     $PropertiesToAdd.ContainsKey('objectClass')
 
                 ) {
+
                     # Retrieve the members of groups from the LDAP provider
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$IdentityReference'"
                     $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams).FullMembers
@@ -948,6 +977,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 } else {
 
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$IdentityReference'"
+
                     if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
                         Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$IdentityReference'"
@@ -5867,6 +5897,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
