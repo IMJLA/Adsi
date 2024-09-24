@@ -2713,7 +2713,7 @@ function Get-AdsiServer {
         .INPUTS
         [System.String]$Fqdn
         .OUTPUTS
-        [PSCustomObject] with AdsiProvider and WellKnownSIDs properties
+        [PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties
         .EXAMPLE
         Get-AdsiServer -Fqdn localhost
 
@@ -2777,7 +2777,13 @@ function Get-AdsiServer {
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
-        [switch]$RemoveCimSession
+        [switch]$RemoveCimSession,
+
+        # Output from Get-KnownSidHashTable
+        [hashtable]$WellKnownSIDBySID = (Get-KnownSidHashTable),
+
+        # Output from Get-KnownSidHashTable but keyed by account Name
+        [hashtable]$WellKnownSIDByName = @{}
 
     )
     begin {
@@ -3046,12 +3052,14 @@ function Get-AdsiServer {
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
 
             $OutputObject = [PSCustomObject]@{
-                DistinguishedName = $DomainDn
-                Dns               = $DomainFqdn
-                Sid               = $DomainSid
-                Netbios           = $DomainNetBIOS
-                AdsiProvider      = $AdsiProvider
-                Win32Accounts     = $Win32Accounts
+                DistinguishedName  = $DomainDn
+                Dns                = $DomainFqdn
+                Sid                = $DomainSid
+                Netbios            = $DomainNetBIOS
+                AdsiProvider       = $AdsiProvider
+                Win32Accounts      = $Win32Accounts
+                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSIDByName = $WellKnownSIDByName
             }
 
             $DomainsBySid[$OutputObject.Sid] = $OutputObject
@@ -3106,12 +3114,14 @@ function Get-AdsiServer {
             }
 
             $OutputObject = [PSCustomObject]@{
-                DistinguishedName = $DomainDn
-                Dns               = $DomainDnsName
-                Sid               = $DomainSid
-                Netbios           = $DomainNetBIOS
-                AdsiProvider      = $AdsiProvider
-                Win32Accounts     = $Win32Accounts
+                DistinguishedName  = $DomainDn
+                Dns                = $DomainDnsName
+                Sid                = $DomainSid
+                Netbios            = $DomainNetBIOS
+                AdsiProvider       = $AdsiProvider
+                Win32Accounts      = $Win32Accounts
+                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSIDByName = $WellKnownSIDByName
             }
 
             $DomainsBySid[$OutputObject.Sid] = $OutputObject
@@ -3345,14 +3355,6 @@ function Get-DirectoryEntry {
         9 = 'computer' #'SidTypeComputer'
     }
 
-    $KnownSIDs = Get-KnownSidHashTable
-
-    $KnownNames = @{}
-    ForEach ($KnownSID in $KnownSIDs.Keys) {
-        $Known = $KnownSIDs[$KnownSID]
-        $KnownNames[$Known['Name']] = $Known
-    }
-
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $AccountName = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
@@ -3392,33 +3394,64 @@ function Get-DirectoryEntry {
                 $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[[int]$CimCacheResult.SIDType]
             }
 
-            #$DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
+            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
 
         } else {
 
             Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server'"
+            $DomainCacheResult = $DomainsByFqdn[$Server]
 
-            $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
-
-            if ($SIDCacheResult) {
-
-                Write-LogMsg @LogParams -Text " # Known SIDs cache hit for '$($CimCacheResult.SID)'"
-                #$DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
-
-            } else {
-
-                Write-LogMsg @LogParams -Text " # Known SIDs cache miss for '$($CimCacheResult.SID)'"
-                $NameCacheResult = $KnownNames[$AccountName]
-
-                if ($NameCacheResult) {
-
-                    Write-LogMsg @LogParams -Text " # Known Account Names cache hit for '$AccountName'"
-                    #$DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
-
+            if ($DomainCacheResult) {
+                $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
+                if ($SIDCacheResult) {
+                    Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with FQDN '$Server'"
+                    $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
                 } else {
-                    Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
+                    Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server'"
+                    $NameCacheResult = $DomainCacheResult['WellKnownSIDByName'][$AccountName]
+                    if ($NameCacheResult) {
+                        Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with FQDN '$Server'"
+                        $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+                    } else {
+                        Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server'"
+                    }
                 }
-
+            } else {
+                $DomainCacheResult = $DomainsByNetbios[$Server]
+                if ($DomainCacheResult) {
+                    $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
+                    if ($SIDCacheResult) {
+                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with NetBIOS '$Server'"
+                        $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+                    } else {
+                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server'"
+                        $NameCacheResult = $DomainCacheResult['WellKnownSIDByName'][$AccountName]
+                        if ($NameCacheResult) {
+                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
+                            $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+                        } else {
+                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server'"
+                        }
+                    }
+                } else {
+                    $DomainCacheResult = $DomainsBySid[$Server]
+                    if ($DomainCacheResult) {
+                        $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
+                        if ($SIDCacheResult) {
+                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with SID '$Server'"
+                            $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+                        } else {
+                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server'"
+                            $NameCacheResult = $DomainCacheResult['WellKnownSIDByName'][$AccountName]
+                            if ($NameCacheResult) {
+                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with SID '$Server'"
+                                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+                            } else {
+                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server'"
+                            }
+                        }
+                    }
+                }
             }
 
         }
@@ -4154,112 +4187,6 @@ function Get-KnownSidHashTable {
             'NTAccount'       = 'NT AUTHORITY\Local account and member of Administrators group'
             'SchemaClassName' = 'group'
             'SID'             = 'S-1-5-114'
-        }
-
-        'S-1-5-5-X-Y'                                                    = @{
-            'Name'        = 'Logon Session'
-            'Description' = "The X and Y values for these SIDs uniquely identify a particular sign-in session."
-            'SID'         = 'S-1-5-5-X-Y'
-        }
-        'S-1-5-domain-500'                                               = @{
-            'Name'        = 'Administrator'
-            'Description' = "A user account for the system administrator. Every computer has a local Administrator account and every domain has a domain Administrator account. The Administrator account is the first account created during operating system installation. The account can't be deleted, disabled, or locked out, but it can be renamed. By default, the Administrator account is a member of the Administrators group, and it can't be removed from that group."
-            'SID'         = 'S-1-5-domain-500'
-        }
-        'S-1-5-domain-501'                                               = @{
-            'Name'        = 'Guest'
-            'Description' = "A user account for people who don't have individual accounts. Every computer has a local Guest account, and every domain has a domain Guest account. By default, Guest is a member of the Everyone and the Guests groups. The domain Guest account is also a member of the Domain Guests and Domain Users groups. Unlike Anonymous Logon, Guest is a real account, and it can be used to sign in interactively. The Guest account doesn't require a password, but it can have one."
-            'SID'         = 'S-1-5-domain-501'
-        }
-        'S-1-5-domain-502'                                               = @{
-            'Name'        = 'KRBTGT'
-            'Description' = "A user account that's used by the Key Distribution Center (KDC) service. The account exists only on domain controllers."
-            'SID'         = 'S-1-5-domain-502'
-        }
-        'S-1-5-domain-512'                                               = @{
-            'Name'        = 'Domain Admins'
-            'Description' = "A global group with members that are authorized to administer the domain. By default, the Domain Admins group is a member of the Administrators group on all computers that have joined the domain, including domain controllers. Domain Admins is the default owner of any object that's created in the domain's Active Directory by any member of the group. If members of the group create other objects, such as files, the default owner is the Administrators group."
-            'SID'         = 'S-1-5-domain-512'
-        }
-        'S-1-5-domain-513'                                               = @{
-            'Name'        = 'Domain Users'
-            'Description' = "A global group that includes all users in a domain. When you create a new User object in Active Directory, the user is automatically added to this group."
-            'SID'         = 'S-1-5-domain-513'
-        }
-        'S-1-5-domain-514'                                               = @{
-            'Name'        = 'Domain Guests'
-            'Description' = "A global group that, by default, has only one member: the domain's built-in Guest account."
-            'SID'         = 'S-1-5-domain-514'
-        }
-        'S-1-5-domain-515'                                               = @{
-            'Name'        = 'Domain Computers'
-            'Description' = "A global group that includes all computers that have joined the domain, excluding domain controllers."
-            'SID'         = 'S-1-5-domain-515'
-        }
-        'S-1-5-domain-516'                                               = @{
-            'Name'        = 'Domain Controllers'
-            'Description' = "A global group that includes all domain controllers in the domain. New domain controllers are added to this group automatically."
-            'SID'         = 'S-1-5-domain-516'
-        }
-        'S-1-5-domain-517'                                               = @{
-            'Name'        = 'Cert Publishers'
-            'Description' = "A global group that includes all computers that host an enterprise certification authority. Cert Publishers are authorized to publish certificates for User objects in Active Directory."
-            'SID'         = 'S-1-5-domain-517'
-        }
-        'S-1-5-root domain-518'                                          = @{
-            'Name'        = 'Schema Admins'
-            'Description' = "A group that exists only in the forest root domain. It's a universal group if the domain is in native mode, and it's a global group if the domain is in mixed mode. The Schema Admins group is authorized to make schema changes in Active Directory. By default, the only member of the group is the Administrator account for the forest root domain."
-            'SID'         = 'S-1-5-root domain-518'
-        }
-        'S-1-5-root domain-519'                                          = @{
-            'Name'        = 'Enterprise Admins'
-            'Description' = "A group that exists only in the forest root domain. It's a universal group if the domain is in native mode, and it's a global group if the domain is in mixed mode. The Enterprise Admins group is authorized to make changes to the forest infrastructure, such as adding child domains, configuring sites, authorizing DHCP servers, and installing enterprise certification authorities. By default, the only member of Enterprise Admins is the Administrator account for the forest root domain. The group is a default member of every Domain Admins group in the forest."
-            'SID'         = 'S-1-5-root domain-519'
-        }
-        'S-1-5-domain-520'                                               = @{
-            'Name'        = 'Group Policy Creator Owners'
-            'Description' = "A global group that's authorized to create new Group Policy Objects in Active Directory. By default, the only member of the group is Administrator. Objects that are created by members of Group Policy Creator Owners are owned by the individual user who creates them. In this way, the Group Policy Creator Owners group is unlike other administrative groups (such as Administrators and Domain Admins). Objects that are created by members of these groups are owned by the group rather than by the individual."
-            'SID'         = 'S-1-5-domain-520'
-        }
-        'S-1-5-domain-521'                                               = @{
-            'Name'        = 'Read-only Domain Controllers'
-            'Description' = "A global group that includes all read-only domain controllers."
-            'SID'         = 'S-1-5-domain-521'
-        }
-        'S-1-5-domain-522'                                               = @{
-            'Name'        = 'Clonable Controllers'
-            'Description' = "A global group that includes all domain controllers in the domain that can be cloned."
-            'SID'         = 'S-1-5-domain-522'
-        }
-        'S-1-5-domain-525'                                               = @{
-            'Name'        = 'Protected Users'
-            'Description' = "A global group that is afforded additional protections against authentication security threats."
-            'SID'         = 'S-1-5-domain-525'
-        }
-        'S-1-5-root domain-526'                                          = @{
-            'Name'        = 'Key Admins'
-            'Description' = "This group is intended for use in scenarios where trusted external authorities are responsible for modifying this attribute. Only trusted administrators should be made a member of this group."
-            'SID'         = 'S-1-5-root domain-526'
-        }
-        'S-1-5-domain-527'                                               = @{
-            'Name'        = 'Enterprise Key Admins'
-            'Description' = "This group is intended for use in scenarios where trusted external authorities are responsible for modifying this attribute. Only trusted enterprise administrators should be made a member of this group."
-            'SID'         = 'S-1-5-domain-527'
-        }
-        'S-1-5-domain-553'                                               = @{
-            'Name'        = 'RAS and IAS Servers'
-            'Description' = "A local domain group. By default, this group has no members. Computers that are running the Routing and Remote Access service are added to the group automatically. Members have access to certain properties of User objects, such as Read Account Restrictions, Read Logon Information, and Read Remote Access Information."
-            'SID'         = 'S-1-5-domain-553'
-        }
-        'S-1-5-domain-571'                                               = @{
-            'Name'        = 'Allowed RODC Password Replication Group'
-            'Description' = "Members in this group can have their passwords replicated to all read-only domain controllers in the domain."
-            'SID'         = 'S-1-5-domain-571'
-        }
-        'S-1-5-domain-572'                                               = @{
-            'Name'        = 'Denied RODC Password Replication Group'
-            'Description' = "Members in this group can't have their passwords replicated to all read-only domain controllers in the domain."
-            'SID'         = 'S-1-5-domain-572'
         }
 
         <#
@@ -5949,6 +5876,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

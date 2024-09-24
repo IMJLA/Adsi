@@ -8,7 +8,7 @@ function Get-AdsiServer {
         .INPUTS
         [System.String]$Fqdn
         .OUTPUTS
-        [PSCustomObject] with AdsiProvider and WellKnownSIDs properties
+        [PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties
         .EXAMPLE
         Get-AdsiServer -Fqdn localhost
 
@@ -72,7 +72,13 @@ function Get-AdsiServer {
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
-        [switch]$RemoveCimSession
+        [switch]$RemoveCimSession,
+
+        # Output from Get-KnownSidHashTable
+        [hashtable]$WellKnownSIDBySID = (Get-KnownSidHashTable),
+
+        # Output from Get-KnownSidHashTable but keyed by account Name
+        [hashtable]$WellKnownSIDByName = @{}
 
     )
     begin {
@@ -341,12 +347,14 @@ function Get-AdsiServer {
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
 
             $OutputObject = [PSCustomObject]@{
-                DistinguishedName = $DomainDn
-                Dns               = $DomainFqdn
-                Sid               = $DomainSid
-                Netbios           = $DomainNetBIOS
-                AdsiProvider      = $AdsiProvider
-                Win32Accounts     = $Win32Accounts
+                DistinguishedName  = $DomainDn
+                Dns                = $DomainFqdn
+                Sid                = $DomainSid
+                Netbios            = $DomainNetBIOS
+                AdsiProvider       = $AdsiProvider
+                Win32Accounts      = $Win32Accounts
+                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSIDByName = $WellKnownSIDByName
             }
 
             $DomainsBySid[$OutputObject.Sid] = $OutputObject
@@ -401,12 +409,14 @@ function Get-AdsiServer {
             }
 
             $OutputObject = [PSCustomObject]@{
-                DistinguishedName = $DomainDn
-                Dns               = $DomainDnsName
-                Sid               = $DomainSid
-                Netbios           = $DomainNetBIOS
-                AdsiProvider      = $AdsiProvider
-                Win32Accounts     = $Win32Accounts
+                DistinguishedName  = $DomainDn
+                Dns                = $DomainDnsName
+                Sid                = $DomainSid
+                Netbios            = $DomainNetBIOS
+                AdsiProvider       = $AdsiProvider
+                Win32Accounts      = $Win32Accounts
+                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSIDByName = $WellKnownSIDByName
             }
 
             $DomainsBySid[$OutputObject.Sid] = $OutputObject

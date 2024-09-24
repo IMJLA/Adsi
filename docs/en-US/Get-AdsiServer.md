@@ -17,7 +17,8 @@ Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-CimCache] <Hashta
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-RemoveCimSession]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WellKnownSIDBySID] <Hashtable>] [[-WellKnownSIDByName] <Hashtable>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -243,6 +244,36 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -WellKnownSIDByName
+Output from Get-KnownSidHashTable but keyed by account Name
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 14
+Default value: @{}
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WellKnownSIDBySID
+Output from Get-KnownSidHashTable
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 13
+Default value: (Get-KnownSidHashTable)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -WhoAmI
 Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
 
@@ -266,7 +297,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### [System.String]$Fqdn
 ## OUTPUTS
 
-### [PSCustomObject] with AdsiProvider and WellKnownSIDs properties
+### [PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties
 ## NOTES
 
 ## RELATED LINKS

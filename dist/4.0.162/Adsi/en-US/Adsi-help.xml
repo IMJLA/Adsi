@@ -5796,6 +5796,30 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>Debug</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+          <maml:name>WellKnownSIDBySID</maml:name>
+          <maml:description>
+            <maml:para>Output from Get-KnownSidHashTable</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Get-KnownSidHashTable)</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+          <maml:name>WellKnownSIDByName</maml:name>
+          <maml:description>
+            <maml:para>Output from Get-KnownSidHashTable but keyed by account Name</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>@{}</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Netbios</maml:name>
           <maml:description>
@@ -6080,6 +6104,30 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+        <maml:name>WellKnownSIDByName</maml:name>
+        <maml:description>
+          <maml:para>Output from Get-KnownSidHashTable but keyed by account Name</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>@{}</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
+        <maml:name>WellKnownSIDBySID</maml:name>
+        <maml:description>
+          <maml:para>Output from Get-KnownSidHashTable</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(Get-KnownSidHashTable)</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>WhoAmI</maml:name>
         <maml:description>
@@ -6106,7 +6154,7 @@ ad.contoso.com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[PSCustomObject] with AdsiProvider and WellKnownSIDs properties</maml:name>
+          <maml:name>[PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>

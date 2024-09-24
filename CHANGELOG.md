@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.162] - 2024-09-23 - implement well-known sid caching as part of domain caching
+
 ## [4.0.161] - 2024-09-23 - return null if not allowed to return fake directory entry
 
 ## [4.0.160] - 2024-09-23 - begin to only create fake directoryentries when necessary (rather than whenever possible). goal is to avoid known failure lookups, but going too far prevents full directoryentry retrieval
