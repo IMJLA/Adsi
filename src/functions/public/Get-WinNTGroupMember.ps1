@@ -158,7 +158,12 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
 
-                    if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
+                    <#
+                    WinNT://WORKGROUP/COMPUTER/Administrator
+                    WinNT://COMPUTER/Administrators
+                    WinNT://CONTOSO/COMPUTER/Administrator
+                    #>
+                    if ($DirectoryPath -match 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
 
                         Write-LogMsg @LogParams -Text " # '$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
                         $MemberName = $Matches.Acct

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.164] - 2024-09-23 - bugfix regex to handle domain paths
+
+## [4.0.163] - 2024-09-23 - bugfix regex to handle domain paths
+
 ## [4.0.162] - 2024-09-23 - implement well-known sid caching as part of domain caching
 
 ## [4.0.161] - 2024-09-23 - return null if not allowed to return fake directory entry

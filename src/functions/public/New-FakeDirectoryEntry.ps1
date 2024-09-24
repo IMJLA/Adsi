@@ -23,6 +23,7 @@ function New-FakeDirectoryEntry {
             'LOCAL SERVICE'             = $null
             'INTERACTIVE'               = $null
             'CREATOR OWNER'             = $null
+            'RDS Endpoint Servers'      = $null
         },
 
         # Unused but here for convenient splats
