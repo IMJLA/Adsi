@@ -120,9 +120,8 @@ function Get-DirectoryEntry {
     $FirstSlashIndex = $ParentPath.IndexOf('/')
     if ($FirstSlashIndex -ne (-1)) {
         $Server = $ParentPath.Substring(0, $FirstSlashIndex)
-        if ($Server.Contains('WORKGROUP/')) {
-            $FirstSlashIndex = $Server.IndexOf('/')
-            $Server = $Server.Substring(0, $FirstSlashIndex)
+        if ($Server.Equals('WORKGROUP')) {
+            $Server = $ParentPath.Substring($FirstSlashIndex + 1, $ParentPath.Length - $FirstSlashIndex - 1)
         }
     } else {
         $Server = $ParentPath
