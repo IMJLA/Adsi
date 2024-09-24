@@ -83,6 +83,19 @@ function Get-WinNTGroupMember {
             WhoAmI       = $WhoAmI
         }
 
+        $AuthoritiesToReplaceWithParentName = @{
+            'APPLICATION PACKAGE AUTHORITY' = $null
+            'BUILTIN'                       = $null
+            'CREATOR SID AUTHORITY'         = $null
+            'LOCAL SID AUTHORITY'           = $null
+            'Non-unique Authority'          = $null
+            'NT AUTHORITY'                  = $null
+            'NT SERVICE'                    = $null
+            'NT VIRTUAL MACHINE'            = $null
+            'NULL SID AUTHORITY'            = $null
+            'WORLD SID AUTHORITY'           = $null
+        }
+
         $PropertiesToLoad += 'Department',
         'description',
         'distinguishedName',
@@ -163,11 +176,17 @@ function Get-WinNTGroupMember {
                     WinNT://COMPUTER/Administrators
                     WinNT://CONTOSO/COMPUTER/Administrator
                     #>
-                    if ($DirectoryPath -match 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)') {
+                    $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
+                    if ($DirectoryPath -match $workgroupregex) {
 
                         Write-LogMsg @LogParams -Text " # '$DirectoryPath' has a domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)'"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
+
+                        if ($AuthoritiesToReplaceWithParentName.ContainsKey($MemberDomainNetbios)) {
+                            $MemberDomainNetbios = $DirectoryEntry.Parent.Name
+                        }
+
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
                         if ($DomainCacheResult) {
@@ -190,10 +209,12 @@ function Get-WinNTGroupMember {
                                 $MemberDomainDn = $null
                             }
 
+                        } else {
+                            Write-LogMsg @LogParams -Text " # '$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)'"
                         }
 
                     } else {
-                        Write-LogMsg @LogParams -Text " # '$DirectoryPath' does not match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Acct>.*$)'"
+                        Write-LogMsg @LogParams -Text " # '$DirectoryPath' does not match '$workgroupregex'"
                     }
 
                     # LDAP directories have a distinguishedName
