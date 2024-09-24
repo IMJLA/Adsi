@@ -155,19 +155,21 @@ function Get-DirectoryEntry {
             }
 
             if ($CimCacheResult.SIDType) {
-                $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[$CimCacheResult.SIDType]
+                $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[[int]$CimCacheResult.SIDType]
             }
+
+            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
+
+        } else {
+
+            Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server'"
 
             $SIDCacheResult = $KnownSIDs[$CimCacheResult.SID]
 
             if ($SIDCacheResult) {
 
                 Write-LogMsg @LogParams -Text " # Known SIDs cache hit for '$($CimCacheResult.SID)'"
-                $FakeDirectoryEntry['Description'] = $SIDCacheResult['Description']
-
-                if (-not $CimCacheResult.SIDType) {
-                    $FakeDirectoryEntry['SchemaClassName'] = $SIDCacheResult['SchemaClassName']
-                }
+                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
             } else {
 
@@ -177,23 +179,14 @@ function Get-DirectoryEntry {
                 if ($NameCacheResult) {
 
                     Write-LogMsg @LogParams -Text " # Known Account Names cache hit for '$AccountName'"
-                    $FakeDirectoryEntry['Description'] = $NameCacheResult['Description']
-
-                    if (-not $CimCacheResult.SIDType) {
-                        $FakeDirectoryEntry['SchemaClassName'] = $NameCacheResult['SchemaClassName']
-                    }
+                    $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                 } else {
                     Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
-                    pause
                 }
 
             }
 
-            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
-
-        } else {
-            Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server'"
         }
 
     } else {
