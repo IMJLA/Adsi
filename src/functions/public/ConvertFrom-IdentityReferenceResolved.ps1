@@ -415,7 +415,6 @@ function ConvertFrom-IdentityReferenceResolved {
                 } else {
 
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$IdentityReference'"
-                    if ($DirectoryEntry.Path -eq 'WinNT://JLA-LoftHTPC/TestPopulatedGroup') { pause }
                     if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
                         Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$IdentityReference'"

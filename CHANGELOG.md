@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.159] - 2024-09-23 - remove fake directory entries to create an accurate list of accounts which must be in that list
+
 ## [4.0.158] - 2024-09-23 - bugfix treat all applicable sidtypes as groups
 
 ## [4.0.157] - 2024-09-23 - bugfix fake directory entry process

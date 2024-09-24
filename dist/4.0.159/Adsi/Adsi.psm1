@@ -977,7 +977,6 @@ function ConvertFrom-IdentityReferenceResolved {
                 } else {
 
                     Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$IdentityReference'"
-                    if ($DirectoryEntry.Path -eq 'WinNT://JLA-LoftHTPC/TestPopulatedGroup') { pause }
                     if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
                         Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$IdentityReference'"
@@ -3393,7 +3392,7 @@ function Get-DirectoryEntry {
                 $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[[int]$CimCacheResult.SIDType]
             }
 
-            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
+            #$DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
 
         } else {
 
@@ -3404,7 +3403,7 @@ function Get-DirectoryEntry {
             if ($SIDCacheResult) {
 
                 Write-LogMsg @LogParams -Text " # Known SIDs cache hit for '$($CimCacheResult.SID)'"
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+                #$DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
             } else {
 
@@ -3414,7 +3413,7 @@ function Get-DirectoryEntry {
                 if ($NameCacheResult) {
 
                     Write-LogMsg @LogParams -Text " # Known Account Names cache hit for '$AccountName'"
-                    $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+                    #$DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                 } else {
                     Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
@@ -5030,7 +5029,9 @@ function New-FakeDirectoryEntry {
         [string]$DirectoryPath,
         [string]$SID,
         [string]$Description,
-        [string]$SchemaClassName
+        [string]$SchemaClassName,
+        [string]$Name, #unused but here for convenient splats
+        [string]$NTAccount #unused but here for convenient splats
     )
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
@@ -5926,6 +5927,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

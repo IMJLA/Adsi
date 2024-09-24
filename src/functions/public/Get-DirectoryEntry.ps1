@@ -158,7 +158,7 @@ function Get-DirectoryEntry {
                 $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[[int]$CimCacheResult.SIDType]
             }
 
-            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
+            #$DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
 
         } else {
 
@@ -169,7 +169,7 @@ function Get-DirectoryEntry {
             if ($SIDCacheResult) {
 
                 Write-LogMsg @LogParams -Text " # Known SIDs cache hit for '$($CimCacheResult.SID)'"
-                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+                #$DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
             } else {
 
@@ -179,7 +179,7 @@ function Get-DirectoryEntry {
                 if ($NameCacheResult) {
 
                     Write-LogMsg @LogParams -Text " # Known Account Names cache hit for '$AccountName'"
-                    $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+                    #$DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                 } else {
                     Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"

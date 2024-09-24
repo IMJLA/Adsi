@@ -9,7 +9,9 @@ function New-FakeDirectoryEntry {
         [string]$DirectoryPath,
         [string]$SID,
         [string]$Description,
-        [string]$SchemaClassName
+        [string]$SchemaClassName,
+        [string]$Name, #unused but here for convenient splats
+        [string]$NTAccount #unused but here for convenient splats
     )
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')

@@ -14,7 +14,7 @@ schema: 2.0.0
 
 ```
 New-FakeDirectoryEntry [[-DirectoryPath] <String>] [[-SID] <String>] [[-Description] <String>]
- [[-SchemaClassName] <String>]
+ [[-SchemaClassName] <String>] [[-Name] <String>] [[-NTAccount] <String>]
 ```
 
 ## DESCRIPTION
@@ -56,6 +56,36 @@ Aliases:
 
 Required: False
 Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Name
+{{ Fill Name Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -NTAccount
+{{ Fill NTAccount Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
