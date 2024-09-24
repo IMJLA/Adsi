@@ -4832,16 +4832,20 @@ function Get-WinNTGroupMember {
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
+                        # Replace the well-known SID authorities with the computer name
                         if ($AuthoritiesToReplaceWithParentName.ContainsKey($MemberDomainNetbios)) {
                             # Possibly a debugging issue, not sure whether I need to prepare for both here.
                             # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
                             if ($DirectoryEntry.Parent.GetType().Name -eq 'String') {
                                 $LastIndexOf = $DirectoryEntry.Parent.LastIndexOf('/')
-                                $MemberDomainNetbios = $DirectoryEntry.Parent.Substring($LastIndexOf + 1, $DirectoryEntry.Parent.Length - $LastIndexOf - 1)
+                                $ResolvedMemberDomainNetbios = $DirectoryEntry.Parent.Substring($LastIndexOf + 1, $DirectoryEntry.Parent.Length - $LastIndexOf - 1)
                             } elseif ($DirectoryEntry.Parent.GetType().Name -eq 'DirectoryEntry') {
-                                $MemberDomainNetbios = $DirectoryEntry.Parent.Name
+                                $ResolvedMemberDomainNetbios = $DirectoryEntry.Parent.Name
                             }
+                            $DirectoryPath = $DirectoryPath.Replace($MemberDomainNetbios, $ResolvedMemberDomainNetbios)
+                            $ResolvedMemberDomainNetbios = $MemberDomainNetbios
                         }
+
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
@@ -5915,6 +5919,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

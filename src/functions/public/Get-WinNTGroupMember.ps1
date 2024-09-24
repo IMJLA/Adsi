@@ -183,16 +183,20 @@ function Get-WinNTGroupMember {
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
+                        # Replace the well-known SID authorities with the computer name
                         if ($AuthoritiesToReplaceWithParentName.ContainsKey($MemberDomainNetbios)) {
                             # Possibly a debugging issue, not sure whether I need to prepare for both here.
                             # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
                             if ($DirectoryEntry.Parent.GetType().Name -eq 'String') {
                                 $LastIndexOf = $DirectoryEntry.Parent.LastIndexOf('/')
-                                $MemberDomainNetbios = $DirectoryEntry.Parent.Substring($LastIndexOf + 1, $DirectoryEntry.Parent.Length - $LastIndexOf - 1)
+                                $ResolvedMemberDomainNetbios = $DirectoryEntry.Parent.Substring($LastIndexOf + 1, $DirectoryEntry.Parent.Length - $LastIndexOf - 1)
                             } elseif ($DirectoryEntry.Parent.GetType().Name -eq 'DirectoryEntry') {
-                                $MemberDomainNetbios = $DirectoryEntry.Parent.Name
+                                $ResolvedMemberDomainNetbios = $DirectoryEntry.Parent.Name
                             }
+                            $DirectoryPath = $DirectoryPath.Replace($MemberDomainNetbios, $ResolvedMemberDomainNetbios)
+                            $ResolvedMemberDomainNetbios = $MemberDomainNetbios
                         }
+
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 

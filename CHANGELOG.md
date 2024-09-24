@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.174] - 2024-09-24 - bugfix directorypath update with computername to replace well-known sid authority
+
 ## [4.0.173] - 2024-09-24 - add debug pause back
 
 ## [4.0.172] - 2024-09-23 - bugfix workgroup handling
