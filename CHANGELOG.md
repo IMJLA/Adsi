@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.156] - 2024-09-23 - add debug pause
+
 ## [4.0.155] - 2024-09-23 - bugfix missing sidtype to schematypename translation
 
 ## [4.0.154] - 2024-09-23 - more robust sidtype to schemaclassname translation

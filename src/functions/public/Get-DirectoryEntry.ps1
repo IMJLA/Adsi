@@ -185,6 +185,7 @@ function Get-DirectoryEntry {
 
                 } else {
                     Write-LogMsg @LogParams -Text " # Known Account Names cache miss for '$AccountName'"
+                    pause
                 }
 
             }
