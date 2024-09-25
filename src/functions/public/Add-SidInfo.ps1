@@ -112,7 +112,7 @@ function Add-SidInfo {
                 #}
             }
             if (-not $DomainObject) {
-                if (-not $SID) { pause }
+
                 # The SID of the domain is the SID of the user minus the last block of numbers
                 $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
 

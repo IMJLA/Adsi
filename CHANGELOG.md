@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.179] - 2024-09-24 - remove debug pause
+
 ## [4.0.178] - 2024-09-24 - add debug pauses
 
 ## [4.0.177] - 2024-09-24 - bugfix incomplete return hashtable
