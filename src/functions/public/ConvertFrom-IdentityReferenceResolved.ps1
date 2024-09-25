@@ -438,11 +438,13 @@ function ConvertFrom-IdentityReferenceResolved {
 
                             # Include specific desired properties
                             $OutputProperties = @{
+
                                 Domain = [pscustomobject]@{
                                     Dns     = $DomainNetBIOS
                                     Netbios = $DomainNetBIOS
                                     Sid     = @($SamAccountNameOrSid -split '-')[-1]
                                 }
+
                             }
 
                         }
@@ -452,7 +454,6 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         # Include any existing properties found earlier
                         ForEach ($ThisProperty in $InputProperties) {
-                            #$OutputProperties[$ThisProperty] = $ThisMember.$ThisProperty
                             $null = ConvertTo-SimpleProperty -InputObject $ThisMember -Property $ThisProperty -PropertyDictionary $OutputProperties
                         }
 
@@ -461,6 +462,8 @@ function ConvertFrom-IdentityReferenceResolved {
                         } else {
                             $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                         }
+
+                        if (-not $ResolvedAccountName) { pause }
 
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                         $PrincipalById[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
@@ -484,6 +487,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         }
 
+        if (-not $PropertiesToAdd['ResolvedAccountName']) { pause }
         $PrincipalById[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
 
     }

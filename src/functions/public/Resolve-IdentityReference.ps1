@@ -196,7 +196,6 @@ function Resolve-IdentityReference {
     if ($CacheResult['Name'] -ne $IdentityReference) {
 
         Write-LogMsg @LogParams -Text " # Capability SID pattern hit for '$IdentityReference' on '$ServerNetBIOS'"
-        pause
         $Name = $CacheResult['Name']
         $Caption = "$ServerNetBIOS\$Name"
 
