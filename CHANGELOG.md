@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.187] - 2024-09-24 - bugfix logging and add consistent detail that shows the directorypath in each log message
+
 ## [4.0.186] - 2024-09-24 - more aggressive caching
 
 ## [4.0.185] - 2024-09-24 - bugfix domaincacheresult is an object not a dict
