@@ -104,67 +104,42 @@ function Get-DirectoryEntry {
     $AccountName = $SplitDirectoryPath['AccountName']
     $Server = $SplitDirectoryPath['Server']
     $CimServer = $CimCache[$Server]
+    $CacheResult = $DirectoryEntryCache[$DirectoryPath]
 
-    <#
-    The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-    We will create own dummy objects instead of performing the query
-    #>
-    if ($CimServer) {
+    if ($null -eq $CacheResult) {
 
-        Write-LogMsg @LogParams -Text " # CIM server cache hit for '$Server'"
-        $ID = "$Server\$AccountName"
-        $CimCacheResult = $CimServer['Win32_AccountByCaption'][$ID]
+        Write-LogMsg @LogParams -Text "DirectoryEntryCache miss for '$DirectoryPath'"
 
-        if ($CimCacheResult) {
+        <#
+        The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+        We will create own dummy objects instead of performing the query
+        #>
+        if ($CimServer) {
 
-            Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server'"
+            Write-LogMsg @LogParams -Text " # CIM server cache hit for '$Server'"
+            $ID = "$Server\$AccountName"
+            $CimCacheResult = $CimServer['Win32_AccountByCaption'][$ID]
 
-            $FakeDirectoryEntry = @{
-                'Description'   = $CimCacheResult.Description
-                'SID'           = $CimCacheResult.SID
-                'DirectoryPath' = $DirectoryPath
-            }
+            if ($CimCacheResult) {
 
-            if ($CimCacheResult.SIDType) {
-                $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[[int]$CimCacheResult.SIDType]
-            }
+                Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server'"
 
-            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
-
-        } else {
-
-            Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server'"
-            $DomainCacheResult = $DomainsByFqdn[$Server]
-
-            if ($DomainCacheResult) {
-
-                $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
-
-                if ($SIDCacheResult) {
-
-                    Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with FQDN '$Server'"
-                    $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
-
-                } else {
-
-                    Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server'"
-                    $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
-
-                    if ($NameCacheResult) {
-
-                        Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with FQDN '$Server'"
-                        $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
-
-                    } else {
-
-                        Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server'"
-
-                    }
+                $FakeDirectoryEntry = @{
+                    'Description'   = $CimCacheResult.Description
+                    'SID'           = $CimCacheResult.SID
+                    'DirectoryPath' = $DirectoryPath
                 }
+
+                if ($CimCacheResult.SIDType) {
+                    $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[[int]$CimCacheResult.SIDType]
+                }
+
+                $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
 
             } else {
 
-                $DomainCacheResult = $DomainsByNetbios[$Server]
+                Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server'"
+                $DomainCacheResult = $DomainsByFqdn[$Server]
 
                 if ($DomainCacheResult) {
 
@@ -172,26 +147,29 @@ function Get-DirectoryEntry {
 
                     if ($SIDCacheResult) {
 
-                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with NetBIOS '$Server'"
+                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with FQDN '$Server'"
                         $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                     } else {
 
-                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server'"
+                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server'"
                         $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                         if ($NameCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with FQDN '$Server'"
                             $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                         } else {
-                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server'"
+
+                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server'"
+
                         }
                     }
+
                 } else {
 
-                    $DomainCacheResult = $DomainsBySid[$Server]
+                    $DomainCacheResult = $DomainsByNetbios[$Server]
 
                     if ($DomainCacheResult) {
 
@@ -199,21 +177,50 @@ function Get-DirectoryEntry {
 
                         if ($SIDCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with SID '$Server'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with NetBIOS '$Server'"
                             $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                         } else {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server'"
                             $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                             if ($NameCacheResult) {
 
-                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with SID '$Server'"
+                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
                                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                             } else {
-                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server'"
+                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server'"
+                            }
+                        }
+                    } else {
+
+                        $DomainCacheResult = $DomainsBySid[$Server]
+
+                        if ($DomainCacheResult) {
+
+                            $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
+
+                            if ($SIDCacheResult) {
+
+                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with SID '$Server'"
+                                $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+
+                            } else {
+
+                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server'"
+                                $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
+
+                                if ($NameCacheResult) {
+
+                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with SID '$Server'"
+                                    $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+
+                                } else {
+                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server'"
+                                }
+
                             }
 
                         }
@@ -224,101 +231,96 @@ function Get-DirectoryEntry {
 
             }
 
+        } else {
+            Write-LogMsg @LogParams -Text " # CIM server cache miss for '$Server'"
         }
 
-    } else {
-        Write-LogMsg @LogParams -Text " # CIM server cache miss for '$Server'"
-    }
+        if ($null -eq $DirectoryEntry) {
 
-    if ($null -eq $DirectoryEntry) {
+            switch -regex ($DirectoryPath) {
 
-        switch -regex ($DirectoryPath) {
+                # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
+                # This is also invoked when DirectoryPath is null for any reason
+                # We will return a WinNT object representing the local computer's WinNT directory
+                '^$' {
+                    Write-LogMsg @LogParams -Text "'$ThisHostname' does not seem to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
 
-            # Workgroup computers do not return a DirectoryEntry with a SearchRoot Path so this ends up being an empty string
-            # This is also invoked when DirectoryPath is null for any reason
-            # We will return a WinNT object representing the local computer's WinNT directory
-            '^$' {
-                Write-LogMsg @LogParams -Text "'$ThisHostname' does not seem to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
+                    $CimParams = @{
+                        CimCache          = $CimCache
+                        ComputerName      = $ThisFqdn
+                        DebugOutputStream = $DebugOutputStream
+                        ThisFqdn          = $ThisFqdn
+                    }
 
-                $CimParams = @{
-                    CimCache          = $CimCache
-                    ComputerName      = $ThisFqdn
-                    DebugOutputStream = $DebugOutputStream
-                    ThisFqdn          = $ThisFqdn
+                    $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
+                    $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
+                    Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+
+                    if ($Credential) {
+                        $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
+                    } else {
+                        $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
+                    }
+
+                    $SampleUser = @(
+                        $DirectoryEntry.PSBase.Children |
+                        Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
+                    )[0] |
+                    Add-SidInfo -DomainsBySid $DomainsBySid @LoggingParams
+
+                    $DirectoryEntry |
+                    Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+                    break
+
                 }
 
-                $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
-                $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
-                Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+                # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
+                default {
 
-                if ($Credential) {
-                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
-                } else {
-                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
+                    Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+
+                    if ($Credential) {
+                        $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
+                    } else {
+                        $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
+                    }
+
+                    break
+
                 }
-
-                $SampleUser = @(
-                    $DirectoryEntry.PSBase.Children |
-                    Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
-                )[0] |
-                Add-SidInfo -DomainsBySid $DomainsBySid @LoggingParams
-
-                $DirectoryEntry |
-                Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
-                break
 
             }
 
-            # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
-            default {
+        }
 
-                Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
+        if ($PropertiesToLoad) {
 
-                if ($Credential) {
-                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath, $($Credential.UserName), $($Credential.GetNetworkCredential().password))
-                } else {
-                    $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
-                }
+            try {
 
-                break
+                # If the $DirectoryPath was invalid, this line will return an error
+                $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
+
+            } catch {
+
+                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+
+                # Ensure that the error message appears on 1 line
+                # Use .Trim() to remove leading and trailing whitespace
+                # Use -replace to remove an errant line break in the following specific error I encountered: The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
+                Write-LogMsg @LogParams -Text " # '$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim().Replace('The following exception occurred while retrieving member "RefreshCache": ','').Replace('"',''))" # -replace '\s"',' "')"
+
+                return
 
             }
 
         }
 
-    }
-
-    if ($null -eq $DirectoryEntryCache[$DirectoryPath]) {
-
-        #Write-LogMsg @LogParams -Text "DirectoryEntryCache miss for '$DirectoryPath'"
         $DirectoryEntryCache[$DirectoryPath] = $DirectoryEntry
 
     } else {
 
-        #Write-LogMsg @LogParams -Text "DirectoryEntryCache hit for '$DirectoryPath'"
-        $DirectoryEntry = $DirectoryEntryCache[$DirectoryPath]
-
-    }
-
-    if ($PropertiesToLoad) {
-
-        try {
-
-            # If the $DirectoryPath was invalid, this line will return an error
-            $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
-
-        } catch {
-
-            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-
-            # Ensure that the error message appears on 1 line
-            # Use .Trim() to remove leading and trailing whitespace
-            # Use -replace to remove an errant line break in the following specific error I encountered: The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
-            Write-LogMsg @LogParams -Text " # '$DirectoryPath' could not be retrieved. Error: $($_.Exception.Message.Trim().Replace('The following exception occurred while retrieving member "RefreshCache": ','').Replace('"',''))" # -replace '\s"',' "')"
-
-            return
-
-        }
+        Write-LogMsg @LogParams -Text "DirectoryEntryCache hit for '$DirectoryPath'"
+        $DirectoryEntry = $CacheResult
 
     }
 

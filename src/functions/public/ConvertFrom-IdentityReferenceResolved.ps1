@@ -270,16 +270,16 @@ function ConvertFrom-IdentityReferenceResolved {
 
             if ($SamAccountNameOrSid -like "S-1-*") {
 
-                Write-LogMsg @LogParams -Text "$($IdentityReference) is an unresolved SID"
+                Write-LogMsg @LogParams -Text " # '$($IdentityReference)' is an unresolved SID"
 
                 # The SID of the domain is the SID of the user minus the last block of numbers
                 $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf("-"))
 
                 # Determine if SID belongs to current domain
                 if ($DomainSid -eq $CurrentDomain.SIDString) {
-                    Write-LogMsg @LogParams -Text "$($IdentityReference) belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
+                    Write-LogMsg @LogParams -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
                 } else {
-                    Write-LogMsg @LogParams -Text "$($IdentityReference) does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
+                    Write-LogMsg @LogParams -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
                 }
 
                 # Lookup other information about the domain using its SID as the key

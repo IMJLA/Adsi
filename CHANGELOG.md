@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.186] - 2024-09-24 - more aggressive caching
+
 ## [4.0.185] - 2024-09-24 - bugfix domaincacheresult is an object not a dict
 
 ## [4.0.184] - 2024-09-24 - add debug pauses
