@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.181] - 2024-09-24 - bugfix incorrect name and ntaccount; stick with sid when translation impossible
+
 ## [4.0.180] - 2024-09-24 - move reusable logic to helper functions
 
 ## [4.0.179] - 2024-09-24 - remove debug pause

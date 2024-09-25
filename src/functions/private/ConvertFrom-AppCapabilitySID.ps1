@@ -150,9 +150,9 @@ You can programmatically generate these app capability SIDs by calling Derive­C
             return @{
                 'SID'             = $SID
                 'SchemaClassName' = 'group'
-                'Description'     = "Apps with App Capability $Capability"
-                'Name'            = "App Capability $Capability"
-                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\App Capability $Capability"
+                'Description'     = "Apps w/ App Capability $Capability"
+                'Name'            = $SID
+                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\$SID"
             }
         }
 
@@ -162,8 +162,8 @@ You can programmatically generate these app capability SIDs by calling Derive­C
                 'SID'             = $SID
                 'SchemaClassName' = 'group'
                 'Description'     = "Unknown App Capability $SID"
-                'Name'            = "Unknown App Capability $SID"
-                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\Unknown App Capability $SID"
+                'Name'            = $SID
+                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\$SID"
             }
         }
     }
@@ -191,10 +191,10 @@ You can programmatically generate these app capability SIDs by calling Derive­C
     } else {
         return @{
             'SID'             = $SID
-            'Description'     = "Apps with access to unknown capability {$Guid}"
-            'Name'            = "Unknown device capability {$Guid}"
+            'Description'     = "Apps w/ access to app capability {$Guid}"
             'SchemaClassName' = 'group'
-            'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\Unknown device capability {$Guid}"
+            'Name'            = $SID
+            'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\$SID"
         }
     }
 }
