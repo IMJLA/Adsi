@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.182] - 2024-09-24 - bugfix incorrect detection of capability sid pattern hit/miss
+
 ## [4.0.181] - 2024-09-24 - bugfix incorrect name and ntaccount; stick with sid when translation impossible
 
 ## [4.0.180] - 2024-09-24 - move reusable logic to helper functions

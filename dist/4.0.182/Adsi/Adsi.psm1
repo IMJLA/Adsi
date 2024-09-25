@@ -3649,9 +3649,9 @@ function Get-KnownSid {
     switch -regex ($SID) {
         'S-1-15-2-' {
             return @{
-                'Name'            = "App Container $SID"
+                'Name'            = $SID
                 'Description'     = "App Container $SID"
-                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\App Container $SID"
+                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\$SID"
                 'SchemaClassName' = 'user'
                 'SID'             = $SID
             }
@@ -5348,7 +5348,7 @@ function Resolve-IdentityReference {
 
     $CacheResult = Get-KnownSid -SID $IdentityReference
 
-    if ($CacheResult['Name'] -ne $IdentityReference) {
+    if ($CacheResult['NTAccount'] -ne $CacheResult['SID']) {
 
         Write-LogMsg @LogParams -Text " # Capability SID pattern hit for '$IdentityReference' on '$ServerNetBIOS'"
         $Name = $CacheResult['Name']
@@ -6016,6 +6016,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

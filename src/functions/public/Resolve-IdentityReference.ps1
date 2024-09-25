@@ -193,7 +193,7 @@ function Resolve-IdentityReference {
 
     $CacheResult = Get-KnownSid -SID $IdentityReference
 
-    if ($CacheResult['Name'] -ne $IdentityReference) {
+    if ($CacheResult['NTAccount'] -ne $CacheResult['SID']) {
 
         Write-LogMsg @LogParams -Text " # Capability SID pattern hit for '$IdentityReference' on '$ServerNetBIOS'"
         $Name = $CacheResult['Name']

@@ -7,9 +7,9 @@ function Get-KnownSid {
     switch -regex ($SID) {
         'S-1-15-2-' {
             return @{
-                'Name'            = "App Container $SID"
+                'Name'            = $SID
                 'Description'     = "App Container $SID"
-                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\App Container $SID"
+                'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\$SID"
                 'SchemaClassName' = 'user'
                 'SID'             = $SID
             }
