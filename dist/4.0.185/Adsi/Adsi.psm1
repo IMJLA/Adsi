@@ -3456,10 +3456,7 @@ function Get-DirectoryEntry {
 
             if ($DomainCacheResult) {
 
-                if (-not $DomainCacheResult['WellKnownSIDBySID']) { pause }
-                if (-not $DomainCacheResult['WellKnownSIDByName']) { pause }
-
-                $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
+                $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
                 if ($SIDCacheResult) {
 
@@ -3469,7 +3466,7 @@ function Get-DirectoryEntry {
                 } else {
 
                     Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server'"
-                    $NameCacheResult = $DomainCacheResult['WellKnownSIDByName'][$AccountName]
+                    $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                     if ($NameCacheResult) {
 
@@ -3489,10 +3486,7 @@ function Get-DirectoryEntry {
 
                 if ($DomainCacheResult) {
 
-                    if (-not $DomainCacheResult['WellKnownSIDBySID']) { pause }
-                    if (-not $DomainCacheResult['WellKnownSIDByName']) { pause }
-
-                    $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
+                    $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
                     if ($SIDCacheResult) {
 
@@ -3502,7 +3496,7 @@ function Get-DirectoryEntry {
                     } else {
 
                         Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server'"
-                        $NameCacheResult = $DomainCacheResult['WellKnownSIDByName'][$AccountName]
+                        $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                         if ($NameCacheResult) {
 
@@ -3519,10 +3513,7 @@ function Get-DirectoryEntry {
 
                     if ($DomainCacheResult) {
 
-                        if (-not $DomainCacheResult['WellKnownSIDBySID']) { pause }
-                        if (-not $DomainCacheResult['WellKnownSIDByName']) { pause }
-
-                        $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
+                        $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
                         if ($SIDCacheResult) {
 
@@ -3532,7 +3523,7 @@ function Get-DirectoryEntry {
                         } else {
 
                             Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server'"
-                            $NameCacheResult = $DomainCacheResult['WellKnownSIDByName'][$AccountName]
+                            $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                             if ($NameCacheResult) {
 
@@ -6028,6 +6019,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
