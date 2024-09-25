@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.184] - 2024-09-24 - add debug pauses
+
 ## [4.0.183] - 2024-09-24 - add debug pause
 
 ## [4.0.182] - 2024-09-24 - bugfix incorrect detection of capability sid pattern hit/miss

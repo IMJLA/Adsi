@@ -138,6 +138,9 @@ function Get-DirectoryEntry {
 
             if ($DomainCacheResult) {
 
+                if (-not $DomainCacheResult['WellKnownSIDBySID']) { pause }
+                if (-not $DomainCacheResult['WellKnownSIDByName']) { pause }
+
                 $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
 
                 if ($SIDCacheResult) {
@@ -168,6 +171,9 @@ function Get-DirectoryEntry {
 
                 if ($DomainCacheResult) {
 
+                    if (-not $DomainCacheResult['WellKnownSIDBySID']) { pause }
+                    if (-not $DomainCacheResult['WellKnownSIDByName']) { pause }
+
                     $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
 
                     if ($SIDCacheResult) {
@@ -194,6 +200,9 @@ function Get-DirectoryEntry {
                     $DomainCacheResult = $DomainsBySid[$Server]
 
                     if ($DomainCacheResult) {
+
+                        if (-not $DomainCacheResult['WellKnownSIDBySID']) { pause }
+                        if (-not $DomainCacheResult['WellKnownSIDByName']) { pause }
 
                         $SIDCacheResult = $DomainCacheResult['WellKnownSIDBySID'][$ID]
 
@@ -246,8 +255,8 @@ function Get-DirectoryEntry {
                     DebugOutputStream = $DebugOutputStream
                     ThisFqdn          = $ThisFqdn
                 }
-                $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
 
+                $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
                 $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
                 Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
 
@@ -257,8 +266,10 @@ function Get-DirectoryEntry {
                     $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
                 }
 
-                $SampleUser = @($DirectoryEntry.PSBase.Children |
-                    Where-Object -FilterScript { $_.schemaclassname -eq 'user' })[0] |
+                $SampleUser = @(
+                    $DirectoryEntry.PSBase.Children |
+                    Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
+                )[0] |
                 Add-SidInfo -DomainsBySid $DomainsBySid @LoggingParams
 
                 $DirectoryEntry |
