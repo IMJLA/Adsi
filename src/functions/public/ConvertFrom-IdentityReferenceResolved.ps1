@@ -1,4 +1,5 @@
 function ConvertFrom-IdentityReferenceResolved {
+
     <#
         .SYNOPSIS
         Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
@@ -23,7 +24,9 @@ function ConvertFrom-IdentityReferenceResolved {
 
         Incomplete example but it shows the chain of functions to generate the expected input for this
     #>
+
     [OutputType([void])]
+
     param (
 
         # The NTFS AccessControlEntry object(s), grouped by their IdentityReference property

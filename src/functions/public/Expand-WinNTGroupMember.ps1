@@ -64,6 +64,7 @@ function Expand-WinNTGroupMember {
         [string]$DebugOutputStream = 'Debug'
 
     )
+
     begin {
 
         $LogParams = @{
@@ -80,38 +81,49 @@ function Expand-WinNTGroupMember {
         }
 
     }
+
     process {
+
         ForEach ($ThisEntry in $DirectoryEntry) {
 
             if (!($ThisEntry.Properties)) {
+
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                Write-LogMsg @LogParams -Text " # '$ThisEntry' has no properties"
+                Write-LogMsg @LogParams -Text " # '$ThisEntry' has no properties # For '$($ThisEntry.Path)'"
                 $LogParams['Type'] = $DebugOutputStream
+
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
-                Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is an ADSI group"
+                Write-LogMsg @LogParams -Text " # Is an ADSI group # For '$($ThisEntry.Path)'"
                 $AdsiGroup = Get-AdsiGroup -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $ThisEntry.Path -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainsBySid @LoggingParams
 
             } else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
-                    Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is a WinNT group"
+
+                    Write-LogMsg @LogParams -Text " # Is a WinNT group # For '$($ThisEntry.Path)'"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
-                        Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is a special group with no direct memberships"
+
+                        Write-LogMsg @LogParams -Text " # Is a special group with no direct memberships # '$($ThisEntry.Path)'"
                         Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
+
                     } else {
                         Get-WinNTGroupMember -DirectoryEntry $ThisEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                     }
 
                 } else {
-                    Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is a user account"
+
+                    Write-LogMsg @LogParams -Text " # Is a user account # For '$($ThisEntry.Path)'"
                     Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
+
                 }
 
             }
 
         }
+
     }
+
 }

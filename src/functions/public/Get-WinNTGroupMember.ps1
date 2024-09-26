@@ -179,7 +179,7 @@ function Get-WinNTGroupMember {
                     $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
                     if ($DirectoryPath -match $workgroupregex) {
 
-                        Write-LogMsg @LogParams -Text " # Domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath'"
+                        Write-LogMsg @LogParams -Text " # Domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
@@ -202,30 +202,30 @@ function Get-WinNTGroupMember {
 
                         if ($DomainCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
 
                             if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
                             }
 
                         } else {
-                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         }
 
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
 
-                            Write-LogMsg @LogParams -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
 
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }
 
                         } else {
-                            Write-LogMsg @LogParams -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)' # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         }
 
                     } else {
-                        Write-LogMsg @LogParams -Text " # No RegEx match for '$workgroupregex' # For '$DirectoryPath'"
+                        Write-LogMsg @LogParams -Text " # No RegEx match for '$workgroupregex' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                     }
 
                     # LDAP directories have a distinguishedName

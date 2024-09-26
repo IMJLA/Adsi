@@ -630,6 +630,7 @@ function ConvertFrom-DirectoryEntry {
 
 }
 function ConvertFrom-IdentityReferenceResolved {
+
     <#
         .SYNOPSIS
         Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
@@ -654,7 +655,9 @@ function ConvertFrom-IdentityReferenceResolved {
 
         Incomplete example but it shows the chain of functions to generate the expected input for this
     #>
+
     [OutputType([void])]
+
     param (
 
         # The NTFS AccessControlEntry object(s), grouped by their IdentityReference property
@@ -2175,6 +2178,7 @@ function Expand-WinNTGroupMember {
         [string]$DebugOutputStream = 'Debug'
 
     )
+
     begin {
 
         $LogParams = @{
@@ -2191,40 +2195,51 @@ function Expand-WinNTGroupMember {
         }
 
     }
+
     process {
+
         ForEach ($ThisEntry in $DirectoryEntry) {
 
             if (!($ThisEntry.Properties)) {
+
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                Write-LogMsg @LogParams -Text " # '$ThisEntry' has no properties"
+                Write-LogMsg @LogParams -Text " # '$ThisEntry' has no properties # For '$($ThisEntry.Path)'"
                 $LogParams['Type'] = $DebugOutputStream
+
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
-                Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is an ADSI group"
+                Write-LogMsg @LogParams -Text " # Is an ADSI group # For '$($ThisEntry.Path)'"
                 $AdsiGroup = Get-AdsiGroup -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DirectoryPath $ThisEntry.Path -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainsBySid @LoggingParams
 
             } else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
-                    Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is a WinNT group"
+
+                    Write-LogMsg @LogParams -Text " # Is a WinNT group # For '$($ThisEntry.Path)'"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
-                        Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is a special group with no direct memberships"
+
+                        Write-LogMsg @LogParams -Text " # Is a special group with no direct memberships # '$($ThisEntry.Path)'"
                         Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
+
                     } else {
                         Get-WinNTGroupMember -DirectoryEntry $ThisEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                     }
 
                 } else {
-                    Write-LogMsg @LogParams -Text " # '$($ThisEntry.Path)' is a user account"
+
+                    Write-LogMsg @LogParams -Text " # Is a user account # For '$($ThisEntry.Path)'"
                     Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
+
                 }
 
             }
 
         }
+
     }
+
 }
 function Find-AdsiProvider {
     <#
@@ -3317,6 +3332,7 @@ function Get-CurrentDomain {
 
 }
 function Get-DirectoryEntry {
+
     <#
         .SYNOPSIS
         Use Active Directory Service Interfaces to retrieve an object from a directory
@@ -3340,8 +3356,10 @@ function Get-DirectoryEntry {
 
         As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
     [CmdletBinding()]
+
     param (
 
         <#
@@ -3426,7 +3444,7 @@ function Get-DirectoryEntry {
 
     if ($null -eq $CacheResult) {
 
-        Write-LogMsg @LogParams -Text "DirectoryEntryCache miss for '$DirectoryPath'"
+        Write-LogMsg @LogParams -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
 
         <#
         The WinNT provider only throws an error if you try to retrieve certain accounts/identities
@@ -3434,13 +3452,13 @@ function Get-DirectoryEntry {
         #>
         if ($CimServer) {
 
-            Write-LogMsg @LogParams -Text " # CIM server cache hit for '$Server'"
+            Write-LogMsg @LogParams -Text " # CIM server cache hit for '$Server' # for '$DirectoryPath'"
             $ID = "$Server\$AccountName"
             $CimCacheResult = $CimServer['Win32_AccountByCaption'][$ID]
 
             if ($CimCacheResult) {
 
-                Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server'"
+                Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server' # for '$DirectoryPath'"
 
                 $FakeDirectoryEntry = @{
                     'Description'   = $CimCacheResult.Description
@@ -3456,7 +3474,7 @@ function Get-DirectoryEntry {
 
             } else {
 
-                Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server'"
+                Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
                 $DomainCacheResult = $DomainsByFqdn[$Server]
 
                 if ($DomainCacheResult) {
@@ -3465,22 +3483,22 @@ function Get-DirectoryEntry {
 
                     if ($SIDCacheResult) {
 
-                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with FQDN '$Server'"
+                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
                         $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                     } else {
 
-                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server'"
+                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
                         $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                         if ($NameCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with FQDN '$Server'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
                             $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                         } else {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
 
                         }
                     }
@@ -3495,21 +3513,21 @@ function Get-DirectoryEntry {
 
                         if ($SIDCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with NetBIOS '$Server'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                             $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                         } else {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                             $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                             if ($NameCacheResult) {
 
-                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
+                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                             } else {
-                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server'"
+                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                             }
                         }
                     } else {
@@ -3522,21 +3540,21 @@ function Get-DirectoryEntry {
 
                             if ($SIDCacheResult) {
 
-                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with SID '$Server'"
+                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
                                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                             } else {
 
-                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server'"
+                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
                                 $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                                 if ($NameCacheResult) {
 
-                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with SID '$Server'"
+                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
                                     $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                                 } else {
-                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server'"
+                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
                                 }
 
                             }
@@ -3550,7 +3568,7 @@ function Get-DirectoryEntry {
             }
 
         } else {
-            Write-LogMsg @LogParams -Text " # CIM server cache miss for '$Server'"
+            Write-LogMsg @LogParams -Text " # CIM server cache miss for '$Server' # for '$DirectoryPath'"
         }
 
         if ($null -eq $DirectoryEntry) {
@@ -3561,7 +3579,7 @@ function Get-DirectoryEntry {
                 # This is also invoked when DirectoryPath is null for any reason
                 # We will return a WinNT object representing the local computer's WinNT directory
                 '^$' {
-                    Write-LogMsg @LogParams -Text "'$ThisHostname' does not seem to be domain-joined since the SearchRoot Path is empty. Defaulting to WinNT provider for localhost instead."
+                    Write-LogMsg @LogParams -Text " # The SearchRoot Path is empty, indicating '$ThisHostname' is not domain-joined. Defaulting to WinNT provider for localhost instead. # for '$DirectoryPath'"
 
                     $CimParams = @{
                         CimCache          = $CimCache
@@ -3637,7 +3655,7 @@ function Get-DirectoryEntry {
 
     } else {
 
-        Write-LogMsg @LogParams -Text "DirectoryEntryCache hit for '$DirectoryPath'"
+        Write-LogMsg @LogParams -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
         $DirectoryEntry = $CacheResult
 
     }
@@ -4926,7 +4944,7 @@ function Get-WinNTGroupMember {
                     $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
                     if ($DirectoryPath -match $workgroupregex) {
 
-                        Write-LogMsg @LogParams -Text " # Domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath'"
+                        Write-LogMsg @LogParams -Text " # Domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
@@ -4949,30 +4967,30 @@ function Get-WinNTGroupMember {
 
                         if ($DomainCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
 
                             if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
                             }
 
                         } else {
-                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         }
 
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
 
-                            Write-LogMsg @LogParams -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
 
                             if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
                                 $MemberDomainDn = $null
                             }
 
                         } else {
-                            Write-LogMsg @LogParams -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)' # For '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         }
 
                     } else {
-                        Write-LogMsg @LogParams -Text " # No RegEx match for '$workgroupregex' # For '$DirectoryPath'"
+                        Write-LogMsg @LogParams -Text " # No RegEx match for '$workgroupregex' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                     }
 
                     # LDAP directories have a distinguishedName
@@ -6021,6 +6039,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
