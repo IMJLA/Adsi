@@ -307,7 +307,6 @@ function ConvertFrom-IdentityReferenceResolved {
                 try {
                     $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                 } catch {
-                    pause
                     $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
                     Write-LogMsg @LogParams -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
                     $LogParams['Type'] = $DebugOutputStream
