@@ -2225,7 +2225,8 @@ function Expand-WinNTGroupMember {
                         Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
 
                     } else {
-                        Get-WinNTGroupMember -DirectoryEntry $ThisEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+                        #Commented while troubleshooting to avoid infinite loop.  This line only seems necessary to handle nested WinNT groups, is that even possible?
+                        #Get-WinNTGroupMember -DirectoryEntry $ThisEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                     }
 
                 } else {
@@ -5001,14 +5002,14 @@ function Get-WinNTGroupMember {
                         # Combine all members' samAccountNames into a single search per directory distinguishedName
                         # Use a hashtable with the directory path as the key and a string as the definition
                         # The string is a partial LDAP filter, just the segments of the LDAP filter for each samAccountName
-                        Write-LogMsg @LogParams -Text " # '$MemberName' is a domain security principal # For '$DirectoryPath'"
+                        Write-LogMsg @LogParams -Text " # '$MemberName' is a domain security principal # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MembersToGet["LDAP://$MemberDomainDn"] += "(samaccountname=$MemberName)"
 
                     } else {
 
                         # WinNT directories do not support searching so we will retrieve each member individually
                         # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
-                        Write-LogMsg @LogParams -Text " # Is a local security principal # For '$DirectoryPath'"
+                        Write-LogMsg @LogParams -Text " # Is a local security principal # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MembersToGet['WinNTMembers'] += $DirectoryPath
 
                     }
@@ -5019,7 +5020,7 @@ function Get-WinNTGroupMember {
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
 
                     $MemberParams['DirectoryPath'] = $ThisMember
-                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' # For '$DirectoryPath'"
+                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                     $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
@@ -5039,7 +5040,7 @@ function Get-WinNTGroupMember {
 
                 }
             } else {
-                Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' is not a group # For '$DirectoryPath'"
+                Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' is not a group # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
             }
         }
     }
@@ -6040,6 +6041,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
