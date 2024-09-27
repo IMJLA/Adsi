@@ -468,8 +468,6 @@ function ConvertFrom-IdentityReferenceResolved {
                             $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                         }
 
-                        if (-not $ResolvedAccountName) { pause }
-
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                         $PrincipalById[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
                         $ACEsByResolvedID[$ResolvedAccountName] = $AccessControlEntries
@@ -486,13 +484,11 @@ function ConvertFrom-IdentityReferenceResolved {
 
         } else {
 
-            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+            $LogParams['Type'] = 'Verbose' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
             Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be matched to a DirectoryEntry"
             $LogParams['Type'] = $DebugOutputStream
 
         }
-
-        if (-not $PropertiesToAdd['ResolvedAccountName']) { pause }
         $PrincipalById[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
 
     }

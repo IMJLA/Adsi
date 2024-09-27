@@ -1099,8 +1099,6 @@ function ConvertFrom-IdentityReferenceResolved {
                             $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                         }
 
-                        if (-not $ResolvedAccountName) { pause }
-
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                         $PrincipalById[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
                         $ACEsByResolvedID[$ResolvedAccountName] = $AccessControlEntries
@@ -1117,13 +1115,11 @@ function ConvertFrom-IdentityReferenceResolved {
 
         } else {
 
-            $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+            $LogParams['Type'] = 'Verbose' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
             Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be matched to a DirectoryEntry"
             $LogParams['Type'] = $DebugOutputStream
 
         }
-
-        if (-not $PropertiesToAdd['ResolvedAccountName']) { pause }
         $PrincipalById[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
 
     }
@@ -2225,7 +2221,8 @@ function Expand-WinNTGroupMember {
                         Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainsBySid @LoggingParams
 
                     } else {
-                        #Commented while troubleshooting to avoid infinite loop.  This line only seems necessary to handle nested WinNT groups, is that even possible?
+                        # Commented while troubleshooting to avoid infinite loop. This line only seems necessary to handle nested WinNT groups; is that even possible?
+                        # After commenting, it seems local group members are still being retrieved as expected.
                         #Get-WinNTGroupMember -DirectoryEntry $ThisEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                     }
 
@@ -6041,6 +6038,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 

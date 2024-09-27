@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.192] - 2024-09-26 - remove debug pause, change warning to verbose, update comments
+
 ## [4.0.191] - 2024-09-26 - improve debug output
 
 ## [4.0.190] - 2024-09-26 - avoid recursive winnt group get/expand loop
