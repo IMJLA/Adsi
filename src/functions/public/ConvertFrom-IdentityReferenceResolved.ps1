@@ -367,8 +367,9 @@ function ConvertFrom-IdentityReferenceResolved {
         }
 
         $PropertiesToAdd = @{
-            DomainDn      = $DomainDn
-            DomainNetbios = $DomainNetBIOS
+            DomainDn            = $DomainDn
+            DomainNetbios       = $DomainNetBIOS
+            ResolvedAccountName = $IdentityReference
         }
 
         if ($null -ne $DirectoryEntry) {

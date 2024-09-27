@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.189] - 2024-09-26 - add default value for ResolvedAccountName in case of unresolveable IdentityReferences
+
 ## [4.0.188] - 2024-09-25 - update logging output
 
 ## [4.0.187] - 2024-09-24 - bugfix logging and add consistent detail that shows the directorypath in each log message
