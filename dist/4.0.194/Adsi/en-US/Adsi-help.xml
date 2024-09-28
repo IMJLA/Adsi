@@ -5797,7 +5797,7 @@ ad.contoso.com</dev:code>
           <dev:defaultValue>Debug</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
-          <maml:name>WellKnownSIDBySID</maml:name>
+          <maml:name>WellKnownSidBySid</maml:name>
           <maml:description>
             <maml:para>Output from Get-KnownSidHashTable</maml:para>
           </maml:description>
@@ -6117,7 +6117,7 @@ ad.contoso.com</dev:code>
         <dev:defaultValue>@{}</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
-        <maml:name>WellKnownSIDBySID</maml:name>
+        <maml:name>WellKnownSidBySid</maml:name>
         <maml:description>
           <maml:para>Output from Get-KnownSidHashTable</maml:para>
         </maml:description>
@@ -6154,7 +6154,7 @@ ad.contoso.com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties</maml:name>
+          <maml:name>[PSCustomObject] with AdsiProvider and WellKnownSidBySid properties</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -8240,6 +8240,18 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>Debug</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+          <maml:name>WellKnownSidBySid</maml:name>
+          <maml:description>
+            <maml:para>Output from Get-KnownSidHashTable</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>(Get-KnownSidHashTable)</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>AdsiServer</maml:name>
           <maml:description>
@@ -8514,6 +8526,18 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="14" aliases="none">
+        <maml:name>WellKnownSidBySid</maml:name>
+        <maml:description>
+          <maml:para>Output from Get-KnownSidHashTable</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>(Get-KnownSidHashTable)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>WhoAmI</maml:name>

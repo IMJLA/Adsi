@@ -77,7 +77,10 @@ function Resolve-IdentityReference {
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # Output from Get-KnownSidHashTable
+        [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable)
 
     )
 
@@ -111,8 +114,8 @@ function Resolve-IdentityReference {
     } else {
         Write-LogMsg @LogParams -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
-    $KnownSIDs = Get-KnownSidHashTable
-    $CacheResult = $KnownSIDs[$IdentityReference]
+
+    $CacheResult = $WellKnownSidBySid[$IdentityReference]
 
     if ($CacheResult) {
 
@@ -333,7 +336,7 @@ function Resolve-IdentityReference {
             } catch {
 
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
+                Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
                 $LogParams['Type'] = $DebugOutputStream
 
             }

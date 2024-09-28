@@ -8,7 +8,7 @@ function Get-AdsiServer {
         .INPUTS
         [System.String]$Fqdn
         .OUTPUTS
-        [PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties
+        [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
         .EXAMPLE
         Get-AdsiServer -Fqdn localhost
 
@@ -75,7 +75,7 @@ function Get-AdsiServer {
         [switch]$RemoveCimSession,
 
         # Output from Get-KnownSidHashTable
-        [hashtable]$WellKnownSIDBySID = (Get-KnownSidHashTable),
+        [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
 
         # Output from Get-KnownSidHashTable but keyed by account Name
         [hashtable]$WellKnownSIDByName = @{}
@@ -353,7 +353,7 @@ function Get-AdsiServer {
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
-                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
 
@@ -415,7 +415,7 @@ function Get-AdsiServer {
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
-                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
 

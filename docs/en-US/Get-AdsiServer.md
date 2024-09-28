@@ -17,7 +17,7 @@ Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-CimCache] <Hashta
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-RemoveCimSession]
- [[-WellKnownSIDBySID] <Hashtable>] [[-WellKnownSIDByName] <Hashtable>] [-ProgressAction <ActionPreference>]
+ [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSIDByName] <Hashtable>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
@@ -259,7 +259,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -WellKnownSIDBySID
+### -WellKnownSidBySid
 Output from Get-KnownSidHashTable
 
 ```yaml
@@ -297,7 +297,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### [System.String]$Fqdn
 ## OUTPUTS
 
-### [PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties
+### [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
 ## NOTES
 
 ## RELATED LINKS

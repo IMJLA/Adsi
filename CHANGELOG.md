@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.194] - 2024-09-28 - ensure consistent availability of WellKnownSidBySid parameter...TODO use it in function calls rather than relying on default to call funct
+
 ## [4.0.193] - 2024-09-26 - remove last remaining debug pause
 
 ## [4.0.192] - 2024-09-26 - remove debug pause, change warning to verbose, update comments

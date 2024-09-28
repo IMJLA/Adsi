@@ -2800,7 +2800,7 @@ function Get-AdsiServer {
         .INPUTS
         [System.String]$Fqdn
         .OUTPUTS
-        [PSCustomObject] with AdsiProvider and WellKnownSIDBySID properties
+        [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
         .EXAMPLE
         Get-AdsiServer -Fqdn localhost
 
@@ -2867,7 +2867,7 @@ function Get-AdsiServer {
         [switch]$RemoveCimSession,
 
         # Output from Get-KnownSidHashTable
-        [hashtable]$WellKnownSIDBySID = (Get-KnownSidHashTable),
+        [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
 
         # Output from Get-KnownSidHashTable but keyed by account Name
         [hashtable]$WellKnownSIDByName = @{}
@@ -3145,7 +3145,7 @@ function Get-AdsiServer {
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
-                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
 
@@ -3207,7 +3207,7 @@ function Get-AdsiServer {
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
-                WellKnownSIDBySID  = $WellKnownSIDBySID
+                WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
 
@@ -5253,7 +5253,10 @@ function Resolve-IdentityReference {
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # Output from Get-KnownSidHashTable
+        [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable)
 
     )
 
@@ -5287,8 +5290,8 @@ function Resolve-IdentityReference {
     } else {
         Write-LogMsg @LogParams -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
-    $KnownSIDs = Get-KnownSidHashTable
-    $CacheResult = $KnownSIDs[$IdentityReference]
+
+    $CacheResult = $WellKnownSidBySid[$IdentityReference]
 
     if ($CacheResult) {
 
@@ -5509,7 +5512,7 @@ function Resolve-IdentityReference {
             } catch {
 
                 $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message)"
+                Write-LogMsg @LogParams -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
                 $LogParams['Type'] = $DebugOutputStream
 
             }
@@ -6037,6 +6040,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
