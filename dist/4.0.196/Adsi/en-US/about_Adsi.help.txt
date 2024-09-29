@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.194
+Help Version: 4.0.195
 Locale: en-US
 ---
 
@@ -93,6 +93,11 @@ Use ADSI to get the current domain
 
 ### [Get-DirectoryEntry](docs/en-US/Get-DirectoryEntry.md)
 Use Active Directory Service Interfaces to retrieve an object from a directory
+
+### [Get-KnownCaptionHashTable](docs/en-US/Get-KnownCaptionHashTable.md)
+
+Get-KnownCaptionHashTable [[-WellKnownSidBySid] <hashtable>]
+
 
 ### [Get-KnownSid](docs/en-US/Get-KnownSid.md)
 

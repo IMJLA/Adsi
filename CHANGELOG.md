@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.196] - 2024-09-28 - splat cleanup and debug pause
+
 ## [4.0.195] - 2024-09-28 - split up resolve-identityreference into smaller constituent functions
 
 ## [4.0.194] - 2024-09-28 - ensure consistent availability of WellKnownSidBySid parameter...TODO use it in function calls rather than relying on default to call funct

@@ -75,7 +75,8 @@ function Resolve-IdRefCached {
         WhoAmI       = $WhoAmI
     }
 
-    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference]
+    $ErrorActionPreference = $Stop
+    try { $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] } catch { pause }
 
     if ($CacheResult) {
 

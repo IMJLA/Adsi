@@ -94,81 +94,71 @@ function Resolve-IdentityReference {
         WhoAmI       = $WhoAmI
     }
 
-    $LogParams = @{
-        ThisHostname = $ThisHostname
-        LogBuffer    = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    # Many Well-Known SIDs cannot be translated with the Translate method
-    # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server
-    # and update the Win32_AccountBySID and Win32_AccountByCaption caches
-    # and Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs
-    # Search the caches now
-
     $ServerNetBIOS = $AdsiServer.Netbios
     $split = $IdentityReference.Split('\')
     $Name = $split[1]
-    $splat2a = @{ WellKnownSidBySid = $WellKnownSidBySid ; WellKnownSidByCaption = $WellKnownSidByCaption }
-    $splat4a = @{ DomainsByFqdn = $DomainsByFqdn }
-    $splat5b = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
-    $splat5d = @{ Name = $Name }
-    $splat5c = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }
-    $splat5a = @{ DebugOutputStream = $DebugOutputStream }
-    $splat7a = @{ DomainsBySid = $DomainsBySid }
-    $splat6a = @{ CimCache = $CimCache; IdentityReference = $IdentityReference }
-    $splat2b = @{ LogParams = $LogParams }
+    $splat1 = @{ WellKnownSidBySid = $WellKnownSidBySid ; WellKnownSidByCaption = $WellKnownSidByCaption }
+    $splat3 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
+    $splat5 = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }
+    $splat6 = @{ DebugOutputStream = $DebugOutputStream }
+    $splat8 = @{ CimCache = $CimCache; IdentityReference = $IdentityReference }
+    $LogParams = @{ ThisHostname = $ThisHostname ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI }
     $GetDirectoryEntryParams = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; DomainsBySid = $DomainsBySid }
-    $splat2c = @{ GetDirectoryEntryParams = $GetDirectoryEntryParams }
+    $splat10 = @{ GetDirectoryEntryParams = $GetDirectoryEntryParams }
 
-    $CacheResult = Resolve-IdRefCached @splat2a @LogParams @splat4a @splat5b @splat5d @splat5c @splat6a @splat7a @splat5a
+    # Many Well-Known SIDs cannot be translated with the Translate method.
+    # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server
+    # and update the Win32_AccountBySID and Win32_AccountByCaption caches.
+    # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
+    # Search these caches now.
+    $CacheResult = Resolve-IdRefCached @splat1 -DomainsByFqdn $DomainsByFqdn @splat3 -Name $Name @splat5 @splat6 -DomainsBySid $DomainsBySid @splat8 @LogParams
     if ($CacheResult) { return $CacheResult }
 
-    # If no match was found in any cache, the path forward depends on the IdentityReference
+    # If no match was found in any cache, the path forward depends on the IdentityReference.
     switch -Wildcard ($IdentityReference) {
 
         "S-1-*" {
-            $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns @splat4a @splat5b @splat5c @splat6a @splat7a @splat5a @LogParams
+            $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
             return $Resolved
         }
 
         "NT SERVICE\*" {
-            $Resolved = Resolve-IdRefSvc @splat4a @splat5b @splat5d @splat5c @splat6a @splat7a @splat5a @LogParams
+            $Resolved = Resolve-IdRefSvc -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
             return $Resolved
         }
 
         "APPLICATION PACKAGE AUTHORITY\*" {
-            $Resolved = Resolve-IdRefAppPkg @splat2a @splat5d @splat5c @splat6a @splat7a @splat4a @splat5b
+            $Resolved = Resolve-IdRefAppPkg -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8
             return $Resolved
         }
 
         "BUILTIN\*" {
-            $Resolved = Resolve-IdRefBuiltIn @splat2c @splat5b @splat5a@splat6a @splat7a @splat5d @LogParams
+            $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat6 @splat8 @splat10 @LogParams
             return $Resolved
         }
 
     }
 
-    # The IdentityReference is an NTAccount
-    # Translate NTAccount to SID
+    # If no regular expression match was found with any of the known patterns for SIDs or well-known SID authorities, the IdentityReference is an NTAccount.
+    # Translate the NTAccount to a SID.
 
     if ($ServerNetBIOS) {
 
         # Start by determining the domain DN and DNS name
-        $DomainNetBIOSCacheResult = $DomainsByNetbios[$ServerNetBIOS]
+        $CacheResult = $DomainsByNetbios[$ServerNetBIOS]
 
-        if ($DomainNetBIOSCacheResult) {
+        if ($CacheResult) {
             # Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$($ServerNetBIOS)'."
         } else {
 
             Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($ServerNetBIOS)'."
-            $DomainNetBIOSCacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogParams
-            $DomainsByNetbios[$ServerNetBIOS] = $ServerNetBIOSCacheResult
+            $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
+            $DomainsByNetbios[$ServerNetBIOS] = $CacheResult
 
         }
 
-        $DomainDn = $DomainNetBIOSCacheResult.DistinguishedName
-        $DomainDns = $DomainNetBIOSCacheResult.Dns
+        $DomainDn = $CacheResult.DistinguishedName
+        $DomainDns = $CacheResult.Dns
 
         # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
         $SIDString = ConvertTo-SidString -ServerNetBIOS $ServerNetBIOS -Name $Name -DebugOutputStream $DebugOutputStream -Log $Log
@@ -177,14 +167,14 @@ function Resolve-IdentityReference {
 
             # Try to resolve the account against the domain indicated in its NT Account Name
             # Add this domain to our list of known domains
-            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log @splat2b @Cached_Search_Svc @splat5c @splat6a @splat7a @splat5a @splat5d
+            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogParams $LogParams -DomainsBySid $DomainsBySid -Name $Name @splat5 @splat6 @splat8
 
         }
 
         if (-not $SIDString) {
 
             # Try to find the DirectoryEntry object directly on the server
-            $SIDString = Resolve-IdRefGetDirEntry @splat2b @splat2c @splat5b @splat5d @splat7a
+            $SIDString = Resolve-IdRefGetDirEntry -LogParams $LogParams -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat10
 
         }
 
