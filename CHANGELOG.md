@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.205] - 2024-09-29 - update psakefile write-host output
+
 ## [4.0.204] - 2024-09-29 - handle S-1-5-32-AppContainer SIDs in Get-KnownSID
 
 ## [4.0.203] - 2024-09-29 - activate new tasks in psakefile

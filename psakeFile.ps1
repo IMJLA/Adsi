@@ -346,7 +346,7 @@ task FixMarkdownHelp -depends BuildMarkdownHelp {
 
     $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
     Remove-Module $env:BHProjectName -Force
-    
+
     $ReadMeContents = $ModuleHelp
     $DocsRootForURL = "docs/$HelpDefaultLocale"
     [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
@@ -511,7 +511,6 @@ task Publish -depends SourceControl {
 } -description 'Publish module to the defined PowerShell repository'
 
 task AwaitRepoUpdate -depends Publish {
-    Write-Host "Entered AwaitRepoUpdate"
     $timer = 0
     $timer = 30
     do {
