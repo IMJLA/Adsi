@@ -5,6 +5,15 @@ function Get-KnownSid {
     #https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
     param ([string]$SID)
     switch -regex ($SID) {
+        'S-1-5-80-' {
+            return @{
+                'Name'            = $SID
+                'Description'     = "Service $SID"
+                'NTAccount'       = "NT SERVICE\$SID"
+                'SchemaClassName' = 'service'
+                'SID'             = $SID
+            }
+        }
         'S-1-15-2-' {
             return @{
                 'Name'            = $SID

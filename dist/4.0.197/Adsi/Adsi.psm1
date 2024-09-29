@@ -607,8 +607,7 @@ function Resolve-IdRefCached {
         WhoAmI       = $WhoAmI
     }
 
-    $ErrorActionPreference = $Stop
-    try { $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] } catch { pause }
+    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference]
 
     if ($CacheResult) {
 
@@ -4594,6 +4593,15 @@ function Get-KnownSid {
     #https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
     param ([string]$SID)
     switch -regex ($SID) {
+        'S-1-5-80-' {
+            return @{
+                'Name'            = $SID
+                'Description'     = "Service $SID"
+                'NTAccount'       = "NT SERVICE\$SID"
+                'SchemaClassName' = 'service'
+                'SID'             = $SID
+            }
+        }
         'S-1-15-2-' {
             return @{
                 'Name'            = $SID
@@ -6454,6 +6462,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+
 
 
 
