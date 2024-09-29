@@ -215,6 +215,15 @@ function Get-KnownSid {
                 'SID'             = $SID
             }
         }
+        'S-1-5-32-' {
+            return @{
+                'Name'            = $SID
+                'Description'     = "BuiltIn $SID"
+                'NTAccount'       = "BUILTIN\$SID"
+                'SchemaClassName' = 'user'
+                'SID'             = $SID
+            }
+        }
         default {
             return @{
                 'Name'            = $SID
