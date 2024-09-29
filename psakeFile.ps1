@@ -96,7 +96,7 @@ FormatTaskName {
     Write-Host $taskName -ForegroundColor Blue
 }
 
-task Default -depends Publish
+task Default -depends RemoveScriptScopedVariables
 
 #Task Init -FromModule PowerShellBuild -minimumVersion 0.6.1
 
@@ -536,7 +536,7 @@ task Reinstall -depends Uninstall {
     Install-Module -Name $env:BHProjectName -Force
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
-task FinalTasks -depends Reinstall {
+task RemoveScriptScopedVariables -depends Reinstall {
 
     # Remove script-scoped variables to avoid their accidental re-use
     Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
