@@ -17,7 +17,8 @@ Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject
  [[-DirectoryEntryCache] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
- [[-WellKnownSidBySid] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByCaption] <Hashtable>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -237,6 +238,21 @@ Aliases:
 Required: False
 Position: 8
 Default value: (HOSTNAME.EXE)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WellKnownSidByCaption
+Output from Get-KnownCaptionHashTable
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 15
+Default value: (Get-KnownCaptionHashTable -WellKnownSidBySid $WellKnownSidBySid)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
