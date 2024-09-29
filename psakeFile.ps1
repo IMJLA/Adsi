@@ -510,8 +510,8 @@ task Publish -depends SourceControl {
     }
 } -description 'Publish module to the defined PowerShell repository'
 
-task WaitForRepoToUpdate -depends Publish {
-
+task AwaitRepoUpdate -depends Publish {
+    Write-Host "Entered AwaitRepoUpdate"
     $timer = 0
     $timer = 30
     do {
@@ -528,7 +528,7 @@ task WaitForRepoToUpdate -depends Publish {
     }
 } -description 'Await the new version in the defined PowerShell repository'
 
-task Uninstall -depends WaitForRepoToUpdate {
+task Uninstall -depends AwaitRepoUpdate {
     Uninstall-Module -Name $env:BHProjectName -AllVersions
 } -description 'Uninstall all versions of the module'
 
