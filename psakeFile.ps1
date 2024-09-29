@@ -514,7 +514,33 @@ task Publish -depends SourceControl {
     }
 } -description 'Publish module to the defined PowerShell repository'
 
-task FinalTasks -depends Publish {
+task WaitForRepoToUpdate -depends Publish {
+
+    $timer = 0
+    $timer = 30
+    do {
+        Start-Sleep -Seconds 1
+        $timer++
+        $VersionInGallery = Find-Module -Name $env:BHProjectName -Repository $PublishPSRepository
+    } while (
+        $VersionInGallery.Version -lt $NewModuleVersion -and
+        $timer -lt $timeout
+    )
+
+    if ($timer -eq $timeout) {
+        Write-Warning "Cannot retrieve version '$NewModuleVersion' of module '$env:BHProjectName' from repo '$PublishPSRepository'"
+    }
+} -description 'Await the new version in the defined PowerShell repository'
+
+task Uninstall -depends WaitForRepoToUpdate {
+    Uninstall-Module -Name $env:BHProjectName -AllVersions
+} -description 'Uninstall all versions of the module'
+
+task Reinstall -depends Uninstall {
+    Install-Module -Name $env:BHProjectName -Force
+} -description 'Reinstall the latest version of the module from the defined PowerShell repository'
+
+task FinalTasks -depends Reinstall {
 
     # Remove script-scoped variables to avoid their accidental re-use
     Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue

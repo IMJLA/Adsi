@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.199] - 2024-09-29 - update psake tasks to include awaitrepoupdate,uninstall,reinstall
+
 ## [4.0.198] - 2024-09-29 - minor cleanup
 
 ## [4.0.197] - 2024-09-28 - implement service sid detection in get-knownsid
