@@ -266,10 +266,6 @@ task BuildModule -depends CleanOutputDir {
     Build-PSBuildModule @buildParams
 } -description 'Build a PowerShell script module based on the source directory'
 
-task CleanupBuiltModule {
-    
-}
-
 $genMarkdownPreReqs = {
     $result = $true
     if (-not (Get-Module PlatyPS -ListAvailable)) {
