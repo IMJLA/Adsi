@@ -234,7 +234,6 @@ function Resolve-IdRefCached {
             if (-not $DomainDns) {
 
                 $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
-                $DomainDn = $DomainsByNetbios[$ServerNetBIOS].DistinguishedName
 
             }
 
