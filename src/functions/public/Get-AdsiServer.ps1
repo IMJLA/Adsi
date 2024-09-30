@@ -347,7 +347,7 @@ function Get-AdsiServer {
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
 
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Service' # for '$DomainFqdn'"
-            $Win32Services = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -KeyProperty Name -CacheByProperty @('Name') @CimParams @LoggingParams
+            $Win32Services = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -KeyProperty Name -CacheByProperty @() @CimParams @LoggingParams
 
             Write-LogMsg @LogParams -Text "Resolve-ServiceNameToSID -ComputerName '$DomainFqdn' -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -InputObject `$Win32Services # for '$DomainFqdn'"
             $ResolvedWin32Services = Resolve-ServiceNameToSID -ComputerName $DomainFqdn -InputObject $Win32Services -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $LogParams
@@ -413,7 +413,7 @@ function Get-AdsiServer {
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
 
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Service' # for '$DomainNetbios'"
-            $Win32Services = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -KeyProperty Name -CacheByProperty @('Name') @CimParams @LoggingParams
+            $Win32Services = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -KeyProperty Name -CacheByProperty @() @CimParams @LoggingParams
 
             Write-LogMsg @LogParams -Text "Resolve-ServiceNameToSID -ComputerName '$DomainDnsName' -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -InputObject `$Win32Services # for '$DomainFqdn'"
             $ResolvedWin32Services = Resolve-ServiceNameToSID -ComputerName $DomainDnsName -InputObject $Win32Services -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $LogParams
