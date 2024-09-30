@@ -75,7 +75,11 @@ function Resolve-IdRefCached {
         WhoAmI       = $WhoAmI
     }
 
-    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference]
+    $ComputerCache = $CimCache[$ServerNetBIOS]
+
+    if ($ComputerCache) {
+        $CacheResult = $ComputerCache['Win32_AccountBySID'][$IdentityReference]
+    }
 
     if ($CacheResult) {
 
@@ -90,6 +94,25 @@ function Resolve-IdRefCached {
 
     } else {
         Write-LogMsg @Log -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+    }
+
+    if ($ComputerCache) {
+        $CacheResult = $ComputerCache['Win32_ServiceBySID'][$IdentityReference]
+    }
+
+    if ($CacheResult) {
+
+        #Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
+
+        return [PSCustomObject]@{
+            IdentityReference        = $IdentityReference
+            SIDString                = $CacheResult.SID
+            IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.SID)"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.SID)"
+        }
+
+    } else {
+        Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
     $CacheResult = $WellKnownSidBySid[$IdentityReference]

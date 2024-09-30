@@ -10,6 +10,7 @@ function New-FakeDirectoryEntry {
         [string]$SID,
         [string]$Description,
         [string]$SchemaClassName,
+        $InputObject,
 
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
         [hashtable]$NameAllowList = @{
@@ -54,6 +55,10 @@ function New-FakeDirectoryEntry {
         Description     = $Description
         objectSid       = $objectSid
         SchemaClassName = $SchemaClassName
+    }
+
+    ForEach ($Prop in ($InputObject | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+        $OutputObject[$Prop] = $InputObject.$Prop
     }
 
     $Object = [PSCustomObject]@{

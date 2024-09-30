@@ -662,7 +662,11 @@ function Resolve-IdRefCached {
         WhoAmI       = $WhoAmI
     }
 
-    $CacheResult = $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference]
+    $ComputerCache = $CimCache[$ServerNetBIOS]
+
+    if ($ComputerCache) {
+        $CacheResult = $ComputerCache['Win32_AccountBySID'][$IdentityReference]
+    }
 
     if ($CacheResult) {
 
@@ -677,6 +681,25 @@ function Resolve-IdRefCached {
 
     } else {
         Write-LogMsg @Log -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+    }
+
+    if ($ComputerCache) {
+        $CacheResult = $ComputerCache['Win32_ServiceBySID'][$IdentityReference]
+    }
+
+    if ($CacheResult) {
+
+        #Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
+
+        return [PSCustomObject]@{
+            IdentityReference        = $IdentityReference
+            SIDString                = $CacheResult.SID
+            IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.SID)"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.SID)"
+        }
+
+    } else {
+        Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
     $CacheResult = $WellKnownSidBySid[$IdentityReference]
@@ -4433,18 +4456,17 @@ function Get-DirectoryEntry {
         #>
         if ($CimServer) {
 
-            Write-LogMsg @LogParams -Text " # CIM server cache hit for '$Server' # for '$DirectoryPath'"
+            #Write-LogMsg @LogParams -Text " # CIM server cache hit for '$Server' # for '$DirectoryPath'"
             $ID = "$Server\$AccountName"
             $CimCacheResult = $CimServer['Win32_AccountByCaption'][$ID]
 
             if ($CimCacheResult) {
 
-                Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server' # for '$DirectoryPath'"
+                #Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server' # for '$DirectoryPath'"
 
                 $FakeDirectoryEntry = @{
-                    'Description'   = $CimCacheResult.Description
-                    'SID'           = $CimCacheResult.SID
-                    'DirectoryPath' = $DirectoryPath
+                    InputObject   = $CimCacheResult
+                    DirectoryPath = $DirectoryPath
                 }
 
                 if ($CimCacheResult.SIDType) {
@@ -4456,37 +4478,27 @@ function Get-DirectoryEntry {
             } else {
 
                 Write-LogMsg @LogParams -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
-                $DomainCacheResult = $DomainsByFqdn[$Server]
+                $CimCacheResult = $CimServer['Win32_ServiceBySID'][$ID]
 
-                if ($DomainCacheResult) {
+                if ($CimCacheResult) {
 
-                    $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
+                    #Write-LogMsg @LogParams -Text " # Win32_ServiceBySID CIM instance cache hit for '$ID' on '$Server' # for '$DirectoryPath'"
 
-                    if ($SIDCacheResult) {
-
-                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
-                        $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
-
-                    } else {
-
-                        Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
-                        $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
-
-                        if ($NameCacheResult) {
-
-                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
-                            $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
-
-                        } else {
-
-                            Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
-
-                        }
+                    $FakeDirectoryEntry = @{
+                        InputObject   = $CimCacheResult
+                        DirectoryPath = $DirectoryPath
                     }
+
+                    if ($CimCacheResult.SIDType) {
+                        $FakeDirectoryEntry['SchemaClassName'] = $SidTypes[[int]$CimCacheResult.SIDType]
+                    }
+
+                    $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntry
 
                 } else {
 
-                    $DomainCacheResult = $DomainsByNetbios[$Server]
+                    Write-LogMsg @LogParams -Text " # Win32_ServiceBySID CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
+                    $DomainCacheResult = $DomainsByFqdn[$Server]
 
                     if ($DomainCacheResult) {
 
@@ -4494,26 +4506,29 @@ function Get-DirectoryEntry {
 
                         if ($SIDCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
+                            #Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
                             $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                         } else {
 
-                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
+                            Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
                             $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                             if ($NameCacheResult) {
 
-                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
+                                #Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
                                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                             } else {
-                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
+
+                                Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
+
                             }
                         }
+
                     } else {
 
-                        $DomainCacheResult = $DomainsBySid[$Server]
+                        $DomainCacheResult = $DomainsByNetbios[$Server]
 
                         if ($DomainCacheResult) {
 
@@ -4521,21 +4536,50 @@ function Get-DirectoryEntry {
 
                             if ($SIDCacheResult) {
 
-                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
+                                #Write-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                                 $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                             } else {
 
-                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
+                                Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                                 $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                                 if ($NameCacheResult) {
 
-                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
+                                    #Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                                     $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                                 } else {
-                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
+                                    Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
+                                }
+                            }
+                        } else {
+
+                            $DomainCacheResult = $DomainsBySid[$Server]
+
+                            if ($DomainCacheResult) {
+
+                                $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
+
+                                if ($SIDCacheResult) {
+
+                                    W#rite-LogMsg @LogParams -Text " # Well-known SID by SID cache hit for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
+                                    $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+
+                                } else {
+
+                                    Write-LogMsg @LogParams -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
+                                    $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
+
+                                    if ($NameCacheResult) {
+
+                                        #Write-LogMsg @LogParams -Text " # Well-known SID by name cache hit for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
+                                        $DirectoryEntry = New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+
+                                    } else {
+                                        Write-LogMsg @LogParams -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
+                                    }
+
                                 }
 
                             }
@@ -4543,7 +4587,7 @@ function Get-DirectoryEntry {
                         }
 
                     }
-
+                
                 }
 
             }
@@ -4636,7 +4680,7 @@ function Get-DirectoryEntry {
 
     } else {
 
-        Write-LogMsg @LogParams -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
+        #Write-LogMsg @LogParams -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
         $DirectoryEntry = $CacheResult
 
     }
@@ -6131,6 +6175,7 @@ function New-FakeDirectoryEntry {
         [string]$SID,
         [string]$Description,
         [string]$SchemaClassName,
+        $InputObject,
 
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
         [hashtable]$NameAllowList = @{
@@ -6175,6 +6220,10 @@ function New-FakeDirectoryEntry {
         Description     = $Description
         objectSid       = $objectSid
         SchemaClassName = $SchemaClassName
+    }
+
+    ForEach ($Prop in ($InputObject | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+        $OutputObject[$Prop] = $InputObject.$Prop
     }
 
     $Object = [PSCustomObject]@{
@@ -6588,6 +6637,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
