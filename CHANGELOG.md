@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.215] - 2024-09-30 - bugfix missing CimCache for Get-WinNTGroupMember
+
 ## [4.0.214] - 2024-09-30 - add debug pause
 
 ## [4.0.213] - 2024-09-30 - skip unnecessary caching

@@ -179,7 +179,7 @@ function Get-WinNTGroupMember {
                     $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
                     if ($DirectoryPath -match $workgroupregex) {
 
-                        Write-LogMsg @LogParams -Text " # Domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                        Write-LogMsg @LogParams -Text " # Local computer of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 

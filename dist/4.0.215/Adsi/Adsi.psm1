@@ -1933,7 +1933,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     $LogParams['Type'] = $DebugOutputStream
                 }
 
-                $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+                $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
 
                 $DirectoryEntry = $MembersOfUsersGroup |
                 Where-Object -FilterScript { ($SamAccountNameOrSid -eq [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0)) }
@@ -6006,7 +6006,7 @@ function Get-WinNTGroupMember {
                     $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
                     if ($DirectoryPath -match $workgroupregex) {
 
-                        Write-LogMsg @LogParams -Text " # Domain of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                        Write-LogMsg @LogParams -Text " # Local computer of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MemberName = $Matches.Acct
                         $MemberDomainNetbios = $Matches.Domain
 
@@ -6641,6 +6641,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
