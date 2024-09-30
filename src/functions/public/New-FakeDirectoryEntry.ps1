@@ -32,7 +32,6 @@ function New-FakeDirectoryEntry {
             'SYSTEM'                              = $null
         },
 
-        # Unused but here for convenient splats
         [string]$Name,
 
         # Unused but here for convenient splats
@@ -48,30 +47,33 @@ function New-FakeDirectoryEntry {
     }
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
-    $objectSid = ConvertTo-SidByteArray -SidString $SID
 
     $Properties = @{
         Name            = $Name
         Description     = $Description
-        objectSid       = $objectSid
         SchemaClassName = $SchemaClassName
     }
 
     ForEach ($Prop in ($InputObject | Get-Member -View All -MemberType Property, NoteProperty).Name) {
-        $OutputObject[$Prop] = $InputObject.$Prop
+        $Properties[$Prop] = $InputObject.$Prop
     }
 
-    $Object = [PSCustomObject]@{
-        Name            = $Name
-        Description     = $Description
-        objectSid       = $objectSid
-        SchemaClassName = $SchemaClassName
-        Parent          = $Parent
-        Path            = $DirectoryPath
-        SchemaEntry     = $SchemaEntry
-        Properties      = $Properties
+    $SID = $Properties['SID']
+    if ($SID) {
+        $Properties['objectSid'] = ConvertTo-SidByteArray -SidString $SID
+    } else {
+        $Properties['objectSid'] = $null
     }
 
+    $TopLevelOnlyProperties = @{
+        Parent      = $Parent
+        Path        = $DirectoryPath
+        SchemaEntry = $SchemaEntry
+        Properties  = $Properties
+    }
+
+    $AllProperties = $Properties + $TopLevelOnlyProperties
+    $Object = [PSCustomObject]$AllProperties
     Add-Member -InputObject $Object -Name RefreshCache -MemberType ScriptMethod -Value {}
     Add-Member -InputObject $Object -Name Invoke -MemberType ScriptMethod -Value {}
     return $Object
