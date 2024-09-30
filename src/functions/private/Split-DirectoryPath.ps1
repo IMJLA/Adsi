@@ -23,8 +23,6 @@ function Split-DirectoryPath {
         $Server = $ParentPath
     }
 
-    if ($Server -ne 'JLA-LoftHTPC') { pause }
-
     return @{
         'AccountName' = $AccountName
         'Server'      = $Server
