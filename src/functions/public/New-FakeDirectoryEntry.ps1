@@ -32,6 +32,7 @@ function New-FakeDirectoryEntry {
             'SYSTEM'                              = $null
         },
 
+        # Unused but here for convenient splats
         [string]$Name,
 
         # Unused but here for convenient splats

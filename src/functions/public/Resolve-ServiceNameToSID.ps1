@@ -18,7 +18,7 @@ function Resolve-ServiceNameToSID {
 
         ForEach ($Svc in $InputObject) {
 
-            Write-LogMsg @Log -Text "Invoke-ScShowSid -ServiceName '$($Svc.Name)' -ComputerName '$ComputerName' -ThisFqdn '$ThisFqdn' -ThisHostName '$ThisHostName' -Log `$Log"
+            #Write-LogMsg @Log -Text "Invoke-ScShowSid -ServiceName '$($Svc.Name)' -ComputerName '$ComputerName' -ThisFqdn '$ThisFqdn' -ThisHostName '$ThisHostName' -Log `$Log"
             $ScShowSidResults = Invoke-ScShowSid -ServiceName $Svc.Name -ComputerName $ComputerName -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $Log
             $ServiceSidAndStatus = ConvertFrom-ScShowSidResult -Result $ScShowSidResults
 

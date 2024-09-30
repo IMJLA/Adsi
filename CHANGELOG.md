@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.212] - 2024-09-30 - reduce debug log verbosity
+
 ## [4.0.211] - 2024-09-30 - bugfix allow retention of all inputobject properties
 
 ## [4.0.210] - 2024-09-30 - support sid to service resolution
