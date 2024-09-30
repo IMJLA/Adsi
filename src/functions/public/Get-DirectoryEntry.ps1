@@ -250,13 +250,14 @@ function Get-DirectoryEntry {
                         }
 
                     }
-                
+
                 }
 
             }
 
         } else {
             Write-LogMsg @LogParams -Text " # CIM server cache miss for '$Server' # for '$DirectoryPath'"
+            pause
         }
 
         if ($null -eq $DirectoryEntry) {

@@ -3310,7 +3310,7 @@ function Find-AdsiProvider {
         WhoAmI            = $WhoAmI
     }
 
-    Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
+    ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
 
     if (Get-CachedCimInstance @CommandParameters) {
         #$AdsiPath = "LDAP://$AdsiServer"
@@ -4587,13 +4587,14 @@ function Get-DirectoryEntry {
                         }
 
                     }
-                
+
                 }
 
             }
 
         } else {
             Write-LogMsg @LogParams -Text " # CIM server cache miss for '$Server' # for '$DirectoryPath'"
+            pause
         }
 
         if ($null -eq $DirectoryEntry) {
@@ -6640,6 +6641,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

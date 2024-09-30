@@ -79,7 +79,7 @@ function Find-AdsiProvider {
         WhoAmI            = $WhoAmI
     }
 
-    Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
+    ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
 
     if (Get-CachedCimInstance @CommandParameters) {
         #$AdsiPath = "LDAP://$AdsiServer"
