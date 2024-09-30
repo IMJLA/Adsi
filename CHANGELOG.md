@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.209] - 2024-09-30 - update debug logging
+
 ## [4.0.208] - 2024-09-30 - add service sid caching to get-adsiserver
 
 ## [4.0.207] - 2024-09-30 - add service sid caching to get-adsiserver
