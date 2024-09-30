@@ -118,7 +118,7 @@ function Get-AdsiServer {
 
             if ($OutputObject) {
 
-                Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFqdn'"
+                #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFqdn'"
                 $OutputObject
                 continue
 
@@ -370,13 +370,13 @@ function Get-AdsiServer {
 
             if ($OutputObject) {
 
-                Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
+                #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
                 $OutputObject
                 continue
 
             }
 
-            Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' # Domain NetBIOS cache hit for '$DomainNetbios'"
+            Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' # Domain NetBIOS cache miss for '$DomainNetbios'"
             $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
 
             Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName' # for '$DomainNetbios'"
