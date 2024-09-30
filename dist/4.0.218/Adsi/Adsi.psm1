@@ -4423,30 +4423,30 @@ function Get-DirectoryEntry {
         [string]$DebugOutputStream = 'Debug'
 
     )
-
-    $LogParams = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    $LoggingParams = @{
-        ThisHostname = $ThisHostname
-        LogBuffer    = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    $SidTypes = Get-SidTypeMap
-    $SplitDirectoryPath = Split-DirectoryPath -DirectoryPath $DirectoryPath
-    $AccountName = $SplitDirectoryPath['AccountName']
-    $Server = $SplitDirectoryPath['Server']
-    $CimServer = $CimCache[$Server]
     $CacheResult = $DirectoryEntryCache[$DirectoryPath]
 
     if ($null -eq $CacheResult) {
 
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = $DebugOutputStream
+            Buffer       = $LogBuffer
+            WhoAmI       = $WhoAmI
+        }
+
         Write-LogMsg @LogParams -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogBuffer    = $LogBuffer
+            WhoAmI       = $WhoAmI
+        }
+
+        $SidTypes = Get-SidTypeMap
+        $SplitDirectoryPath = Split-DirectoryPath -DirectoryPath $DirectoryPath
+        $AccountName = $SplitDirectoryPath['AccountName']
+        $Server = $SplitDirectoryPath['Server']
+        $CimServer = $CimCache[$Server]
 
         <#
         The WinNT provider only throws an error if you try to retrieve certain accounts/identities
@@ -4679,7 +4679,7 @@ function Get-DirectoryEntry {
     } else {
 
         #Write-LogMsg @LogParams -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
-        $DirectoryEntry = $CacheResult
+        return $CacheResult
 
     }
 
@@ -6638,6 +6638,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.218] - 2024-09-30 - slight efficiency improvement for directoryentrycache hits
+
 ## [4.0.217] - 2024-09-30 - add debug pause
 
 ## [4.0.216] - 2024-09-30 - remove debug pauses
