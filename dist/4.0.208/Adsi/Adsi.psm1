@@ -307,6 +307,31 @@ You can programmatically generate these app capability SIDs by calling Derive­C
         }
     }
 }
+function ConvertFrom-ScShowSidResult {
+    # Convert the results from sc.exe into an object
+    param (
+        [string[]]$Result
+    )
+
+    $dict = @{}
+    ForEach ($Line in $Result) {
+
+        if ([string]::IsNullOrEmpty($Line)) {
+            if ($dict.Keys.Count -ge 1) {
+                [PSCustomObject]$dict
+                $dict = @{}
+                continue
+            }
+        } else {
+            $Prop, $Value = ($Line -split ':').Trim()
+            $dict[$Prop] = $Value
+        }
+
+    }
+    if ($dict.Keys.Count -ge 1) {
+        [PSCustomObject]$dict
+    }
+}
 function ConvertTo-SidString {
 
     param ($ServerNetBIOS, $Name, $Log, $DebugOutputStream)
@@ -338,6 +363,36 @@ function Get-SidTypeMap {
         8 = 'SidTypeUnknown'
         9 = 'computer' #'SidTypeComputer'
     }
+}
+function Invoke-ScShowSid {
+
+    # Invoke sc.exe showsid
+
+    param (
+        [string]$ServiceName,
+        [string]$ComputerName,
+        [string]$ThisHostName,
+        [string]$ThisFqdn,
+        [hashtable]$Log
+    )
+
+    if (
+        $ComputerName -eq $ThisFqdn -or
+        $ComputerName -eq $ThisHostName -or
+        $ComputerName -eq 'localhost' -or
+        $ComputerName -eq '127.0.0.1'
+    ) {
+
+        Write-LogMsg @Log -Text "& sc.exe showsid $ServiceName"
+        & sc.exe showsid $ServiceName
+
+    } else {
+
+        Write-LogMsg @Log -Text "Invoke-Command -ComputerName $ComputerName -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $ServiceName"
+        Invoke-Command -ComputerName $ComputerName -ScriptBlock { & sc.exe showsid $args[0] } -ArgumentList $ServiceName
+
+    }
+
 }
 function Resolve-IdRefAppPkgAuth {
 
@@ -1169,6 +1224,7 @@ function Resolve-IdRefSvc {
         WhoAmI       = $WhoAmI
     }
 
+    <#
     # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
     if ($ServerNetBIOS -eq $ThisHostName) {
 
@@ -1192,6 +1248,11 @@ function Resolve-IdRefSvc {
     }
 
     $SIDString = $ScResultProps['SERVICE SID']
+    #>
+
+    $ScShowSidResults = Invoke-ScShowSid -ServiceName $Name -ComputerName $ServerNetBIOS -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $Log
+    $ServiceSidAndStatus = ConvertFrom-ScShowSidResult -Result $ScShowSidResults
+    $SIDString = $ServiceSidAndStatus.SID
     $Caption = "$ServerNetBIOS\$Name"
 
     $DomainCacheResult = $DomainsByNetbios[$ServerNetBIOS]
@@ -1205,7 +1266,7 @@ function Resolve-IdRefSvc {
     }
 
     # Update the caches
-    $Win32Acct = [PSCustomObject]@{
+    $Win32Svc = [PSCustomObject]@{
         SID     = $SIDString
         Caption = $Caption
         Domain  = $ServerNetBIOS
@@ -1213,10 +1274,10 @@ function Resolve-IdRefSvc {
     }
 
     Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
+    $CimCache[$ServerNetBIOS]['Win32_ServiceByName'][$Name] = $Win32Svc
 
     Write-LogMsg @Log -Text " # Add '$SIDString' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
+    $CimCache[$ServerNetBIOS]['Win32_ServiceBySID'][$SIDString] = $Win32Svc
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -3826,13 +3887,13 @@ function Get-AdsiServer {
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn -CimCache $CimCache -ThisFqdn $ThisFqdn @LoggingParams
             $CacheParams['AdsiProvider'] = $AdsiProvider
 
-            Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider'"
+            Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' # for '$DomainFqdn'"
             $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider @LoggingParams
 
-            Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -ThisFqdn '$ThisFqdn'"
+            Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -ThisFqdn '$ThisFqdn' # for '$DomainFqdn'"
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainFqdn -ThisFqdn $ThisFqdn -CimCache $CimCache @CacheParams @LoggingParams
 
-            Write-LogMsg @LogParams -Text "ConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn'"
+            Write-LogMsg @LogParams -Text "ConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn' # for '$DomainFqdn'"
             $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -ThisFqdn $ThisFqdn -CimCache $CimCache @CacheParams @LoggingParams
 
             <#
@@ -4041,8 +4102,15 @@ function Get-AdsiServer {
                     WinCapabilityRemovableStorageSid                     16                                           S-1-15-3-10
             #>
 
-            Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account'"
+            Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account' # for '$DomainFqdn'"
             $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
+
+            Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Service' # for '$DomainFqdn'"
+            $Win32Services = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -KeyProperty Name -CacheByProperty @('Name') @CimParams @LoggingParams
+
+            Write-LogMsg @LogParams -Text "Resolve-ServiceNameToSID -ComputerName '$DomainFqdn' -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -InputObject `$Win32Services # for '$DomainFqdn'"
+            $ResolvedWin32Services = Resolve-ServiceNameToSID -ComputerName $DomainFqdn -InputObject $Win32Services -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $LogParams
+            Add-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -InputObject $ResolvedWin32Services -CacheByProperty @('Name', 'SID') -CimCache $CimCache -DebugOutputStream $DebugOutputStream @LoggingParams
 
             $OutputObject = [PSCustomObject]@{
                 DistinguishedName  = $DomainDn
@@ -4051,6 +4119,7 @@ function Get-AdsiServer {
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
+                Win32Services      = $ResolvedWin32Services
                 WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
@@ -4081,7 +4150,7 @@ function Get-AdsiServer {
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainDnsName -CimCache $CimCache -ThisFqdn $ThisFqdn @LoggingParams
             $CacheParams['AdsiProvider'] = $AdsiProvider
 
-            Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -Domain '$DomainNetBIOS'"
+            Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -Domain '$DomainNetBIOS' # for '$DomainNetbios'"
             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
 
             if ($DomainDn) {
@@ -4100,7 +4169,14 @@ function Get-AdsiServer {
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -ThisFqdn $ThisFqdn -CimCache $CimCache @CacheParams @LoggingParams
 
             Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Account' # for '$DomainNetbios'"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Account' -KeyProperty Caption -CacheByProperty @('Caption', 'SID') @CimParams @LoggingParams
+
+            Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Service' # for '$DomainNetbios'"
+            $Win32Services = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -KeyProperty Name -CacheByProperty @('Name') @CimParams @LoggingParams
+
+            Write-LogMsg @LogParams -Text "Resolve-ServiceNameToSID -ComputerName '$DomainDnsName' -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -InputObject `$Win32Services # for '$DomainFqdn'"
+            $ResolvedWin32Services = Resolve-ServiceNameToSID -ComputerName $DomainDnsName -InputObject $Win32Services -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $LogParams
+            Add-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -InputObject $ResolvedWin32Services -CacheByProperty @('Name', 'SID') @CimParams @LoggingParams
 
             if ($RemoveCimSession) {
                 Remove-CimSession -CimSession $CimSession
@@ -4113,6 +4189,7 @@ function Get-AdsiServer {
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
+                Win32Services      = $ResolvedWin32Services
                 WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
@@ -6316,6 +6393,46 @@ function Resolve-IdentityReference {
     }
 
 }
+function Resolve-ServiceNameToSID {
+
+    # Use sc.exe to enrich a Service object with the SID and Status of the service
+
+    param (
+
+        # Output of Get-Service or an instance of the Win32_Service CIM class
+        [Parameter(ValueFromPipeline)]
+        $InputObject,
+        [string]$ComputerName,
+        [string]$ThisHostName,
+        [string]$ThisFqdn,
+        [hashtable]$Log
+
+    )
+
+    process {
+
+        ForEach ($Svc in $InputObject) {
+
+            $ScShowSidResults = Invoke-ScShowSid -ServiceName $Svc.Name -ComputerName $ComputerName -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $Log
+            $ServiceSidAndStatus = ConvertFrom-ScShowSidResult -Result $ScShowSidResults
+
+            $OutputObject = @{
+                Name   = $Svc.Name
+                SID    = $ServiceSidAndStatus.'SERVICE SID'
+                Status = $ServiceSidAndStatus.Status
+            }
+
+            ForEach ($Prop in ($Svc | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+                $OutputObject[$Prop] = $Svc.$Prop
+            }
+
+            [PSCustomObject]$OutputObject
+
+        }
+
+    }
+
+}
 function Search-Directory {
     <#
         .SYNOPSIS
@@ -6469,7 +6586,9 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
+
 
 
 

@@ -69,6 +69,7 @@ function Resolve-IdRefSvc {
         WhoAmI       = $WhoAmI
     }
 
+    <#
     # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
     if ($ServerNetBIOS -eq $ThisHostName) {
 
@@ -92,6 +93,11 @@ function Resolve-IdRefSvc {
     }
 
     $SIDString = $ScResultProps['SERVICE SID']
+    #>
+
+    $ScShowSidResults = Invoke-ScShowSid -ServiceName $Name -ComputerName $ServerNetBIOS -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $Log
+    $ServiceSidAndStatus = ConvertFrom-ScShowSidResult -Result $ScShowSidResults
+    $SIDString = $ServiceSidAndStatus.SID
     $Caption = "$ServerNetBIOS\$Name"
 
     $DomainCacheResult = $DomainsByNetbios[$ServerNetBIOS]
@@ -105,7 +111,7 @@ function Resolve-IdRefSvc {
     }
 
     # Update the caches
-    $Win32Acct = [PSCustomObject]@{
+    $Win32Svc = [PSCustomObject]@{
         SID     = $SIDString
         Caption = $Caption
         Domain  = $ServerNetBIOS
@@ -113,10 +119,10 @@ function Resolve-IdRefSvc {
     }
 
     Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
+    $CimCache[$ServerNetBIOS]['Win32_ServiceByName'][$Name] = $Win32Svc
 
     Write-LogMsg @Log -Text " # Add '$SIDString' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
+    $CimCache[$ServerNetBIOS]['Win32_ServiceBySID'][$SIDString] = $Win32Svc
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference

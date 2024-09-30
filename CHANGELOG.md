@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.208] - 2024-09-30 - add service sid caching to get-adsiserver
+
+## [4.0.207] - 2024-09-30 - add service sid caching to get-adsiserver
+
 ## [4.0.206] - 2024-09-30 - bugfix incorrect logmsg indicating cache hit. also commented excessively verbose msgs about cache hits (more interested in directory queries/translations)
 
 ## [4.0.205] - 2024-09-29 - update psakefile write-host output
