@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.229] - 2024-09-30 - implement cachetosearch param
+
 ## [4.0.228] - 2024-09-30 - add debug pause
 
 ## [4.0.227] - 2024-09-30 - add debug log output
