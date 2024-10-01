@@ -31,11 +31,14 @@ function Find-CachedWellKnownSID {
                     Write-LogMsg @LogParams -Text " # '$Cache' cache miss for '$IdentityReference' on '$DomainNetBIOS'"
                 }
 
+            } else {
+                Write-LogMsg @LogParams -Text " # Cache miss for '$Cache' on '$DomainNetBIOS'"
             }
 
-        } else {
-            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
         }
 
+    } else {
+        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
     }
+
 }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.236] - 2024-09-30 - bugfix else location
+
 ## [4.0.235] - 2024-09-30 - implement well known sid caching
 
 ## [4.0.234] - 2024-09-30 - implement find-cachedciminstance
