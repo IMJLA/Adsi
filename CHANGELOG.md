@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.223] - 2024-09-30 - missed a spot to use write-logmsg -expand
+
 ## [4.0.222] - 2024-09-30 - implement Find-CachedCimInstance and the Write-LogMsg -Expand parameter
 
 ## [4.0.221] - 2024-09-30 - move math to dedicated function

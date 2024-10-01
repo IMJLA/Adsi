@@ -181,14 +181,13 @@ function ConvertFrom-IdentityReferenceResolved {
                     'primaryGroupToken'
                 )
     
-                $Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
+                #$Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
+                #    $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
+                #    "-$ParamName $ParamValue"
+                #}
     
-                    $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
-                    "-$ParamName $ParamValue"
-    
-                }
-    
-                Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
+                #Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
+                Write-LogMsg @LogParams -Text 'Search-Directory' -Expand $SearchDirectoryParams, $LoggingParams
     
                 try {
                     $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
