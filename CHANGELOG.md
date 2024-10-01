@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.228] - 2024-09-30 - add debug pause
+
 ## [4.0.227] - 2024-09-30 - add debug log output
 
 ## [4.0.226] - 2024-09-30 - bugfix need to check for null cim cache result
