@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.221] - 2024-09-30 - move math to dedicated function
+
 ## [4.0.220] - 2024-09-30 - use math instead of sc.exe for service sid calculation
 
 ## [4.0.219] - 2024-09-30 - remove debug pause
