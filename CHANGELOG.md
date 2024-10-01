@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.233] - 2024-09-30 - update psakefile
+
 ## [4.0.232] - 2024-09-30 - rebuild/reinstall
 
 ## [4.0.231] - 2024-09-30 - bugfix extra paren

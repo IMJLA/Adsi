@@ -528,7 +528,7 @@ task AwaitRepoUpdate -depends Publish {
 } -description 'Await the new version in the defined PowerShell repository'
 
 task Uninstall -depends AwaitRepoUpdate {
-    Uninstall-Module -Name $env:BHProjectName -AllVersions
+    Uninstall-Module -Name $env:BHProjectName -AllVersions -ErrorAction SilentlyContinue
 } -description 'Uninstall all versions of the module'
 
 task Reinstall -depends Uninstall {
