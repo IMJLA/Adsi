@@ -493,10 +493,11 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 }
 
+                Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members for '$IdentityReference'"
+
             }
 
             $PropertiesToAdd['Members'] = $GroupMembers
-            Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members for '$IdentityReference'"
 
         } else {
 

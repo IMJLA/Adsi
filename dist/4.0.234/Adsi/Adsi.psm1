@@ -723,44 +723,21 @@ function Resolve-IdRefCached {
         WhoAmI       = $WhoAmI
     }
 
-    $ComputerCache = $CimCache[$ServerNetBIOS]
+    $CachedCimInstance = Find-CachedCimInstance -ComputerName $ServerNetBIOS -Key $IdentityReference -CimCache $CimCache -Log $Log -CacheToSearch 'Win32_ServiceBySid', 'Win32_AccountBySid', 'Win32_AccountByCaption'
 
-    if ($ComputerCache) {
-        $CacheResult = $ComputerCache['Win32_AccountBySID'][$IdentityReference]
-    }
-
-    if ($CacheResult) {
+    if ($CachedCimInstance) {
 
         #Write-LogMsg @Log -Text " # Win32_AccountBySID CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
-            SIDString                = $CacheResult.SID
-            IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.Name)"
-            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
+            SIDString                = $CachedCimInstance.SID
+            IdentityReferenceNetBios = "$ServerNetBIOS\$($CachedCimInstance.Name)"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CachedCimInstance.Name)"
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
-    }
-
-    if ($ComputerCache) {
-        $CacheResult = $ComputerCache['Win32_ServiceBySID'][$IdentityReference]
-    }
-
-    if ($CacheResult) {
-
-        #Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
-
-        return [PSCustomObject]@{
-            IdentityReference        = $IdentityReference
-            SIDString                = $CacheResult.SID
-            IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.SID)"
-            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.SID)"
-        }
-
-    } else {
-        Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+        Write-LogMsg @Log -Text " # CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
     $CacheResult = $WellKnownSidBySid[$IdentityReference]
@@ -2173,10 +2150,11 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 }
 
+                Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members for '$IdentityReference'"
+
             }
 
             $PropertiesToAdd['Members'] = $GroupMembers
-            Write-LogMsg @LogParams -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members for '$IdentityReference'"
 
         } else {
 
@@ -4501,6 +4479,7 @@ function Get-DirectoryEntry {
         [string]$DebugOutputStream = 'Debug'
 
     )
+
     $CacheResult = $DirectoryEntryCache[$DirectoryPath]
 
     if ($null -eq $CacheResult) {
@@ -6434,8 +6413,10 @@ function Resolve-IdentityReference {
     # and update the Win32_AccountBySID and Win32_AccountByCaption caches.
     # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
     # Search these caches now.
-    $CacheResult = Resolve-IdRefCached @splat1 -DomainsByFqdn $DomainsByFqdn @splat3 -Name $Name @splat5 @splat6 -DomainsBySid $DomainsBySid @splat8 @LogParams
-    if ($CacheResult) { return $CacheResult }
+    $CacheResult = Resolve-IdRefCached @splat1 -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
+    if ($CacheResult) { return $CacheResult } else {
+        Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
+    }
 
     # If no match was found in any cache, the path forward depends on the IdentityReference.
     switch -Wildcard ($IdentityReference) {
@@ -6728,6 +6709,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

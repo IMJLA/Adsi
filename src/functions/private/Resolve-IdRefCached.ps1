@@ -75,44 +75,21 @@ function Resolve-IdRefCached {
         WhoAmI       = $WhoAmI
     }
 
-    $ComputerCache = $CimCache[$ServerNetBIOS]
+    $CachedCimInstance = Find-CachedCimInstance -ComputerName $ServerNetBIOS -Key $IdentityReference -CimCache $CimCache -Log $Log -CacheToSearch 'Win32_ServiceBySid', 'Win32_AccountBySid', 'Win32_AccountByCaption'
 
-    if ($ComputerCache) {
-        $CacheResult = $ComputerCache['Win32_AccountBySID'][$IdentityReference]
-    }
+    if ($CachedCimInstance) {
 
-    if ($CacheResult) {
-
-        #Write-LogMsg @Log -Text " # Win32_AccountBySID CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
+        #Write-LogMsg @Log -Text " # CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
-            SIDString                = $CacheResult.SID
-            IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.Name)"
-            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
+            SIDString                = $CachedCimInstance.SID
+            IdentityReferenceNetBios = "$ServerNetBIOS\$($CachedCimInstance.Name)"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CachedCimInstance.Name)"
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Win32_AccountBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
-    }
-
-    if ($ComputerCache) {
-        $CacheResult = $ComputerCache['Win32_ServiceBySID'][$IdentityReference]
-    }
-
-    if ($CacheResult) {
-
-        #Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
-
-        return [PSCustomObject]@{
-            IdentityReference        = $IdentityReference
-            SIDString                = $CacheResult.SID
-            IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.SID)"
-            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.SID)"
-        }
-
-    } else {
-        Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+        Write-LogMsg @Log -Text " # CIM instance cache miss for '$IdentityReference' on '$ServerNetBIOS'"
     }
 
     $CacheResult = $WellKnownSidBySid[$IdentityReference]

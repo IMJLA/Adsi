@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.234] - 2024-09-30 - implement find-cachedciminstance
+
 ## [4.0.233] - 2024-09-30 - update psakefile
 
 ## [4.0.232] - 2024-09-30 - rebuild/reinstall

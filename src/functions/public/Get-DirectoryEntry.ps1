@@ -88,6 +88,7 @@ function Get-DirectoryEntry {
         [string]$DebugOutputStream = 'Debug'
 
     )
+
     $CacheResult = $DirectoryEntryCache[$DirectoryPath]
 
     if ($null -eq $CacheResult) {
