@@ -1800,9 +1800,8 @@ function ConvertFrom-IdentityReferenceResolved {
         if ($CachedCimInstance) {
             #TODO: # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
             #        Use Get-KnownSidHashtable first as those are guaranteed local accounts?
-            $DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedCimInstance.Name))"
+            $DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedCimInstance.Name)"
             $DirectoryEntry = New-FakeDirectoryEntry -InputObject $CachedCimInstance -NameAllowList @{ $CachedCimInstance.Name = $null } -DirectoryPath $DirectoryPath
-            pause
         } else {
             Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
         }
@@ -6729,6 +6728,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
