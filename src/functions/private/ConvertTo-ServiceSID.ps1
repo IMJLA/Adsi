@@ -1,10 +1,10 @@
 function ConvertTo-ServiceSID {
-    <# 
-    .SYNOPSIS 
+    <#
+    .SYNOPSIS
     This script calculates the SID of a Virtual Service Account.
-    .DESCRIPTION 
-    Virtual service accounts are used by Windows Server 2008 and later to isolate services without the 
-    complexity of password management and local accounts.  However, the SID for these accounts is not 
+    .DESCRIPTION
+    Virtual service accounts are used by Windows Server 2008 and later to isolate services without the
+    complexity of password management and local accounts.  However, the SID for these accounts is not
     stored in the SAM database.  Instead, it is calculated based on the service name.  This script
     performs that calculation to arrive at the SID for a service account.  This same calculation
     can be preformed by the sc.exe ustility using "sc.exe showsid <service_name>".
