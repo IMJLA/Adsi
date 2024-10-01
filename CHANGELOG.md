@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.225] - 2024-09-30 - bugfix need dict not arr
+
 ## [4.0.224] - 2024-09-30 - properly set directoryentry
 
 ## [4.0.223] - 2024-09-30 - missed a spot to use write-logmsg -expand

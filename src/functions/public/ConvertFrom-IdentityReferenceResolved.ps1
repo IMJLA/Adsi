@@ -117,7 +117,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $CachedCimInstance = Find-CachedCimInstance -ComputerName $DomainNetBIOS -Key $SamAccountNameOrSid -CimCache $CimCache -Log $LogParams
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid" # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
-        $DirectoryEntry = New-FakeDirectoryEntry -InputObject $CachedCimInstance -NameAllowList $CachedCimInstance.Name -DirectoryPath $DirectoryPath
+        $DirectoryEntry = New-FakeDirectoryEntry -InputObject $CachedCimInstance -NameAllowList @{ $CachedCimInstance.Name = $null } -DirectoryPath $DirectoryPath
 
         if ($null -eq $DirectoryEntry) {
 
