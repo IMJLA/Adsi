@@ -132,6 +132,8 @@ function ConvertFrom-IdentityReferenceResolved {
 
             $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
 
+        } else {
+            Write-LogMsg @LogParams -Text " # Well Known SID cache miss for '$IdentityReference' on '$DomainNetBIOS'"
         }
 
         if ($null -eq $DirectoryEntry) {
