@@ -1798,7 +1798,9 @@ function ConvertFrom-IdentityReferenceResolved {
         $CachedCimInstance = Find-CachedCimInstance -ComputerName $DomainNetBIOS -Key $SamAccountNameOrSid -CimCache $CimCache -Log $LogParams -CacheToSearch 'Win32_ServiceBySid', 'Win32_AccountBySid'
 
         if ($CachedCimInstance) {
-            $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid" # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
+            #TODO: # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
+            #        Use Get-KnownSidHashtable first as those are guaranteed local accounts?
+            $DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedCimInstance.Name))"
             $DirectoryEntry = New-FakeDirectoryEntry -InputObject $CachedCimInstance -NameAllowList @{ $CachedCimInstance.Name = $null } -DirectoryPath $DirectoryPath
             pause
         } else {
@@ -5591,14 +5593,14 @@ function Get-KnownSidHashTable {
             'Description'     = 'Windows Cryptographic service account'
             'Name'            = 'CryptSvc'
             'NTAccount'       = 'NT SERVICE\CryptSvc'
-            'SchemaClassName' = 'user'
+            'SchemaClassName' = 'service'
             'SID'             = 'S-1-5-80-242729624-280608522-2219052887-3187409060-2225943459'
         }
         'S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420' = @{
             'Description'     = 'Windows Diagnostics service account'
             'Name'            = 'WdiServiceHost'
             'NTAccount'       = 'NT SERVICE\WdiServiceHost'
-            'SchemaClassName' = 'user'
+            'SchemaClassName' = 'service'
             'SID'             = 'S-1-5-80-3139157870-2983391045-3678747466-658725712-1809340420'
         }
         'S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122'  = @{
@@ -5606,13 +5608,13 @@ function Get-KnownSidHashTable {
             'Name'            = 'EventLog'
             'NTAccount'       = 'NT SERVICE\EventLog'
             'SchemaClassName' = 'user'
-            'SID'             = 'S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122'
+            'SID'             = 'service'
         }
         'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464' = @{
             'Description'     = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'
             'Name'            = 'TrustedInstaller'
             'NTAccount'       = 'NT SERVICE\TrustedInstaller'
-            'SchemaClassName' = 'user'
+            'SchemaClassName' = 'service'
             'SID'             = 'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'
         }
         <#
@@ -6727,6 +6729,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

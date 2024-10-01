@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.230] - 2024-09-30 - bugfix use name of cahced instance as part of directorypath
+
 ## [4.0.229] - 2024-09-30 - implement cachetosearch param
 
 ## [4.0.228] - 2024-09-30 - add debug pause
