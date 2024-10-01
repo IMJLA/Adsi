@@ -115,7 +115,7 @@ function ConvertFrom-IdentityReferenceResolved {
         $SamAccountNameOrSid = $split[1]
 
         $WellKnownSidParams = @{
-            IdentityReference = $IdentityReference
+            IdentityReference = $SamAccountNameOrSid
             DomainsByNetbios  = $DomainsByNetbios
             DomainNetBios     = $DomainNetBIOS
         }

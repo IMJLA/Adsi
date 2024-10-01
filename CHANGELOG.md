@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.238] - 2024-09-30 - lookup name instead of ntaccount caption for well known sids
+
 ## [4.0.237] - 2024-09-30 - add debug logging
 
 ## [4.0.236] - 2024-09-30 - bugfix else location
