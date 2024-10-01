@@ -127,7 +127,6 @@ function ConvertFrom-IdentityReferenceResolved {
             $FakeDirectoryEntryParams = @{
                 DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedWellKnownSID.Name)"
                 InputObject   = $CachedWellKnownSID
-                NameAllowList = @{ $CachedWellKnownSID.Name = $null }
             }
 
             $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
@@ -153,7 +152,6 @@ function ConvertFrom-IdentityReferenceResolved {
                     #TODO: # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
                     DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedCimInstance.Name)"
                     InputObject   = $CachedCimInstance
-                    NameAllowList = @{ $CachedCimInstance.Name = $null }
                 }
 
                 $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams

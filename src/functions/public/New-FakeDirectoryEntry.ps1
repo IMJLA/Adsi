@@ -16,20 +16,59 @@ function New-FakeDirectoryEntry {
         [hashtable]$NameAllowList = @{
             'ALL APPLICATION PACKAGES'            = $null
             'ALL RESTRICTED APPLICATION PACKAGES' = $null
+            'ANONYMOUS LOGON'                     = $null
             'Authenticated Users'                 = $null
             'BATCH'                               = $null
+            'BUILTIN'                             = $null
+            'CREATOR GROUP'                       = $null
+            'CREATOR GROUP SERVER'                = $null
             'CREATOR OWNER'                       = $null
+            'CREATOR OWNER SERVER'                = $null
+            'DIALUP'                              = $null
+            'ENTERPRISE DOMAIN CONTROLLERS'       = $null
             'Everyone'                            = $null
             'INTERACTIVE'                         = $null
             'internetExplorer'                    = $null
+            'IUSR'                                = $null
+            'LOCAL'                               = $null
             'LOCAL SERVICE'                       = $null
+            'NETWORK'                             = $null
             'NETWORK SERVICE'                     = $null
-            'RESTRICTED'                          = $null
+            'OWNER RIGHTS'                        = $null
+            'PROXY'                               = $null
             'RDS Endpoint Servers'                = $null
             'RDS Management Servers'              = $null
             'RDS Remote Access Servers'           = $null
+            'REMOTE INTERACTIVE LOGON'            = $null
+            'RESTRICTED'                          = $null
+            'SELF'                                = $null
             'SERVICE'                             = $null
             'SYSTEM'                              = $null
+            'TERMINAL SERVER USER'                = $null
+        },
+
+        # These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries
+        [hashtable]$NameBlockList = @{
+            'Access Control Assistance Operators' = $null
+            'Administrators'                      = $null
+            'Backup Operators'                    = $null
+            'Cryptographic Operators'             = $null
+            'DefaultAccount'                      = $null
+            'Distributed COM Users'               = $null
+            'Event Log Readers'                   = $null
+            'Guests'                              = $null
+            'Hyper-V Administrators'              = $null
+            'IIS_IUSRS'                           = $null
+            'Network Configuration Operators'     = $null
+            'Performance Log Users'               = $null
+            'Performance Monitor Users'           = $null
+            'Power Users'                         = $null
+            'Remote Desktop Users'                = $null
+            'Remote Management Users'             = $null
+            'Replicator'                          = $null
+            'System Managed Accounts Group'       = $null
+            'Users'                               = $null
+            'WinRMRemoteWMIUsers__'               = $null
         },
 
         # Unused but here for convenient splats
@@ -43,7 +82,12 @@ function New-FakeDirectoryEntry {
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
-    if (-not $NameAllowList.ContainsKey($Name)) {
+    if (
+        $NameBlockList.ContainsKey($Name) -or
+        -not $NameAllowList.ContainsKey($Name) -or
+        $InputObject.SidType -eq 4 -or
+        $InputObject.SidType -eq 5
+    ) {
         return $null
     }
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)

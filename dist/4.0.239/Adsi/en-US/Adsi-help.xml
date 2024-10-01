@@ -8109,6 +8109,18 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+          <maml:name>NameBlockList</maml:name>
+          <maml:description>
+            <maml:para>{{ Fill NameBlockList Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>Name</maml:name>
           <maml:description>
             <maml:para>{{ Fill Name Description }}</maml:para>
@@ -8120,7 +8132,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>NTAccount</maml:name>
           <maml:description>
             <maml:para>{{ Fill NTAccount Description }}</maml:para>
@@ -8171,7 +8183,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para>{{ Fill Name Description }}</maml:para>
@@ -8195,7 +8207,19 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <maml:name>NameBlockList</maml:name>
+        <maml:description>
+          <maml:para>{{ Fill NameBlockList Description }}</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>NTAccount</maml:name>
         <maml:description>
           <maml:para>{{ Fill NTAccount Description }}</maml:para>
