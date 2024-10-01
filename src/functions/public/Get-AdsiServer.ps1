@@ -78,7 +78,7 @@ function Get-AdsiServer {
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
 
         # Output from Get-KnownSidHashTable but keyed by account Name
-        [hashtable]$WellKnownSIDByName = @{}
+        [hashtable]$WellKnownSIDByName = {}
 
     )
     begin {

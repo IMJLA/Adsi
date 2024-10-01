@@ -110,20 +110,56 @@ function ConvertFrom-IdentityReferenceResolved {
     if ($null -eq $PrincipalById[$IdentityReference]) {
 
         Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
-
         $split = $IdentityReference.Split('\')
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
 
-        $CachedCimInstance = Find-CachedCimInstance -ComputerName $DomainNetBIOS -Key $SamAccountNameOrSid -CimCache $CimCache -Log $LogParams -CacheToSearch 'Win32_ServiceBySid', 'Win32_AccountBySid'
+        $WellKnownSidParams = @{
+            IdentityReference = $IdentityReference
+            DomainsByNetbios  = $DomainsByNetbios
+            DomainNetBios     = $DomainNetBIOS
+        }
 
-        if ($CachedCimInstance) {
-            #TODO: # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
-            #        Use Get-KnownSidHashtable first as those are guaranteed local accounts?
-            $DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedCimInstance.Name)"
-            $DirectoryEntry = New-FakeDirectoryEntry -InputObject $CachedCimInstance -NameAllowList @{ $CachedCimInstance.Name = $null } -DirectoryPath $DirectoryPath
-        } else {
-            Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
+        $CachedWellKnownSID = Find-CachedWellKnownSID @WellKnownSidParams
+
+        if ($CachedWellKnownSID) {
+
+            $FakeDirectoryEntryParams = @{
+                DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedWellKnownSID.Name)"
+                InputObject   = $CachedWellKnownSID
+                NameAllowList = @{ $CachedWellKnownSID.Name = $null }
+            }
+
+            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
+
+        }
+
+        if ($null -eq $DirectoryEntry) {
+
+            $CimInstanceParams = @{
+                ComputerName  = $DomainNetBIOS
+                Key           = $SamAccountNameOrSid
+                CimCache      = $CimCache
+                Log           = $LogParams
+                CacheToSearch = 'Win32_ServiceBySid', 'Win32_AccountBySid'
+            }
+            $CachedCimInstance = Find-CachedCimInstance @CimInstanceParams
+
+            if ($CachedCimInstance) {
+
+                $FakeDirectoryEntryParams = @{
+                    #TODO: # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
+                    DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedCimInstance.Name)"
+                    InputObject   = $CachedCimInstance
+                    NameAllowList = @{ $CachedCimInstance.Name = $null }
+                }
+
+                $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
+
+            } else {
+                Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
+            }
+
         }
 
         if ($null -eq $DirectoryEntry) {
@@ -135,7 +171,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 CimCache            = $CimCache
                 DebugOutputStream   = $DebugOutputStream
             }
-   
+
             $SearchDirectoryParams = @{
                 CimCache            = $CimCache
                 DebugOutputStream   = $DebugOutputStream
@@ -152,7 +188,6 @@ function ConvertFrom-IdentityReferenceResolved {
             ) {
     
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a domain security principal"
-                $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
     
                 if ($DomainNetbiosCacheResult) {
     
@@ -168,7 +203,12 @@ function ConvertFrom-IdentityReferenceResolved {
                         $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                     }
     
-                    $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainNetBIOS" -ThisFqdn $ThisFqdn -CimCache $CimCache @LogParams
+                    $FqdnParams = @{
+                        DirectoryPath = "LDAP://$DomainNetBIOS"
+                        ThisFqdn      = $ThisFqdn
+                        CimCache      = $CimCache
+                    }
+                    $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath @FqdnParams @LogParams
     
                 }
     
@@ -202,8 +242,8 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
                 } catch {
     
-                    $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                    Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory: $($_.Exception.Message)"
+                    $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+                    Write-LogMsg @LogParams -Text " # Did not find '$IdentityReference' in a directory search: $($_.Exception.Message.Trim())"
                     $LogParams['Type'] = $DebugOutputStream
     
                 }
@@ -220,23 +260,27 @@ function ConvertFrom-IdentityReferenceResolved {
                 $SearchDirectoryParams['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
                 $SearchDirectoryParams['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
                 $SearchDirectoryParams['PropertiesToLoad'] = 'netbiosname'
-    
+
                 #$Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
                 #    $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
                 #    "-$ParamName $ParamValue"
                 #}
-    
+
                 #Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
                 Write-LogMsg @LogParams -Text 'Search-Directory' -Expand $SearchDirectoryParams, $LoggingParams
                 $DomainCrossReference = Search-Directory @SearchDirectoryParams @LoggingParams
-    
+
                 if ($DomainCrossReference.Properties ) {
-    
+
                     Write-LogMsg @LogParams -Text " # The domain '$DomainFQDN' is online for '$IdentityReference'"
                     [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
-                    # TODO: The domain is online, so let's see if any domain trusts have issues?  Determine if SID is foreign security principal?
-                    # TODO: What if the foreign security principal exists but the corresponding domain trust is down?  Don't want to recommend deletion of the ACE in that case.
-    
+
+                    # TODO: The domain is online; see if any domain trusts have issues?
+                    #       Determine if SID is foreign security principal?
+
+                    # TODO: What if the foreign security principal exists but the corresponding domain trust is down?
+                    # Don't want to recommend deletion of the ACE in that case.
+
                 }
                 $SidObject = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
                 $SidBytes = [byte[]]::new($SidObject.BinaryLength)
@@ -271,8 +315,8 @@ function ConvertFrom-IdentityReferenceResolved {
                     $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
                 } catch {
     
-                    $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                    Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message.Trim())"
+                    $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+                    Write-LogMsg @LogParams -Text " # Couldn't find '$IdentityReference' in a directory search: $($_.Exception.Message.Trim())"
                     $LogParams['Type'] = $DebugOutputStream
     
                 }
@@ -320,8 +364,8 @@ function ConvertFrom-IdentityReferenceResolved {
                     try {
                         $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                     } catch {
-                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text "Could not get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
+                        $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+                        Write-LogMsg @LogParams -Text "Couldn't get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
                         $LogParams['Type'] = $DebugOutputStream
                     }
     
@@ -369,8 +413,8 @@ function ConvertFrom-IdentityReferenceResolved {
                         $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                     } catch {
     
-                        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-                        Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' could not be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
+                        $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+                        Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' Couldn't be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
                         $LogParams['Type'] = $DebugOutputStream
     
                     }
@@ -501,11 +545,12 @@ function ConvertFrom-IdentityReferenceResolved {
 
         } else {
 
-            $LogParams['Type'] = 'Verbose' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
-            Write-LogMsg @LogParams -Text " # '$IdentityReference' could not be matched to a DirectoryEntry"
+            $LogParams['Type'] = 'Verbose' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+            Write-LogMsg @LogParams -Text " # '$IdentityReference' Couldn't be matched to a DirectoryEntry"
             $LogParams['Type'] = $DebugOutputStream
 
         }
+
         $PrincipalById[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
 
     }

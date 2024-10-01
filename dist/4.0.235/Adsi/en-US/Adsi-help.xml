@@ -5818,7 +5818,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>@{}</dev:defaultValue>
+          <dev:defaultValue>{}</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Netbios</maml:name>
@@ -6114,7 +6114,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>@{}</dev:defaultValue>
+        <dev:defaultValue>{}</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="13" aliases="none">
         <maml:name>WellKnownSidBySid</maml:name>

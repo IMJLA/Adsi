@@ -10,7 +10,7 @@ function ConvertTo-SidString {
         & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
     } catch {
 
-        $Log['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+        $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
         Write-LogMsg @Log -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)"
         $Log['Type'] = $DebugOutputStream
 

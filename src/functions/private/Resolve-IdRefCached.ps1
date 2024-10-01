@@ -75,6 +75,29 @@ function Resolve-IdRefCached {
         WhoAmI       = $WhoAmI
     }
 
+    ForEach ($Cache in 'WellKnownSidBySid', 'WellKnownSIDByName') {
+
+        if ($AdsiServer.$Cache) {
+
+            $WellKnownSidCacheResult = $AdsiServer.$Cache[$IdentityReference]
+
+            if ($WellKnownSidCacheResult) {
+
+                return [PSCustomObject]@{
+                    IdentityReference        = $IdentityReference
+                    SIDString                = $WellKnownSidCacheResult.SID
+                    IdentityReferenceNetBios = "$ServerNetBIOS\$($WellKnownSidCacheResult.Name)"
+                    IdentityReferenceDns     = "$($AdsiServer.Dns)\$($WellKnownSidCacheResult.Name)"
+                }
+
+            } else {
+                Write-LogMsg @Log -Text " # '$Cache' cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+            }
+
+        }
+
+    }
+
     $CachedCimInstance = Find-CachedCimInstance -ComputerName $ServerNetBIOS -Key $IdentityReference -CimCache $CimCache -Log $Log -CacheToSearch 'Win32_ServiceBySid', 'Win32_AccountBySid', 'Win32_AccountByCaption'
 
     if ($CachedCimInstance) {
@@ -102,20 +125,6 @@ function Resolve-IdRefCached {
         $Name = $CacheResult['Name']
         $Caption = "$ServerNetBIOS\$Name"
 
-        # Update the caches
-        $Win32Acct = [PSCustomObject]@{
-            SID     = $IdentityReference
-            Caption = $Caption
-            Domain  = $ServerNetBIOS
-            Name    = $Name
-        }
-
-        Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-        $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-
-        Write-LogMsg @Log -Text " # Add '$IdentityReference' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-        $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
-
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
             SIDString                = $IdentityReference
@@ -137,20 +146,6 @@ function Resolve-IdRefCached {
         $Name = $CacheResult['Name']
         $Caption = "$ServerNetBIOS\$Name"
 
-        # Update the caches
-        $Win32Acct = [PSCustomObject]@{
-            SID     = $CacheResult['SID']
-            Caption = $Caption
-            Domain  = $ServerNetBIOS
-            Name    = $Name
-        }
-
-        Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-        $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-
-        Write-LogMsg @Log -Text " # Add '$IdentityReference' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-        $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
-
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
             SIDString                = $CacheResult['SID']
@@ -169,20 +164,6 @@ function Resolve-IdRefCached {
         Write-LogMsg @Log -Text " # Capability SID pattern hit for '$IdentityReference' on '$ServerNetBIOS'"
         $Name = $CacheResult['Name']
         $Caption = "$ServerNetBIOS\$Name"
-
-        # Update the caches
-        $Win32Acct = [PSCustomObject]@{
-            SID     = $CacheResult['SID']
-            Caption = $Caption
-            Domain  = $ServerNetBIOS
-            Name    = $Name
-        }
-
-        Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-        $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-
-        Write-LogMsg @Log -Text " # Add '$IdentityReference' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-        $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference

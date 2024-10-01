@@ -327,7 +327,7 @@ function Get-DirectoryEntry {
 
             } catch {
 
-                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
 
                 # Ensure that the error message appears on 1 line
                 # Use .Trim() to remove leading and trailing whitespace

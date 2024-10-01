@@ -63,7 +63,7 @@ function ConvertTo-DomainSidString {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        Buffer = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
@@ -129,7 +129,7 @@ function ConvertTo-DomainSidString {
     if ($DomainSid) {
         return $DomainSid
     } else {
-        $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+        $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
         Write-LogMsg @LogParams -Text " # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
         $LogParams['Type'] = $DebugOutputStream
     }

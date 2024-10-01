@@ -88,7 +88,7 @@ function Expand-WinNTGroupMember {
 
             if (!($ThisEntry.Properties)) {
 
-                $LogParams['Type'] = 'Warning' # PS 5.1 will not allow you to override the Splat by manually calling the param, so we must update the splat
+                $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
                 Write-LogMsg @LogParams -Text " # '$ThisEntry' has no properties # For '$($ThisEntry.Path)'"
                 $LogParams['Type'] = $DebugOutputStream
 
