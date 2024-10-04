@@ -28,6 +28,7 @@ function Find-CachedWellKnownSID {
                     return [PSCustomObject]$CombinedProperties
 
                 } else {
+                    if ($IdentityReference -like "*SDDL*") { pause }
                     Write-LogMsg @LogParams -Text " # '$Cache' cache miss for '$IdentityReference' on '$DomainNetBIOS'"
                 }
 
