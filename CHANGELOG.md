@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.240] - 2024-10-03 - S-1-5-84-0-0-0-0-0
+
 ## [4.0.239] - 2024-10-01 - update fake directory entry skip logic
 
 ## [4.0.238] - 2024-09-30 - lookup name instead of ntaccount caption for well known sids
