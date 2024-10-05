@@ -697,6 +697,14 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'service'
             'SID'             = 'S-1-5-80-4230913304-2206818457-801678004-120036174-1892434133'
         }
+        'S-1-5-84-0-0-0-0-0'                                             = @{
+            #https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/controlling-device-access
+            'Description'     = "A security identifier that identifies UMDF drivers."
+            'Name'            = 'SDDL_USER_MODE_DRIVERS'
+            'NTAccount'       = "NT SERVICE\SDDL_USER_MODE_DRIVERS"
+            'SchemaClassName' = 'service'
+            'SID'             = $SID
+        }
     }
 }
 

@@ -4869,16 +4869,6 @@ function Get-KnownSid {
                 'SID'             = $SID
             }
         }
-        'S-1-5-84-0-0-0-0-0' {
-            #https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/controlling-device-access
-            return @{
-                'Name'            = 'SDDL_USER_MODE_DRIVERS'
-                'Description'     = "A security identifier that identifies UMDF drivers."
-                'NTAccount'       = "NT SERVICE\SDDL_USER_MODE_DRIVERS"
-                'SchemaClassName' = 'service'
-                'SID'             = $SID
-            }
-        }
         'S-1-5-(?<Domain>.*)-500' {
             return @{
                 'Name'            = 'Administrator'
@@ -5777,6 +5767,14 @@ function Get-KnownSidHashTable {
             'Description'     = 'Used by the TAPI server to provide the central repository of telephony on data on a computer.'
             'SchemaClassName' = 'service'
             'SID'             = 'S-1-5-80-4230913304-2206818457-801678004-120036174-1892434133'
+        }
+        'S-1-5-84-0-0-0-0-0'                                             = @{
+            #https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/controlling-device-access
+            'Description'     = "A security identifier that identifies UMDF drivers."
+            'Name'            = 'SDDL_USER_MODE_DRIVERS'
+            'NTAccount'       = "NT SERVICE\SDDL_USER_MODE_DRIVERS"
+            'SchemaClassName' = 'service'
+            'SID'             = $SID
         }
     }
 }
@@ -6834,6 +6832,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

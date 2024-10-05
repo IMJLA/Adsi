@@ -35,16 +35,6 @@ function Get-KnownSid {
                 'SID'             = $SID
             }
         }
-        'S-1-5-84-0-0-0-0-0' {
-            #https://learn.microsoft.com/en-us/windows-hardware/drivers/wdf/controlling-device-access
-            return @{
-                'Name'            = 'SDDL_USER_MODE_DRIVERS'
-                'Description'     = "A security identifier that identifies UMDF drivers."
-                'NTAccount'       = "NT SERVICE\SDDL_USER_MODE_DRIVERS"
-                'SchemaClassName' = 'service'
-                'SID'             = $SID
-            }
-        }
         'S-1-5-(?<Domain>.*)-500' {
             return @{
                 'Name'            = 'Administrator'
