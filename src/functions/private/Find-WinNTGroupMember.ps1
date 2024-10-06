@@ -63,23 +63,13 @@ function Find-WinNTGroupMember {
                 Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') $MemberLogSuffix $LogSuffix"
             }
 
-            # WinNT://WORKGROUP/COMPUTER/GuestAccount
-            if ($ResolvedDirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
+            if ($DirectorySplit['Domain'] -eq $SourceDomain) {
 
-                Write-LogMsg @Log -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' $MemberLogSuffix $LogSuffix"
-
-                if ($Matches.Middle -eq $SourceDomain) {
-                    pause
-                    # TODO: Why does this indicate a WinNT group member rather than LDAP?
-                    Write-LogMsg @Log -Text " # $($Matches.Middle) -eq $SourceDomain but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
-                    $MemberDomainDn = $null
-
-                } else {
-                    Write-LogMsg @Log -Text " # $($Matches.Middle) -ne $SourceDomain but why does my logic think this means LDAP or unconfirmed WinNT group member? $MemberLogSuffix $LogSuffix"
-                }
+                Write-LogMsg @Log -Text " # Member's parsed domain $($DirectorySplit['Domain']) equals the group's parsed domain '$SourceDomain' but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
+                $MemberDomainDn = $null
 
             } else {
-                Write-LogMsg @Log -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$) but why does my logic think this means LDAP or unconfirmed WinNT group member?' $MemberLogSuffix $LogSuffix"
+                Write-LogMsg @Log -Text " # Member's parsed domain $($DirectorySplit['Domain']) does not equal the group's parsed domain '$SourceDomain' but why does my logic think this means LDAP or unconfirmed WinNT group member? $MemberLogSuffix $LogSuffix"
             }
 
         } else {
