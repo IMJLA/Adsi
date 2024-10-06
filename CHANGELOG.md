@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.268] - 2024-10-06 - temporary debug logging for cache hits
+
 ## [4.0.267] - 2024-10-06 - simplified logic
 
 ## [4.0.266] - 2024-10-06 - eliminate use of get-member to improve performance
