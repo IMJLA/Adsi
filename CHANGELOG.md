@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.248] - 2024-10-06 - improve splat usage
+
 ## [4.0.247] - 2024-10-06 - add split-directorypath to get-winntgroupmember
 
 ## [4.0.246] - 2024-10-06 - update split-directorypath to be more efficient and accurate

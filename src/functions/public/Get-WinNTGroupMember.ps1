@@ -264,10 +264,9 @@ function Get-WinNTGroupMember {
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
 
-                    $MemberParams['DirectoryPath'] = $ThisMember
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
-                    $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @MemberParams
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @MemberParams @LogThis
 
                 }
 
@@ -275,14 +274,14 @@ function Get-WinNTGroupMember {
                 $MembersToGet.Remove('WinNTMembers')
 
                 # Get and Expand the directory entries for the LDAP group members
-                ForEach ($Key in $MembersToGet.Keys) {
+                ForEach ($MemberPath in $MembersToGet.Keys) {
 
-                    $MemberParams['DirectoryPath'] = $Key
-                    $MemberParams['Filter'] = "(|$($MembersToGet[$Key]))"
-                    $MemberDirectoryEntries = Search-Directory @MemberParams
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+                    Write-LogMsg @LogParams -Text "Search-Directory -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                    $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$($MembersToGet[$Key]))" @MemberParams
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @MemberParams @LogThis
 
                 }
+
             } else {
                 Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' is not a group # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
             }
