@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.251] - 2024-10-06 - bugfix debug output
+
 ## [4.0.250] - 2024-10-06 - bugflix splats...again
 
 ## [4.0.249] - 2024-10-06 - bugflix splats

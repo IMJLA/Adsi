@@ -283,7 +283,7 @@ function Get-WinNTGroupMember {
                 # Get and Expand the directory entries for the LDAP group members
                 ForEach ($MemberPath in $MembersToGet.Keys) {
 
-                    Write-LogMsg @Log -Text "Search-Directory -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                    Write-LogMsg @Log -Text "Search-Directory -DirectoryPath '$MemberPath' -Filter '(|$($MembersToGet[$MemberPath]))' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                     $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$($MembersToGet[$MemberPath]))" @GetSearch @MemberParams @LogThis
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries @MemberParams @ExpandParams @LogThis
 
