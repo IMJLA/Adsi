@@ -6259,8 +6259,10 @@ function Get-WinNTGroupMember {
                             Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
 
                             if ( $MemberDomainNetbios -ne $SourceDomain ) {
-                                # TODO: Why does this indicate an LDAP group member rather than WinNT?
+                                Write-LogMsg @Log -Text " # $MemberDomainNetbios -ne $SourceDomain but why does my logic think this means LDAP group member rather than WinNT? $MemberLogSuffix $LogSuffix"
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
+                            } else {
+                                Write-LogMsg @Log -Text " # $MemberDomainNetbios -ne $SourceDomain but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
                             }
 
                         } else {
@@ -6274,11 +6276,14 @@ function Get-WinNTGroupMember {
 
                             if ($Matches.Middle -eq $SourceDomain) {
                                 # TODO: Why does this indicate a WinNT group member rather than LDAP?
+                                Write-LogMsg @Log -Text " # $($Matches.Middle) -eq $SourceDomain but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
                                 $MemberDomainDn = $null
+                            } else {
+                                Write-LogMsg @Log -Text " # $($Matches.Middle) -ne $SourceDomain but why does my logic think this means LDAP or unconfirmed WinNT group member? $MemberLogSuffix $LogSuffix"
                             }
 
                         } else {
-                            Write-LogMsg @Log -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)' $MemberLogSuffix $LogSuffix"
+                            Write-LogMsg @Log -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$) but why does my logic think this means LDAP or unconfirmed WinNT group member?' $MemberLogSuffix $LogSuffix"
                         }
 
                     } else {
@@ -6936,6 +6941,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
