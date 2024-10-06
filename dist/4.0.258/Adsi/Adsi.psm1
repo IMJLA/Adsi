@@ -1450,8 +1450,11 @@ function Resolve-LocalSidAuthorityToComputerName {
 
     param (
 
-        # A DirectoryPath or IdentityReference
-        [string]$InputObject,
+        # A DirectoryPath which has been split on the / character then parsed into a dictionary of constituent components
+        [hashtable]$DirectorySplit,
+
+        # DirectoryEntry [System.DirectoryServices.DirectoryEntry] object whose Parent's Name will be used as the replacement Authority.
+        $DirectoryEntry,
 
         # Well-Known local SID authorities to replace with the computer name in the InputObject string.
         [hashtable]$AuthoritiesToReplaceWithParentName = @{
@@ -1465,27 +1468,27 @@ function Resolve-LocalSidAuthorityToComputerName {
             'NT VIRTUAL MACHINE'            = $null
             'NULL SID AUTHORITY'            = $null
             'WORLD SID AUTHORITY'           = $null
-        },
-
-        # Computer name to use to replace the well-known local SID authorities in the InputObject string.
-        [string]$ComputerName,
-
-        # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the directory entry so its parent can be retrieved
-        $DirectoryEntry
+        }
 
     )
 
+    $Domain = $DirectorySplit['Domain']
+
     # Replace the well-known SID authorities with the computer name
-    if ($AuthoritiesToReplaceWithParentName.ContainsKey($ComputerName)) {
+    if ($AuthoritiesToReplaceWithParentName.ContainsKey($Domain)) {
 
-        pause
-
-        # This may be unnecessary.  See comments of the private function for details.
+        # This function may be unnecessary.  See comments of the private function for details.
         $ParentName = Get-DirectoryEntryParentName -DirectoryEntry $DirectoryEntry
+        $DirectorySplit['ResolvedDomain'] = $ParentName
+        $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath'].Replace($Domain, $ParentName)
 
-        return $InputObject.Replace($ComputerName, $ParentName)
+    } else {
+
+        $DirectorySplit['ResolvedDomain'] = $Domain
+        $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath']
 
     }
+
 }
 function Split-DirectoryPath {
 
@@ -6098,7 +6101,9 @@ function Get-WinNTGroupMember {
 
         Get members of the local Administrators group
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
@@ -6152,6 +6157,7 @@ function Get-WinNTGroupMember {
         [string]$DebugOutputStream = 'Debug'
 
     )
+
     begin {
 
         $Log = @{
@@ -6225,21 +6231,26 @@ function Get-WinNTGroupMember {
 
                 ForEach ($DirectoryMember in $DirectoryMembers) {
 
-                    # The IADsGroup::Members method returns ComObjects
-                    # But proper .Net objects are much easier to work with
-                    # So we will convert the ComObjects into DirectoryEntry objects
-
+                    # The IADsGroup::Members method returns ComObjects.
+                    # Proper .Net objects are much easier to work with.
+                    # Convert the ComObjects into DirectoryEntry objects.
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
+
                     $MemberLogSuffix = "# For '$DirectoryPath'"
                     $MemberDomainDn = $null
+
+                    # Split the DirectoryPath into its constituent components.
                     $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
-                    $MemberDomainNetbios = ConvertFrom-LocalSidAuthority -Domain $DirectorySplit['Domain']
                     $MemberName = $DirectorySplit['Account']
+
+                    # Resolve well-known SID authorities to the name of the computer the DirectoryEntry came from.
+                    Resolve-LocalSidAuthorityToComputerName -InputObject $DirectorySplit -DirectoryEntry $ThisDirEntry
+                    $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
+                    $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
 
                     if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
 
                         Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
-                        $ResolvedDirectoryPath = Resolve-LocalSidAuthorityToComputerName -InputObject $DirectoryPath -ComputerName $MemberDomainNetbios -DirectoryEntry $DirectoryEntry
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
                         if ($DomainCacheResult) {
@@ -6924,6 +6935,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

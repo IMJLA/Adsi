@@ -2,8 +2,11 @@ function Resolve-LocalSidAuthorityToComputerName {
 
     param (
 
-        # A DirectoryPath or IdentityReference
-        [string]$InputObject,
+        # A DirectoryPath which has been split on the / character then parsed into a dictionary of constituent components
+        [hashtable]$DirectorySplit,
+
+        # DirectoryEntry [System.DirectoryServices.DirectoryEntry] object whose Parent's Name will be used as the replacement Authority.
+        $DirectoryEntry,
 
         # Well-Known local SID authorities to replace with the computer name in the InputObject string.
         [hashtable]$AuthoritiesToReplaceWithParentName = @{
@@ -17,25 +20,25 @@ function Resolve-LocalSidAuthorityToComputerName {
             'NT VIRTUAL MACHINE'            = $null
             'NULL SID AUTHORITY'            = $null
             'WORLD SID AUTHORITY'           = $null
-        },
-
-        # Computer name to use to replace the well-known local SID authorities in the InputObject string.
-        [string]$ComputerName,
-
-        # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the directory entry so its parent can be retrieved
-        $DirectoryEntry
+        }
 
     )
 
+    $Domain = $DirectorySplit['Domain']
+
     # Replace the well-known SID authorities with the computer name
-    if ($AuthoritiesToReplaceWithParentName.ContainsKey($ComputerName)) {
+    if ($AuthoritiesToReplaceWithParentName.ContainsKey($Domain)) {
 
-        pause
-
-        # This may be unnecessary.  See comments of the private function for details.
+        # This function may be unnecessary.  See comments of the private function for details.
         $ParentName = Get-DirectoryEntryParentName -DirectoryEntry $DirectoryEntry
+        $DirectorySplit['ResolvedDomain'] = $ParentName
+        $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath'].Replace($Domain, $ParentName)
 
-        return $InputObject.Replace($ComputerName, $ParentName)
+    } else {
+
+        $DirectorySplit['ResolvedDomain'] = $Domain
+        $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath']
 
     }
+
 }

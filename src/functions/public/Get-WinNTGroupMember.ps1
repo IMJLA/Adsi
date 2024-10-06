@@ -14,7 +14,9 @@ function Get-WinNTGroupMember {
 
         Get members of the local Administrators group
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
@@ -68,6 +70,7 @@ function Get-WinNTGroupMember {
         [string]$DebugOutputStream = 'Debug'
 
     )
+
     begin {
 
         $Log = @{
@@ -141,21 +144,26 @@ function Get-WinNTGroupMember {
 
                 ForEach ($DirectoryMember in $DirectoryMembers) {
 
-                    # The IADsGroup::Members method returns ComObjects
-                    # But proper .Net objects are much easier to work with
-                    # So we will convert the ComObjects into DirectoryEntry objects
-
+                    # The IADsGroup::Members method returns ComObjects.
+                    # Proper .Net objects are much easier to work with.
+                    # Convert the ComObjects into DirectoryEntry objects.
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
+
                     $MemberLogSuffix = "# For '$DirectoryPath'"
                     $MemberDomainDn = $null
+
+                    # Split the DirectoryPath into its constituent components.
                     $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
-                    $MemberDomainNetbios = ConvertFrom-LocalSidAuthority -Domain $DirectorySplit['Domain']
                     $MemberName = $DirectorySplit['Account']
+
+                    # Resolve well-known SID authorities to the name of the computer the DirectoryEntry came from.
+                    Resolve-LocalSidAuthorityToComputerName -InputObject $DirectorySplit -DirectoryEntry $ThisDirEntry
+                    $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
+                    $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
 
                     if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
 
                         Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
-                        $ResolvedDirectoryPath = Resolve-LocalSidAuthorityToComputerName -InputObject $DirectoryPath -ComputerName $MemberDomainNetbios -DirectoryEntry $DirectoryEntry
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
                         if ($DomainCacheResult) {
