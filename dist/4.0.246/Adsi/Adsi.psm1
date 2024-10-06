@@ -1377,32 +1377,43 @@ function Resolve-IdRefSvc {
 }
 function Split-DirectoryPath {
 
-    param ([string]$DirectoryPath)
+    <#
+    .EXAMPLE
+        Split-DirectoryPath -DirectoryPath 'WinNT://WORKGROUP/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://WORKGROUP/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/OU2/COMPUTER/Administrator'
+    #>
 
-    $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
-    $StartIndex = $LastSlashIndex + 1
-    $AccountName = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
-    $ParentDirectoryPath = $DirectoryPath.Substring(0, $LastSlashIndex)
-    $FirstSlashIndex = $ParentDirectoryPath.IndexOf('/')
-    $ParentPath = $ParentDirectoryPath.Substring($FirstSlashIndex + 2, $ParentDirectoryPath.Length - $FirstSlashIndex - 2)
-    $FirstSlashIndex = $ParentPath.IndexOf('/')
+    param (
+        [string]$DirectoryPath
+    )
 
-    if ($FirstSlashIndex -ne (-1)) {
+    $Split = $DirectoryPath.Split('/')
 
-        $Server = $ParentPath.Substring(0, $FirstSlashIndex)
+    # Extra segments an account's Directory Path indicate that the account's domain is a child domain.
+    if ($Split.Count -gt 4) {
 
-        if ($Server.Equals('WORKGROUP')) {
-            $FirstSlashIndex = $ParentPath.IndexOf('/')
-            $Server = $ParentPath.Substring($FirstSlashIndex + 1, $ParentPath.Length - $FirstSlashIndex - 1)
+        $ParentDomain = $Split[2]
+
+        if ($Split.Count -gt 5) {
+            $Middle = $Split[3..($Split.Count - 3)]
+        } else {
+            $Middle = $null
         }
 
     } else {
-        $Server = $ParentPath
+        $ParentDomain = $null
     }
 
     return @{
-        'AccountName' = $AccountName
-        'Server'      = $Server
+        #DirectoryPath = $DirectoryPath # Not currently in use by dependent functions
+        Account = $Split[ ( $Split.Count - 1 ) ]
+        Domain  = $Split[ ( $Split.Count - 2 ) ]
+        #ParentDomain  = $ParentDomain # Not currently in use by dependent functions
+        #Middle        = $Middle # Not currently in use by dependent functions
     }
 
 }
@@ -4573,8 +4584,8 @@ function Get-DirectoryEntry {
 
         $SidTypes = Get-SidTypeMap
         $SplitDirectoryPath = Split-DirectoryPath -DirectoryPath $DirectoryPath
-        $AccountName = $SplitDirectoryPath['AccountName']
-        $Server = $SplitDirectoryPath['Server']
+        $AccountName = $SplitDirectoryPath['Account']
+        $Server = $SplitDirectoryPath['Domain']
         $CimServer = $CimCache[$Server]
 
         <#
@@ -6038,7 +6049,7 @@ function Get-WinNTGroupMember {
             WhoAmI       = $WhoAmI
         }
 
-        $LoggingParams = @{
+        $LogThis = @{
             ThisHostname = $ThisHostname
             LogBuffer    = $LogBuffer
             WhoAmI       = $WhoAmI
@@ -6074,6 +6085,16 @@ function Get-WinNTGroupMember {
         $PropertiesToLoad = $PropertiesToLoad |
         Sort-Object -Unique
 
+        $MemberParams = @{
+            DirectoryEntryCache = $DirectoryEntryCache
+            PropertiesToLoad    = $PropertiesToLoad
+            DomainsByNetbios    = $DomainsByNetbios
+            LogBuffer           = $LogBuffer
+            WhoAmI              = $WhoAmI
+            CimCache            = $CimCache
+            ThisFqdn            = $ThisFqdn
+        }
+
     }
 
     process {
@@ -6082,9 +6103,12 @@ function Get-WinNTGroupMember {
 
             $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
 
-            # Retrieve the members of local groups
+            if (
+                $null -ne $ThisDirEntry.Properties['groupType'] -or
+                $ThisDirEntry.schemaclassname -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')
+            ) {
 
-            if ($null -ne $ThisDirEntry.Properties['groupType'] -or $ThisDirEntry.schemaclassname -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
+                # Retrieve the members of local groups
 
                 # Assembly: System.DirectoryServices.dll
                 # Namespace: System.DirectoryServices
@@ -6113,16 +6137,6 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                $MemberParams = @{
-                    DirectoryEntryCache = $DirectoryEntryCache
-                    PropertiesToLoad    = $PropertiesToLoad
-                    DomainsByNetbios    = $DomainsByNetbios
-                    LogBuffer           = $LogBuffer
-                    WhoAmI              = $WhoAmI
-                    CimCache            = $CimCache
-                    ThisFqdn            = $ThisFqdn
-                }
-
                 ForEach ($DirectoryMember in $DirectoryMembers) {
 
                     # The IADsGroup::Members method returns ComObjects
@@ -6131,33 +6145,39 @@ function Get-WinNTGroupMember {
 
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberDomainDn = $null
+                    #####$DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
 
                     <#
                     WinNT://WORKGROUP/COMPUTER/Administrator
                     WinNT://COMPUTER/Administrators
-                    WinNT://CONTOSO/COMPUTER/Administrator
+                    WinNT://DOMAIN/COMPUTER/Administrator
+                    WinNT://WORKGROUP/COMPUTER/GuestAccount
                     #>
                     $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
                     if ($DirectoryPath -match $workgroupregex) {
 
-                        Write-LogMsg @LogParams -Text " # Local computer of '$($Matches.Domain)' and an account name of '$($Matches.Acct)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MemberName = $Matches.Acct
+                        Write-LogMsg @LogParams -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MemberDomainNetbios = $Matches.Domain
 
                         # Replace the well-known SID authorities with the computer name
                         if ($AuthoritiesToReplaceWithParentName.ContainsKey($MemberDomainNetbios)) {
+
                             # Possibly a debugging issue, not sure whether I need to prepare for both here.
                             # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
-                            if ($DirectoryEntry.Parent.GetType().Name -eq 'String') {
-                                $LastIndexOf = $DirectoryEntry.Parent.LastIndexOf('/')
-                                $ResolvedMemberDomainNetbios = $DirectoryEntry.Parent.Substring($LastIndexOf + 1, $DirectoryEntry.Parent.Length - $LastIndexOf - 1)
-                            } elseif ($DirectoryEntry.Parent.GetType().Name -eq 'DirectoryEntry') {
-                                $ResolvedMemberDomainNetbios = $DirectoryEntry.Parent.Name
+                            if ($ThisDirEntry.Parent.GetType().Name -eq 'String') {
+
+                                $LastIndexOf = $ThisDirEntry.Parent.LastIndexOf('/')
+                                $ResolvedMemberDomainNetbios = $ThisDirEntry.Parent.Substring($LastIndexOf + 1, $ThisDirEntry.Parent.Length - $LastIndexOf - 1)
+
+                            } elseif ($ThisDirEntry.Parent.GetType().Name -eq 'DirectoryEntry') {
+                                $ResolvedMemberDomainNetbios = $ThisDirEntry.Parent.Name
                             }
+
                             $DirectoryPath = $DirectoryPath.Replace($MemberDomainNetbios, $ResolvedMemberDomainNetbios)
                             $ResolvedMemberDomainNetbios = $MemberDomainNetbios
-                        }
 
+                        }
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
@@ -6173,6 +6193,7 @@ function Get-WinNTGroupMember {
                             Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         }
 
+                        # WinNT://WORKGROUP/COMPUTER/GuestAccount
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
 
                             Write-LogMsg @LogParams -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
@@ -6216,7 +6237,7 @@ function Get-WinNTGroupMember {
                     $MemberParams['DirectoryPath'] = $ThisMember
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                     $MemberDirectoryEntry = Get-DirectoryEntry @MemberParams
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
                 }
 
@@ -6230,7 +6251,7 @@ function Get-WinNTGroupMember {
                     $MemberParams['DirectoryPath'] = $_
                     $MemberParams['Filter'] = "(|$($MembersToGet[$_]))"
                     $MemberDirectoryEntries = Search-Directory @MemberParams
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
                 }
             } else {
@@ -6839,6 +6860,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

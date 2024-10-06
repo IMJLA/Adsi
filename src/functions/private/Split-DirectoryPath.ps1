@@ -1,31 +1,42 @@
 function Split-DirectoryPath {
 
-    param ([string]$DirectoryPath)
+    <#
+    .EXAMPLE
+        Split-DirectoryPath -DirectoryPath 'WinNT://WORKGROUP/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://WORKGROUP/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/COMPUTER/Administrator'
+        Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/OU2/COMPUTER/Administrator'
+    #>
 
-    $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
-    $StartIndex = $LastSlashIndex + 1
-    $AccountName = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
-    $ParentDirectoryPath = $DirectoryPath.Substring(0, $LastSlashIndex)
-    $FirstSlashIndex = $ParentDirectoryPath.IndexOf('/')
-    $ParentPath = $ParentDirectoryPath.Substring($FirstSlashIndex + 2, $ParentDirectoryPath.Length - $FirstSlashIndex - 2)
-    $FirstSlashIndex = $ParentPath.IndexOf('/')
+    param (
+        [string]$DirectoryPath
+    )
 
-    if ($FirstSlashIndex -ne (-1)) {
+    $Split = $DirectoryPath.Split('/')
 
-        $Server = $ParentPath.Substring(0, $FirstSlashIndex)
+    # Extra segments an account's Directory Path indicate that the account's domain is a child domain.
+    if ($Split.Count -gt 4) {
 
-        if ($Server.Equals('WORKGROUP')) {
-            $FirstSlashIndex = $ParentPath.IndexOf('/')
-            $Server = $ParentPath.Substring($FirstSlashIndex + 1, $ParentPath.Length - $FirstSlashIndex - 1)
+        $ParentDomain = $Split[2]
+
+        if ($Split.Count -gt 5) {
+            $Middle = $Split[3..($Split.Count - 3)]
+        } else {
+            $Middle = $null
         }
 
     } else {
-        $Server = $ParentPath
+        $ParentDomain = $null
     }
 
     return @{
-        'AccountName' = $AccountName
-        'Server'      = $Server
+        #DirectoryPath = $DirectoryPath # Not currently in use by dependent functions
+        Account = $Split[ ( $Split.Count - 1 ) ]
+        Domain  = $Split[ ( $Split.Count - 2 ) ]
+        #ParentDomain  = $ParentDomain # Not currently in use by dependent functions
+        #Middle        = $Middle # Not currently in use by dependent functions
     }
 
 }

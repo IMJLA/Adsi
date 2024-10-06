@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.246] - 2024-10-06 - update split-directorypath to be more efficient and accurate
+
 ## [4.0.245] - 2024-10-05 - update debug output
 
 ## [4.0.244] - 2024-10-05 - update debug output

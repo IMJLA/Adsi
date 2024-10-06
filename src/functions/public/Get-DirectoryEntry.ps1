@@ -110,8 +110,8 @@ function Get-DirectoryEntry {
 
         $SidTypes = Get-SidTypeMap
         $SplitDirectoryPath = Split-DirectoryPath -DirectoryPath $DirectoryPath
-        $AccountName = $SplitDirectoryPath['AccountName']
-        $Server = $SplitDirectoryPath['Server']
+        $AccountName = $SplitDirectoryPath['Account']
+        $Server = $SplitDirectoryPath['Domain']
         $CimServer = $CimCache[$Server]
 
         <#
