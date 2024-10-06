@@ -129,7 +129,9 @@ function Get-WinNTGroupMember {
 
         ForEach ($ThisDirEntry in $DirectoryEntry) {
 
-            $SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
+            #$SourceDomain = $ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf
+            $ThisSplitPath = Split-DirectoryPath -DirectoryPath $ThisDirEntry.Path
+            $SourceDomain = $ThisSplitPath['Domain']
 
             if (
                 $null -ne $ThisDirEntry.Properties['groupType'] -or
@@ -226,7 +228,7 @@ function Get-WinNTGroupMember {
 
                             Write-LogMsg @LogParams -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
 
-                            if ($Matches.Middle -eq ($ThisDirEntry.Path | Split-Path -Parent | Split-Path -Leaf)) {
+                            if ($Matches.Middle -eq $SourceDomain) {
                                 $MemberDomainDn = $null
                             }
 
@@ -273,11 +275,10 @@ function Get-WinNTGroupMember {
                 $MembersToGet.Remove('WinNTMembers')
 
                 # Get and Expand the directory entries for the LDAP group members
-                $MembersToGet.Keys |
-                ForEach-Object {
+                ForEach ($Key in $MembersToGet.Keys) {
 
-                    $MemberParams['DirectoryPath'] = $_
-                    $MemberParams['Filter'] = "(|$($MembersToGet[$_]))"
+                    $MemberParams['DirectoryPath'] = $Key
+                    $MemberParams['Filter'] = "(|$($MembersToGet[$Key]))"
                     $MemberDirectoryEntries = Search-Directory @MemberParams
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
@@ -285,7 +286,9 @@ function Get-WinNTGroupMember {
             } else {
                 Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' is not a group # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
             }
+
         }
+
     }
 
 }
