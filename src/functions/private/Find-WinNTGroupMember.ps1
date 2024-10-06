@@ -1,9 +1,12 @@
 function Find-WinNTGroupMember {
 
+    # Find LDAP and WinNT group members to retrieve from their directories.
+    # Convert COM objects from the IADsGroup::Members method into strings.
+    # Use contextual information to determine whether each string represents an LDAP or a WinNT group member.
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
-        [Parameter(ValueFromPipeline)]
         $DirectoryEntry,
 
         $ComObject,
@@ -23,8 +26,6 @@ function Find-WinNTGroupMember {
 
     ForEach ($DirectoryMember in $ComObject) {
 
-        # The IADsGroup::Members method returns ComObjects.
-        # Proper .Net objects are much easier to work with.
         # Convert the ComObjects into DirectoryEntry objects.
         $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
 
@@ -68,7 +69,7 @@ function Find-WinNTGroupMember {
                 Write-LogMsg @Log -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' $MemberLogSuffix $LogSuffix"
 
                 if ($Matches.Middle -eq $SourceDomain) {
-
+                    pause
                     # TODO: Why does this indicate a WinNT group member rather than LDAP?
                     Write-LogMsg @Log -Text " # $($Matches.Middle) -eq $SourceDomain but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
                     $MemberDomainDn = $null
