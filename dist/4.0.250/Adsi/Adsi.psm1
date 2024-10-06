@@ -6090,11 +6090,12 @@ function Get-WinNTGroupMember {
 
         $MemberParams = @{
             DirectoryEntryCache = $DirectoryEntryCache
-            PropertiesToLoad    = $PropertiesToLoad
             DomainsByNetbios    = $DomainsByNetbios
             CimCache            = $CimCache
             ThisFqdn            = $ThisFqdn
         }
+
+        $GetSearch = @{ PropertiesToLoad = $PropertiesToLoad }
 
         $ExpandParams = @{
             DomainsByFqdn = $DomainsByFqdn
@@ -6243,7 +6244,7 @@ function Get-WinNTGroupMember {
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
 
                     Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
-                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @MemberParams @LogThis
+                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @GetSearch @MemberParams @LogThis
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry @MemberParams @ExpandParams @LogThis
 
                 }
@@ -6255,7 +6256,7 @@ function Get-WinNTGroupMember {
                 ForEach ($MemberPath in $MembersToGet.Keys) {
 
                     Write-LogMsg @Log -Text "Search-Directory -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
-                    $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$($MembersToGet[$Key]))" @MemberParams @LogThis
+                    $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$($MembersToGet[$MemberPath]))" @GetSearch @MemberParams @LogThis
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries @MemberParams @ExpandParams @LogThis
 
                 }
@@ -6868,6 +6869,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
