@@ -8,7 +8,7 @@ schema: 2.0.0
 # Resolve-IdentityReference
 
 ## SYNOPSIS
-Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
+Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
 
 ## SYNTAX
 

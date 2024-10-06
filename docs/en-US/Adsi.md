@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.243
+Help Version: 4.0.244
 Locale: en-US
 ---
 
@@ -129,7 +129,7 @@ New-FakeDirectoryEntry [[-DirectoryPath] <string>] [[-SID] <string>] [[-Descript
 
 
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)
-Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
+Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
 
 ### [Resolve-ServiceNameToSID](Resolve-ServiceNameToSID.md)
 

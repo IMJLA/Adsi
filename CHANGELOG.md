@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.244] - 2024-10-05 - update debug output
+
 ## [4.0.243] - 2024-10-05 - remove debug pause and update debug log output
 
 ## [4.0.242] - 2024-10-04 - move S-1-5-84-0-0-0-0-0 to get-knownsidhashtable instead of get-knownsid

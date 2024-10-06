@@ -2,7 +2,7 @@ function Resolve-IdentityReference {
 
     <#
     .SYNOPSIS
-    Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
+    Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
     .DESCRIPTION
     Based on the IdentityReference proprety of each Access Control Entry:
     Resolve SID to NT account name and vise-versa
@@ -112,7 +112,13 @@ function Resolve-IdentityReference {
     # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
     # Search these caches now.
     $CacheResult = Resolve-IdRefCached @splat1 -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
-    if ($CacheResult) { return $CacheResult } else {
+
+    if ($CacheResult) {
+
+        Write-LogMsg @Log -Text " # Cache hit for '$IdentityReference'"
+        return $CacheResult
+
+    } else {
         Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
     }
 
@@ -125,12 +131,12 @@ function Resolve-IdentityReference {
         }
 
         "NT SERVICE\*" {
-            $Resolved = Resolve-IdRefSvc -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
+            $Resolved = Resolve-IdRefSvc -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
             return $Resolved
         }
 
         "APPLICATION PACKAGE AUTHORITY\*" {
-            $Resolved = Resolve-IdRefAppPkg -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8
+            $Resolved = Resolve-IdRefAppPkg -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8
             return $Resolved
         }
 
@@ -150,10 +156,10 @@ function Resolve-IdentityReference {
         $CacheResult = $DomainsByNetbios[$ServerNetBIOS]
 
         if ($CacheResult) {
-            # Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$($ServerNetBIOS)'."
+            Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ServerNetBIOS' for '$IdentityReference'"
         } else {
 
-            Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($ServerNetBIOS)'."
+            Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
             $DomainsByNetbios[$ServerNetBIOS] = $CacheResult
 

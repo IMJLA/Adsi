@@ -8298,7 +8298,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:verb>Resolve</command:verb>
       <command:noun>IdentityReference</command:noun>
       <maml:description>
-        <maml:para>Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists</maml:para>
+        <maml:para>Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists</maml:para>
       </maml:description>
     </command:details>
     <maml:description>

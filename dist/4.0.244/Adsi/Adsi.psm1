@@ -771,15 +771,17 @@ function Resolve-IdRefCached {
 
         if ($AdsiServer.$Cache) {
 
-            $WellKnownSidCacheResult = $AdsiServer.$Cache[$IdentityReference]
+            $CacheResult = $AdsiServer.$Cache[$IdentityReference]
 
-            if ($WellKnownSidCacheResult) {
+            if ($CacheResult) {
+
+                Write-LogMsg @Log -Text " # '$Cache' cache hit for '$IdentityReference' on '$ServerNetBIOS': $($CacheResult.Name)"
 
                 return [PSCustomObject]@{
                     IdentityReference        = $IdentityReference
-                    SIDString                = $WellKnownSidCacheResult.SID
-                    IdentityReferenceNetBios = "$ServerNetBIOS\$($WellKnownSidCacheResult.Name)"
-                    IdentityReferenceDns     = "$($AdsiServer.Dns)\$($WellKnownSidCacheResult.Name)"
+                    SIDString                = $CacheResult.SID
+                    IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.Name)"
+                    IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
                 }
 
             } else {
@@ -790,17 +792,17 @@ function Resolve-IdRefCached {
 
     }
 
-    $CachedCimInstance = Find-CachedCimInstance -ComputerName $ServerNetBIOS -Key $IdentityReference -CimCache $CimCache -Log $Log -CacheToSearch 'Win32_ServiceBySid', 'Win32_AccountBySid', 'Win32_AccountByCaption'
+    $CacheResult = Find-CachedCimInstance -ComputerName $ServerNetBIOS -Key $IdentityReference -CimCache $CimCache -Log $Log -CacheToSearch 'Win32_ServiceBySid', 'Win32_AccountBySid', 'Win32_AccountByCaption'
 
-    if ($CachedCimInstance) {
+    if ($CacheResult) {
 
-        #Write-LogMsg @Log -Text " # CIM instance cache hit for '$IdentityReference' on '$ServerNetBios'"
+        #Write-LogMsg @Log -Text " # CIM instance cache hit for '$IdentityReference' on '$ServerNetBios': $($CacheResult.Name)"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
-            SIDString                = $CachedCimInstance.SID
-            IdentityReferenceNetBios = "$ServerNetBIOS\$($CachedCimInstance.Name)"
-            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CachedCimInstance.Name)"
+            SIDString                = $CacheResult.SID
+            IdentityReferenceNetBios = "$ServerNetBIOS\$($CacheResult.Name)"
+            IdentityReferenceDns     = "$($AdsiServer.Dns)\$($CacheResult.Name)"
         }
 
     } else {
@@ -813,8 +815,8 @@ function Resolve-IdRefCached {
 
         # IdentityReference is a well-known SID
 
-        # Write-LogMsg @Log -Text " # Known SID cache hit for '$IdentityReference' on '$ServerNetBIOS'"
         $Name = $CacheResult['Name']
+        # Write-LogMsg @Log -Text " # Known SID cache hit for '$IdentityReference' on '$ServerNetBIOS': $Name"
         $Caption = "$ServerNetBIOS\$Name"
 
         return [PSCustomObject]@{
@@ -834,8 +836,8 @@ function Resolve-IdRefCached {
 
         # IdentityReference is a well-known NT Account caption
 
-        # Write-LogMsg @Log -Text " # Known NTAccount caption hit for '$IdentityReference' on '$ServerNetBIOS'"
         $Name = $CacheResult['Name']
+        # Write-LogMsg @Log -Text " # Known NTAccount caption hit for '$IdentityReference' on '$ServerNetBIOS': $Name"
         $Caption = "$ServerNetBIOS\$Name"
 
         return [PSCustomObject]@{
@@ -846,15 +848,15 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Known NTAccount caption cache miss for '$IdentityReference' on '$ServerNetBIOS'"
+        Write-LogMsg @Log -Text " # Known NTAccount caption cache miss for '$IdentityReference' on '$ServerNetBIOS': $Name"
     }
 
     $CacheResult = Get-KnownSid -SID $IdentityReference
 
     if ($CacheResult['NTAccount'] -ne $CacheResult['SID']) {
 
-        Write-LogMsg @Log -Text " # Capability SID pattern hit for '$IdentityReference' on '$ServerNetBIOS'"
         $Name = $CacheResult['Name']
+        Write-LogMsg @Log -Text " # Capability SID pattern hit for '$IdentityReference' on '$ServerNetBIOS'"
         $Caption = "$ServerNetBIOS\$Name"
 
         return [PSCustomObject]@{
@@ -883,7 +885,7 @@ function Resolve-IdRefCached {
 
         if ($CacheResult) {
 
-            # Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache hit for '$ServerNetBIOS\$Name' on '$ServerNetBIOS'"
+            # Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache hit for '$ServerNetBIOS\$Name' on '$ServerNetBIOS': $($CacheResult.SID)"
 
             if ($ServerNetBIOS -eq $CacheResult.Domain) {
                 $DomainDns = $AdsiServer.Dns
@@ -895,8 +897,8 @@ function Resolve-IdRefCached {
 
                 if ($DomainCacheResult) {
 
-                    # Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$($CacheResult.Domain)'"
                     $DomainDns = $DomainCacheResult.Dns
+                    # Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$($CacheResult.Domain)': $DomainDns"
 
                 } else {
                     Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($CacheResult.Domain)'"
@@ -928,7 +930,7 @@ function Resolve-IdRefCached {
     if ($CacheResult) {
 
         # IdentityReference is an NT Account Name without a \, and has been cached from this server
-        # Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache hit for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS'"
+        # Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache hit for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS': $($CacheResult.SID)"
 
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
@@ -6426,7 +6428,7 @@ function Resolve-IdentityReference {
 
     <#
     .SYNOPSIS
-    Use ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
+    Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
     .DESCRIPTION
     Based on the IdentityReference proprety of each Access Control Entry:
     Resolve SID to NT account name and vise-versa
@@ -6536,7 +6538,13 @@ function Resolve-IdentityReference {
     # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
     # Search these caches now.
     $CacheResult = Resolve-IdRefCached @splat1 -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
-    if ($CacheResult) { return $CacheResult } else {
+
+    if ($CacheResult) {
+
+        Write-LogMsg @Log -Text " # Cache hit for '$IdentityReference'"
+        return $CacheResult
+
+    } else {
         Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
     }
 
@@ -6549,12 +6557,12 @@ function Resolve-IdentityReference {
         }
 
         "NT SERVICE\*" {
-            $Resolved = Resolve-IdRefSvc -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
+            $Resolved = Resolve-IdRefSvc -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
             return $Resolved
         }
 
         "APPLICATION PACKAGE AUTHORITY\*" {
-            $Resolved = Resolve-IdRefAppPkg -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8
+            $Resolved = Resolve-IdRefAppPkg -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8
             return $Resolved
         }
 
@@ -6574,10 +6582,10 @@ function Resolve-IdentityReference {
         $CacheResult = $DomainsByNetbios[$ServerNetBIOS]
 
         if ($CacheResult) {
-            # Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$($ServerNetBIOS)'."
+            Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ServerNetBIOS' for '$IdentityReference'"
         } else {
 
-            Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($ServerNetBIOS)'."
+            Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
             $DomainsByNetbios[$ServerNetBIOS] = $CacheResult
 
@@ -6831,6 +6839,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
