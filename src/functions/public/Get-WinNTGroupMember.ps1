@@ -157,7 +157,7 @@ function Get-WinNTGroupMember {
                     $MemberName = $DirectorySplit['Account']
 
                     # Resolve well-known SID authorities to the name of the computer the DirectoryEntry came from.
-                    Resolve-LocalSidAuthorityToComputerName -InputObject $DirectorySplit -DirectoryEntry $ThisDirEntry
+                    Resolve-SidAuthority -DirectorySplit $DirectorySplit -DirectoryEntry $ThisDirEntry
                     $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
                     $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
 

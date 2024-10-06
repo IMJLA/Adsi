@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.259] - 2024-10-06 - bugfix param name, rename funct for fun
+
 ## [4.0.258] - 2024-10-06 - bugfix sid authority resolution
 
 ## [4.0.257] - 2024-10-06 - no tests

@@ -1,8 +1,9 @@
-function Resolve-LocalSidAuthorityToComputerName {
+function Resolve-SidAuthority {
 
     param (
 
         # A DirectoryPath which has been split on the / character then parsed into a dictionary of constituent components
+        # Must have a Domain key
         [hashtable]$DirectorySplit,
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] object whose Parent's Name will be used as the replacement Authority.
