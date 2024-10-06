@@ -32,11 +32,11 @@ function Split-DirectoryPath {
     }
 
     return @{
-        #DirectoryPath = $DirectoryPath # Not currently in use by dependent functions
-        Account = $Split[ ( $Split.Count - 1 ) ]
-        Domain  = $Split[ ( $Split.Count - 2 ) ]
-        #ParentDomain  = $ParentDomain # Not currently in use by dependent functions
-        #Middle        = $Middle # Not currently in use by dependent functions
+        DirectoryPath = $DirectoryPath # Not currently in use by dependent functions
+        Account       = $Split[ ( $Split.Count - 1 ) ]
+        Domain        = $Split[ ( $Split.Count - 2 ) ]
+        ParentDomain  = $ParentDomain # Not currently in use by dependent functions
+        Middle        = $Middle # Not currently in use by dependent functions
     }
 
 }

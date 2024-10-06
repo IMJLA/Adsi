@@ -456,6 +456,27 @@ function Find-CachedWellKnownSID {
     }
 
 }
+function Get-DirectoryEntryParentName {
+
+    # Possibly a debugging issue, not sure whether I need to prepare for both here.
+    # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
+
+    param (
+        $DirectoryEntry
+    )
+
+    if ($DirectoryEntry.Parent.Name) {
+
+        return $DirectoryEntry.Parent.Name
+
+    } else {
+
+        $LastIndexOf = $DirectoryEntry.Parent.LastIndexOf('/')
+        return $DirectoryEntry.Parent.Substring($LastIndexOf + 1, $DirectoryEntry.Parent.Length - $LastIndexOf - 1)
+
+    }
+
+}
 function Get-SidTypeMap {
     return @{
         1 = 'user' #'SidTypeUser'
@@ -1375,6 +1396,47 @@ function Resolve-IdRefSvc {
     }
 
 }
+function Resolve-LocalSidAuthorityToComputerName {
+
+    param (
+
+        # A DirectoryPath or IdentityReference
+        [string]$InputObject,
+
+        # Well-Known local SID authorities to replace with the computer name in the InputObject string.
+        [hashtable]$AuthoritiesToReplaceWithParentName = @{
+            'APPLICATION PACKAGE AUTHORITY' = $null
+            'BUILTIN'                       = $null
+            'CREATOR SID AUTHORITY'         = $null
+            'LOCAL SID AUTHORITY'           = $null
+            'Non-unique Authority'          = $null
+            'NT AUTHORITY'                  = $null
+            'NT SERVICE'                    = $null
+            'NT VIRTUAL MACHINE'            = $null
+            'NULL SID AUTHORITY'            = $null
+            'WORLD SID AUTHORITY'           = $null
+        },
+
+        # Computer name to use to replace the well-known local SID authorities in the InputObject string.
+        [string]$ComputerName,
+
+        # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the directory entry so its parent can be retrieved
+        $DirectoryEntry
+
+    )
+
+    # Replace the well-known SID authorities with the computer name
+    if ($AuthoritiesToReplaceWithParentName.ContainsKey($ComputerName)) {
+
+        pause
+
+        # This may be unnecessary.  See comments of the private function for details.
+        $ParentName = Get-DirectoryEntryParentName -DirectoryEntry $DirectoryEntry
+
+        return $InputObject.Replace($ComputerName, $ParentName)
+
+    }
+}
 function Split-DirectoryPath {
 
     <#
@@ -1409,11 +1471,11 @@ function Split-DirectoryPath {
     }
 
     return @{
-        #DirectoryPath = $DirectoryPath # Not currently in use by dependent functions
-        Account = $Split[ ( $Split.Count - 1 ) ]
-        Domain  = $Split[ ( $Split.Count - 2 ) ]
-        #ParentDomain  = $ParentDomain # Not currently in use by dependent functions
-        #Middle        = $Middle # Not currently in use by dependent functions
+        DirectoryPath = $DirectoryPath # Not currently in use by dependent functions
+        Account       = $Split[ ( $Split.Count - 1 ) ]
+        Domain        = $Split[ ( $Split.Count - 2 ) ]
+        ParentDomain  = $ParentDomain # Not currently in use by dependent functions
+        Middle        = $Middle # Not currently in use by dependent functions
     }
 
 }
@@ -6055,19 +6117,6 @@ function Get-WinNTGroupMember {
             WhoAmI       = $WhoAmI
         }
 
-        $AuthoritiesToReplaceWithParentName = @{
-            'APPLICATION PACKAGE AUTHORITY' = $null
-            'BUILTIN'                       = $null
-            'CREATOR SID AUTHORITY'         = $null
-            'LOCAL SID AUTHORITY'           = $null
-            'Non-unique Authority'          = $null
-            'NT AUTHORITY'                  = $null
-            'NT SERVICE'                    = $null
-            'NT VIRTUAL MACHINE'            = $null
-            'NULL SID AUTHORITY'            = $null
-            'WORLD SID AUTHORITY'           = $null
-        }
-
         # Add the bare minimum required properties (TODO: distinguished desirable but not mandatory properties e.g. Department)
         $PropertiesToLoad = $PropertiesToLoad + @(
             'Department',
@@ -6155,7 +6204,9 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberLogSuffix = "# For '$DirectoryPath'"
                     $MemberDomainDn = $null
-                    #####$DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
+                    $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
+                    $MemberDomainNetbios = ConvertFrom-LocalSidAuthority -Domain $DirectorySplit['Domain']
+                    $MemberName = $DirectorySplit['Account']
 
                     <#
                     WinNT://WORKGROUP/COMPUTER/Administrator
@@ -6163,33 +6214,15 @@ function Get-WinNTGroupMember {
                     WinNT://DOMAIN/COMPUTER/Administrator
                     WinNT://WORKGROUP/COMPUTER/GuestAccount
                     #>
-                    $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
-                    if ($DirectoryPath -match $workgroupregex) {
+                    #$workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
+                    #if ($DirectoryPath -match $workgroupregex) {
+                    if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
 
-                        $MemberName = $Matches.Acct
-                        Write-LogMsg @Log -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' $MemberLogSuffix $LogSuffix"
-                        $MemberDomainNetbios = $Matches.Domain
-
-                        # Replace the well-known SID authorities with the computer name
-                        if ($AuthoritiesToReplaceWithParentName.ContainsKey($MemberDomainNetbios)) {
-                            
-                            pause
-
-                            # Possibly a debugging issue, not sure whether I need to prepare for both here.
-                            # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
-                            if ($ThisDirEntry.Parent.GetType().Name -eq 'String') {
-
-                                $LastIndexOf = $ThisDirEntry.Parent.LastIndexOf('/')
-                                $ResolvedMemberDomainNetbios = $ThisDirEntry.Parent.Substring($LastIndexOf + 1, $ThisDirEntry.Parent.Length - $LastIndexOf - 1)
-
-                            } elseif ($ThisDirEntry.Parent.GetType().Name -eq 'DirectoryEntry') {
-                                $ResolvedMemberDomainNetbios = $ThisDirEntry.Parent.Name
-                            }
-
-                            $DirectoryPath = $DirectoryPath.Replace($MemberDomainNetbios, $ResolvedMemberDomainNetbios)
-                            $ResolvedMemberDomainNetbios = $MemberDomainNetbios
-
-                        }
+                        #$MemberName = $Matches.Acct
+                        #Write-LogMsg @Log -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' $MemberLogSuffix $LogSuffix"
+                        Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
+                        #$MemberDomainNetbios = $Matches.Domain
+                        $ResolvedDirectoryPath = Resolve-LocalSidAuthorityToComputerName -InputObject $DirectoryPath -ComputerName $MemberDomainNetbios -DirectoryEntry $DirectoryEntry
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
@@ -6206,7 +6239,7 @@ function Get-WinNTGroupMember {
                         }
 
                         # WinNT://WORKGROUP/COMPUTER/GuestAccount
-                        if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
+                        if ($ResolvedDirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
 
                             Write-LogMsg @Log -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' $MemberLogSuffix $LogSuffix"
 
@@ -6219,7 +6252,7 @@ function Get-WinNTGroupMember {
                         }
 
                     } else {
-                        Write-LogMsg @Log -Text " # No RegEx match for '$workgroupregex' $MemberLogSuffix $LogSuffix"
+                        Write-LogMsg @Log -Text " # '$MemberDomainNetbios' may or may not be a workgroup computer (inconclusive) $MemberLogSuffix $LogSuffix"
                     }
 
                     # LDAP directories have a distinguishedName
@@ -6237,7 +6270,7 @@ function Get-WinNTGroupMember {
                         # WinNT directories do not support searching so we will retrieve each member individually
                         # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
                         Write-LogMsg @Log -Text " # Is a local security principal $MemberLogSuffix $LogSuffix"
-                        $MembersToGet['WinNTMembers'] += $DirectoryPath
+                        $MembersToGet['WinNTMembers'] += $ResolvedDirectoryPath
 
                     }
 
@@ -6873,6 +6906,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

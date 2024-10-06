@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.254] - 2024-10-06 - eliminate first regex
+
 ## [4.0.253] - 2024-10-06 - add debug pause
 
 ## [4.0.252] - 2024-10-06 - cleanup debug logging

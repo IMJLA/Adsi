@@ -83,19 +83,6 @@ function Get-WinNTGroupMember {
             WhoAmI       = $WhoAmI
         }
 
-        $AuthoritiesToReplaceWithParentName = @{
-            'APPLICATION PACKAGE AUTHORITY' = $null
-            'BUILTIN'                       = $null
-            'CREATOR SID AUTHORITY'         = $null
-            'LOCAL SID AUTHORITY'           = $null
-            'Non-unique Authority'          = $null
-            'NT AUTHORITY'                  = $null
-            'NT SERVICE'                    = $null
-            'NT VIRTUAL MACHINE'            = $null
-            'NULL SID AUTHORITY'            = $null
-            'WORLD SID AUTHORITY'           = $null
-        }
-
         # Add the bare minimum required properties (TODO: distinguished desirable but not mandatory properties e.g. Department)
         $PropertiesToLoad = $PropertiesToLoad + @(
             'Department',
@@ -183,7 +170,9 @@ function Get-WinNTGroupMember {
                     $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
                     $MemberLogSuffix = "# For '$DirectoryPath'"
                     $MemberDomainDn = $null
-                    #####$DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
+                    $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
+                    $MemberDomainNetbios = ConvertFrom-LocalSidAuthority -Domain $DirectorySplit['Domain']
+                    $MemberName = $DirectorySplit['Account']
 
                     <#
                     WinNT://WORKGROUP/COMPUTER/Administrator
@@ -191,33 +180,15 @@ function Get-WinNTGroupMember {
                     WinNT://DOMAIN/COMPUTER/Administrator
                     WinNT://WORKGROUP/COMPUTER/GuestAccount
                     #>
-                    $workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
-                    if ($DirectoryPath -match $workgroupregex) {
+                    #$workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
+                    #if ($DirectoryPath -match $workgroupregex) {
+                    if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
 
-                        $MemberName = $Matches.Acct
-                        Write-LogMsg @Log -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' $MemberLogSuffix $LogSuffix"
-                        $MemberDomainNetbios = $Matches.Domain
-
-                        # Replace the well-known SID authorities with the computer name
-                        if ($AuthoritiesToReplaceWithParentName.ContainsKey($MemberDomainNetbios)) {
-                            
-                            pause
-
-                            # Possibly a debugging issue, not sure whether I need to prepare for both here.
-                            # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
-                            if ($ThisDirEntry.Parent.GetType().Name -eq 'String') {
-
-                                $LastIndexOf = $ThisDirEntry.Parent.LastIndexOf('/')
-                                $ResolvedMemberDomainNetbios = $ThisDirEntry.Parent.Substring($LastIndexOf + 1, $ThisDirEntry.Parent.Length - $LastIndexOf - 1)
-
-                            } elseif ($ThisDirEntry.Parent.GetType().Name -eq 'DirectoryEntry') {
-                                $ResolvedMemberDomainNetbios = $ThisDirEntry.Parent.Name
-                            }
-
-                            $DirectoryPath = $DirectoryPath.Replace($MemberDomainNetbios, $ResolvedMemberDomainNetbios)
-                            $ResolvedMemberDomainNetbios = $MemberDomainNetbios
-
-                        }
+                        #$MemberName = $Matches.Acct
+                        #Write-LogMsg @Log -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' $MemberLogSuffix $LogSuffix"
+                        Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
+                        #$MemberDomainNetbios = $Matches.Domain
+                        $ResolvedDirectoryPath = Resolve-LocalSidAuthorityToComputerName -InputObject $DirectoryPath -ComputerName $MemberDomainNetbios -DirectoryEntry $DirectoryEntry
 
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
@@ -234,7 +205,7 @@ function Get-WinNTGroupMember {
                         }
 
                         # WinNT://WORKGROUP/COMPUTER/GuestAccount
-                        if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
+                        if ($ResolvedDirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
 
                             Write-LogMsg @Log -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' $MemberLogSuffix $LogSuffix"
 
@@ -247,7 +218,7 @@ function Get-WinNTGroupMember {
                         }
 
                     } else {
-                        Write-LogMsg @Log -Text " # No RegEx match for '$workgroupregex' $MemberLogSuffix $LogSuffix"
+                        Write-LogMsg @Log -Text " # '$MemberDomainNetbios' may or may not be a workgroup computer (inconclusive) $MemberLogSuffix $LogSuffix"
                     }
 
                     # LDAP directories have a distinguishedName
@@ -265,7 +236,7 @@ function Get-WinNTGroupMember {
                         # WinNT directories do not support searching so we will retrieve each member individually
                         # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
                         Write-LogMsg @Log -Text " # Is a local security principal $MemberLogSuffix $LogSuffix"
-                        $MembersToGet['WinNTMembers'] += $DirectoryPath
+                        $MembersToGet['WinNTMembers'] += $ResolvedDirectoryPath
 
                     }
 
