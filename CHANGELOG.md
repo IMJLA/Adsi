@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.261] - 2024-10-06 - bugfix debug logging
+
 ## [4.0.260] - 2024-10-06 - improved debug logging
 
 ## [4.0.259] - 2024-10-06 - bugfix param name, rename funct for fun
