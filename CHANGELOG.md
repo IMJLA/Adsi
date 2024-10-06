@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.266] - 2024-10-06 - eliminate use of get-member to improve performance
+
 ## [4.0.265] - 2024-10-06 - eliminate second regex
 
 ## [4.0.264] - 2024-10-06 - add debug pause

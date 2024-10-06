@@ -523,7 +523,6 @@ function Find-WinNTGroupMember {
 
             if ($DirectorySplit['Domain'] -eq $SourceDomain) {
 
-                # TODO: Why does this indicate a WinNT group member rather than LDAP?
                 Write-LogMsg @Log -Text " # Member's parsed domain $($DirectorySplit['Domain']) equals the group's parsed domain '$SourceDomain' but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
                 $MemberDomainDn = $null
 
@@ -1899,7 +1898,8 @@ function ConvertFrom-DirectoryEntry {
 
         $OutputObject = @{}
 
-        ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+        #ForEach ($Prop in ($ThisDirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+        ForEach ($Prop in $ThisDirectoryEntry.PSObject.Properties.GetEnumerator().Name) {
 
             $null = ConvertTo-SimpleProperty -InputObject $ThisDirectoryEntry -Property $Prop -PropertyDictionary $OutputObject
 
@@ -2345,7 +2345,8 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -ne $DirectoryEntry) {
 
-            ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            #ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            ForEach ($Prop in $DirectoryEntry.PSObject.Properties.GetEnumerator().Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertiesToAdd
             }
 
@@ -2427,7 +2428,8 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         # Get any existing properties for inclusion later
-                        $InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+                        #$InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+                        $InputProperties = $ThisMember.PSObject.Properties.GetEnumerator().Name
 
                         # Include any existing properties found earlier
                         ForEach ($ThisProperty in $InputProperties) {
@@ -2544,26 +2546,8 @@ function ConvertFrom-SearchResult {
     )
 
     process {
+
         ForEach ($ThisSearchResult in $SearchResult) {
-            #$ObjectWithProperties = $ThisSearchResult |
-            #Select-Object -Property *
-            #
-            #$ObjectNoteProperties = $ObjectWithProperties |
-            #Get-Member -MemberType Property, CodeProperty, ScriptProperty, NoteProperty
-            #
-            #$ThisObject = @{}
-            #
-            ## Enumerate the keys of the ResultPropertyCollection
-            #ForEach ($ThisProperty in $ThisSearchResult.Properties.Keys) {
-            #   $ThisObject = ConvertTo-SimpleProperty -InputObject $ThisSearchResult.Properties -Property $ThisProperty -PropertyDictionary $ThisObject
-            #}
-            #
-            ## We will allow any existing properties to override members of the ResultPropertyCollection
-            #ForEach ($ThisObjProperty in $ObjectNoteProperties) {
-            #    $ThisObject = ConvertTo-SimpleProperty -InputObject $ObjectWithProperties -Property $ThisObjProperty.Name -PropertyDictionary $ThisObject
-            #}
-            #
-            #[PSCustomObject]$ThisObject
 
             $OutputObject = @{}
 
@@ -2573,7 +2557,8 @@ function ConvertFrom-SearchResult {
             }
 
             # We will allow any existing properties to override members of the ResultPropertyCollection
-            ForEach ($ThisProperty in ($ThisSearchResult | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            #ForEach ($ThisProperty in ($ThisSearchResult | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            ForEach ($ThisProperty in $ThisSearchResult.PSObject.Properties.GetEnumerator().Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $ThisSearchResult -Property $ThisProperty -PropertyDictionary $OutputObject
             }
 
@@ -4638,7 +4623,7 @@ function Get-CurrentDomain {
         CimCache          = $CimCache
         ComputerName      = $ComputerName
         DebugOutputStream = $DebugOutputStream
-        LogBuffer       = $LogBuffer
+        LogBuffer         = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -4676,7 +4661,14 @@ function Get-CurrentDomain {
         }
 
         # Get any existing properties for inclusion later
-        $InputProperties = (Get-Member -InputObject $CurrentDomain[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        if ($CurrentDomain -is [System.Collections.IEnumerable]) {
+            $FirstDomain = $CurrentDomain[0]
+        } else {
+            $FirstDomain = $CurrentDomain
+        }
+
+        #$InputProperties = (Get-Member -InputObject $CurrentDomain[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        $InputProperties = $FirstDomain.PSObject.Properties.GetEnumerator().Name
 
         # Include any existing properties found earlier
         ForEach ($ThisProperty in $InputProperties) {
@@ -6523,7 +6515,8 @@ function New-FakeDirectoryEntry {
         SchemaClassName = $SchemaClassName
     }
 
-    ForEach ($Prop in ($InputObject | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+    #ForEach ($Prop in ($InputObject | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+    ForEach ($Prop in $InputObject.PSObject.Properties.GetEnumerator().Name) {
         $Properties[$Prop] = $InputObject.$Prop
     }
 
@@ -6798,7 +6791,8 @@ function Resolve-ServiceNameToSID {
                 SID  = $SID
             }
 
-            ForEach ($Prop in ($Svc | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            #ForEach ($Prop in ($Svc | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            ForEach ($Prop in $Svc.PSObject.Properties.GetEnumerator().Name) {
                 $OutputObject[$Prop] = $Svc.$Prop
             }
 
@@ -6963,6 +6957,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

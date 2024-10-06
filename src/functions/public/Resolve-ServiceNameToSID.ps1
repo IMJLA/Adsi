@@ -40,7 +40,8 @@ function Resolve-ServiceNameToSID {
                 SID  = $SID
             }
 
-            ForEach ($Prop in ($Svc | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            #ForEach ($Prop in ($Svc | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            ForEach ($Prop in $Svc.PSObject.Properties.GetEnumerator().Name) {
                 $OutputObject[$Prop] = $Svc.$Prop
             }
 

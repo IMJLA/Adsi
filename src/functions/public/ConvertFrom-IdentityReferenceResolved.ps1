@@ -433,7 +433,8 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -ne $DirectoryEntry) {
 
-            ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            #ForEach ($Prop in ($DirectoryEntry | Get-Member -View All -MemberType Property, NoteProperty).Name) {
+            ForEach ($Prop in $DirectoryEntry.PSObject.Properties.GetEnumerator().Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $DirectoryEntry -Property $Prop -PropertyDictionary $PropertiesToAdd
             }
 
@@ -515,7 +516,8 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         # Get any existing properties for inclusion later
-                        $InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+                        #$InputProperties = (Get-Member -InputObject $ThisMember -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+                        $InputProperties = $ThisMember.PSObject.Properties.GetEnumerator().Name
 
                         # Include any existing properties found earlier
                         ForEach ($ThisProperty in $InputProperties) {

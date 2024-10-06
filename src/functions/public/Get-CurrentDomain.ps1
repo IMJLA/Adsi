@@ -55,7 +55,7 @@ function Get-CurrentDomain {
         CimCache          = $CimCache
         ComputerName      = $ComputerName
         DebugOutputStream = $DebugOutputStream
-        LogBuffer       = $LogBuffer
+        LogBuffer         = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -93,7 +93,14 @@ function Get-CurrentDomain {
         }
 
         # Get any existing properties for inclusion later
-        $InputProperties = (Get-Member -InputObject $CurrentDomain[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        if ($CurrentDomain -is [System.Collections.IEnumerable]) {
+            $FirstDomain = $CurrentDomain[0]
+        } else {
+            $FirstDomain = $CurrentDomain
+        }
+
+        #$InputProperties = (Get-Member -InputObject $CurrentDomain[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
+        $InputProperties = $FirstDomain.PSObject.Properties.GetEnumerator().Name
 
         # Include any existing properties found earlier
         ForEach ($ThisProperty in $InputProperties) {
