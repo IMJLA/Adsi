@@ -132,29 +132,7 @@ function Get-WinNTGroupMember {
                 $ThisDirEntry.schemaclassname -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')
             ) {
 
-                # Retrieve the members of local groups
-
-                # Assembly: System.DirectoryServices.dll
-                # Namespace: System.DirectoryServices
-                # DirectoryEntry.Invoke(String, Object[]) Method
-                # Calls a method on the native Active Directory Domain Services object
-                # https://docs.microsoft.com/en-us/dotnet/api/system.directoryservices.directoryentry.invoke?view=dotnet-plat-ext-6.0
-
-                # I am using it to call the IADsGroup::Members method
-                # The IADsGroup programming interface is part of the iads.h header
-                # The iads.h header is part of the ADSI component of the Win32 API
-                # The IADsGroup::Members method retrieves a collection of the immediate members of the group.
-                # The collection does not include the members of other groups that are nested within the group.
-                # The default implementation of this method uses LsaLookupSids to query name information for the group members.
-                # LsaLookupSids has a maximum limitation of 20480 SIDs it can convert, therefore that limitation also applies to this method.
-                # Returns a pointer to an IADsMembers interface pointer that receives the collection of group members. The caller must release this interface when it is no longer required.
-                # https://docs.microsoft.com/en-us/windows/win32/api/iads/nf-iads-iadsgroup-members
-                # The IADsMembers::Members method would use the same provider but I have chosen not to implement that here
-                # Recursion through nested groups can be handled outside of Get-WinNTGroupMember for now
-                # Maybe that could be a feature in the future
-                # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
-
-                $DirectoryMembers = & { $ThisDirEntry.Invoke('Members') } 2>$null
+                $DirectoryMembers = Invoke-IADsGroupMembersMethod -DirectoryEntry $ThisDirEntry
                 Write-LogMsg @Log -Text " # $(@($DirectoryMembers).Count) members found $LogSuffix"
 
                 $MembersToGet = @{
@@ -174,29 +152,18 @@ function Get-WinNTGroupMember {
                     $MemberDomainNetbios = ConvertFrom-LocalSidAuthority -Domain $DirectorySplit['Domain']
                     $MemberName = $DirectorySplit['Account']
 
-                    <#
-                    WinNT://WORKGROUP/COMPUTER/Administrator
-                    WinNT://COMPUTER/Administrators
-                    WinNT://DOMAIN/COMPUTER/Administrator
-                    WinNT://WORKGROUP/COMPUTER/GuestAccount
-                    #>
-                    #$workgroupregex = 'WinNT:\/\/(WORKGROUP\/)?(?<Domain>[^\/]*)\/(?<Acct>.*$)'
-                    #if ($DirectoryPath -match $workgroupregex) {
                     if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
 
-                        #$MemberName = $Matches.Acct
-                        #Write-LogMsg @Log -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' $MemberLogSuffix $LogSuffix"
                         Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
-                        #$MemberDomainNetbios = $Matches.Domain
                         $ResolvedDirectoryPath = Resolve-LocalSidAuthorityToComputerName -InputObject $DirectoryPath -ComputerName $MemberDomainNetbios -DirectoryEntry $DirectoryEntry
-
                         $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
 
                         if ($DomainCacheResult) {
 
                             Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
 
-                            if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
+                            if ( $MemberDomainNetbios -ne $SourceDomain ) {
+                                # TODO: Why does this indicate an LDAP group member rather than WinNT?
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
                             }
 
@@ -210,6 +177,7 @@ function Get-WinNTGroupMember {
                             Write-LogMsg @Log -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' $MemberLogSuffix $LogSuffix"
 
                             if ($Matches.Middle -eq $SourceDomain) {
+                                # TODO: Why does this indicate a WinNT group member rather than LDAP?
                                 $MemberDomainDn = $null
                             }
 
