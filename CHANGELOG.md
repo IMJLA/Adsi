@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.263] - 2024-10-06 - bugfix missing params
+
 ## [4.0.262] - 2024-10-06 - split logic out into find-winntgroupmember
 
 ## [4.0.261] - 2024-10-06 - bugfix debug logging

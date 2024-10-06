@@ -142,7 +142,7 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $DirectoryEntry -SourceDomain $SourceDomain
+                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $DirectoryEntry -SourceDomain $SourceDomain -Log $Log -DomainsByNetbios $DomainsByNetbios
 
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
