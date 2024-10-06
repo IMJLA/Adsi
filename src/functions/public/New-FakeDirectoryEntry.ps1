@@ -88,6 +88,7 @@ function New-FakeDirectoryEntry {
         $InputObject.SidType -eq 4 -or
         $InputObject.SidType -eq 5
     ) {
+        pause
         return $null
     }
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
