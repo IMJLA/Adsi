@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.249] - 2024-10-06 - bugflix splats
+
 ## [4.0.248] - 2024-10-06 - improve splat usage
 
 ## [4.0.247] - 2024-10-06 - add split-directorypath to get-winntgroupmember

@@ -70,7 +70,7 @@ function Get-WinNTGroupMember {
     )
     begin {
 
-        $LogParams = @{
+        $Log = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
             Buffer       = $LogBuffer
@@ -96,19 +96,22 @@ function Get-WinNTGroupMember {
             'WORLD SID AUTHORITY'           = $null
         }
 
-        $PropertiesToLoad += 'Department',
-        'description',
-        'distinguishedName',
-        'grouptype',
-        'managedby',
-        'member',
-        'name',
-        'objectClass',
-        'objectSid',
-        'operatingSystem',
-        'primaryGroupToken',
-        'samAccountName',
-        'Title'
+        # Add the bare minimum required properties (TODO: distinguished desirable but not mandatory properties e.g. Department)
+        $PropertiesToLoad = $PropertiesToLoad + @(
+            'Department',
+            'description',
+            'distinguishedName',
+            'grouptype',
+            'managedby',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'operatingSystem',
+            'primaryGroupToken',
+            'samAccountName',
+            'Title'
+        )
 
         $PropertiesToLoad = $PropertiesToLoad |
         Sort-Object -Unique
@@ -117,10 +120,13 @@ function Get-WinNTGroupMember {
             DirectoryEntryCache = $DirectoryEntryCache
             PropertiesToLoad    = $PropertiesToLoad
             DomainsByNetbios    = $DomainsByNetbios
-            LogBuffer           = $LogBuffer
-            WhoAmI              = $WhoAmI
             CimCache            = $CimCache
             ThisFqdn            = $ThisFqdn
+        }
+
+        $ExpandParams = @{
+            DomainsByFqdn = $DomainsByFqdn
+            DomainsBySid  = $DomainsBySid
         }
 
     }
@@ -161,7 +167,7 @@ function Get-WinNTGroupMember {
                 # https://docs.microsoft.com/en-us/windows/win32/adsi/adsi-object-model-for-winnt-providers?redirectedfrom=MSDN
 
                 $DirectoryMembers = & { $ThisDirEntry.Invoke('Members') } 2>$null
-                Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
+                Write-LogMsg @Log -Text " # '$($ThisDirEntry.Path)' has $(($DirectoryMembers | Measure-Object).Count) members # For $($ThisDirEntry.Path)"
 
                 $MembersToGet = @{
                     'WinNTMembers' = @()
@@ -187,7 +193,7 @@ function Get-WinNTGroupMember {
                     if ($DirectoryPath -match $workgroupregex) {
 
                         $MemberName = $Matches.Acct
-                        Write-LogMsg @LogParams -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                        Write-LogMsg @Log -Text " # Local computer of '$($Matches.Domain)' and an account name of '$MemberName' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MemberDomainNetbios = $Matches.Domain
 
                         # Replace the well-known SID authorities with the computer name
@@ -213,31 +219,31 @@ function Get-WinNTGroupMember {
 
                         if ($DomainCacheResult) {
 
-                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                            Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
 
                             if ( "WinNT:\\$MemberDomainNetbios" -ne $SourceDomain ) {
                                 $MemberDomainDn = $DomainCacheResult.DistinguishedName
                             }
 
                         } else {
-                            Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                            Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         }
 
                         # WinNT://WORKGROUP/COMPUTER/GuestAccount
                         if ($DirectoryPath -match 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)') {
 
-                            Write-LogMsg @LogParams -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                            Write-LogMsg @Log -Text " # Name '$($Matches.Acct)' is on ADSI server '$($Matches.Middle)' joined to the domain '$($Matches.Domain)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
 
                             if ($Matches.Middle -eq $SourceDomain) {
                                 $MemberDomainDn = $null
                             }
 
                         } else {
-                            Write-LogMsg @LogParams -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                            Write-LogMsg @Log -Text " # No RegEx match for 'WinNT:\/\/(?<Domain>[^\/]*)\/(?<Middle>[^\/]*)\/(?<Acct>.*$)' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         }
 
                     } else {
-                        Write-LogMsg @LogParams -Text " # No RegEx match for '$workgroupregex' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                        Write-LogMsg @Log -Text " # No RegEx match for '$workgroupregex' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                     }
 
                     # LDAP directories have a distinguishedName
@@ -247,14 +253,14 @@ function Get-WinNTGroupMember {
                         # Combine all members' samAccountNames into a single search per directory distinguishedName
                         # Use a hashtable with the directory path as the key and a string as the definition
                         # The string is a partial LDAP filter, just the segments of the LDAP filter for each samAccountName
-                        Write-LogMsg @LogParams -Text " # '$MemberName' is a domain security principal # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                        Write-LogMsg @Log -Text " # '$MemberName' is a domain security principal # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MembersToGet["LDAP://$MemberDomainDn"] += "(samaccountname=$MemberName)"
 
                     } else {
 
                         # WinNT directories do not support searching so we will retrieve each member individually
                         # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
-                        Write-LogMsg @LogParams -Text " # Is a local security principal # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                        Write-LogMsg @Log -Text " # Is a local security principal # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
                         $MembersToGet['WinNTMembers'] += $DirectoryPath
 
                     }
@@ -264,9 +270,9 @@ function Get-WinNTGroupMember {
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
 
-                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
-                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @MemberParams
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @MemberParams @LogThis
+                    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @MemberParams @LogThis
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry @MemberParams @ExpandParams @LogThis
 
                 }
 
@@ -276,14 +282,14 @@ function Get-WinNTGroupMember {
                 # Get and Expand the directory entries for the LDAP group members
                 ForEach ($MemberPath in $MembersToGet.Keys) {
 
-                    Write-LogMsg @LogParams -Text "Search-Directory -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
-                    $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$($MembersToGet[$Key]))" @MemberParams
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @MemberParams @LogThis
+                    Write-LogMsg @Log -Text "Search-Directory -DirectoryPath '$ThisMember' # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                    $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$($MembersToGet[$Key]))" @MemberParams @LogThis
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries @MemberParams @ExpandParams @LogThis
 
                 }
 
             } else {
-                Write-LogMsg @LogParams -Text " # '$($ThisDirEntry.Path)' is not a group # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
+                Write-LogMsg @Log -Text " # '$($ThisDirEntry.Path)' is not a group # For '$DirectoryPath' # For $($ThisDirEntry.Path)"
             }
 
         }
