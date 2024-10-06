@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.270] - 2024-10-06 - bugfix new-fakedirectoryentry was skipping groups such as INTERACTIVE
+
 ## [4.0.269] - 2024-10-06 - add debug pause
 
 ## [4.0.268] - 2024-10-06 - temporary debug logging for cache hits

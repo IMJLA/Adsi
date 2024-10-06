@@ -82,15 +82,24 @@ function New-FakeDirectoryEntry {
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
+
     if (
-        $NameBlockList.ContainsKey($Name) -or
-        -not $NameAllowList.ContainsKey($Name) -or
         $InputObject.SidType -eq 4 -or
         $InputObject.SidType -eq 5
     ) {
-        pause
+
+        if (-not $NameAllowList.ContainsKey($Name)) {
+            return
+        }
+
+    }
+
+    if (
+        $NameBlockList.ContainsKey($Name)
+    ) {
         return $null
     }
+
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
 

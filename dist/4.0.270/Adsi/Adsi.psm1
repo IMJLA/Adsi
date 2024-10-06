@@ -6506,15 +6506,24 @@ function New-FakeDirectoryEntry {
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
     $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
+
     if (
-        $NameBlockList.ContainsKey($Name) -or
-        -not $NameAllowList.ContainsKey($Name) -or
         $InputObject.SidType -eq 4 -or
         $InputObject.SidType -eq 5
     ) {
-        pause
+
+        if (-not $NameAllowList.ContainsKey($Name)) {
+            return
+        }
+
+    }
+
+    if (
+        $NameBlockList.ContainsKey($Name)
+    ) {
         return $null
     }
+
     $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
     $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
 
@@ -6966,6 +6975,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
