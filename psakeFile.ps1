@@ -475,7 +475,7 @@ task UnitTests -depends Lint -precondition $pesterPreReqs {
     Test-PSBuildPester @pesterParams
 } -description 'Execute Pester tests'
 
-task SourceControl -depends UnitTests {
+task SourceControl -depends Lint {
     $CurrentBranch = git branch --show-current
     # Commit to Git
     git add .
