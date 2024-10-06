@@ -95,8 +95,14 @@ function Resolve-IdentityReference {
     }
 
     $ServerNetBIOS = $AdsiServer.Netbios
-    $split = $IdentityReference.Split('\')
-    $Name = $split[1]
+    $LastSlashIndex = $IdentityReference.LastIndexOf('\')
+
+    if ($LastSlashIndex -eq -1) {
+        $Name = $IdentityReference
+    } else {
+        $Name = $IdentityReference.Substring( $LastSlashIndex + 1 , $LastSlashIndex.Length - 1 )
+    }
+
     $splat1 = @{ WellKnownSidBySid = $WellKnownSidBySid ; WellKnownSidByCaption = $WellKnownSidByCaption }
     $splat3 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
     $splat5 = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }

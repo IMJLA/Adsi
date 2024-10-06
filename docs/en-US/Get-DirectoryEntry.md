@@ -17,7 +17,7 @@ Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByFqdn] <Hashtable>]
  [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>]
  [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-SidTypeMap] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -210,6 +210,21 @@ Aliases:
 Required: False
 Position: 3
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SidTypeMap
+{{ Fill SidTypeMap Description }}
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 14
+Default value: (Get-SidTypeMap)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
