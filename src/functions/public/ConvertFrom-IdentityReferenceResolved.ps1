@@ -372,7 +372,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
     
                     $DirectoryEntry = $MembersOfUsersGroup |
-                    Where-Object -FilterScript { ($SamAccountNameOrSid -eq (try { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0) }catch { pause })) }
+                    Where-Object -FilterScript { ($SamAccountNameOrSid -eq $(try { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'].Value, 0) }catch { pause })) }
     
                 } else {
     
