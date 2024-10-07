@@ -149,12 +149,6 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
             $env:BHProjectName
         )
     }
-    <#
-    $params = @{
-        BuildOutput = $env:BHBuildOutput
-    }
-    Set-BuildEnvironment @params -Force
-#>
 
     Write-Host "`tBuildHelpers environment variables:" -ForegroundColor Yellow
     (Get-Item ENV:BH*).Foreach({
@@ -167,7 +161,7 @@ task InitializePowershellBuild -depends UpdateModuleVersion {
     $buildModuleName = $MyInvocation.MyCommand.Module.Name
     $buildModuleVersion = $MyInvocation.MyCommand.Module.Version
     "`tBuild Module:       $buildModuleName`:$buildModuleVersion"
-    "`tPowerShell Version: $psVersion$NewLine"
+    "`tPowerShell Version: $psVersion"
 
 } -description 'Initialize environment variables from the PowerShellBuild module'
 
