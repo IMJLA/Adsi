@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.280] - 2024-10-06 - reduce debug log verbosity by leaving out cache miss messages
+
 ## [4.0.279] - 2024-10-06 - reduce debug log verbosity by leaving out cache miss messages
 
 ## [4.0.278] - 2024-10-06 - add debug pause
