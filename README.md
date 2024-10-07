@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.272
+Help Version: 4.0.273
 Locale: en-US
 ---
 
@@ -133,7 +133,7 @@ Use CIM and ADSI to lookup info about IdentityReferences from Access Control Ent
 
 ### [Resolve-ServiceNameToSID](docs/en-US/Resolve-ServiceNameToSID.md)
 
-Resolve-ServiceNameToSID [[-InputObject] <Object>] [[-ComputerName] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-Log] <hashtable>] [<CommonParameters>]
+Resolve-ServiceNameToSID [[-InputObject] <Object>] [<CommonParameters>]
 
 
 ### [Search-Directory](docs/en-US/Search-Directory.md)
