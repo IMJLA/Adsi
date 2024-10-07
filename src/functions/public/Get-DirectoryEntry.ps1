@@ -102,7 +102,7 @@ function Get-DirectoryEntry {
 
     if ($CacheResult) {
 
-        Write-LogMsg @Log -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
+        #Write-LogMsg @Log -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
         return $CacheResult
 
     }

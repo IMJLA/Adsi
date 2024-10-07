@@ -121,7 +121,7 @@ function Resolve-IdentityReference {
 
     if ($CacheResult) {
 
-        Write-LogMsg @Log -Text " # Cache hit for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Cache hit for '$IdentityReference'"
         return $CacheResult
 
     } else {
@@ -162,7 +162,7 @@ function Resolve-IdentityReference {
         $CacheResult = $DomainsByNetbios[$ServerNetBIOS]
 
         if ($CacheResult) {
-            Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ServerNetBIOS' for '$IdentityReference'"
         } else {
 
             Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"

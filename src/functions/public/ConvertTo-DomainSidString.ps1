@@ -76,8 +76,10 @@ function ConvertTo-DomainSidString {
 
     $CacheResult = $DomainsByFqdn[$DomainDnsName]
     if ($CacheResult) {
-        Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainDnsName'"
+
+        #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainDnsName'"
         return $CacheResult.Sid
+
     }
     Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainDnsName'"
 

@@ -191,7 +191,7 @@ function ConvertFrom-IdentityReferenceResolved {
     
                 if ($DomainNetbiosCacheResult) {
     
-                    Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$IdentityReference'"
+                    #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$IdentityReference'"
                     $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                     $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
     

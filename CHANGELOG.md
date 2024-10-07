@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.272] - 2024-10-06 - reduce log verbosity
+
 ## [4.0.271] - 2024-10-06 - move cim cache logic from get-directoryentry to get-cacheddirectoryentry and replace .Split with more efficient LastIndexOf+Substring
 
 ## [4.0.270] - 2024-10-06 - bugfix new-fakedirectoryentry was skipping groups such as INTERACTIVE

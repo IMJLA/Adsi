@@ -48,7 +48,7 @@ function Find-WinNTGroupMember {
 
             if ($DomainCacheResult) {
 
-                Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
 
                 if ( $MemberDomainNetbios -ne $SourceDomain ) {
 

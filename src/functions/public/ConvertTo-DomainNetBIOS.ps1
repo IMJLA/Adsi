@@ -52,14 +52,17 @@ function ConvertTo-DomainNetBIOS {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        Buffer = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
     $DomainCacheResult = $DomainsByFqdn[$DomainFQDN]
+
     if ($DomainCacheResult) {
-        Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
+
+        #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
         return $DomainCacheResult.Netbios
+
     }
 
     Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFQDN'"

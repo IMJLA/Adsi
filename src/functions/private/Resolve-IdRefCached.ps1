@@ -83,7 +83,7 @@ function Resolve-IdRefCached {
 
             if ($CacheResult) {
 
-                Write-LogMsg @Log -Text " # '$Cache' cache hit on '$ServerNetBIOS': $($CacheResult.Name) for '$IdentityReference'"
+                #Write-LogMsg @Log -Text " # '$Cache' cache hit on '$ServerNetBIOS': $($CacheResult.Name) for '$IdentityReference'"
 
                 return [PSCustomObject]@{
                     IdentityReference        = $IdentityReference
@@ -164,7 +164,7 @@ function Resolve-IdRefCached {
     if ($CacheResult['NTAccount'] -ne $CacheResult['SID']) {
 
         $Name = $CacheResult['Name']
-        Write-LogMsg @Log -Text " # Capability SID pattern hit on '$ServerNetBIOS' for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Capability SID pattern hit on '$ServerNetBIOS' for '$IdentityReference'"
         $Caption = "$ServerNetBIOS\$Name"
 
         return [PSCustomObject]@{
