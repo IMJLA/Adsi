@@ -125,7 +125,7 @@ function Resolve-IdentityReference {
         return $CacheResult
 
     } else {
-        Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
     }
 
     # If no match was found in any cache, the path forward depends on the IdentityReference.
@@ -165,7 +165,7 @@ function Resolve-IdentityReference {
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ServerNetBIOS' for '$IdentityReference'"
         } else {
 
-            Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
             $DomainsByNetbios[$ServerNetBIOS] = $CacheResult
 

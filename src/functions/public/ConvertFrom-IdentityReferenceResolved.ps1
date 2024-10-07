@@ -109,7 +109,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
     if ($null -eq $PrincipalById[$IdentityReference]) {
 
-        Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
+        #Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
         $split = $IdentityReference.Split('\')
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
@@ -132,7 +132,7 @@ function ConvertFrom-IdentityReferenceResolved {
             $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
 
         } else {
-            Write-LogMsg @LogParams -Text " # Well Known SID cache miss for '$IdentityReference' on '$DomainNetBIOS'"
+            #Write-LogMsg @LogParams -Text " # Well Known SID cache miss for '$IdentityReference' on '$DomainNetBIOS'"
         }
 
         if ($null -eq $DirectoryEntry) {
@@ -157,7 +157,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
 
             } else {
-                Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
+                #Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
             }
 
         }
@@ -197,10 +197,10 @@ function ConvertFrom-IdentityReferenceResolved {
     
                 } else {
     
-                    Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
+                    #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
     
                     if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
-                        $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
+                        #$DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                     }
     
                     $FqdnParams = @{

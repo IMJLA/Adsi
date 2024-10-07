@@ -107,7 +107,7 @@ function Get-DirectoryEntry {
 
     }
 
-    Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
+    #Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname

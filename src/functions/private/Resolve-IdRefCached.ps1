@@ -93,7 +93,7 @@ function Resolve-IdRefCached {
                 }
 
             } else {
-                Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+                #Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
             }
 
         }
@@ -114,7 +114,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # CIM instance cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # CIM instance cache miss on '$ServerNetBIOS' for '$IdentityReference'"
     }
 
     $CacheResult = $WellKnownSidBySid[$IdentityReference]
@@ -135,7 +135,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Known SID cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Known SID cache miss on '$ServerNetBIOS' for '$IdentityReference'"
     }
 
     $CacheResult = $WellKnownSidByCaption[$IdentityReference]
@@ -156,7 +156,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Known NTAccount caption cache miss on '$ServerNetBIOS': $Name for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Known NTAccount caption cache miss on '$ServerNetBIOS': $Name for '$IdentityReference'"
     }
 
     $CacheResult = Get-KnownSid -SID $IdentityReference
@@ -209,7 +209,7 @@ function Resolve-IdRefCached {
                     # Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$($CacheResult.Domain)': $DomainDns"
 
                 } else {
-                    Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($CacheResult.Domain)' for '$IdentityReference'"
+                    #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($CacheResult.Domain)' for '$IdentityReference'"
                 }
 
             }
@@ -228,7 +228,7 @@ function Resolve-IdRefCached {
             }
 
         } else {
-            Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS' for '$IdentityReference'"
         }
 
     }
@@ -248,7 +248,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS' for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS' for '$IdentityReference'"
     }
 
 }

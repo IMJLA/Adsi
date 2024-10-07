@@ -81,7 +81,7 @@ function ConvertTo-DomainSidString {
         return $CacheResult.Sid
 
     }
-    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainDnsName'"
+    #Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainDnsName'"
 
     if (
         -not $AdsiProvider -or

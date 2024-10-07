@@ -65,7 +65,7 @@ function ConvertTo-DomainNetBIOS {
 
     }
 
-    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFQDN'"
+    #Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFQDN'"
 
     if ($AdsiProvider -eq 'LDAP') {
 

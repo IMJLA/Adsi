@@ -442,7 +442,7 @@ function Find-CachedWellKnownSID {
                     return [PSCustomObject]$CombinedProperties
 
                 } else {
-                    Write-LogMsg @LogParams -Text " # '$Cache' cache miss for '$IdentityReference' on '$DomainNetBIOS'"
+                    #Write-LogMsg @LogParams -Text " # '$Cache' cache miss for '$IdentityReference' on '$DomainNetBIOS'"
                 }
 
             } else {
@@ -452,7 +452,7 @@ function Find-CachedWellKnownSID {
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
+        #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
     }
 
 }
@@ -518,7 +518,7 @@ function Find-WinNTGroupMember {
                 }
 
             } else {
-                Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') $MemberLogSuffix $LogSuffix"
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') $MemberLogSuffix $LogSuffix"
             }
 
             if ($DirectorySplit['Domain'] -eq $SourceDomain) {
@@ -618,7 +618,7 @@ function Get-CachedDirectoryEntry {
 
         } else {
 
-            Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
+            #Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
             $CimCacheResult = $CimServer['Win32_ServiceBySID'][$ID]
 
             if ($CimCacheResult) {
@@ -638,7 +638,7 @@ function Get-CachedDirectoryEntry {
 
             } else {
 
-                Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
+                #Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
                 $DomainCacheResult = $DomainsByFqdn[$Server]
 
                 if ($DomainCacheResult) {
@@ -652,7 +652,7 @@ function Get-CachedDirectoryEntry {
 
                     } else {
 
-                        Write-LogMsg @Log -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
+                        #Write-LogMsg @Log -Text " # Well-known SID by SID cache miss for '$ID' on host with FQDN '$Server' # for '$DirectoryPath'"
                         $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                         if ($NameCacheResult) {
@@ -662,7 +662,7 @@ function Get-CachedDirectoryEntry {
 
                         } else {
 
-                            Write-LogMsg @Log -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
+                            #Write-LogMsg @Log -Text " # Well-known SID by name cache miss for '$AccountName' on host with FQDN '$Server' # for '$DirectoryPath'"
 
                         }
                     }
@@ -682,7 +682,7 @@ function Get-CachedDirectoryEntry {
 
                         } else {
 
-                            Write-LogMsg @Log -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
+                            #Write-LogMsg @Log -Text " # Well-known SID by SID cache miss for '$ID' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                             $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                             if ($NameCacheResult) {
@@ -691,7 +691,7 @@ function Get-CachedDirectoryEntry {
                                 New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                             } else {
-                                Write-LogMsg @Log -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
+                                #Write-LogMsg @Log -Text " # Well-known SID by name cache miss for '$AccountName' on host with NetBIOS '$Server' # for '$DirectoryPath'"
                             }
                         }
                     } else {
@@ -709,7 +709,7 @@ function Get-CachedDirectoryEntry {
 
                             } else {
 
-                                Write-LogMsg @Log -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
+                                #Write-LogMsg @Log -Text " # Well-known SID by SID cache miss for '$ID' on host with SID '$Server' # for '$DirectoryPath'"
                                 $NameCacheResult = $DomainCacheResult.WellKnownSIDByName[$AccountName]
 
                                 if ($NameCacheResult) {
@@ -718,7 +718,7 @@ function Get-CachedDirectoryEntry {
                                     New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                                 } else {
-                                    Write-LogMsg @Log -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
+                                    #Write-LogMsg @Log -Text " # Well-known SID by name cache miss for '$AccountName' on host with SID '$Server' # for '$DirectoryPath'"
                                 }
 
                             }
@@ -734,8 +734,9 @@ function Get-CachedDirectoryEntry {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # CIM server cache miss for '$Server' # for '$DirectoryPath'"
+        #Write-LogMsg @Log -Text " # CIM server cache miss for '$Server' # for '$DirectoryPath'"
     }
+
 }
 function Get-DirectoryEntryParentName {
 
@@ -1137,7 +1138,7 @@ function Resolve-IdRefCached {
                 }
 
             } else {
-                Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+                #Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
             }
 
         }
@@ -1158,7 +1159,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # CIM instance cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # CIM instance cache miss on '$ServerNetBIOS' for '$IdentityReference'"
     }
 
     $CacheResult = $WellKnownSidBySid[$IdentityReference]
@@ -1179,7 +1180,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Known SID cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Known SID cache miss on '$ServerNetBIOS' for '$IdentityReference'"
     }
 
     $CacheResult = $WellKnownSidByCaption[$IdentityReference]
@@ -1200,7 +1201,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Known NTAccount caption cache miss on '$ServerNetBIOS': $Name for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Known NTAccount caption cache miss on '$ServerNetBIOS': $Name for '$IdentityReference'"
     }
 
     $CacheResult = Get-KnownSid -SID $IdentityReference
@@ -1253,7 +1254,7 @@ function Resolve-IdRefCached {
                     # Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$($CacheResult.Domain)': $DomainDns"
 
                 } else {
-                    Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($CacheResult.Domain)' for '$IdentityReference'"
+                    #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$($CacheResult.Domain)' for '$IdentityReference'"
                 }
 
             }
@@ -1272,7 +1273,7 @@ function Resolve-IdRefCached {
             }
 
         } else {
-            Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$Name' on '$ServerNetBIOS' for '$IdentityReference'"
         }
 
     }
@@ -1292,7 +1293,7 @@ function Resolve-IdRefCached {
         }
 
     } else {
-        Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS' for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ServerNetBIOS\$IdentityReference' on '$ServerNetBIOS' for '$IdentityReference'"
     }
 
 }
@@ -1508,7 +1509,7 @@ function Resolve-IdRefSID {
         # Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid'"
     } else {
 
-        Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid'"
+        #Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid'"
         $split = $NTAccount -split '\\'
         $DomainFromSplit = $split[0]
 
@@ -2201,7 +2202,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
     if ($null -eq $PrincipalById[$IdentityReference]) {
 
-        Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
+        #Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
         $split = $IdentityReference.Split('\')
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
@@ -2224,7 +2225,7 @@ function ConvertFrom-IdentityReferenceResolved {
             $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
 
         } else {
-            Write-LogMsg @LogParams -Text " # Well Known SID cache miss for '$IdentityReference' on '$DomainNetBIOS'"
+            #Write-LogMsg @LogParams -Text " # Well Known SID cache miss for '$IdentityReference' on '$DomainNetBIOS'"
         }
 
         if ($null -eq $DirectoryEntry) {
@@ -2249,7 +2250,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
 
             } else {
-                Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
+                #Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
             }
 
         }
@@ -2289,10 +2290,10 @@ function ConvertFrom-IdentityReferenceResolved {
     
                 } else {
     
-                    Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
+                    #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
     
                     if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
-                        $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
+                        #$DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                     }
     
                     $FqdnParams = @{
@@ -2960,7 +2961,7 @@ function ConvertTo-DistinguishedName {
                 #ConvertTo-DistinguishedName -DomainFQDN $DomainCacheResult.Dns -AdsiProvider $DomainCacheResult.AdsiProvider
                 $DomainCacheResult.DistinguishedName
             } else {
-                Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
+                #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
                 Write-LogMsg @LogParams -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
                 $IADsNameTranslateComObject = New-Object -comObject "NameTranslate"
                 Write-LogMsg @LogParams -Text "`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"
@@ -2984,7 +2985,8 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
             } else {
-                Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$ThisDomain'"
+
+                #Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$ThisDomain'"
 
                 if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
                     $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain @LoggingParams
@@ -3064,7 +3066,7 @@ function ConvertTo-DomainNetBIOS {
 
     }
 
-    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFQDN'"
+    #Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFQDN'"
 
     if ($AdsiProvider -eq 'LDAP') {
 
@@ -3185,7 +3187,7 @@ function ConvertTo-DomainSidString {
         return $CacheResult.Sid
 
     }
-    Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainDnsName'"
+    #Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainDnsName'"
 
     if (
         -not $AdsiProvider -or
@@ -3323,7 +3325,7 @@ function ConvertTo-Fqdn {
         $LogParams = @{
             ThisHostname = $ThisHostname
             Type         = $DebugOutputStream
-            Buffer = $LogBuffer
+            Buffer       = $LogBuffer
             WhoAmI       = $WhoAmI
         }
 
@@ -3346,7 +3348,7 @@ function ConvertTo-Fqdn {
                 -not $DomainObject -and
                 -not [string]::IsNullOrEmpty($DomainNetBIOS)
             ) {
-                Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
+                #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
                 $DomainObject = Get-AdsiServer -Netbios $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
                 $DomainsByNetbios[$DomainNetBIOS] = $DomainObject
             }
@@ -4427,7 +4429,7 @@ function Get-AdsiServer {
 
             }
 
-            Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' # Domain FQDN cache miss for '$DomainFqdn'"
+            #Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' # Domain FQDN cache miss for '$DomainFqdn'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn -CimCache $CimCache -ThisFqdn $ThisFqdn @LoggingParams
             $CacheParams['AdsiProvider'] = $AdsiProvider
 
@@ -4687,7 +4689,7 @@ function Get-AdsiServer {
 
             }
 
-            Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' # Domain NetBIOS cache miss for '$DomainNetbios'"
+            #Write-LogMsg @LogParams -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' # Domain NetBIOS cache miss for '$DomainNetbios'"
             $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
 
             Write-LogMsg @LogParams -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName' # for '$DomainNetbios'"
@@ -4971,7 +4973,7 @@ function Get-DirectoryEntry {
 
     }
 
-    Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
+    #Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
@@ -6725,7 +6727,7 @@ function Resolve-IdentityReference {
         return $CacheResult
 
     } else {
-        Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
     }
 
     # If no match was found in any cache, the path forward depends on the IdentityReference.
@@ -6765,7 +6767,7 @@ function Resolve-IdentityReference {
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ServerNetBIOS' for '$IdentityReference'"
         } else {
 
-            Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
             $DomainsByNetbios[$ServerNetBIOS] = $CacheResult
 
@@ -7000,6 +7002,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

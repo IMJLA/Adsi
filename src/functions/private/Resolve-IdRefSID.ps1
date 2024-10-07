@@ -107,7 +107,7 @@ function Resolve-IdRefSID {
         # Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid'"
     } else {
 
-        Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid'"
+        #Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid'"
         $split = $NTAccount -split '\\'
         $DomainFromSplit = $split[0]
 
