@@ -585,8 +585,8 @@ function Get-KnownSidHashTable {
             'Description'     = 'Windows Event Log service account'
             'Name'            = 'EventLog'
             'NTAccount'       = 'NT SERVICE\EventLog'
-            'SchemaClassName' = 'user'
-            'SID'             = 'service'
+            'SchemaClassName' = 'service'
+            'SID'             = 'S-1-5-80-880578595-1860270145-482643319-2788375705-1540778122'
         }
         'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464' = @{
             'Description'     = 'Most of the operating system files are owned by the TrustedInstaller security identifier (SID)'

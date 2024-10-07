@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.282] - 2024-10-06 - bugfix eventlog known sid
+
 ## [4.0.281] - 2024-10-06 - bugfix debug pause
 
 ## [4.0.280] - 2024-10-06 - reduce debug log verbosity by leaving out cache miss messages
