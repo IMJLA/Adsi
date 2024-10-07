@@ -29,7 +29,6 @@ function ConvertFrom-SearchResult {
             }
 
             # We will allow any existing properties to override members of the ResultPropertyCollection
-            #ForEach ($ThisProperty in ($ThisSearchResult | Get-Member -View All -MemberType Property, NoteProperty).Name) {
             ForEach ($ThisProperty in $ThisSearchResult.PSObject.Properties.GetEnumerator().Name) {
                 $null = ConvertTo-SimpleProperty -InputObject $ThisSearchResult -Property $ThisProperty -PropertyDictionary $OutputObject
             }

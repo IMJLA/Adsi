@@ -109,7 +109,6 @@ function New-FakeDirectoryEntry {
         SchemaClassName = $SchemaClassName
     }
 
-    #ForEach ($Prop in ($InputObject | Get-Member -View All -MemberType Property, NoteProperty).Name) {
     ForEach ($Prop in $InputObject.PSObject.Properties.GetEnumerator().Name) {
         $Properties[$Prop] = $InputObject.$Prop
     }

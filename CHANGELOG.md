@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.274] - 2024-10-06 - remove commented old Get-Member approach
+
 ## [4.0.273] - 2024-10-06 - remove unused params
 
 ## [4.0.272] - 2024-10-06 - reduce log verbosity

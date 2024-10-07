@@ -99,7 +99,6 @@ function Get-CurrentDomain {
             $FirstDomain = $CurrentDomain
         }
 
-        #$InputProperties = (Get-Member -InputObject $CurrentDomain[0] -MemberType Property, CodeProperty, ScriptProperty, NoteProperty).Name
         $InputProperties = $FirstDomain.PSObject.Properties.GetEnumerator().Name
 
         # Include any existing properties found earlier
