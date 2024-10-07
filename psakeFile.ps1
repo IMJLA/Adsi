@@ -91,9 +91,14 @@ properties {
 }
 
 FormatTaskName {
-    param($taskName)
-    Write-Host 'Task: ' -ForegroundColor Cyan -NoNewline
+
+    param(
+        [string]$taskName
+    )
+
+    Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
     Write-Host $taskName -ForegroundColor Blue
+
 }
 
 task Default -depends RemoveScriptScopedVariables
@@ -120,9 +125,10 @@ task UpdateModuleVersion -depends InitializeEnvironmentVariables -Action {
         "`tThis is a new build"
         $NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
     }
-    "`tNew Version: $NewModuleVersion$NewLine"
 
+    "`tUpdate-Metadata -Path '$env:BHPSModuleManifest' -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop"
     Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop
+
 } -description 'Increment the module version and update the module manifest accordingly'
 
 task InitializePowershellBuild -depends UpdateModuleVersion {

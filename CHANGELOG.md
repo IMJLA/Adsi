@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.276] - 2024-10-06 - update psakefile
+
 ## [4.0.275] - 2024-10-06 - add debug pause
 
 ## [4.0.274] - 2024-10-06 - remove commented old Get-Member approach
