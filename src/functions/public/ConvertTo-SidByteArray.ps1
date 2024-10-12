@@ -21,7 +21,7 @@ function ConvertTo-SidByteArray {
     )
     process {
         ForEach ($ThisSID in $SidString) {
-            try { $SID = [System.Security.Principal.SecurityIdentifier]::new($ThisSID) }catch { pause }
+            $SID = [System.Security.Principal.SecurityIdentifier]::new($ThisSID)
             [byte[]]$Bytes = [byte[]]::new($SID.BinaryLength)
             $SID.GetBinaryForm($Bytes, 0)
             $Bytes
