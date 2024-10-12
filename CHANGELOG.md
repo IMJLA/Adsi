@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.284] - 2024-10-12 - add searching of win32_servicebyname cache
+
+## [4.0.283] - 2024-10-12 - add searching of cached services by name
+
 ## [4.0.282] - 2024-10-06 - bugfix eventlog known sid
 
 ## [4.0.281] - 2024-10-06 - bugfix debug pause

@@ -2235,7 +2235,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 Key           = $SamAccountNameOrSid
                 CimCache      = $CimCache
                 Log           = $LogParams
-                CacheToSearch = 'Win32_ServiceBySid', 'Win32_AccountBySid'
+                CacheToSearch = 'Win32_ServiceBySid', 'Win32_AccountBySid', 'Win32_ServiceByName'
             }
             $CachedCimInstance = Find-CachedCimInstance @CimInstanceParams
 
@@ -2274,40 +2274,40 @@ function ConvertFrom-IdentityReferenceResolved {
             }
 
             if (
-    
+
                 $null -ne $SamAccountNameOrSid -and
                 @($AccessControlEntries.AdsiProvider)[0] -eq 'LDAP'
-    
+
             ) {
-    
+
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a domain security principal"
-    
+
                 if ($DomainNetbiosCacheResult) {
-    
+
                     #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$IdentityReference'"
                     $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                     $SearchDirectoryParams['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
-    
+
                 } else {
-    
+
                     #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
-    
+
                     if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
                         #$DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                     }
-    
+
                     $FqdnParams = @{
                         DirectoryPath = "LDAP://$DomainNetBIOS"
                         ThisFqdn      = $ThisFqdn
                         CimCache      = $CimCache
                     }
                     $SearchDirectoryParams['DirectoryPath'] = Add-DomainFqdnToLdapPath @FqdnParams @LogParams
-    
+
                 }
-    
+
                 # Search the domain for the principal
                 $SearchDirectoryParams['Filter'] = "(samaccountname=$SamAccountNameOrSid)"
-    
+
                 $SearchDirectoryParams['PropertiesToLoad'] = @(
                     'objectClass',
                     'objectSid',
@@ -2322,25 +2322,25 @@ function ConvertFrom-IdentityReferenceResolved {
                     'Title',
                     'primaryGroupToken'
                 )
-    
+
                 #$Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
                 #    $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
                 #    "-$ParamName $ParamValue"
                 #}
-    
+
                 #Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
                 Write-LogMsg @LogParams -Text 'Search-Directory' -Expand $SearchDirectoryParams, $LoggingParams
-    
+
                 try {
                     $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
                 } catch {
-    
+
                     $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
                     Write-LogMsg @LogParams -Text " # Did not find '$IdentityReference' in a directory search: $($_.Exception.Message.Trim())"
                     $LogParams['Type'] = $DebugOutputStream
-    
+
                 }
-    
+
             } elseif (
                 $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
             ) {
@@ -2415,28 +2415,28 @@ function ConvertFrom-IdentityReferenceResolved {
                 }
     
             } else {
-    
+
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal or unresolved SID"
-    
+
                 if ($null -eq $SamAccountNameOrSid) { $SamAccountNameOrSid = $IdentityReference }
-    
+
                 if ($SamAccountNameOrSid -like "S-1-*") {
-    
+
                     Write-LogMsg @LogParams -Text " # '$($IdentityReference)' is an unresolved SID"
-    
+
                     # The SID of the domain is the SID of the user minus the last block of numbers
                     $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf("-"))
-    
+
                     # Determine if SID belongs to current domain
                     if ($DomainSid -eq $CurrentDomain.SIDString) {
                         Write-LogMsg @LogParams -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
                     } else {
                         Write-LogMsg @LogParams -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
                     }
-    
+
                     # Lookup other information about the domain using its SID as the key
                     $DomainObject = $DomainsBySID[$DomainSid]
-    
+
                     if ($DomainObject) {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users,group"
                         $DomainNetBIOS = $DomainObject.Netbios
@@ -2445,15 +2445,15 @@ function ConvertFrom-IdentityReferenceResolved {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/Users,group"
                         $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                     }
-    
+
                     #$Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
                     #    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
                     #    "-$ParamName $ParamValue"
                     #}
-    
+
                     #Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
-    
+
                     try {
                         $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                     } catch {
@@ -2461,23 +2461,23 @@ function ConvertFrom-IdentityReferenceResolved {
                         Write-LogMsg @LogParams -Text "Couldn't get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
                         $LogParams['Type'] = $DebugOutputStream
                     }
-    
+
                     $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
-    
+
                     $DirectoryEntry = $MembersOfUsersGroup |
                     Where-Object -FilterScript { ($SamAccountNameOrSid -eq $(try { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'], 0) }catch { pause })) }
-    
+
                 } else {
-    
+
                     Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
                     $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
-    
+
                     if ($DomainNetbiosCacheResult) {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"
                     } else {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
                     }
-    
+
                     $GetDirectoryEntryParams['PropertiesToLoad'] = @(
                         'members',
                         'objectClass',
@@ -2493,29 +2493,29 @@ function ConvertFrom-IdentityReferenceResolved {
                         'Title',
                         'primaryGroupToken'
                     )
-    
+
                     #$Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
                     #    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
                     #    "-$ParamName $ParamValue"
                     #}
-    
+
                     #Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
-    
+
                     try {
                         $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
                     } catch {
-    
+
                         $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
                         Write-LogMsg @LogParams -Text " # '$($GetDirectoryEntryParams['DirectoryPath'])' Couldn't be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
                         $LogParams['Type'] = $DebugOutputStream
-    
+
                     }
-    
+
                 }
-    
+
             }
-            
+
         }
 
         $PropertiesToAdd = @{
@@ -7002,6 +7002,8 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
+
 
 
 
