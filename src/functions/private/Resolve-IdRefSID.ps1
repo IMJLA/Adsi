@@ -168,7 +168,7 @@ function Resolve-IdRefSID {
         # Update the caches
         $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
         $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
-        $DomainsByFqdn[$DomainCacheResult.FQDN] = $DomainCacheResult
+        $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
         $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
         $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
     }
