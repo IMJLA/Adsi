@@ -132,8 +132,11 @@ function Resolve-IdentityReference {
     switch -Wildcard ($IdentityReference) {
 
         "S-1-*" {
+
+            # IdentityReference is a Revision 1 SID
             $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
             return $Resolved
+
         }
 
         "NT SERVICE\*" {
@@ -167,7 +170,9 @@ function Resolve-IdentityReference {
 
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
-            $DomainsByNetbios[$ServerNetBIOS] = $CacheResult
+
+            #is this necessary? Shouldn't the cache already be updated by Get-AdsiServer?  Commenting to find out.
+            #$DomainsByNetbios[$ServerNetBIOS] = $CacheResult
 
         }
 

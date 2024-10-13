@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.297] - 2024-10-13 - use domain caches instead of cim cache
+
 ## [4.0.296] - 2024-10-13 - remove unused params
 
 ## [4.0.295] - 2024-10-13 - remove redundant cache checks

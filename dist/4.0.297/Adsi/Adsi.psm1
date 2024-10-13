@@ -1336,11 +1336,9 @@ function Resolve-IdRefSID {
         WhoAmI       = $WhoAmI
     }
 
-    # IdentityReference is a Revision 1 SID
-
     # The SID of the domain is everything up to (but not including) the last hyphen
     $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
-    Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+    Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount]) # For '$IdentityReference'"
     $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 
     try {
@@ -1356,21 +1354,21 @@ function Resolve-IdRefSID {
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # '$IdentityReference' unexpectedly could not be translated from SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
+        Write-LogMsg @Log -Text " # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ','')) # For '$IdentityReference'"
         $Log['Type'] = $DebugOutputStream
 
     }
 
-    Write-LogMsg @Log -Text " # Translated NTAccount name for '$IdentityReference' is '$NTAccount'"
+    Write-LogMsg @Log -Text " # Translated NTAccount name is '$NTAccount' # For '$IdentityReference'"
 
     # Search the cache of domains, first by SID, then by NetBIOS name
     $DomainCacheResult = $DomainsBySID[$DomainSid]
 
     if ($DomainCacheResult) {
-        # Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid'"
+        # Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid' # For '$IdentityReference'"
     } else {
 
-        #Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid'"
+        #Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid' # For '$IdentityReference'"
         $split = $NTAccount -split '\\'
         $DomainFromSplit = $split[0]
 
@@ -1385,7 +1383,7 @@ function Resolve-IdRefSID {
             $DomainNetBIOS = $ServerNetBIOS
             $Caption = "$ServerNetBIOS\$NameFromSplit"
 
-            # Update the caches
+            # This will be used to update the caches
             $Win32Acct = [PSCustomObject]@{
                 SID     = $IdentityReference
                 Caption = $Caption
@@ -1393,17 +1391,15 @@ function Resolve-IdRefSID {
                 Name    = $NameFromSplit
             }
 
-            Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-            $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
+            #Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS' # For '$IdentityReference'"
+            #$CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
 
-            Write-LogMsg @Log -Text " # Add '$IdentityReference' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-            $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
+            #Write-LogMsg @Log -Text " # Add '$IdentityReference' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS' # For '$IdentityReference'"
+            #$CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
 
         } else {
             $DomainNetBIOS = $DomainFromSplit
         }
-
-        $DomainCacheResult = $DomainsByNetbios[$DomainFromSplit]
 
     }
 
@@ -1414,19 +1410,31 @@ function Resolve-IdRefSID {
 
     } else {
 
-        Write-LogMsg @Log -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS'"
+        Write-LogMsg @Log -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS' # For '$IdentityReference'"
         $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
 
     }
 
-    $AdsiServer = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+    if (-not $DomainCacheResult) {
+        $DomainCacheResult = $AdsiServer
+    }
+
+    if ($Win32Acct) {
+        # Update the caches
+        $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
+        $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+        $DomainsByFqdn[$DomainCacheResult.FQDN] = $DomainCacheResult
+        $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
+        $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
+    }
 
     if ($NTAccount) {
 
         # Recursively call this function to resolve the new IdentityReference we have
         $ResolveIdentityReferenceParams = @{
             IdentityReference   = $NTAccount
-            AdsiServer          = $AdsiServer
+            AdsiServer          = $DomainCacheResult
             AdsiServersByDns    = $AdsiServersByDns
             DirectoryEntryCache = $DirectoryEntryCache
             DomainsBySID        = $DomainsBySID
@@ -6546,8 +6554,11 @@ function Resolve-IdentityReference {
     switch -Wildcard ($IdentityReference) {
 
         "S-1-*" {
+
+            # IdentityReference is a Revision 1 SID
             $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
             return $Resolved
+
         }
 
         "NT SERVICE\*" {
@@ -6581,7 +6592,9 @@ function Resolve-IdentityReference {
 
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
-            $DomainsByNetbios[$ServerNetBIOS] = $CacheResult
+
+            #is this necessary? Shouldn't the cache already be updated by Get-AdsiServer?  Commenting to find out.
+            #$DomainsByNetbios[$ServerNetBIOS] = $CacheResult
 
         }
 
@@ -6814,6 +6827,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
