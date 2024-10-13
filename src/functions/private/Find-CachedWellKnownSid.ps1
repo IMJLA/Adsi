@@ -28,17 +28,17 @@ function Find-CachedWellKnownSID {
                     return [PSCustomObject]$CombinedProperties
 
                 } else {
-                    Write-LogMsg @LogParams -Text " # '$Cache' cache miss for '$IdentityReference' on '$DomainNetBIOS'"
+                    #Write-LogMsg @LogParams -Text " # '$Cache' cache miss for '$IdentityReference' on '$DomainNetBIOS'"
                 }
 
             } else {
-                Write-LogMsg @LogParams -Text " # No '$Cache' cache found for '$DomainNetBIOS'"
+                #Write-LogMsg @LogParams -Text " # No '$Cache' cache found for '$DomainNetBIOS'"
             }
 
         }
 
     } else {
-        Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
+        #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'"
     }
 
 }
