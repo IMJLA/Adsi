@@ -355,7 +355,7 @@ function Get-AdsiServer {
             Write-LogMsg @LogParams -Text "Resolve-ServiceNameToSID -ComputerName '$DomainFqdn' -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -InputObject `$Win32Services # for '$DomainFqdn'"
             $ResolvedWin32Services = Resolve-ServiceNameToSID -InputObject $Win32Services
 
-            Add-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -InputObject $ResolvedWin32Services -CacheByProperty @('Name', 'SID') -CimCache $CimCache -DebugOutputStream $DebugOutputStream @LoggingParams
+            #Add-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -InputObject $ResolvedWin32Services -CacheByProperty @('Name', 'SID') -CimCache $CimCache -DebugOutputStream $DebugOutputStream @LoggingParams
             ConvertTo-AccountCache -Account $Win32Accounts -SidCache $WellKnownSidBySid -NameCache $WellKnownSidByName
             ConvertTo-AccountCache -Account $ResolvedWin32Services -SidCache $WellKnownSidBySid -NameCache $WellKnownSidByName
 
