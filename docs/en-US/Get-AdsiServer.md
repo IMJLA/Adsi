@@ -17,7 +17,7 @@ Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-CimCache] <Hashta
  [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-RemoveCimSession]
- [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSIDByName] <Hashtable>] [-ProgressAction <ActionPreference>]
+ [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByName] <Hashtable>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
@@ -244,7 +244,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -WellKnownSIDByName
+### -WellKnownSidByName
 Output from Get-KnownSidHashTable but keyed by account Name
 
 ```yaml

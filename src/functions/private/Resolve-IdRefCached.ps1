@@ -96,6 +96,8 @@ function Resolve-IdRefCached {
                 #Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
             }
 
+        } else {
+            #Write-LogMsg @Log -Text " # No '$Cache' cache for '$ServerNetBIOS' for '$IdentityReference'"
         }
 
     }

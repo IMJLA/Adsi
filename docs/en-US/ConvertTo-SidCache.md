@@ -23,7 +23,7 @@ ConvertTo-SidCache [[-Win32Accounts] <Object>] [[-Win32Services] <Object>] [[-We
 ## EXAMPLES
 
 ### Example 1
-```powershell
+```
 PS C:\> {{ Add example code here }}
 ```
 
@@ -94,7 +94,6 @@ Accept wildcard characters: False
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
 ### System.Object
