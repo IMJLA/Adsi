@@ -133,6 +133,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         } else {
             Write-LogMsg @LogParams -Text " # Known SID cache miss for '$IdentityReference' on '$DomainNetBIOS'"
+            pause
         }
 
         if ($null -eq $DirectoryEntry) {

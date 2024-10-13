@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.292] - 2024-10-13 - add debug pause
+
 ## [4.0.291] - 2024-10-13 - continue reduction of reliance on cim cache
 
 ## [4.0.290] - 2024-10-12 - start add-cachedciminstance deprecation
