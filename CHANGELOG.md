@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.288] - 2024-10-12 - add debug msgs temporarily
+
 ## [4.0.287] - 2024-10-12 - implement convertto-accountcache to cache all win32accounts and win32services by sid and name along with the well-known sids in order to reduce the number of caches which must be searched later
 
 ## [4.0.286] - 2024-10-12 - bugfix default param value for wellknownsidbyname
