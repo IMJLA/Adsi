@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.298] - 2024-10-13 - bugfixes with buffer vs logbuffer param, and moving to psobjects instead of hashtables for easier/more consistent property referencing
+
 ## [4.0.297] - 2024-10-13 - use domain caches instead of cim cache
 
 ## [4.0.296] - 2024-10-13 - remove unused params
