@@ -138,32 +138,6 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -eq $DirectoryEntry) {
 
-            $CimInstanceParams = @{
-                ComputerName  = $DomainNetBIOS
-                Key           = $SamAccountNameOrSid
-                CimCache      = $CimCache
-                Log           = $LogParams
-                CacheToSearch = 'Win32_ServiceBySid', 'Win32_AccountBySid', 'Win32_ServiceByName'
-            }
-            $CachedCimInstance = Find-CachedCimInstance @CimInstanceParams
-
-            if ($CachedCimInstance) {
-
-                $FakeDirectoryEntryParams = @{
-                    #TODO: # Is WinNT and the DN valid here or does it need to follow the logic below for domain detection/etc?
-                    DirectoryPath = "WinNT://$DomainNetBIOS/$($CachedCimInstance.Name)"
-                    InputObject   = $CachedCimInstance
-                }
-
-                $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
-
-            } else {
-                #Write-LogMsg @LogParams -Text " # CIM cache miss for '$SamAccountNameOrSid' on '$DomainNetBIOS'"
-            }
-
-        }
-
-        if ($null -eq $DirectoryEntry) {
 
             $GetDirectoryEntryParams = @{
                 DirectoryEntryCache = $DirectoryEntryCache
@@ -422,6 +396,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 }
 
             }
+
             $PropertiesToAdd['ResolvedAccountName'] = "$DomainNetBIOS\$AccountName"
 
             # WinNT objects have a SchemaClassName property which is a string

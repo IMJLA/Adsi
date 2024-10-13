@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.293] - 2024-10-13 - use objects instead of hashtables for well-known sids.  Eliminate CIM cache checking by get-directoryentry thru get-cacheddirectoryentry, checking adsi server's account cache instead
+
 ## [4.0.292] - 2024-10-13 - add debug pause
 
 ## [4.0.291] - 2024-10-13 - continue reduction of reliance on cim cache
