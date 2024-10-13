@@ -3447,6 +3447,15 @@ function ConvertTo-SidByteArray {
         }
     }
 }
+function ConvertTo-SidCache {
+    param (
+        $Win32Accounts,
+        $Win32Services,
+        $WellKnownSidBySid,
+        $WellKnownSIDByName
+    )
+    
+}
 function Expand-AdsiGroupMember {
     <#
         .SYNOPSIS
@@ -4383,7 +4392,7 @@ function Get-AdsiServer {
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
 
         # Output from Get-KnownSidHashTable but keyed by account Name
-        [hashtable]$WellKnownSIDByName = {}
+        [hashtable]$WellKnownSIDByName = @{}
 
     )
     begin {
@@ -4664,12 +4673,12 @@ function Get-AdsiServer {
                 Sid                = $DomainSid
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
-                Win32Accounts      = $Win32Accounts
-                Win32Services      = $ResolvedWin32Services
+                #Win32Accounts      = $Win32Accounts
+                #Win32Services      = $ResolvedWin32Services
                 WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
-
+            pause
             $DomainsBySid[$OutputObject.Sid] = $OutputObject
             $DomainsByNetbios[$OutputObject.Netbios] = $OutputObject
             $DomainsByFqdn[$DomainFqdn] = $OutputObject
@@ -7001,7 +7010,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','ConvertTo-SidCache','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

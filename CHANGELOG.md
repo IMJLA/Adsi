@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.286] - 2024-10-12 - bugfix default param value for wellknownsidbyname
+
 ## [4.0.285] - 2024-10-12 - remove debug pause
 
 ## [4.0.284] - 2024-10-12 - add searching of win32_servicebyname cache

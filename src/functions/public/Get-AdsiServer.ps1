@@ -78,7 +78,7 @@ function Get-AdsiServer {
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
 
         # Output from Get-KnownSidHashTable but keyed by account Name
-        [hashtable]$WellKnownSIDByName = {}
+        [hashtable]$WellKnownSIDByName = @{}
 
     )
     begin {
@@ -359,12 +359,12 @@ function Get-AdsiServer {
                 Sid                = $DomainSid
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
-                Win32Accounts      = $Win32Accounts
-                Win32Services      = $ResolvedWin32Services
+                #Win32Accounts      = $Win32Accounts
+                #Win32Services      = $ResolvedWin32Services
                 WellKnownSidBySid  = $WellKnownSidBySid
                 WellKnownSIDByName = $WellKnownSIDByName
             }
-
+            pause
             $DomainsBySid[$OutputObject.Sid] = $OutputObject
             $DomainsByNetbios[$OutputObject.Netbios] = $OutputObject
             $DomainsByFqdn[$DomainFqdn] = $OutputObject
