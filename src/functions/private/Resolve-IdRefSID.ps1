@@ -73,6 +73,13 @@ function Resolve-IdRefSID {
         WhoAmI       = $WhoAmI
     }
 
+    $LogThis = @{
+        ThisHostname      = $ThisHostname
+        DebugOutputStream = $DebugOutputStream
+        LogBuffer         = $LogBuffer
+        WhoAmI            = $WhoAmI
+    }
+
     # The SID of the domain is everything up to (but not including) the last hyphen
     $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
     Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount]) # For '$IdentityReference'"
@@ -148,8 +155,8 @@ function Resolve-IdRefSID {
     } else {
 
         Write-LogMsg @Log -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS' # For '$IdentityReference'"
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
-        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
     }
 

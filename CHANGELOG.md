@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.300] - 2024-10-13 - bugfix incorrect splat
+
 ## [4.0.299] - 2024-10-13 - bugfix now using objects instead of dicts
 
 ## [4.0.298] - 2024-10-13 - bugfixes with buffer vs logbuffer param, and moving to psobjects instead of hashtables for easier/more consistent property referencing
