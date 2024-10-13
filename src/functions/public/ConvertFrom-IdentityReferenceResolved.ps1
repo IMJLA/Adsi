@@ -92,22 +92,22 @@ function ConvertFrom-IdentityReferenceResolved {
 
     )
 
-    $LogParams = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    $LoggingParams = @{
-        ThisHostname = $ThisHostname
-        LogBuffer    = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    $AccessControlEntries = $ACEsByResolvedID[$IdentityReference]
-
     if ($null -eq $PrincipalById[$IdentityReference]) {
+
+        $LogParams = @{
+            ThisHostname = $ThisHostname
+            Type         = $DebugOutputStream
+            Buffer       = $LogBuffer
+            WhoAmI       = $WhoAmI
+        }
+
+        $LoggingParams = @{
+            ThisHostname = $ThisHostname
+            LogBuffer    = $LogBuffer
+            WhoAmI       = $WhoAmI
+        }
+
+        $AccessControlEntries = $ACEsByResolvedID[$IdentityReference]
 
         #Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
         $split = $IdentityReference.Split('\')
@@ -230,12 +230,6 @@ function ConvertFrom-IdentityReferenceResolved {
                     'primaryGroupToken'
                 )
 
-                #$Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
-                #    $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
-                #    "-$ParamName $ParamValue"
-                #}
-
-                #Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
                 Write-LogMsg @LogParams -Text 'Search-Directory' -Expand $SearchDirectoryParams, $LoggingParams
 
                 try {
@@ -251,22 +245,15 @@ function ConvertFrom-IdentityReferenceResolved {
             } elseif (
                 $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
             ) {
-    
+
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is an unresolved SID from the current domain"
-    
+
                 # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
                 $DomainDN = $CurrentDomain.distinguishedName.Value
                 $DomainFQDN = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
                 $SearchDirectoryParams['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
                 $SearchDirectoryParams['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
                 $SearchDirectoryParams['PropertiesToLoad'] = 'netbiosname'
-
-                #$Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
-                #    $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
-                #    "-$ParamName $ParamValue"
-                #}
-
-                #Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
                 Write-LogMsg @LogParams -Text 'Search-Directory' -Expand $SearchDirectoryParams, $LoggingParams
                 $DomainCrossReference = Search-Directory @SearchDirectoryParams @LoggingParams
 
@@ -302,25 +289,19 @@ function ConvertFrom-IdentityReferenceResolved {
                     'Title',
                     'primaryGroupToken'
                 )
-    
-                #$Params = ForEach ($ParamName in $SearchDirectoryParams.Keys) {
-                #    $ParamValue = ConvertTo-PSCodeString -InputObject $SearchDirectoryParams[$ParamName]
-                #    "-$ParamName $ParamValue"
-                #}
-    
-                #Write-LogMsg @LogParams -Text "Search-Directory $($Params -join ' ')"
+
                 Write-LogMsg @LogParams -Text 'Search-Directory' -Expand $SearchDirectoryParams, $LoggingParams
-    
+
                 try {
                     $DirectoryEntry = Search-Directory @SearchDirectoryParams @LoggingParams
                 } catch {
-    
+
                     $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
                     Write-LogMsg @LogParams -Text " # Couldn't find '$IdentityReference' in a directory search: $($_.Exception.Message.Trim())"
                     $LogParams['Type'] = $DebugOutputStream
-    
+
                 }
-    
+
             } else {
 
                 Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal or unresolved SID"
@@ -353,12 +334,6 @@ function ConvertFrom-IdentityReferenceResolved {
                         $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                     }
 
-                    #$Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
-                    #    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
-                    #    "-$ParamName $ParamValue"
-                    #}
-
-                    #Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
 
                     try {
@@ -401,12 +376,6 @@ function ConvertFrom-IdentityReferenceResolved {
                         'primaryGroupToken'
                     )
 
-                    #$Params = ForEach ($ParamName in $GetDirectoryEntryParams.Keys) {
-                    #    $ParamValue = ConvertTo-PSCodeString -InputObject $GetDirectoryEntryParams[$ParamName]
-                    #    "-$ParamName $ParamValue"
-                    #}
-
-                    #Write-LogMsg @LogParams -Text "Get-DirectoryEntry $($Params -join ' ')"
                     Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
 
                     try {
