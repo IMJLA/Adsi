@@ -9,7 +9,7 @@ function Get-KnownCaptionHashTable {
     ForEach ($KnownSID in $WellKnownSidBySid.Keys) {
 
         $Known = $WellKnownSidBySid[$KnownSID]
-        $WellKnownSidByCaption[$Known['NTAccount']] = $Known
+        $WellKnownSidByCaption[$Known.NTAccount] = $Known
 
     }
 
