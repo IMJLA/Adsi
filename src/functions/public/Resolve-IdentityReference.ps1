@@ -117,7 +117,7 @@ function Resolve-IdentityReference {
     # and update the Win32_AccountBySID and Win32_AccountByCaption caches.
     # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
     # Search these caches now.
-    $CacheResult = Resolve-IdRefCached @splat1 -DomainsByFqdn $DomainsByFqdn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
+    $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @splat3 @splat6 @LogParams
 
     if ($CacheResult) {
 
