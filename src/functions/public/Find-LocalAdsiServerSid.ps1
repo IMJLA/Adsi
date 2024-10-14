@@ -34,7 +34,7 @@ function Find-LocalAdsiServerSid {
 
     )
 
-    $LogParams = @{
+    $Log = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
         Buffer       = $LogBuffer
@@ -49,10 +49,12 @@ function Find-LocalAdsiServerSid {
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
+        Query             = "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'"
+        KeyProperty       = 'SID'
     }
 
-    Write-LogMsg @LogParams -Text "Get-CachedCimInstance -ComputerName '$ComputerName' -Query `"SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'`""
-    $LocalAdminAccount = Get-CachedCimInstance -Query "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'" -KeyProperty SID @CimParams
+    Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CimParams
+    $LocalAdminAccount = Get-CachedCimInstance @CimParams
 
     if (-not $LocalAdminAccount) {
         return
