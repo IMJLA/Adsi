@@ -80,37 +80,52 @@ function Resolve-IdRefSID {
         WhoAmI            = $WhoAmI
     }
 
-    # The SID of the domain is everything up to (but not including) the last hyphen
-    $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
-    Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
-    $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
+    $KnownSid = Get-KnownSid -SID $IdentityReference
 
-    try {
+    if ($KnownSid) {
 
-        <#
-            This .Net method makes it impossible to redirect the error stream directly
-            Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-            I don't understand exactly why
-            The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
-        #>
-        $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Known SID pattern match"
+        $NTAccount = $KnownSid.NTAccount
+        $DomainNetBIOS = $ServerNetBIOS
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
-    } catch {
+    } else {
 
-        $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
-        $Log['Type'] = $DebugOutputStream
+        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # No match with known SID patterns"
+        # The SID of the domain is everything up to (but not including) the last hyphen
+        $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+        Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+        $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
+
+        try {
+
+            <#
+                This .Net method makes it impossible to redirect the error stream directly
+                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+                I don't understand exactly why
+                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
+            #>
+            $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
+
+        } catch {
+
+            $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+            Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
+            $Log['Type'] = $DebugOutputStream
+
+        }
 
     }
 
     Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'"
 
     # Search the cache of domains, first by SID, then by NetBIOS name
-    $DomainCacheResult = $DomainsBySID[$DomainSid]
+    if (-not $DomainCacheResult) {
+        $DomainCacheResult = $DomainsBySID[$DomainSid]
+    }
 
-    if ($DomainCacheResult) {
-        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain SID cache hit for '$DomainSid'"
-    } else {
+    if (-not $DomainCacheResult) {
 
         #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain SID cache miss for '$DomainSid'"
         $split = $NTAccount -split '\\'
@@ -160,8 +175,8 @@ function Resolve-IdRefSID {
         $DomainCacheResult = $AdsiServer
     }
 
+    # Update the caches
     if ($Win32Acct) {
-        # Update the caches
         $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
         $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
         $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
