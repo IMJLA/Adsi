@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.325] - 2024-10-14 - bugfix splats
+
 ## [4.0.324] - 2024-10-14 - reduce log verbosity
 
 ## [4.0.323] - 2024-10-14 - update splat and use write-logmsg -expand
