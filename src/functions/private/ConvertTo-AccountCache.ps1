@@ -7,8 +7,8 @@ function ConvertTo-AccountCache {
     )
 
     ForEach ($ThisAccount in $Account) {
-        $SidCache[$Account.SID] = $ThisAccount
-        $NameCache[$Account.Name] = $ThisAccount
+        $SidCache[$ThisAccount.SID] = $ThisAccount
+        $NameCache[$ThisAccount.Name] = $ThisAccount
     }
 
 }
