@@ -614,58 +614,7 @@ function Get-CachedDirectoryEntry {
     The WinNT provider only throws an error if you try to retrieve certain accounts/identities
     We will create own dummy objects instead of performing the query
     #>
-    <#
-    if ($CimServer) {
-
-        #Write-LogMsg @Log -Text " # CIM server cache hit for '$Server' # for '$DirectoryPath'"
-        $ID = "$Server\$AccountName"
-        $CimCacheResult = $CimServer['Win32_AccountByCaption'][$ID]
-
-        if ($CimCacheResult) {
-
-            #Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache hit for '$ID' on '$Server' # for '$DirectoryPath'"
-
-            $FakeDirectoryEntry = @{
-                InputObject   = $CimCacheResult
-                DirectoryPath = $DirectoryPath
-            }
-
-            if ($CimCacheResult.SIDType) {
-                $FakeDirectoryEntry['SchemaClassName'] = $SidTypeMap[[int]$CimCacheResult.SIDType]
-            }
-
-            New-FakeDirectoryEntry @FakeDirectoryEntry
-
-        } else {
-
-            #Write-LogMsg @Log -Text " # Win32_AccountByCaption CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
-            $CimCacheResult = $CimServer['Win32_ServiceBySID'][$ID]
-
-            if ($CimCacheResult) {
-
-                #Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache hit for '$ID' on '$Server' # for '$DirectoryPath'"
-
-                $FakeDirectoryEntry = @{
-                    InputObject   = $CimCacheResult
-                    DirectoryPath = $DirectoryPath
-                }
-
-                if ($CimCacheResult.SIDType) {
-                    $FakeDirectoryEntry['SchemaClassName'] = $SidTypeMap[[int]$CimCacheResult.SIDType]
-                }
-
-                New-FakeDirectoryEntry @FakeDirectoryEntry
-
-            } else {}
-
-        }
-
-    } else {
-        #Write-LogMsg @Log -Text " # CIM server cache miss for '$Server' # for '$DirectoryPath'"
-    }
-    #Write-LogMsg @Log -Text " # Win32_ServiceBySID CIM instance cache miss for '$ID' on '$Server' # for '$DirectoryPath'"
-    #>
-
+    $ID = "$Server\$AccountName"
     $DomainCacheResult = $DomainsByFqdn[$Server]
 
     if ($DomainCacheResult) {
@@ -6827,6 +6776,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
