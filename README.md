@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.308
+Help Version: 4.0.309
 Locale: en-US
 ---
 
@@ -79,10 +79,10 @@ Determine whether a directory server is an LDAP or a WinNT server
 Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-LogBuffer] <hashtable>] [[-DebugOutputStream] <string>]
 
 
-### [Get-ADSIGroup](docs/en-US/Get-ADSIGroup.md)
+### [Get-AdsiGroup](docs/en-US/Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI
 
-### [Get-ADSIGroupMember](docs/en-US/Get-ADSIGroupMember.md)
+### [Get-AdsiGroupMember](docs/en-US/Get-AdsiGroupMember.md)
 Get members of a group from the LDAP provider
 
 ### [Get-AdsiServer](docs/en-US/Get-AdsiServer.md)
