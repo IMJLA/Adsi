@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.306] - 2024-10-13 - remove debug pause
+
 ## [4.0.305] - 2024-10-13 - bugfix use obj not dict
 
 ## [4.0.304] - 2024-10-13 - bugfix move from cim cache dependency to domain-based caching

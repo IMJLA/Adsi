@@ -61,7 +61,7 @@ function Resolve-IdRefSvc {
         [string]$DebugOutputStream = 'Debug'
 
     )
-    pause
+
     $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $LogBuffer ; WhoAmI = $WhoAmI }
     $LogThis = @{ ThisHostname = $ThisHostname ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $SIDString = ConvertTo-ServiceSID -ServiceName $Name
