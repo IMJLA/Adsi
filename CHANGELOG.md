@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.308] - 2024-10-13 - move from cimcache to domain-based cache
+
 ## [4.0.307] - 2024-10-13 - remove debug pause
 
 ## [4.0.306] - 2024-10-13 - remove debug pause

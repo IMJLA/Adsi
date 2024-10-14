@@ -949,12 +949,8 @@ function Resolve-IdRefAppPkgAuth {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $LogBuffer ; WhoAmI = $WhoAmI }
+    $LogThis = @{ ThisHostname = $ThisHostname ; DebugOutputStream = $DebugOutputStream ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI }
 
     <#
     These SIDs cannot be resolved from the NTAccount name:
@@ -972,7 +968,7 @@ function Resolve-IdRefAppPkgAuth {
     $Known = $WellKnownSidByCaption[$IdentityReference]
 
     if ($Known) {
-        $SIDString = $Known['SID']
+        $SIDString = $Known.SID
     } else {
         $SIDString = $IdentityReference
     }
@@ -983,10 +979,12 @@ function Resolve-IdRefAppPkgAuth {
 
     if ($DomainCacheResult) {
         $DomainDns = $DomainCacheResult.Dns
-    }
+    } else {
 
-    if (-not $DomainDns) {
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+        Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' # For '$IdentityReference'"
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+
     }
 
     # Update the caches
@@ -997,10 +995,12 @@ function Resolve-IdRefAppPkgAuth {
         Name    = $Name
     }
 
-    Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-    Write-LogMsg @Log -Text " # Add '$SIDString' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
+    # Update the caches
+    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
+    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+    $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
+    $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
+    $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -1029,8 +1029,14 @@ function Resolve-IdRefBuiltIn {
         # Name of the IdentityReference with the DOMAIN\ prefix removed
         [string]$Name,
 
+        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+
+        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
 
         <#
         Hostname of the computer running this function.
@@ -1052,7 +1058,19 @@ function Resolve-IdRefBuiltIn {
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
-        [hashtable]$GetDirectoryEntryParams
+        <#
+        Dictionary to cache directory entries to avoid redundant lookups
+
+        Defaults to an empty thread-safe hashtable
+        #>
+        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 
     )
 
@@ -1071,6 +1089,7 @@ function Resolve-IdRefBuiltIn {
     $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LoggingParams).SidString
     $Caption = "$ServerNetBIOS\$Name"
     $DomainDns = $AdsiServer.Dns
+    $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
     # Update the caches
     $Win32Acct = [PSCustomObject]@{
@@ -1080,11 +1099,12 @@ function Resolve-IdRefBuiltIn {
         Name    = $Name
     }
 
-    Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-
-    Write-LogMsg @Log -Text " # Add '$SIDString' to the 'Win32_AccountBySID' SID cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
+    # Update the caches
+    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
+    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+    $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
+    $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
+    $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -6552,7 +6572,7 @@ function Resolve-IdentityReference {
         }
 
         "BUILTIN\*" {
-            $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat8 @splat10 @LogThis
+            $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid -DomainsByFqdn $DomainsByFqdn @GetDirectoryEntryParams @splat3 @splat5 @splat8 @splat10 @LogThis
             return $Resolved
         }
 
@@ -6807,6 +6827,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

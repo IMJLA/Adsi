@@ -55,12 +55,8 @@ function Resolve-IdRefAppPkgAuth {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $LogBuffer ; WhoAmI = $WhoAmI }
+    $LogThis = @{ ThisHostname = $ThisHostname ; DebugOutputStream = $DebugOutputStream ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI }
 
     <#
     These SIDs cannot be resolved from the NTAccount name:
@@ -78,7 +74,7 @@ function Resolve-IdRefAppPkgAuth {
     $Known = $WellKnownSidByCaption[$IdentityReference]
 
     if ($Known) {
-        $SIDString = $Known['SID']
+        $SIDString = $Known.SID
     } else {
         $SIDString = $IdentityReference
     }
@@ -89,10 +85,12 @@ function Resolve-IdRefAppPkgAuth {
 
     if ($DomainCacheResult) {
         $DomainDns = $DomainCacheResult.Dns
-    }
+    } else {
 
-    if (-not $DomainDns) {
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+        Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' # For '$IdentityReference'"
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+
     }
 
     # Update the caches
@@ -103,10 +101,12 @@ function Resolve-IdRefAppPkgAuth {
         Name    = $Name
     }
 
-    Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-    Write-LogMsg @Log -Text " # Add '$SIDString' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$SIDString] = $Win32Acct
+    # Update the caches
+    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
+    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+    $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
+    $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
+    $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference

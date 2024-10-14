@@ -143,7 +143,7 @@ function Resolve-IdentityReference {
         }
 
         "BUILTIN\*" {
-            $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat8 @splat10 @LogThis
+            $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid -DomainsByFqdn $DomainsByFqdn @GetDirectoryEntryParams @splat3 @splat5 @splat8 @splat10 @LogThis
             return $Resolved
         }
 
