@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.315] - 2024-10-13 - add missing params
+
 ## [4.0.314] - 2024-10-13 - temporarily increase debug verbosity
 
 ## [4.0.313] - 2024-10-13 - add missing params, simplify code structure
