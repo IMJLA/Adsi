@@ -117,9 +117,9 @@ function Resolve-IdentityReference {
         #Write-LogMsg @Log -Text " # Cache hit for '$IdentityReference'"
         return $CacheResult
 
-    } else {
-        #Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
     }
+
+    #Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
 
     # If no match was found in any cache, the path forward depends on the IdentityReference.
     switch -Wildcard ($IdentityReference) {

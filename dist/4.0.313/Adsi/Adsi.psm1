@@ -2060,6 +2060,8 @@ function ConvertFrom-IdentityReferenceResolved {
             $GetDirectoryEntryParams = @{
                 DirectoryEntryCache = $DirectoryEntryCache
                 DomainsByNetbios    = $DomainsByNetbios
+                DomainsBySid        = $DomainsBySid
+                DomainsByFqdn       = $DomainsByFqdn
                 ThisFqdn            = $ThisFqdn
                 CimCache            = $CimCache
                 DebugOutputStream   = $DebugOutputStream
@@ -6495,9 +6497,9 @@ function Resolve-IdentityReference {
         #Write-LogMsg @Log -Text " # Cache hit for '$IdentityReference'"
         return $CacheResult
 
-    } else {
-        #Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
     }
+
+    #Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
 
     # If no match was found in any cache, the path forward depends on the IdentityReference.
     switch -Wildcard ($IdentityReference) {
@@ -6776,6 +6778,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

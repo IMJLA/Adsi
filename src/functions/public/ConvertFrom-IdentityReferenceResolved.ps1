@@ -141,6 +141,8 @@ function ConvertFrom-IdentityReferenceResolved {
             $GetDirectoryEntryParams = @{
                 DirectoryEntryCache = $DirectoryEntryCache
                 DomainsByNetbios    = $DomainsByNetbios
+                DomainsBySid        = $DomainsBySid
+                DomainsByFqdn       = $DomainsByFqdn
                 ThisFqdn            = $ThisFqdn
                 CimCache            = $CimCache
                 DebugOutputStream   = $DebugOutputStream
