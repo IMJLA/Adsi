@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.319] - 2024-10-13 - bugfix don't return anything if no match
+
 ## [4.0.318] - 2024-10-13 - upgrade get-knownside and bugfix it needed to be implemented in resolve-idrefsid
 
 ## [4.0.317] - 2024-10-13 - cleanup debug output

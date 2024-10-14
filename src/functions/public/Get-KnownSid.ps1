@@ -248,12 +248,4 @@ function Get-KnownSid {
 
     }
 
-    return [PSCustomObject]@{
-        'Name'            = $SID
-        'Description'     = $SID
-        'NTAccount'       = $SID
-        'SchemaClassName' = 'unknown'
-        'SID'             = $SID
-    }
-
 }
