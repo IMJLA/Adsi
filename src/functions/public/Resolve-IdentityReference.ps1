@@ -92,7 +92,7 @@ function Resolve-IdentityReference {
     if ($LastSlashIndex -eq -1) {
         $Name = $IdentityReference
     } else {
-        $Name = $IdentityReference.Substring( $LastSlashIndex + 1 , $LastSlashIndex.Length - 1 )
+        $Name = $IdentityReference.Substring( $LastSlashIndex + 1 , $IdentityReference.Length - $LastSlashIndex - 1 )
     }
 
     $ServerNetBIOS = $AdsiServer.Netbios
