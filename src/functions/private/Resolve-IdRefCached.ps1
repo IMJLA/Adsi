@@ -42,23 +42,23 @@ function Resolve-IdRefCached {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
+    #$Log = @{
+    #    ThisHostname = $ThisHostname
+    #    Type         = $DebugOutputStream
+    #    Buffer       = $LogBuffer
+    #    WhoAmI       = $WhoAmI
+    #}
 
     ForEach ($Cache in 'WellKnownSidBySid', 'WellKnownSIDByName') {
 
         if ($AdsiServer.$Cache) {
 
-            Write-LogMsg @Log -Text " # '$Cache' cache exists for '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # '$Cache' cache exists for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = $AdsiServer.$Cache[$IdentityReference]
 
             if ($CacheResult) {
 
-                Write-LogMsg @Log -Text " # '$Cache' cache hit on '$ServerNetBIOS': $($CacheResult.Name) for '$IdentityReference'"
+                #Write-LogMsg @Log -Text " # '$Cache' cache hit on '$ServerNetBIOS': $($CacheResult.Name) for '$IdentityReference'"
 
                 return [PSCustomObject]@{
                     IdentityReference        = $IdentityReference
@@ -68,11 +68,11 @@ function Resolve-IdRefCached {
                 }
 
             } else {
-                Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+                #Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
             }
 
         } else {
-            Write-LogMsg @Log -Text " # No '$Cache' cache for '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # No '$Cache' cache for '$ServerNetBIOS' for '$IdentityReference'"
         }
 
     }

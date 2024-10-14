@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.317] - 2024-10-13 - cleanup debug output
+
 ## [4.0.316] - 2024-10-13 - bugfix wrong var name breaking the cache
 
 ## [4.0.315] - 2024-10-13 - add missing params

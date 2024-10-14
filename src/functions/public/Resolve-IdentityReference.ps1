@@ -114,12 +114,12 @@ function Resolve-IdentityReference {
 
     if ($CacheResult) {
 
-        #Write-LogMsg @Log -Text " # Cache hit for '$IdentityReference'"
+        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Cache hit"
         return $CacheResult
 
     }
 
-    #Write-LogMsg @Log -Text " # Cache miss for '$IdentityReference'"
+    #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Cache miss"
 
     # If no match was found in any cache, the path forward depends on the IdentityReference.
     switch -Wildcard ($IdentityReference) {
@@ -158,10 +158,10 @@ function Resolve-IdentityReference {
         $CacheResult = $DomainsByNetbios[$ServerNetBIOS]
 
         if ($CacheResult) {
-            #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache hit for '$ServerNetBIOS'"
         } else {
 
-            #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
+            #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache miss for '$ServerNetBIOS'"
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogThis
 
             #is this necessary? Shouldn't the cache already be updated by Get-AdsiServer?  Commenting to find out.
@@ -194,10 +194,10 @@ function Resolve-IdentityReference {
         if ( '' -eq "$Name" ) {
 
             $Name = $IdentityReference
-            Write-LogMsg @Log -Text " # No name could be parsed for '$IdentityReference'"
+            Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # No name could be parsed."
 
         } else {
-            Write-LogMsg @Log -Text " # Name parsed is '$Name' for '$IdentityReference'"
+            Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Name parsed is '$Name'."
         }
 
         return [PSCustomObject]@{
