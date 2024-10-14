@@ -82,7 +82,7 @@ function Resolve-IdRefSID {
 
     # The SID of the domain is everything up to (but not including) the last hyphen
     $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
-    Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount]) # For '$IdentityReference'"
+    Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount]) # For IdentityReference '$IdentityReference'"
     $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 
     try {
@@ -98,21 +98,21 @@ function Resolve-IdRefSID {
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ','')) # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ','')) # For IdentityReference '$IdentityReference'"
         $Log['Type'] = $DebugOutputStream
 
     }
 
-    Write-LogMsg @Log -Text " # Translated NTAccount name is '$NTAccount' # For '$IdentityReference'"
+    Write-LogMsg @Log -Text " # Translated NTAccount caption is '$NTAccount' # For IdentityReference '$IdentityReference'"
 
     # Search the cache of domains, first by SID, then by NetBIOS name
     $DomainCacheResult = $DomainsBySID[$DomainSid]
 
     if ($DomainCacheResult) {
-        # Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid' # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid' # For IdentityReference '$IdentityReference'"
     } else {
 
-        #Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid' # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid' # For IdentityReference '$IdentityReference'"
         $split = $NTAccount -split '\\'
         $DomainFromSplit = $split[0]
 
@@ -150,7 +150,7 @@ function Resolve-IdRefSID {
 
     } else {
 
-        Write-LogMsg @Log -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS' # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS' # For IdentityReference '$IdentityReference'"
         $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
         $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 

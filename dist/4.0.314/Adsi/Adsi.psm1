@@ -1107,23 +1107,23 @@ function Resolve-IdRefCached {
 
     )
 
-    #$Log = @{
-    #    ThisHostname = $ThisHostname
-    #    Type         = $DebugOutputStream
-    #    Buffer       = $LogBuffer
-    #    WhoAmI       = $WhoAmI
-    #}
+    $Log = @{
+        ThisHostname = $ThisHostname
+        Type         = $DebugOutputStream
+        Buffer       = $LogBuffer
+        WhoAmI       = $WhoAmI
+    }
 
     ForEach ($Cache in 'WellKnownSidBySid', 'WellKnownSIDByName') {
 
         if ($AdsiServer.$Cache) {
 
-            #Write-LogMsg @Log -Text " # '$Cache' cache exists for '$ServerNetBIOS' for '$IdentityReference'"
+            Write-LogMsg @Log -Text " # '$Cache' cache exists for '$ServerNetBIOS' for '$IdentityReference'"
             $CacheResult = $AdsiServer.$Cache[$IdentityReference]
 
             if ($CacheResult) {
 
-                #Write-LogMsg @Log -Text " # '$Cache' cache hit on '$ServerNetBIOS': $($CacheResult.Name) for '$IdentityReference'"
+                Write-LogMsg @Log -Text " # '$Cache' cache hit on '$ServerNetBIOS': $($CacheResult.Name) for '$IdentityReference'"
 
                 return [PSCustomObject]@{
                     IdentityReference        = $IdentityReference
@@ -1133,11 +1133,11 @@ function Resolve-IdRefCached {
                 }
 
             } else {
-                #Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
+                Write-LogMsg @Log -Text " # '$Cache' cache miss on '$ServerNetBIOS' for '$IdentityReference'"
             }
 
         } else {
-            #Write-LogMsg @Log -Text " # No '$Cache' cache for '$ServerNetBIOS' for '$IdentityReference'"
+            Write-LogMsg @Log -Text " # No '$Cache' cache for '$ServerNetBIOS' for '$IdentityReference'"
         }
 
     }
@@ -1330,7 +1330,7 @@ function Resolve-IdRefSID {
 
     # The SID of the domain is everything up to (but not including) the last hyphen
     $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
-    Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount]) # For '$IdentityReference'"
+    Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount]) # For IdentityReference '$IdentityReference'"
     $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 
     try {
@@ -1346,21 +1346,21 @@ function Resolve-IdRefSID {
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ','')) # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ','')) # For IdentityReference '$IdentityReference'"
         $Log['Type'] = $DebugOutputStream
 
     }
 
-    Write-LogMsg @Log -Text " # Translated NTAccount name is '$NTAccount' # For '$IdentityReference'"
+    Write-LogMsg @Log -Text " # Translated NTAccount caption is '$NTAccount' # For IdentityReference '$IdentityReference'"
 
     # Search the cache of domains, first by SID, then by NetBIOS name
     $DomainCacheResult = $DomainsBySID[$DomainSid]
 
     if ($DomainCacheResult) {
-        # Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid' # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Domain SID cache hit for '$DomainSid' # For IdentityReference '$IdentityReference'"
     } else {
 
-        #Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid' # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Domain SID cache miss for '$DomainSid' # For IdentityReference '$IdentityReference'"
         $split = $NTAccount -split '\\'
         $DomainFromSplit = $split[0]
 
@@ -1398,7 +1398,7 @@ function Resolve-IdRefSID {
 
     } else {
 
-        Write-LogMsg @Log -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS' # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS' # For IdentityReference '$IdentityReference'"
         $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
         $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
@@ -6778,6 +6778,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
