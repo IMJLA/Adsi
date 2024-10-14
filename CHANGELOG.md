@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.304] - 2024-10-13 - bugfix move from cim cache dependency to domain-based caching
+
 ## [4.0.303] - 2024-10-13 - bugfix name parsing
 
 ## [4.0.302] - 2024-10-13 - bugfix splats

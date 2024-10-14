@@ -1410,15 +1410,11 @@ function Resolve-IdRefSID {
                 Name    = $NameFromSplit
             }
 
-            #Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS' # For '$IdentityReference'"
-            #$CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-
-            #Write-LogMsg @Log -Text " # Add '$IdentityReference' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS' # For '$IdentityReference'"
-            #$CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
-
         } else {
             $DomainNetBIOS = $DomainFromSplit
         }
+
+        $DomainCacheResult = $DomainsByNetbios[$DomainNetBIOS]
 
     }
 
@@ -1554,10 +1550,12 @@ function Resolve-IdRefSvc {
 
     if ($DomainCacheResult) {
         $DomainDns = $DomainCacheResult.Dns
-    }
+    } else {
 
-    if (-not $DomainDns) {
+        Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' # For '$IdentityReference'"
         $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+
     }
 
     # Update the caches
@@ -1568,11 +1566,12 @@ function Resolve-IdRefSvc {
         Name    = $Name
     }
 
-    Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_ServiceByName'][$Name] = $Win32Svc
-
-    Write-LogMsg @Log -Text " # Add '$SIDString' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_ServiceBySID'][$SIDString] = $Win32Svc
+    # Update the caches
+    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Svc
+    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Svc
+    $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
+    $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
+    $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -6805,6 +6804,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-ADSIGroup','Get-ADSIGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

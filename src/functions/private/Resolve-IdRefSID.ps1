@@ -135,15 +135,11 @@ function Resolve-IdRefSID {
                 Name    = $NameFromSplit
             }
 
-            #Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS' # For '$IdentityReference'"
-            #$CimCache[$ServerNetBIOS]['Win32_AccountByCaption'][$Caption] = $Win32Acct
-
-            #Write-LogMsg @Log -Text " # Add '$IdentityReference' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS' # For '$IdentityReference'"
-            #$CimCache[$ServerNetBIOS]['Win32_AccountBySID'][$IdentityReference] = $Win32Acct
-
         } else {
             $DomainNetBIOS = $DomainFromSplit
         }
+
+        $DomainCacheResult = $DomainsByNetbios[$DomainNetBIOS]
 
     }
 

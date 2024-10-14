@@ -70,10 +70,12 @@ function Resolve-IdRefSvc {
 
     if ($DomainCacheResult) {
         $DomainDns = $DomainCacheResult.Dns
-    }
+    } else {
 
-    if (-not $DomainDns) {
+        Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' # For '$IdentityReference'"
         $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
+
     }
 
     # Update the caches
@@ -84,11 +86,12 @@ function Resolve-IdRefSvc {
         Name    = $Name
     }
 
-    Write-LogMsg @Log -Text " # Add '$Caption' to the 'Win32_AccountByCaption' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_ServiceByName'][$Name] = $Win32Svc
-
-    Write-LogMsg @Log -Text " # Add '$SIDString' to the 'Win32_AccountBySID' cache for '$ServerNetBIOS'"
-    $CimCache[$ServerNetBIOS]['Win32_ServiceBySID'][$SIDString] = $Win32Svc
+    # Update the caches
+    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Svc
+    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Svc
+    $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
+    $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
+    $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
