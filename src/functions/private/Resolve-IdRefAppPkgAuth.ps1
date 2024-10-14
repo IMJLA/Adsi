@@ -89,7 +89,7 @@ function Resolve-IdRefAppPkgAuth {
     if ($Known) {
         $SIDString = $Known.SID
     } else {
-        $SIDString = $IdentityReference
+        $SIDString = $Name
     }
 
     $Caption = "$ServerNetBIOS\$Name"
@@ -100,7 +100,7 @@ function Resolve-IdRefAppPkgAuth {
         $DomainDns = $DomainCacheResult.Dns
     } else {
 
-        Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' # For '$IdentityReference'"
+        Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS '$ServerNetBIOS' # cache miss"
         $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
         $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
 
