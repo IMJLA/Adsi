@@ -18,14 +18,18 @@ function Find-CachedWellKnownSID {
 
                 if ($WellKnownSidCacheResult) {
 
-                    $CombinedProperties = $WellKnownSidCacheResult + @{
+                    $Properties = @{
                         IdentityReference        = $IdentityReference
                         SIDString                = $WellKnownSidCacheResult.SID
                         IdentityReferenceNetBios = "$DomainNetBIOS\$($WellKnownSidCacheResult.Name)"
                         IdentityReferenceDns     = "$($DomainNetbiosCacheResult.Dns)\$($WellKnownSidCacheResult.Name)"
                     }
 
-                    return [PSCustomObject]$CombinedProperties
+                    ForEach ($Prop in $WellKnownSidCacheResult.PSObject.Properties.GetEnumerator().Name) {
+                        $Properties[$Prop] = $WellKnownSidCacheResult.$Prop
+                    }
+
+                    return [PSCustomObject]$Properties
 
                 } else {
                     #Write-LogMsg @LogParams -Text " # '$Cache' cache miss for '$IdentityReference' on '$DomainNetBIOS'"
