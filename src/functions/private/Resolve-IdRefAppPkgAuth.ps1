@@ -115,8 +115,8 @@ function Resolve-IdRefAppPkgAuth {
     }
 
     # Update the caches
-    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
-    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+    $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
+    $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
     $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
     $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
     $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult

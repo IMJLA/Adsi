@@ -958,8 +958,8 @@ function Resolve-IdRefAppPkgAuth {
     }
 
     # Update the caches
-    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
-    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+    $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
+    $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
     $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
     $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
     $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
@@ -1036,19 +1036,19 @@ function Resolve-IdRefBuiltIn {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
+    $LogThis = @{
+        ThisHostname      = $ThisHostname
+        DebugOutputStream = $DebugOutputStream
+        LogBuffer         = $LogBuffer
+        WhoAmI            = $WhoAmI
     }
 
     # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
     # But they may have real DirectoryEntry objects
     # Try to find the DirectoryEntry object locally on the server
     $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
-    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @GetDirectoryEntryParams @LoggingParams
-    $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LoggingParams).SidString
+    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @GetDirectoryEntryParams @LogThis
+    $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LogThis).SidString
     $Caption = "$ServerNetBIOS\$Name"
     $DomainDns = $AdsiServer.Dns
     $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
@@ -1062,8 +1062,8 @@ function Resolve-IdRefBuiltIn {
     }
 
     # Update the caches
-    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
-    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+    $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
+    $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
     $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
     $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
     $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
@@ -1568,8 +1568,8 @@ function Resolve-IdRefSvc {
     }
 
     # Update the caches
-    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Svc
-    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Svc
+    $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Svc
+    $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Svc
     $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
     $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
     $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
@@ -6820,6 +6820,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

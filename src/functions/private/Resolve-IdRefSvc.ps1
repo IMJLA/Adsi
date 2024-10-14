@@ -87,8 +87,8 @@ function Resolve-IdRefSvc {
     }
 
     # Update the caches
-    $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Svc
-    $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Svc
+    $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Svc
+    $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Svc
     $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
     $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
     $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult

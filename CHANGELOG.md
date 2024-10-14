@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.321] - 2024-10-13 - bugfix copy pasta'd code
+
 ## [4.0.320] - 2024-10-13 - missing logging params
 
 ## [4.0.319] - 2024-10-13 - bugfix don't return anything if no match
