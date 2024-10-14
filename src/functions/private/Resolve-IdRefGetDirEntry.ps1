@@ -16,13 +16,13 @@ function Resolve-IdRefGetDirEntry {
 
         [hashtable]$GetDirectoryEntryParams,
 
-        [hashtable]$LogParams
+        [hashtable]$LogThis
 
     )
 
     $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
-    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @GetDirectoryEntryParams @LogParams
-    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LogParams
+    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @GetDirectoryEntryParams @LogThis
+    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $DomainsBySid @LogThis
     return $DirectoryEntryWithSidInfo.SidString
 
 }

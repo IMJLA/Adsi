@@ -61,45 +61,11 @@ function Resolve-IdRefSvc {
         [string]$DebugOutputStream = 'Debug'
 
     )
-
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    <#
-    # Some of them are services (yes services can have SIDs, notably this includes TrustedInstaller but it is also common with SQL)
-    if ($ServerNetBIOS -eq $ThisHostName) {
-
-        Write-LogMsg @Log -Text "sc.exe showsid $Name"
-        [string[]]$ScResult = & sc.exe showsid $Name
-
-    } else {
-
-        Write-LogMsg @Log -Text "Invoke-Command -ComputerName $ServerNetBIOS -ScriptBlock { & sc.exe showsid `$args[0] } -ArgumentList $Name"
-        [string[]]$ScResult = Invoke-Command -ComputerName $ServerNetBIOS -ScriptBlock { & sc.exe showsid $args[0] } -ArgumentList $Name
-
-    }
-    $ScResultProps = @{}
-
-    $ScResult |
-    ForEach-Object {
-
-        $Prop, $Value = ($_ -split ':').Trim()
-        $ScResultProps[$Prop] = $Value
-
-    }
-
-    $SIDString = $ScResultProps['SERVICE SID']
-    #>
-
-    $ScShowSidResults = Invoke-ScShowSid -ServiceName $Name -ComputerName $ServerNetBIOS -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -Log $Log
-    $ServiceSidAndStatus = ConvertFrom-ScShowSidResult -Result $ScShowSidResults
-    $SIDString = $ServiceSidAndStatus.SID
+    pause
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $LogBuffer ; WhoAmI = $WhoAmI }
+    $LogThis = @{ ThisHostname = $ThisHostname ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+    $SIDString = ConvertTo-ServiceSID -ServiceName $Name
     $Caption = "$ServerNetBIOS\$Name"
-
     $DomainCacheResult = $DomainsByNetbios[$ServerNetBIOS]
 
     if ($DomainCacheResult) {
@@ -107,7 +73,7 @@ function Resolve-IdRefSvc {
     }
 
     if (-not $DomainDns) {
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LogThis
     }
 
     # Update the caches

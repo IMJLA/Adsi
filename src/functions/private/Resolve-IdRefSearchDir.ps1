@@ -40,13 +40,13 @@ function Resolve-IdRefSearchDir {
 
         [string]$DomainDn,
 
-        [hashtable]$LogParams,
+        [hashtable]$LogThis,
 
         [hashtable]$Log
 
     )
 
-    $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn" -ThisFqdn $ThisFqdn -CimCache $CimCache @LogParams
+    $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn" -ThisFqdn $ThisFqdn -CimCache $CimCache @LogThis
 
     $SearchParams = @{
         CimCache            = $CimCache
@@ -60,7 +60,7 @@ function Resolve-IdRefSearchDir {
     }
 
     try {
-        $DirectoryEntry = Search-Directory @SearchParams @LogParams
+        $DirectoryEntry = Search-Directory @SearchParams @LogThis
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually

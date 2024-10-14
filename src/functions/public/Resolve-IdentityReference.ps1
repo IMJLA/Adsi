@@ -87,14 +87,6 @@ function Resolve-IdentityReference {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    $ServerNetBIOS = $AdsiServer.Netbios
     $LastSlashIndex = $IdentityReference.LastIndexOf('\')
 
     if ($LastSlashIndex -eq -1) {
@@ -103,12 +95,13 @@ function Resolve-IdentityReference {
         $Name = $IdentityReference.Substring( $LastSlashIndex + 1 , $LastSlashIndex.Length - 1 )
     }
 
+    $ServerNetBIOS = $AdsiServer.Netbios
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $LogBuffer ; WhoAmI = $WhoAmI }
     $splat1 = @{ WellKnownSidBySid = $WellKnownSidBySid ; WellKnownSidByCaption = $WellKnownSidByCaption }
     $splat3 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
     $splat5 = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }
-    $splat6 = @{ DebugOutputStream = $DebugOutputStream }
     $splat8 = @{ CimCache = $CimCache; IdentityReference = $IdentityReference }
-    $LogParams = @{ ThisHostname = $ThisHostname ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI }
+    $LogThis = @{ ThisHostname = $ThisHostname ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $GetDirectoryEntryParams = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; DomainsBySid = $DomainsBySid }
     $splat10 = @{ GetDirectoryEntryParams = $GetDirectoryEntryParams }
 
@@ -117,7 +110,7 @@ function Resolve-IdentityReference {
     # and update the Win32_AccountBySID and Win32_AccountByCaption caches.
     # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
     # Search these caches now.
-    $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @splat3 @splat6 @LogParams
+    $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @splat3 @LogThis
 
     if ($CacheResult) {
 
@@ -134,23 +127,23 @@ function Resolve-IdentityReference {
         "S-1-*" {
 
             # IdentityReference is a Revision 1 SID
-            $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
+            $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat8 @LogThis
             return $Resolved
 
         }
 
         "NT SERVICE\*" {
-            $Resolved = Resolve-IdRefSvc -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat6 @splat8 @LogParams
+            $Resolved = Resolve-IdRefSvc -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat8 @LogThis
             return $Resolved
         }
 
         "APPLICATION PACKAGE AUTHORITY\*" {
-            $Resolved = Resolve-IdRefAppPkg -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8
+            $Resolved = Resolve-IdRefAppPkgAuth -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8 @LogThis
             return $Resolved
         }
 
         "BUILTIN\*" {
-            $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat6 @splat8 @splat10 @LogParams
+            $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat8 @splat10 @LogThis
             return $Resolved
         }
 
@@ -169,7 +162,7 @@ function Resolve-IdentityReference {
         } else {
 
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' for '$IdentityReference'"
-            $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogParams
+            $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogThis
 
             #is this necessary? Shouldn't the cache already be updated by Get-AdsiServer?  Commenting to find out.
             #$DomainsByNetbios[$ServerNetBIOS] = $CacheResult
@@ -186,14 +179,14 @@ function Resolve-IdentityReference {
 
             # Try to resolve the account against the domain indicated in its NT Account Name
             # Add this domain to our list of known domains
-            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogParams $LogParams -DomainsBySid $DomainsBySid -Name $Name @splat5 @splat6 @splat8
+            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogThis $LogThis -DomainsBySid $DomainsBySid -Name $Name @splat5 @splat6 @splat8
 
         }
 
         if (-not $SIDString) {
 
             # Try to find the DirectoryEntry object directly on the server
-            $SIDString = Resolve-IdRefGetDirEntry -LogParams $LogParams -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat10
+            $SIDString = Resolve-IdRefGetDirEntry -LogThis $LogThis -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat10
 
         }
 

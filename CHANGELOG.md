@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.302] - 2024-10-13 - bugfix splats
+
 ## [4.0.301] - 2024-10-13 - bugfix incorrect prop name
 
 ## [4.0.300] - 2024-10-13 - bugfix incorrect splat
