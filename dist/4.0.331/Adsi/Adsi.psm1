@@ -6538,17 +6538,20 @@ function Resolve-IdentityReference {
     if ($LastSlashIndex -eq -1) {
         $Name = $IdentityReference
     } else {
-        $Name = $IdentityReference.Substring( $LastSlashIndex + 1 , $IdentityReference.Length - $LastSlashIndex - 1 )
+        $StartIndex = $LastSlashIndex + 1
+        $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
     }
 
     $ServerNetBIOS = $AdsiServer.Netbios
     $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $LogBuffer ; WhoAmI = $WhoAmI }
-    $splat1 = @{ WellKnownSidBySid = $WellKnownSidBySid ; WellKnownSidByCaption = $WellKnownSidByCaption }
-    $splat3 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
-    $splat5 = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }
-    $splat8 = @{ CimCache = $CimCache; IdentityReference = $IdentityReference }
     $LogThis = @{ ThisHostname = $ThisHostname ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-    $GetDirectoryEntryParams = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; DomainsBySid = $DomainsBySid }
+    $splat1 = @{ WellKnownSidBySid = $WellKnownSidBySid ; WellKnownSidByCaption = $WellKnownSidByCaption }
+    $splat2 = @{ DomainsByFqdn = $DomainsByFqdn ; DomainsByNetbios = $DomainsByNetbios ; DomainsBySid = $DomainsBySid }
+    $splat3 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
+    $splat4 = @{ DomainsByFqdn = $DomainsByFqdn ; DomainsBySid = $DomainsBySid }
+    $splat5 = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }
+    $splat8 = @{ CimCache = $CimCache ; IdentityReference = $IdentityReference }
+    $GetDirectoryEntryParams = @{ DirectoryEntryCache = $DirectoryEntryCache ; DomainsByNetbios = $DomainsByNetbios; DomainsBySid = $DomainsBySid }
     $splat10 = @{ GetDirectoryEntryParams = $GetDirectoryEntryParams }
 
     # Many Well-Known SIDs cannot be translated with the Translate method.
@@ -6556,7 +6559,7 @@ function Resolve-IdentityReference {
     # and update the Win32_AccountBySID and Win32_AccountByCaption caches.
     # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
     # Search these caches now.
-    $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid @splat3 @LogThis
+    $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference @splat2 @splat3 @LogThis
 
     if ($CacheResult) {
 
@@ -6573,18 +6576,18 @@ function Resolve-IdentityReference {
         "S-1-*" {
 
             # IdentityReference is a Revision 1 SID
-            $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat8 @LogThis
+            $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns @splat3 @splat4 @splat5 @splat8 @LogThis
             return $Resolved
 
         }
 
         "NT SERVICE\*" {
-            $Resolved = Resolve-IdRefSvc -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat3 @splat5 @splat8 @LogThis
+            $Resolved = Resolve-IdRefSvc -Name $Name @splat3 @splat4 @splat5 @splat8 @LogThis
             return $Resolved
         }
 
         "APPLICATION PACKAGE AUTHORITY\*" {
-            $Resolved = Resolve-IdRefAppPkgAuth -Name $Name -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat1 @splat3 @splat5 @splat8 @LogThis
+            $Resolved = Resolve-IdRefAppPkgAuth -Name $Name @splat1 @splat3 @splat4 @splat5 @splat8 @LogThis
             return $Resolved
         }
 
@@ -6608,7 +6611,7 @@ function Resolve-IdentityReference {
         } else {
 
             #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache miss for '$ServerNetBIOS'"
-            $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -DomainsBySid $DomainsBySid @splat5 @LogThis
+            $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -CimCache $CimCache @splat4 @splat5 @LogThis
 
         }
 
@@ -6841,6 +6844,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
