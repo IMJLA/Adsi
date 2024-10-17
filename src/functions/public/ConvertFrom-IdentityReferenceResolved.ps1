@@ -286,7 +286,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 if ($SamAccountNameOrSid -like "S-1-*") {
 
-                    if ($Name -in 'APPLICATION PACKAGE AUTHORITY', 'BUILTIN', 'NT SERVICE') {
+                    if ($DomainNetBIOS -in 'APPLICATION PACKAGE AUTHORITY', 'BUILTIN', 'NT SERVICE') {
 
                         Write-LogMsg @LogParams -Text " # '$($IdentityReference)' is a Capability SID or Service SID which could not be resolved to a friendly name."
 
