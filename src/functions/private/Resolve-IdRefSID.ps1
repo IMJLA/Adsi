@@ -118,7 +118,7 @@ function Resolve-IdRefSID {
 
     }
 
-    Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'"
+    #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'"
 
     # Search the cache of domains, first by SID, then by NetBIOS name
     if (-not $DomainCacheResult) {

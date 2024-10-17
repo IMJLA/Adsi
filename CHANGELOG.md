@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.335] - 2024-10-16 - reduce debug verbosity
+
 ## [4.0.334] - 2024-10-16 - punctuation is good, mmkay
 
 ## [4.0.333] - 2024-10-16 - improve error handling
