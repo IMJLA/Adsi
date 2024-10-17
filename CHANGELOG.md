@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.333] - 2024-10-16 - improve error handling
+
 ## [4.0.332] - 2024-10-16 - bugfix wrong var name
 
 ## [4.0.331] - 2024-10-16 - cleanup logic and readability
