@@ -286,44 +286,61 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 if ($SamAccountNameOrSid -like "S-1-*") {
 
-                    Write-LogMsg @LogParams -Text " # '$($IdentityReference)' is an unresolved SID"
+                    if ($Name -in 'APPLICATION PACKAGE AUTHORITY', 'BUILTIN', 'NT SERVICE') {
 
-                    # The SID of the domain is the SID of the user minus the last block of numbers
-                    $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf("-"))
+                        Write-LogMsg @LogParams -Text " # '$($IdentityReference)' is a Capability SID or Service SID which could not be resolved to a friendly name."
 
-                    # Determine if SID belongs to current domain
-                    if ($DomainSid -eq $CurrentDomain.SIDString) {
-                        Write-LogMsg @LogParams -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
+                        $Known = Get-KnownSid -SID $SamAccountNameOrSid
+
+                        $FakeDirectoryEntryParams = @{
+                            DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
+                            InputObject   = $Known
+                        }
+
+                        $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
+
                     } else {
-                        Write-LogMsg @LogParams -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
+
+                        Write-LogMsg @LogParams -Text " # '$($IdentityReference)' is an unresolved SID"
+
+                        # The SID of the domain is the SID of the user minus the last block of numbers
+                        $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf("-"))
+
+                        # Determine if SID belongs to current domain
+                        if ($DomainSid -eq $CurrentDomain.SIDString) {
+                            Write-LogMsg @LogParams -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
+                        } else {
+                            Write-LogMsg @LogParams -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
+                        }
+
+                        # Lookup other information about the domain using its SID as the key
+                        $DomainObject = $DomainsBySID[$DomainSid]
+
+                        if ($DomainObject) {
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users,group"
+                            $DomainNetBIOS = $DomainObject.Netbios
+                            $DomainDN = $DomainObject.DistinguishedName
+                        } else {
+                            $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/Users,group"
+                            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
+                        }
+
+                        Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
+
+                        try {
+                            $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
+                        } catch {
+                            $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+                            Write-LogMsg @LogParams -Text "Couldn't get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
+                            $LogParams['Type'] = $DebugOutputStream
+                        }
+
+                        $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
+
+                        $DirectoryEntry = $MembersOfUsersGroup |
+                        Where-Object -FilterScript { ($SamAccountNameOrSid -eq $([System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'], 0))) }
+
                     }
-
-                    # Lookup other information about the domain using its SID as the key
-                    $DomainObject = $DomainsBySID[$DomainSid]
-
-                    if ($DomainObject) {
-                        $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users,group"
-                        $DomainNetBIOS = $DomainObject.Netbios
-                        $DomainDN = $DomainObject.DistinguishedName
-                    } else {
-                        $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/Users,group"
-                        $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
-                    }
-
-                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
-
-                    try {
-                        $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
-                    } catch {
-                        $LogParams['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                        Write-LogMsg @LogParams -Text "Couldn't get '$($GetDirectoryEntryParams['DirectoryPath'])' using PSRemoting. Error: $_"
-                        $LogParams['Type'] = $DebugOutputStream
-                    }
-
-                    $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
-
-                    $DirectoryEntry = $MembersOfUsersGroup |
-                    Where-Object -FilterScript { ($SamAccountNameOrSid -eq $([System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'], 0))) }
 
                 } else {
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.328] - 2024-10-16 - bugfix stop attempting to resolve known unresolveable sids
+
 ## [4.0.327] - 2024-10-14 - bugfix if it's a SID then we don't need to convert it to a SID
 
 ## [4.0.326] - 2024-10-14 - bugfix splats
