@@ -280,7 +280,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
             } else {
 
-                Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal or unresolved SID"
+                Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal or unresolved SID."
 
                 if ($null -eq $SamAccountNameOrSid) { $SamAccountNameOrSid = $IdentityReference }
 
