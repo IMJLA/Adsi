@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.330] - 2024-10-16 - remove unnecessary commented old lines
+
 ## [4.0.329] - 2024-10-16 - bugfix stop using optional ,group suffix due to cache problems (would need to update cache mechanism to support it)
 
 ## [4.0.328] - 2024-10-16 - bugfix stop attempting to resolve known unresolveable sids
