@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.339] - 2024-11-03 - bugfix proper syntax for public TValue AddOrUpdate (TKey key, Func<TKey,TValue> addValueFactory, Func<TKey,TValue,TValue> updateValueFactory);
+
 ## [4.0.338] - 2024-11-03 - bugfix need to use trygetvalue method
 
 ## [4.0.337] - 2024-11-03 - bugfix need to refer to value prop when param is ref var
