@@ -118,9 +118,9 @@ function Get-AdsiServer {
         ForEach ($DomainFqdn in $Fqdn) {
 
             $OutputObject = $null
-            $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
+            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
 
-            if ($OutputObject) {
+            if ($TryGetValueResult) {
 
                 #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFqdn'"
                 $OutputObject
@@ -382,9 +382,9 @@ function Get-AdsiServer {
         ForEach ($DomainNetbios in $Netbios) {
 
             $OutputObject = $null
-            $DomainsByNetbios.Value.TryGetValue($DomainNetbios, [ref]$OutputObject)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetbios, [ref]$OutputObject)
 
-            if ($OutputObject) {
+            if ($TryGetValueResult) {
 
                 #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
                 $OutputObject

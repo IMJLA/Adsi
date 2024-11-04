@@ -101,10 +101,10 @@ function ConvertTo-Fqdn {
         ForEach ($ThisNetBios in $NetBIOS) {
 
             $DomainObject = $null
-            $DomainsByNetbios.Value.TryGetValue($ThisNetBios, [ref]$DomainObject)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ThisNetBios, [ref]$DomainObject)
 
             if (
-                -not $DomainObject -and
+                -not $TryGetValueResult -and
                 -not [string]::IsNullOrEmpty($ThisNetBios)
             ) {
 

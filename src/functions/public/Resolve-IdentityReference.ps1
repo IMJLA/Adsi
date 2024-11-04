@@ -159,9 +159,9 @@ function Resolve-IdentityReference {
 
         # Start by determining the domain DN and DNS name
         $CacheResult = $null
-        $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$CacheResult)
+        $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$CacheResult)
 
-        if ($CacheResult) {
+        if ($TryGetValueResult) {
             #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache hit for '$ServerNetBIOS'"
         } else {
 

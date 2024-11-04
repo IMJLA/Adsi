@@ -57,9 +57,9 @@ function ConvertTo-DomainNetBIOS {
     }
 
     $DomainCacheResult = $null
-    $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
 
         #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
         return $DomainCacheResult.Netbios

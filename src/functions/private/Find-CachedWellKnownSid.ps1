@@ -7,9 +7,9 @@ function Find-CachedWellKnownSID {
     )
 
     $DomainNetbiosCacheResult = $null
-    $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
-    if ($DomainNetbiosCacheResult) {
+    if ($TryGetValueResult) {
 
         ForEach ($Cache in 'WellKnownSidBySid', 'WellKnownSIDByName') {
 

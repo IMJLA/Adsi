@@ -100,9 +100,9 @@ function Get-DirectoryEntry {
     }
 
     $CacheResult = $null
-    $DirectoryEntryCache.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
+    $TryGetValueResult = $DirectoryEntryCache.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
 
-    if ($CacheResult) {
+    if ($TryGetValueResult) {
 
         Write-LogMsg @Log -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
         return $CacheResult

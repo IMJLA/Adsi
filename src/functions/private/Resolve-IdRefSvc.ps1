@@ -67,9 +67,9 @@ function Resolve-IdRefSvc {
     $SIDString = ConvertTo-ServiceSID -ServiceName $Name
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null
-    $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
     } else {
 

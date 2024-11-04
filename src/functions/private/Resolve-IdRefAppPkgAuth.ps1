@@ -94,9 +94,9 @@ function Resolve-IdRefAppPkgAuth {
 
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null
-    $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
     } else {
 

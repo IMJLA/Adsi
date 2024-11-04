@@ -39,9 +39,9 @@ function Get-CachedDirectoryEntry {
     #>
     $ID = "$Server\$AccountName"
     $DomainCacheResult = $null
-    $DomainsByFqdn.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
 
         $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
@@ -79,9 +79,9 @@ function Get-CachedDirectoryEntry {
     } else {
 
         $DomainCacheResult = $null
-        $DomainsByNetbios.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+        $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
-        if ($DomainCacheResult) {
+        if ($TryGetValueResult) {
 
             $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
@@ -119,9 +119,9 @@ function Get-CachedDirectoryEntry {
         } else {
 
             $DomainCacheResult = $null
-            $DomainsBySid.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainsBySid.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
-            if ($DomainCacheResult) {
+            if ($TryGetValueResult) {
 
                 $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 

@@ -436,9 +436,9 @@ function Find-CachedWellKnownSID {
     )
 
     $DomainNetbiosCacheResult = $null
-    $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
-    if ($DomainNetbiosCacheResult) {
+    if ($TryGetValueResult) {
 
         ForEach ($Cache in 'WellKnownSidBySid', 'WellKnownSIDByName') {
 
@@ -523,9 +523,9 @@ function Find-WinNTGroupMember {
 
             Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
             $DomainCacheResult = $null
-            $DomainsByNetbios.Value.TryGetValue($MemberDomainNetbios, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($MemberDomainNetbios, [ref]$DomainCacheResult)
 
-            if ($DomainCacheResult) {
+            if ($TryGetValueResult) {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
 
@@ -618,9 +618,9 @@ function Get-CachedDirectoryEntry {
     #>
     $ID = "$Server\$AccountName"
     $DomainCacheResult = $null
-    $DomainsByFqdn.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
 
         $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
@@ -658,9 +658,9 @@ function Get-CachedDirectoryEntry {
     } else {
 
         $DomainCacheResult = $null
-        $DomainsByNetbios.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+        $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
-        if ($DomainCacheResult) {
+        if ($TryGetValueResult) {
 
             $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
@@ -698,9 +698,9 @@ function Get-CachedDirectoryEntry {
         } else {
 
             $DomainCacheResult = $null
-            $DomainsBySid.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainsBySid.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
-            if ($DomainCacheResult) {
+            if ($TryGetValueResult) {
 
                 $SIDCacheResult = $DomainCacheResult.WellKnownSIDBySID[$ID]
 
@@ -942,9 +942,9 @@ function Resolve-IdRefAppPkgAuth {
 
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null
-    $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
     } else {
 
@@ -1394,10 +1394,10 @@ function Resolve-IdRefSID {
     # Search the cache of domains, first by SID, then by NetBIOS name
     if (-not $DomainCacheResult) {
         $DomainCacheResult = $null
-        $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainCacheResult)
+        $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainCacheResult)
     }
 
-    if (-not $DomainCacheResult) {
+    if (-not $TryGetValueResult) {
 
         #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain SID cache miss for '$DomainSid'"
         $split = $NTAccount -split '\\'
@@ -1427,7 +1427,7 @@ function Resolve-IdRefSID {
         }
 
         $DomainCacheResult = $null
-        $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainCacheResult)
+        $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainCacheResult)
 
     }
 
@@ -1560,9 +1560,9 @@ function Resolve-IdRefSvc {
     $SIDString = ConvertTo-ServiceSID -ServiceName $Name
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null
-    $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
     } else {
 
@@ -1912,7 +1912,7 @@ function Add-SidInfo {
 
                 # Lookup other information about the domain using its SID as the key
                 $DomainObject = $null
-                $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
+                $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
             }
 
             #Write-LogMsg @LogParams -Text "$SamAccountName`t$SID"
@@ -2276,9 +2276,9 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         # Lookup other information about the domain using its SID as the key
                         $DomainObject = $null
-                        $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
+                        $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
 
-                        if ($DomainObject) {
+                        if ($TryGetValueResult) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users"
                             $DomainNetBIOS = $DomainObject.Netbios
                             $DomainDN = $DomainObject.DistinguishedName
@@ -2308,9 +2308,9 @@ function ConvertFrom-IdentityReferenceResolved {
 
                     Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
                     $DomainNetbiosCacheResult = $null
-                    $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
+                    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
-                    if ($DomainNetbiosCacheResult) {
+                    if ($TryGetValueResult) {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"
                     } else {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
@@ -2791,9 +2791,9 @@ function ConvertTo-DistinguishedName {
         ForEach ($ThisDomain in $Domain) {
 
             $DomainCacheResult = $null
-            $DomainsByNetbios.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
 
-            if ($DomainCacheResult) {
+            if ($TryGetValueResult) {
                 #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
             } else {
@@ -2825,9 +2825,9 @@ function ConvertTo-DistinguishedName {
         ForEach ($ThisDomain in $DomainFQDN) {
 
             $DomainCacheResult = $null
-            $DomainsByFqdn.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
 
-            if ($DomainCacheResult) {
+            if ($TryGetValueResult) {
                 #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
             } else {
@@ -2904,9 +2904,9 @@ function ConvertTo-DomainNetBIOS {
     }
 
     $DomainCacheResult = $null
-    $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$DomainCacheResult)
+    $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$DomainCacheResult)
 
-    if ($DomainCacheResult) {
+    if ($TryGetValueResult) {
 
         #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
         return $DomainCacheResult.Netbios
@@ -3027,9 +3027,9 @@ function ConvertTo-DomainSidString {
     }
 
     $CacheResult = $null
-    $DomainsByFqdn.Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
+    $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
 
-    if ($CacheResult) {
+    if ($TryGetValueResult) {
 
         #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainDnsName'"
         return $CacheResult.Sid
@@ -3194,10 +3194,10 @@ function ConvertTo-Fqdn {
         ForEach ($ThisNetBios in $NetBIOS) {
 
             $DomainObject = $null
-            $DomainsByNetbios.Value.TryGetValue($ThisNetBios, [ref]$DomainObject)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ThisNetBios, [ref]$DomainObject)
 
             if (
-                -not $DomainObject -and
+                -not $TryGetValueResult -and
                 -not [string]::IsNullOrEmpty($ThisNetBios)
             ) {
 
@@ -3441,7 +3441,7 @@ function Expand-AdsiGroupMember {
                     #The SID of the domain is the SID of the user minus the last block of numbers
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf('-'))
                     $Domain = $null
-                    $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
+                    $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
 
                     $GetDirectoryEntryParams = @{
                         ThisFqdn          = $ThisFqdn
@@ -4284,9 +4284,9 @@ function Get-AdsiServer {
         ForEach ($DomainFqdn in $Fqdn) {
 
             $OutputObject = $null
-            $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
+            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
 
-            if ($OutputObject) {
+            if ($TryGetValueResult) {
 
                 #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFqdn'"
                 $OutputObject
@@ -4548,9 +4548,9 @@ function Get-AdsiServer {
         ForEach ($DomainNetbios in $Netbios) {
 
             $OutputObject = $null
-            $DomainsByNetbios.Value.TryGetValue($DomainNetbios, [ref]$OutputObject)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetbios, [ref]$OutputObject)
 
-            if ($OutputObject) {
+            if ($TryGetValueResult) {
 
                 #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
                 $OutputObject
@@ -4835,9 +4835,9 @@ function Get-DirectoryEntry {
     }
 
     $CacheResult = $null
-    $DirectoryEntryCache.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
+    $TryGetValueResult = $DirectoryEntryCache.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
 
-    if ($CacheResult) {
+    if ($TryGetValueResult) {
 
         Write-LogMsg @Log -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
         return $CacheResult
@@ -6646,9 +6646,9 @@ function Resolve-IdentityReference {
 
         # Start by determining the domain DN and DNS name
         $CacheResult = $null
-        $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$CacheResult)
+        $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$CacheResult)
 
-        if ($CacheResult) {
+        if ($TryGetValueResult) {
             #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache hit for '$ServerNetBIOS'"
         } else {
 
@@ -6887,6 +6887,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

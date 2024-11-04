@@ -118,7 +118,7 @@ function Add-SidInfo {
 
                 # Lookup other information about the domain using its SID as the key
                 $DomainObject = $null
-                $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
+                $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
             }
 
             #Write-LogMsg @LogParams -Text "$SamAccountName`t$SID"

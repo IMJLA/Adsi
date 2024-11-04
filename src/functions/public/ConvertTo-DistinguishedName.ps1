@@ -118,9 +118,9 @@ function ConvertTo-DistinguishedName {
         ForEach ($ThisDomain in $Domain) {
 
             $DomainCacheResult = $null
-            $DomainsByNetbios.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
 
-            if ($DomainCacheResult) {
+            if ($TryGetValueResult) {
                 #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
             } else {
@@ -152,9 +152,9 @@ function ConvertTo-DistinguishedName {
         ForEach ($ThisDomain in $DomainFQDN) {
 
             $DomainCacheResult = $null
-            $DomainsByFqdn.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
 
-            if ($DomainCacheResult) {
+            if ($TryGetValueResult) {
                 #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
             } else {

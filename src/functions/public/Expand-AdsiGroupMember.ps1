@@ -135,7 +135,7 @@ function Expand-AdsiGroupMember {
                     #The SID of the domain is the SID of the user minus the last block of numbers
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf('-'))
                     $Domain = $null
-                    $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
+                    $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
 
                     $GetDirectoryEntryParams = @{
                         ThisFqdn          = $ThisFqdn

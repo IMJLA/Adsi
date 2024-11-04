@@ -123,10 +123,10 @@ function Resolve-IdRefSID {
     # Search the cache of domains, first by SID, then by NetBIOS name
     if (-not $DomainCacheResult) {
         $DomainCacheResult = $null
-        $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainCacheResult)
+        $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainCacheResult)
     }
 
-    if (-not $DomainCacheResult) {
+    if (-not $TryGetValueResult) {
 
         #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain SID cache miss for '$DomainSid'"
         $split = $NTAccount -split '\\'
@@ -156,7 +156,7 @@ function Resolve-IdRefSID {
         }
 
         $DomainCacheResult = $null
-        $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainCacheResult)
+        $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainCacheResult)
 
     }
 

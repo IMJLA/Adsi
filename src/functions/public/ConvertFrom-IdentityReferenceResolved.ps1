@@ -315,9 +315,9 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         # Lookup other information about the domain using its SID as the key
                         $DomainObject = $null
-                        $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
+                        $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
 
-                        if ($DomainObject) {
+                        if ($TryGetValueResult) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users"
                             $DomainNetBIOS = $DomainObject.Netbios
                             $DomainDN = $DomainObject.DistinguishedName
@@ -347,9 +347,9 @@ function ConvertFrom-IdentityReferenceResolved {
 
                     Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
                     $DomainNetbiosCacheResult = $null
-                    $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
+                    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
-                    if ($DomainNetbiosCacheResult) {
+                    if ($TryGetValueResult) {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"
                     } else {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
