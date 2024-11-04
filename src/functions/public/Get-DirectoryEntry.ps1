@@ -99,7 +99,8 @@ function Get-DirectoryEntry {
         WhoAmI       = $WhoAmI
     }
 
-    $CacheResult = $DirectoryEntryCache.Value[$DirectoryPath]
+    $CacheResult = $null
+    $DirectoryEntryCache.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
 
     if ($CacheResult) {
 
@@ -216,7 +217,7 @@ function Get-DirectoryEntry {
 
     }
 
-    $DirectoryEntryCache.Value[$DirectoryPath] = $DirectoryEntry
+    $DirectoryEntryCache.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry )
     return $DirectoryEntry
 
 }

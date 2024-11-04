@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.338] - 2024-11-03 - bugfix need to use trygetvalue method
+
 ## [4.0.337] - 2024-11-03 - bugfix need to refer to value prop when param is ref var
 
 ## [4.0.336] - 2024-11-03 - convert directoryentrycache to a reference variable
