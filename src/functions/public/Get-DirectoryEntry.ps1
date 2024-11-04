@@ -49,9 +49,10 @@ function Get-DirectoryEntry {
 
         <#
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-        Uses a thread-safe hashtable by default
+
+        Defaults to a thread-safe dictionary with string keys and object values
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         # This is not actually used but is here so the parameter can be included in a splat shared with other functions

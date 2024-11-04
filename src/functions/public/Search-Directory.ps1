@@ -42,9 +42,10 @@ function Search-Directory {
 
         <#
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-        Uses a thread-safe hashtable by default
+
+        Defaults to a thread-safe dictionary with string keys and object values
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
 

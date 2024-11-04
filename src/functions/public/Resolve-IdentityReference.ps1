@@ -32,9 +32,9 @@ function Resolve-IdentityReference {
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
-        Defaults to an empty thread-safe hashtable
+        Defaults to a thread-safe dictionary with string keys and object values
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         <#
         Dictionary to cache known servers to avoid redundant lookups
@@ -127,7 +127,7 @@ function Resolve-IdentityReference {
     # If no match was found in any cache, the path forward depends on the IdentityReference.
     switch -Wildcard ($IdentityReference) {
 
-        "S-1-*" {
+        'S-1-*' {
 
             # IdentityReference is a Revision 1 SID
             $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns @splat3 @splat4 @splat5 @splat8 @LogThis
@@ -135,17 +135,17 @@ function Resolve-IdentityReference {
 
         }
 
-        "NT SERVICE\*" {
+        'NT SERVICE\*' {
             $Resolved = Resolve-IdRefSvc -Name $Name @splat3 @splat4 @splat5 @splat8 @LogThis
             return $Resolved
         }
 
-        "APPLICATION PACKAGE AUTHORITY\*" {
+        'APPLICATION PACKAGE AUTHORITY\*' {
             $Resolved = Resolve-IdRefAppPkgAuth -Name $Name @splat1 @splat3 @splat4 @splat5 @splat8 @LogThis
             return $Resolved
         }
 
-        "BUILTIN\*" {
+        'BUILTIN\*' {
             $Resolved = Resolve-IdRefBuiltIn -Name $Name -DomainsBySid $DomainsBySid -DomainsByFqdn $DomainsByFqdn @splat3 @splat5 @splat8 @LogThis
             return $Resolved
         }

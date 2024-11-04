@@ -14,7 +14,7 @@ Use CIM and ADSI to lookup info about IdentityReferences from Access Control Ent
 
 ```
 Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>]
- [[-DirectoryEntryCache] <Hashtable>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
+ [[-DirectoryEntryCache] <PSReference>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
  [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByCaption] <Hashtable>] [-ProgressAction <ActionPreference>]
@@ -103,16 +103,16 @@ Accept wildcard characters: False
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups
 
-Defaults to an empty thread-safe hashtable
+Defaults to a thread-safe dictionary with string keys and object values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 3
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

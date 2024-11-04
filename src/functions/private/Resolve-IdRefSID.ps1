@@ -17,9 +17,9 @@ function Resolve-IdRefSID {
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
-        Defaults to an empty thread-safe hashtable
+        Defaults to a thread-safe dictionary with string keys and object values
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         <#
         Dictionary to cache known servers to avoid redundant lookups
@@ -94,7 +94,7 @@ function Resolve-IdRefSID {
 
         #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # No match with known SID patterns"
         # The SID of the domain is everything up to (but not including) the last hyphen
-        $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf("-"))
+        $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-'))
         Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
         $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 

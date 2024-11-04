@@ -53,9 +53,9 @@ function ConvertFrom-IdentityReferenceResolved {
         <#
         Dictionary to cache directory entries to avoid redundant lookups
 
-        Defaults to an empty thread-safe hashtable
+        Defaults to a thread-safe dictionary with string keys and object values
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
@@ -284,7 +284,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 if ($null -eq $SamAccountNameOrSid) { $SamAccountNameOrSid = $IdentityReference }
 
-                if ($SamAccountNameOrSid -like "S-1-*") {
+                if ($SamAccountNameOrSid -like 'S-1-*') {
 
                     if ($DomainNetBIOS -in 'APPLICATION PACKAGE AUTHORITY', 'BUILTIN', 'NT SERVICE') {
 
@@ -304,7 +304,7 @@ function ConvertFrom-IdentityReferenceResolved {
                         Write-LogMsg @LogParams -Text " # '$($IdentityReference)' is an unresolved SID"
 
                         # The SID of the domain is the SID of the user minus the last block of numbers
-                        $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf("-"))
+                        $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf('-'))
 
                         # Determine if SID belongs to current domain
                         if ($DomainSid -eq $CurrentDomain.SIDString) {
@@ -325,7 +325,7 @@ function ConvertFrom-IdentityReferenceResolved {
                             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
                         }
 
-                        Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
+                        Write-LogMsg @LogParams -Text 'Get-DirectoryEntry' -Expand $GetDirectoryEntryParams, $LoggingParams
 
                         try {
                             $UsersGroup = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams
@@ -369,7 +369,7 @@ function ConvertFrom-IdentityReferenceResolved {
                         'primaryGroupToken'
                     )
 
-                    Write-LogMsg @LogParams -Text "Get-DirectoryEntry" -Expand $GetDirectoryEntryParams, $LoggingParams
+                    Write-LogMsg @LogParams -Text 'Get-DirectoryEntry' -Expand $GetDirectoryEntryParams, $LoggingParams
 
                     try {
                         $DirectoryEntry = Get-DirectoryEntry @GetDirectoryEntryParams @LoggingParams

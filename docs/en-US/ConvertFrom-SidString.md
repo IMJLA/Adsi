@@ -14,7 +14,7 @@ schema: 2.0.0
 
 ```
 ConvertFrom-SidString [[-SID] <String>] [[-DebugOutputStream] <String>] [[-CimCache] <Hashtable>]
- [[-DirectoryEntryCache] <Hashtable>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
+ [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
  [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [[-LogBuffer] <Hashtable>]
 ```
@@ -68,7 +68,7 @@ Accept wildcard characters: False
 {{ Fill DirectoryEntryCache Description }}
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 

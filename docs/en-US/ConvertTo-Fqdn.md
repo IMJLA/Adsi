@@ -14,7 +14,7 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 
 ### DistinguishedName
 ```
-ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>]
+ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <PSReference>]
  [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>]
  [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] [-LogBuffer <Hashtable>]
  [-CimCache <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
@@ -23,7 +23,7 @@ ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <Hashtable>
 
 ### NetBIOS
 ```
-ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <Hashtable>] [-DomainsByNetbios <Hashtable>]
+ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <PSReference>] [-DomainsByNetbios <Hashtable>]
  [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [-ThisFqdn <String>]
  [-WhoAmI <String>] [-LogBuffer <Hashtable>] [-CimCache <Hashtable>] [-DebugOutputStream <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
@@ -78,16 +78,16 @@ Accept wildcard characters: False
 ### -DirectoryEntryCache
 Dictionary to cache directory entries to avoid redundant lookups
 
-Defaults to an empty thread-safe hashtable
+Defaults to a thread-safe dictionary with string keys and object values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

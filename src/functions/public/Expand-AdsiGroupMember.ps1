@@ -27,9 +27,9 @@ function Expand-AdsiGroupMember {
         <#
         Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
 
-        Uses a thread-safe hashtable by default
+        Defaults to a thread-safe dictionary with string keys and object values
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
@@ -85,7 +85,7 @@ function Expand-AdsiGroupMember {
 
         # The DomainsBySID cache must be populated with trusted domains in order to translate foreign security principals
         if ( $DomainsBySid.Keys.Count -lt 1 ) {
-            Write-LogMsg @LogParams -Text "# No valid DomainsBySid cache found"
+            Write-LogMsg @LogParams -Text '# No valid DomainsBySid cache found'
             $DomainsBySid = ([hashtable]::Synchronized(@{}))
 
             $GetAdsiServerParams = @{
@@ -103,7 +103,7 @@ function Expand-AdsiGroupMember {
                 $null = Get-AdsiServer -Fqdn $_.DomainFqdn @GetAdsiServerParams @LoggingParams
             }
         } else {
-            Write-LogMsg @LogParams -Text "# Valid DomainsBySid cache found"
+            Write-LogMsg @LogParams -Text '# Valid DomainsBySid cache found'
         }
 
         $CacheParams = @{
@@ -133,7 +133,7 @@ function Expand-AdsiGroupMember {
                     [string]$SID = $Matches.SID
 
                     #The SID of the domain is the SID of the user minus the last block of numbers
-                    $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
+                    $DomainSid = $SID.Substring(0, $Sid.LastIndexOf('-'))
                     $Domain = $DomainsBySid[$DomainSid]
 
                     $GetDirectoryEntryParams = @{

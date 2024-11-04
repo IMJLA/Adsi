@@ -26,9 +26,10 @@ function Get-AdsiGroupMember {
 
         <#
         Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-        Uses a thread-safe hashtable by default
+
+        Defaults to a thread-safe dictionary with string keys and object values
         #>
-        [hashtable]$DirectoryEntryCache = ([hashtable]::Synchronized(@{})),
+        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
@@ -188,13 +189,13 @@ function Get-AdsiGroupMember {
                     DebugOutputStream = $DebugOutputStream
                 }
                 if ($MembersThatAreGroups.Count -gt 0) {
-                    $FilterBuilder = [System.Text.StringBuilder]::new("(|")
+                    $FilterBuilder = [System.Text.StringBuilder]::new('(|')
 
                     ForEach ($ThisMember in $MembersThatAreGroups) {
                         $null = $FilterBuilder.Append("(primaryGroupId=$($ThisMember.Properties['primaryGroupToken'])))")
                     }
 
-                    $null = $FilterBuilder.Append(")")
+                    $null = $FilterBuilder.Append(')')
                     $PrimaryGroupFilter = $FilterBuilder.ToString()
                     $SearchParameters['Filter'] = $PrimaryGroupFilter
                     Write-LogMsg @LogParams -Text "Search-Directory -DirectoryPath '$($SearchParameters['DirectoryPath'])' -Filter '$($SearchParameters['Filter'])'"
