@@ -1799,7 +1799,7 @@ ForEach-Object {
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
+            <maml:para>[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
           <dev:type>
@@ -1938,6 +1938,18 @@ ForEach-Object {
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Management.Automation.PSReference</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>DomainsByNetbios</maml:name>
+          <maml:description>
+            <maml:para>[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
           <dev:type>
@@ -2099,7 +2111,7 @@ ForEach-Object {
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
+          <maml:para>[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
         <dev:type>

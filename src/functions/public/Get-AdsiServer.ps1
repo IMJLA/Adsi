@@ -133,7 +133,7 @@ function Get-AdsiServer {
             $CacheParams['AdsiProvider'] = $AdsiProvider
 
             Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' # for '$DomainFqdn'"
-            $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -DomainsByFqdn $DomainsByFqdn @LogThis
+            $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios @LogThis
 
             Write-LogMsg @LogParams -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -ThisFqdn '$ThisFqdn' # for '$DomainFqdn'"
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainFqdn -ThisFqdn $ThisFqdn -CimCache $CimCache @CacheParams @LogThis
@@ -400,7 +400,7 @@ function Get-AdsiServer {
             $CacheParams['AdsiProvider'] = $AdsiProvider
 
             Write-LogMsg @LogParams -Text "ConvertTo-DistinguishedName -Domain '$DomainNetBIOS' # for '$DomainNetbios'"
-            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios [ref]$DomainsByNetbios -DomainsByFqdn $DomainsByFqdn @LogThis
+            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios -DomainsByFqdn $DomainsByFqdn @LogThis
 
             if ($DomainDn) {
 

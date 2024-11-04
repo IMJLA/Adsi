@@ -21,7 +21,7 @@ function ConvertTo-DistinguishedName {
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'NetBIOS')]
         [string[]]$Domain,
 
-        [Parameter(ParameterSetName = 'NetBIOS')]
+        #[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]
         [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
         [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
