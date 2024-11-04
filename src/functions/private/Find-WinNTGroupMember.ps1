@@ -44,7 +44,8 @@ function Find-WinNTGroupMember {
         if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
 
             Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
-            $DomainCacheResult = $DomainsByNetbios[$MemberDomainNetbios]
+            $DomainCacheResult = $null
+            $DomainsByNetbios.Value.TryGetValue($MemberDomainNetbios, [ref]$DomainCacheResult)
 
             if ($DomainCacheResult) {
 

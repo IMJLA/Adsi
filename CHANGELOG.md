@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.343] - 2024-11-03 - troubleshoot bug
+
 ## [4.0.342] - 2024-11-03 - update DomainsBy... caches to work as ref vars
 
 ## [4.0.341] - 2024-11-03 - bugfix addorupdate syntax
