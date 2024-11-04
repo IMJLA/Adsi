@@ -1,12 +1,13 @@
 function Find-CachedWellKnownSID {
 
     param (
-        [hashtable]$DomainsByNetbios,
+        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
         [string]$IdentityReference,
         [string]$DomainNetBIOS
     )
 
-    $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+    $DomainNetbiosCacheResult = $null
+    $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
     if ($DomainNetbiosCacheResult) {
 

@@ -58,13 +58,13 @@ function ConvertFrom-IdentityReferenceResolved {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         <#
         Hostname of the computer running this function.
@@ -314,7 +314,8 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         # Lookup other information about the domain using its SID as the key
-                        $DomainObject = $DomainsBySID[$DomainSid]
+                        $DomainObject = $null
+                        $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
 
                         if ($DomainObject) {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainObject.Dns)/Users"
@@ -345,7 +346,8 @@ function ConvertFrom-IdentityReferenceResolved {
                 } else {
 
                     Write-LogMsg @LogParams -Text " # '$IdentityReference' is a local security principal"
-                    $DomainNetbiosCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+                    $DomainNetbiosCacheResult = $null
+                    $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
                     if ($DomainNetbiosCacheResult) {
                         $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"

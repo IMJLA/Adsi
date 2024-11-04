@@ -14,8 +14,8 @@ Get information about a directory server including the ADSI provider it hosts an
 
 ```
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-CimCache] <Hashtable>]
- [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <Hashtable>] [[-DomainsBySid] <Hashtable>]
- [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
+ [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <PSReference>] [[-DomainsBySid] <PSReference>]
+ [[-DomainsByFqdn] <PSReference>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-RemoveCimSession]
  [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByName] <Hashtable>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
@@ -94,13 +94,13 @@ Accept wildcard characters: False
 Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 7
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -109,13 +109,13 @@ Accept wildcard characters: False
 Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 5
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -124,13 +124,13 @@ Accept wildcard characters: False
 Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 6
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

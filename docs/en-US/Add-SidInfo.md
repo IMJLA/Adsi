@@ -13,7 +13,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 ## SYNTAX
 
 ```
-Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <Hashtable>] [[-ThisHostName] <String>]
+Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <PSReference>] [[-ThisHostName] <String>]
  [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
@@ -54,13 +54,13 @@ Accept wildcard characters: False
 Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 2
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

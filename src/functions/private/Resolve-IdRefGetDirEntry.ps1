@@ -8,7 +8,7 @@ function Resolve-IdRefGetDirEntry {
         [PSObject]$AdsiServer,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         [string]$ServerNetBIOS,
 

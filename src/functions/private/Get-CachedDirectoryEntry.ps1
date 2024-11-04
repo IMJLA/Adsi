@@ -21,13 +21,13 @@ function Get-CachedDirectoryEntry {
 
         # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         # This is not actually used but is here so the parameter can be included in a splat shared with other functions
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         [hashtable]$SidTypeMap = (Get-SidTypeMap)
 
@@ -38,7 +38,8 @@ function Get-CachedDirectoryEntry {
     We will create own dummy objects instead of performing the query
     #>
     $ID = "$Server\$AccountName"
-    $DomainCacheResult = $DomainsByFqdn[$Server]
+    $DomainCacheResult = $null
+    $DomainsByFqdn.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
     if ($DomainCacheResult) {
 
@@ -77,7 +78,8 @@ function Get-CachedDirectoryEntry {
 
     } else {
 
-        $DomainCacheResult = $DomainsByNetbios[$Server]
+        $DomainCacheResult = $null
+        $DomainsByNetbios.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
         if ($DomainCacheResult) {
 
@@ -116,7 +118,8 @@ function Get-CachedDirectoryEntry {
 
         } else {
 
-            $DomainCacheResult = $DomainsBySid[$Server]
+            $DomainCacheResult = $null
+            $DomainsBySid.Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
             if ($DomainCacheResult) {
 

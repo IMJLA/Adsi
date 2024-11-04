@@ -15,7 +15,7 @@ Use Active Directory Service Interfaces to search an LDAP directory
 ```
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
  [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>] [[-SearchScope] <String>]
- [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <Hashtable>]
+ [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <PSReference>]
  [[-ThisFqdn] <String>] [[-ThisHostName] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>]
  [[-DebugOutputStream] <String>]
 ```
@@ -117,13 +117,13 @@ Accept wildcard characters: False
 {{ Fill DomainsByNetbios Description }}
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 9
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

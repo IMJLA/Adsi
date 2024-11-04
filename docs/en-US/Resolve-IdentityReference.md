@@ -14,11 +14,11 @@ Use CIM and ADSI to lookup info about IdentityReferences from Access Control Ent
 
 ```
 Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>]
- [[-DirectoryEntryCache] <PSReference>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <Hashtable>]
- [[-DomainsBySid] <Hashtable>] [[-DomainsByFqdn] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
- [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByCaption] <Hashtable>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ [[-DirectoryEntryCache] <PSReference>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <PSReference>]
+ [[-DomainsBySid] <PSReference>] [[-DomainsByFqdn] <PSReference>] [[-ThisHostName] <String>]
+ [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimCache] <Hashtable>]
+ [[-DebugOutputStream] <String>] [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByCaption] <Hashtable>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -121,13 +121,13 @@ Accept wildcard characters: False
 Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 7
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -136,13 +136,13 @@ Accept wildcard characters: False
 Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 5
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -151,13 +151,13 @@ Accept wildcard characters: False
 Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 6
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

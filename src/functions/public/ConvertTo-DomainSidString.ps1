@@ -14,13 +14,13 @@ function ConvertTo-DomainSidString {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         <#
         AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
@@ -73,8 +73,9 @@ function ConvertTo-DomainSidString {
         WhoAmI       = $WhoAmI
     }
 
+    $CacheResult = $null
+    $DomainsByFqdn.Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
 
-    $CacheResult = $DomainsByFqdn[$DomainDnsName]
     if ($CacheResult) {
 
         #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainDnsName'"

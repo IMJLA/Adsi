@@ -25,7 +25,7 @@ function Add-SidInfo {
         $InputObject,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         <#
         Hostname of the computer running this function.
@@ -114,10 +114,11 @@ function Add-SidInfo {
             if (-not $DomainObject) {
 
                 # The SID of the domain is the SID of the user minus the last block of numbers
-                $DomainSid = $SID.Substring(0, $Sid.LastIndexOf("-"))
+                $DomainSid = $SID.Substring(0, $Sid.LastIndexOf('-'))
 
                 # Lookup other information about the domain using its SID as the key
-                $DomainObject = $DomainsBySid[$DomainSid]
+                $DomainObject = $null
+                $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
             }
 
             #Write-LogMsg @LogParams -Text "$SamAccountName`t$SID"

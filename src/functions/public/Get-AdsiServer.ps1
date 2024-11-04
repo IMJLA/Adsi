@@ -41,13 +41,13 @@ function Get-AdsiServer {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         <#
         Hostname of the computer running this function.
@@ -117,7 +117,8 @@ function Get-AdsiServer {
 
         ForEach ($DomainFqdn in $Fqdn) {
 
-            $OutputObject = $DomainsByFqdn[$DomainFqdn]
+            $OutputObject = $null
+            $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
 
             if ($OutputObject) {
 
@@ -371,16 +372,17 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName
             }
 
-            $DomainsBySid[$OutputObject.Sid] = $OutputObject
-            $DomainsByNetbios[$OutputObject.Netbios] = $OutputObject
-            $DomainsByFqdn[$DomainFqdn] = $OutputObject
+            $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, { param($key, $val) $val } )
+            $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
+            $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
             $OutputObject
 
         }
 
         ForEach ($DomainNetbios in $Netbios) {
 
-            $OutputObject = $DomainsByNetbios[$DomainNetbios]
+            $OutputObject = $null
+            $DomainsByNetbios.Value.TryGetValue($DomainNetbios, [ref]$OutputObject)
 
             if ($OutputObject) {
 
@@ -441,9 +443,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName
             }
 
-            $DomainsBySid[$OutputObject.Sid] = $OutputObject
-            $DomainsByNetbios[$OutputObject.Netbios] = $OutputObject
-            $DomainsByFqdn[$OutputObject.Dns] = $OutputObject
+            $DomainsByFqdn.Value.AddOrUpdate( $OutputObject.Dns, $OutputObject, { param($key, $val) $val } )
+            $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
+            $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
             $OutputObject
 
         }

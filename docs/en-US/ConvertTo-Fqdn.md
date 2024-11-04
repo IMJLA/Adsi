@@ -15,7 +15,7 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ### DistinguishedName
 ```
 ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <PSReference>]
- [-DomainsByNetbios <Hashtable>] [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>]
+ [-DomainsByNetbios <PSReference>] [-DomainsBySid <PSReference>] [-DomainsByFqdn <PSReference>]
  [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] [-LogBuffer <Hashtable>]
  [-CimCache <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
@@ -23,8 +23,8 @@ ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <PSReferenc
 
 ### NetBIOS
 ```
-ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <PSReference>] [-DomainsByNetbios <Hashtable>]
- [-DomainsBySid <Hashtable>] [-DomainsByFqdn <Hashtable>] [-ThisHostName <String>] [-ThisFqdn <String>]
+ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <PSReference>] [-DomainsByNetbios <PSReference>]
+ [-DomainsBySid <PSReference>] [-DomainsByFqdn <PSReference>] [-ThisHostName <String>] [-ThisFqdn <String>]
  [-WhoAmI <String>] [-LogBuffer <Hashtable>] [-CimCache <Hashtable>] [-DebugOutputStream <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
@@ -111,13 +111,13 @@ Accept wildcard characters: False
 Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -126,13 +126,13 @@ Accept wildcard characters: False
 Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -141,13 +141,13 @@ Accept wildcard characters: False
 Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

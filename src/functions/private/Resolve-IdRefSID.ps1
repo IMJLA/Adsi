@@ -29,13 +29,13 @@ function Resolve-IdRefSID {
         [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByNetbios = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsByFqdn = ([hashtable]::Synchronized(@{})),
+        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         <#
         Hostname of the computer running this function.
@@ -122,7 +122,8 @@ function Resolve-IdRefSID {
 
     # Search the cache of domains, first by SID, then by NetBIOS name
     if (-not $DomainCacheResult) {
-        $DomainCacheResult = $DomainsBySID[$DomainSid]
+        $DomainCacheResult = $null
+        $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainCacheResult)
     }
 
     if (-not $DomainCacheResult) {
@@ -154,7 +155,8 @@ function Resolve-IdRefSID {
             $DomainNetBIOS = $DomainFromSplit
         }
 
-        $DomainCacheResult = $DomainsByNetbios[$DomainNetBIOS]
+        $DomainCacheResult = $null
+        $DomainsByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainCacheResult)
 
     }
 
@@ -179,9 +181,9 @@ function Resolve-IdRefSID {
     if ($Win32Acct) {
         $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
         $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
-        $DomainsByFqdn[$DomainCacheResult.Dns] = $DomainCacheResult
-        $DomainsByNetbios[$DomainCacheResult.Netbios] = $DomainCacheResult
-        $DomainsBySid[$DomainCacheResult.Sid] = $DomainCacheResult
+        $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
+        $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
+        $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
     }
 
     if ($NTAccount) {
