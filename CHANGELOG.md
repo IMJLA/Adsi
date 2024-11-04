@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.337] - 2024-11-03 - bugfix need to refer to value prop when param is ref var
+
 ## [4.0.336] - 2024-11-03 - convert directoryentrycache to a reference variable
 
 ## [4.0.335] - 2024-10-16 - reduce debug verbosity
