@@ -217,7 +217,7 @@ function Get-DirectoryEntry {
 
     }
 
-    $DirectoryEntryCache.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, $DirectoryEntry )
+    $DirectoryEntryCache.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, { param($key, $val) $val } )
     return $DirectoryEntry
 
 }
