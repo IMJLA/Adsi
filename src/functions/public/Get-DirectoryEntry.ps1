@@ -104,12 +104,12 @@ function Get-DirectoryEntry {
 
     if ($CacheResult) {
 
-        #Write-LogMsg @Log -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
+        Write-LogMsg @Log -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
         return $CacheResult
 
     }
 
-    #Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
+    Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
 
     $LoggingParams = @{
         ThisHostname = $ThisHostname
