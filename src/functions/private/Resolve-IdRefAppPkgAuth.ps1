@@ -25,7 +25,8 @@ function Resolve-IdRefAppPkgAuth {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Log messages which have not yet been written to disk
-        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
+        [Parameter(Mandatory)]
+        [ref]$LogBuffer,
 
         <#
         Hostname of the computer running this function.

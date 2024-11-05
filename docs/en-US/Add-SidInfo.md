@@ -14,7 +14,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ```
 Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <PSReference>] [[-ThisHostName] <String>]
- [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -85,13 +85,13 @@ Accept wildcard characters: False
 Log messages which have not yet been written to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 5
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -16,7 +16,7 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [[-DomainsByFqdn] <PSReference>]
  [[-DomainsByNetbios] <PSReference>] [[-DomainsBySid] <PSReference>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
  [[-SidTypeMap] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -174,13 +174,13 @@ Accept wildcard characters: False
 Log messages which have not yet been written to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 12
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

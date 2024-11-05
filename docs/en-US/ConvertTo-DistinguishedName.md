@@ -16,7 +16,7 @@ Convert a domain NetBIOS name to its distinguishedName
 ```
 ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <PSReference>] [-DomainsByFqdn <PSReference>]
  [-InitType <String>] [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>]
- [-ThisHostName <String>] [-WhoAmI <String>] [-LogBuffer <Hashtable>] [-DebugOutputStream <String>]
+ [-ThisHostName <String>] [-WhoAmI <String>] -LogBuffer <PSReference> [-DebugOutputStream <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -24,7 +24,7 @@ ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <PSReference>]
 ```
 ConvertTo-DistinguishedName [-DomainsByNetbios <PSReference>] [-DomainsByFqdn <PSReference>]
  -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>] [-OutputType <String>]
- [-AdsiProvider <String>] [-ThisHostName <String>] [-WhoAmI <String>] [-LogBuffer <Hashtable>]
+ [-AdsiProvider <String>] [-ThisHostName <String>] [-WhoAmI <String>] -LogBuffer <PSReference>
  [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -175,13 +175,13 @@ Accept wildcard characters: False
 Log messages which have not yet been written to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: Named
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

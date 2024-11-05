@@ -16,7 +16,7 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ```
 ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <PSReference>]
  [-DomainsByNetbios <PSReference>] [-DomainsBySid <PSReference>] [-DomainsByFqdn <PSReference>]
- [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] [-LogBuffer <Hashtable>]
+ [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] -LogBuffer <PSReference>
  [-CimCache <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -25,7 +25,7 @@ ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <PSReferenc
 ```
 ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <PSReference>] [-DomainsByNetbios <PSReference>]
  [-DomainsBySid <PSReference>] [-DomainsByFqdn <PSReference>] [-ThisHostName <String>] [-ThisFqdn <String>]
- [-WhoAmI <String>] [-LogBuffer <Hashtable>] [-CimCache <Hashtable>] [-DebugOutputStream <String>]
+ [-WhoAmI <String>] -LogBuffer <PSReference> [-CimCache <Hashtable>] [-DebugOutputStream <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -156,13 +156,13 @@ Accept wildcard characters: False
 Log messages which have not yet been written to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: Named
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

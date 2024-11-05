@@ -16,7 +16,7 @@ schema: 2.0.0
 ConvertTo-DomainSidString [-DomainDnsName] <String> [[-DirectoryEntryCache] <PSReference>]
  [[-DomainsByNetbios] <PSReference>] [[-DomainsBySid] <PSReference>] [[-DomainsByFqdn] <PSReference>]
  [[-AdsiProvider] <String>] [[-CimCache] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -159,11 +159,11 @@ Accept wildcard characters: False
 {{ Fill LogBuffer Description }}
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 10
 Default value: None
 Accept pipeline input: False

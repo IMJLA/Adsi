@@ -72,7 +72,8 @@ function Get-AdsiGroup {
         [string]$WhoAmI = (whoami.EXE),
 
         # Log messages which have not yet been written to disk
-        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{}))
+        [Parameter(Mandatory)]
+        [ref]$LogBuffer
 
     )
 

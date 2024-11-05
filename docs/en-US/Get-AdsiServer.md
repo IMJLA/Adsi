@@ -16,7 +16,7 @@ Get information about a directory server including the ADSI provider it hosts an
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-CimCache] <Hashtable>]
  [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <PSReference>] [[-DomainsBySid] <PSReference>]
  [[-DomainsByFqdn] <PSReference>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-LogBuffer] <Hashtable>] [[-DebugOutputStream] <String>] [-RemoveCimSession]
+ [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>] [-RemoveCimSession]
  [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByName] <Hashtable>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -154,13 +154,13 @@ Accept wildcard characters: False
 Log messages which have not yet been written to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 11
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

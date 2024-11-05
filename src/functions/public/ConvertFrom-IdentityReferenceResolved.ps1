@@ -84,7 +84,8 @@ function ConvertFrom-IdentityReferenceResolved {
         [string]$WhoAmI = (whoami.EXE),
 
         # Log messages which have not yet been written to disk
-        [hashtable]$LogBuffer = ([hashtable]::Synchronized(@{})),
+        [Parameter(Mandatory)]
+        [ref]$LogBuffer,
 
         # The current domain
         # Can be passed as a parameter to reduce calls to Get-CurrentDomain

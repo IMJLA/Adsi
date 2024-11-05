@@ -16,7 +16,7 @@ Use CIM and ADSI to lookup info about IdentityReferences from Access Control Ent
 Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>]
  [[-DirectoryEntryCache] <PSReference>] [[-AdsiServersByDns] <Hashtable>] [[-DomainsByNetbios] <PSReference>]
  [[-DomainsBySid] <PSReference>] [[-DomainsByFqdn] <PSReference>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-LogBuffer] <Hashtable>] [[-CimCache] <Hashtable>]
+ [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-CimCache] <Hashtable>]
  [[-DebugOutputStream] <String>] [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByCaption] <Hashtable>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
@@ -182,13 +182,13 @@ Accept wildcard characters: False
 Log messages which have not yet been written to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 11
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
