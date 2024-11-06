@@ -109,7 +109,10 @@ function Resolve-IdentityReference {
     $splat4 = @{ DomainsByFqdn = $DomainsByFqdn ; DomainsBySid = $DomainsBySid }
     $splat5 = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }
     $splat8 = @{ CimCache = $CimCache ; IdentityReference = $IdentityReference }
-    $GetDirectoryEntryParams = @{ DirectoryEntryCache = $DirectoryEntryCache ; DomainsByNetbios = $DomainsByNetbios; DomainsBySid = $DomainsBySid }
+    $GetDirectoryEntryParams = @{
+        CimCache = $CimCache ; DirectoryEntryCache = $DirectoryEntryCache ; DomainsByFqdn = $DomainsByFqdn ;
+        DomainsByNetbios = $DomainsByNetbios ; DomainsBySid = $DomainsBySid ; ThisFqdn = $ThisFqdn
+    }
     $splat10 = @{ GetDirectoryEntryParams = $GetDirectoryEntryParams }
 
     # Many Well-Known SIDs cannot be translated with the Translate method.
@@ -191,7 +194,7 @@ function Resolve-IdentityReference {
         if (-not $SIDString) {
 
             # Try to find the DirectoryEntry object directly on the server
-            $SIDString = Resolve-IdRefGetDirEntry -LogThis $LogThis -Name $Name -DomainsBySid $DomainsBySid @splat3 @splat10
+            $SIDString = Resolve-IdRefGetDirEntry -Name $Name -GetDirectoryEntryParams $GetDirectoryEntryParams -LogThis $LogThis @splat3
 
         }
 
