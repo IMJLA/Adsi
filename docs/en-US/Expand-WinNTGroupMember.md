@@ -14,8 +14,8 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ```
 Expand-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-CimCache] <Hashtable>]
- [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <PSReference>] [[-DomainsBySid] <PSReference>]
- [[-DomainsByFqdn] <PSReference>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
+ [[-DirectoryEntryCache] <PSReference>] [-DomainsByNetbios] <PSReference> [-DomainsBySid] <PSReference>
+ [-DomainsByFqdn] <PSReference> [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -104,9 +104,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 6
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -119,9 +119,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 4
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -134,9 +134,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 5
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

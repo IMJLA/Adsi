@@ -15,9 +15,9 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
  [[-ACEsByResolvedID] <Hashtable>] [[-PrincipalById] <Hashtable>] [[-DebugOutputStream] <String>]
- [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <PSReference>]
- [[-DomainsBySid] <PSReference>] [[-DomainsByFqdn] <PSReference>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-CurrentDomain] <String>]
+ [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [-DomainsByNetbios] <PSReference>
+ [-DomainsBySid] <PSReference> [-DomainsByFqdn] <PSReference> [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
+ [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-CurrentDomain] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -125,9 +125,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 9
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -140,9 +140,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 7
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -155,9 +155,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 8
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -1,7 +1,8 @@
 function Find-CachedWellKnownSID {
 
     param (
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
         [string]$IdentityReference,
         [string]$DomainNetBIOS
     )

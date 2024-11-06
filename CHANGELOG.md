@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.350] - 2024-11-06 - make ref params mandatory
+
 ## [4.0.349] - 2024-11-06 - missing Get-DirectoryEntry params
 
 ## [4.0.348] - 2024-11-06 - bugfix string comparison

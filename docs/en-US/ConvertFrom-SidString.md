@@ -14,8 +14,8 @@ schema: 2.0.0
 
 ```
 ConvertFrom-SidString [[-SID] <String>] [[-DebugOutputStream] <String>] [[-CimCache] <Hashtable>]
- [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <PSReference>] [[-DomainsBySid] <PSReference>]
- [[-DomainsByFqdn] <PSReference>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
+ [[-DirectoryEntryCache] <PSReference>] [-DomainsByNetbios] <PSReference> [-DomainsBySid] <PSReference>
+ [-DomainsByFqdn] <PSReference> [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [-LogBuffer] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -87,7 +87,7 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 6
 Default value: None
 Accept pipeline input: False
@@ -102,7 +102,7 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 4
 Default value: None
 Accept pipeline input: False
@@ -117,7 +117,7 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 5
 Default value: None
 Accept pipeline input: False

@@ -430,7 +430,8 @@ function ConvertTo-SidString {
 function Find-CachedWellKnownSID {
 
     param (
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
         [string]$IdentityReference,
         [string]$DomainNetBIOS
     )
@@ -496,7 +497,8 @@ function Find-WinNTGroupMember {
         [hashtable]$Log,
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         [string]$SourceDomain
 
@@ -600,13 +602,16 @@ function Get-CachedDirectoryEntry {
 
         # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         # This is not actually used but is here so the parameter can be included in a splat shared with other functions
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         [hashtable]$SidTypeMap = (Get-SidTypeMap)
 
@@ -887,13 +892,16 @@ function Resolve-IdRefAppPkgAuth {
         [string]$WhoAmI = (whoami.EXE),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         FQDN of the computer running this function.
@@ -998,13 +1006,16 @@ function Resolve-IdRefBuiltIn {
         [string]$Name,
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -1120,13 +1131,16 @@ function Resolve-IdRefCached {
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -1194,7 +1208,8 @@ function Resolve-IdRefGetDirEntry {
         [PSObject]$AdsiServer,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         [string]$ServerNetBIOS,
 
@@ -1231,10 +1246,12 @@ function Resolve-IdRefSearchDir {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         <#
         FQDN of the computer running this function.
@@ -1318,13 +1335,16 @@ function Resolve-IdRefSID {
         [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -1537,13 +1557,16 @@ function Resolve-IdRefSvc {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -1840,7 +1863,8 @@ function Add-SidInfo {
         $InputObject,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         <#
         Hostname of the computer running this function.
@@ -2041,13 +2065,16 @@ function ConvertFrom-IdentityReferenceResolved {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -2623,13 +2650,16 @@ function ConvertFrom-SidString {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -2719,8 +2749,10 @@ function ConvertTo-DistinguishedName {
         [string[]]$Domain,
 
         #[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         # FQDN of the domain
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'FQDN')]
@@ -2887,13 +2919,16 @@ function ConvertTo-DomainNetBIOS {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         FQDN of the computer running this function.
@@ -2993,13 +3028,16 @@ function ConvertTo-DomainSidString {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
@@ -3159,13 +3197,16 @@ function ConvertTo-Fqdn {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -3366,13 +3407,15 @@ function Expand-AdsiGroupMember {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         [hashtable]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -3541,13 +3584,16 @@ function Expand-WinNTGroupMember {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -3872,13 +3918,16 @@ function Get-AdsiGroup {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -3993,13 +4042,16 @@ function Get-AdsiGroupMember {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -4241,13 +4293,16 @@ function Get-AdsiServer {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -4827,13 +4882,16 @@ function Get-DirectoryEntry {
 
         # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         # This is not actually used but is here so the parameter can be included in a splat shared with other functions
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         <#
         Hostname of the computer running this function.
@@ -6189,13 +6247,16 @@ function Get-WinNTGroupMember {
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -6571,13 +6632,16 @@ function Resolve-IdentityReference {
         [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -6822,7 +6886,8 @@ function Search-Directory {
         #>
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         <#
         FQDN of the computer running this function.
@@ -6929,6 +6994,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

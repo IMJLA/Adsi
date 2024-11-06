@@ -14,7 +14,7 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### NetBIOS
 ```
-ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <PSReference>] [-DomainsByFqdn <PSReference>]
+ConvertTo-DistinguishedName -Domain <String[]> -DomainsByNetbios <PSReference> -DomainsByFqdn <PSReference>
  [-InitType <String>] [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>]
  [-ThisHostName <String>] [-WhoAmI <String>] -LogBuffer <PSReference> [-DebugOutputStream <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
@@ -22,10 +22,10 @@ ConvertTo-DistinguishedName -Domain <String[]> [-DomainsByNetbios <PSReference>]
 
 ### FQDN
 ```
-ConvertTo-DistinguishedName [-DomainsByNetbios <PSReference>] [-DomainsByFqdn <PSReference>]
- -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>] [-OutputType <String>]
- [-AdsiProvider <String>] [-ThisHostName <String>] [-WhoAmI <String>] -LogBuffer <PSReference>
- [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ConvertTo-DistinguishedName -DomainsByNetbios <PSReference> -DomainsByFqdn <PSReference> -DomainFQDN <String[]>
+ [-InitType <String>] [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>]
+ [-ThisHostName <String>] [-WhoAmI <String>] -LogBuffer <PSReference> [-DebugOutputStream <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -115,9 +115,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: Named
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -130,9 +130,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: Named
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

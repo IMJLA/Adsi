@@ -47,7 +47,8 @@ function Search-Directory {
         #>
         [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
 
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         <#
         FQDN of the computer running this function.

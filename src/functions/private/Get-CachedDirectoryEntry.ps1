@@ -21,13 +21,16 @@ function Get-CachedDirectoryEntry {
 
         # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
         # This is not actually used but is here so the parameter can be included in a splat shared with other functions
-        [ref]$DomainsByFqdn = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByFqdn,
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsBySid = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsBySid,
 
         [hashtable]$SidTypeMap = (Get-SidTypeMap)
 

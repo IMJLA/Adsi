@@ -14,8 +14,8 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ```
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
- [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [[-DomainsByFqdn] <PSReference>]
- [[-DomainsByNetbios] <PSReference>] [[-DomainsBySid] <PSReference>] [[-ThisHostName] <String>]
+ [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [-DomainsByFqdn] <PSReference>
+ [-DomainsByNetbios] <PSReference> [-DomainsBySid] <PSReference> [[-ThisHostName] <String>]
  [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
  [[-SidTypeMap] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
@@ -133,9 +133,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 6
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -148,9 +148,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 7
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -163,9 +163,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 8
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

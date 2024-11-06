@@ -13,7 +13,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 ## SYNTAX
 
 ```
-Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <PSReference>] [[-ThisHostName] <String>]
+Add-SidInfo [[-InputObject] <Object>] [-DomainsBySid] <PSReference> [[-ThisHostName] <String>]
  [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
@@ -58,9 +58,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 2
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

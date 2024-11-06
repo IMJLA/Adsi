@@ -15,7 +15,7 @@ Use Active Directory Service Interfaces to search an LDAP directory
 ```
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
  [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>] [[-SearchScope] <String>]
- [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [[-DomainsByNetbios] <PSReference>]
+ [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [-DomainsByNetbios] <PSReference>
  [[-ThisFqdn] <String>] [[-ThisHostName] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference>
  [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
@@ -121,9 +121,9 @@ Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 9
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

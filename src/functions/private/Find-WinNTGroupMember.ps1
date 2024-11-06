@@ -18,7 +18,8 @@ function Find-WinNTGroupMember {
         [hashtable]$Log,
 
         # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [ref]$DomainsByNetbios = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
+        [Parameter(Mandatory)]
+        [ref]$DomainsByNetbios,
 
         [string]$SourceDomain
 

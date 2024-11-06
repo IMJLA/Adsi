@@ -279,7 +279,7 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -289,7 +289,7 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -367,7 +367,7 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -377,7 +377,7 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>InputObject</maml:name>
@@ -714,7 +714,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -724,9 +724,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -736,9 +736,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -748,7 +748,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>NoGroupMembers</maml:name>
@@ -837,7 +837,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -847,9 +847,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -859,9 +859,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -871,7 +871,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>IdentityReference</maml:name>
@@ -1408,7 +1408,7 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -1420,7 +1420,7 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsBySid Description }}</maml:para>
@@ -1432,7 +1432,7 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -1531,7 +1531,7 @@ ForEach-Object {
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -1543,7 +1543,7 @@ ForEach-Object {
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -1555,7 +1555,7 @@ ForEach-Object {
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsBySid Description }}</maml:para>
@@ -1808,7 +1808,7 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -1818,9 +1818,9 @@ ForEach-Object {
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]</maml:para>
@@ -1830,7 +1830,7 @@ ForEach-Object {
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>InitType</maml:name>
@@ -1958,7 +1958,7 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -1968,9 +1968,9 @@ ForEach-Object {
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]</maml:para>
@@ -1980,7 +1980,7 @@ ForEach-Object {
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>InitType</maml:name>
@@ -2120,7 +2120,7 @@ ForEach-Object {
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -2130,9 +2130,9 @@ ForEach-Object {
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]</maml:para>
@@ -2142,7 +2142,7 @@ ForEach-Object {
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>InitType</maml:name>
@@ -2367,7 +2367,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -2379,7 +2379,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsBySid Description }}</maml:para>
@@ -2391,7 +2391,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -2514,7 +2514,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -2526,7 +2526,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -2538,7 +2538,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsBySid Description }}</maml:para>
@@ -2723,7 +2723,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -2735,7 +2735,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsBySid Description }}</maml:para>
@@ -2747,7 +2747,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -2894,7 +2894,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByFqdn Description }}</maml:para>
@@ -2906,7 +2906,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -2918,7 +2918,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsBySid Description }}</maml:para>
@@ -3091,7 +3091,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3101,9 +3101,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3113,9 +3113,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3125,7 +3125,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>LogBuffer</maml:name>
@@ -3229,7 +3229,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3239,9 +3239,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3251,9 +3251,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3263,7 +3263,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>LogBuffer</maml:name>
@@ -3391,7 +3391,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3401,9 +3401,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3413,9 +3413,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3425,7 +3425,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>LogBuffer</maml:name>
@@ -3888,7 +3888,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3898,7 +3898,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
@@ -3912,7 +3912,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -3922,7 +3922,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -4026,7 +4026,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4036,9 +4036,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4048,7 +4048,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
@@ -4249,7 +4249,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4259,9 +4259,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4271,9 +4271,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4283,7 +4283,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -4387,7 +4387,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4397,9 +4397,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4409,9 +4409,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -4421,7 +4421,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>LogBuffer</maml:name>
@@ -5177,7 +5177,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5187,9 +5187,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5199,9 +5199,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5211,7 +5211,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -5278,7 +5278,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5288,9 +5288,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5300,9 +5300,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5312,7 +5312,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>GroupName</maml:name>
@@ -5532,7 +5532,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5542,9 +5542,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5554,9 +5554,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5566,7 +5566,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -5682,7 +5682,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5692,9 +5692,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5704,9 +5704,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -5716,7 +5716,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>Group</maml:name>
@@ -5991,7 +5991,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6001,9 +6001,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6013,9 +6013,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values</maml:para>
@@ -6025,7 +6025,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -6116,7 +6116,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values</maml:para>
@@ -6126,9 +6126,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6138,9 +6138,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6150,7 +6150,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>Fqdn</maml:name>
@@ -6706,7 +6706,7 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values This is not actually used but is here so the parameter can be included in a splat shared with other functions</maml:para>
@@ -6716,9 +6716,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6728,9 +6728,9 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6740,7 +6740,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -6831,7 +6831,7 @@ ad.contoso.com</dev:code>
         </dev:type>
         <dev:defaultValue>(([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values This is not actually used but is here so the parameter can be included in a splat shared with other functions</maml:para>
@@ -6841,9 +6841,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6853,9 +6853,9 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -6865,7 +6865,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="12" aliases="none">
         <maml:name>LogBuffer</maml:name>
@@ -7793,7 +7793,7 @@ Path              : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -7803,9 +7803,9 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -7815,9 +7815,9 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -7827,7 +7827,7 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -7931,7 +7931,7 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -7941,9 +7941,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -7953,9 +7953,9 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -7965,7 +7965,7 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="10" aliases="none">
         <maml:name>LogBuffer</maml:name>
@@ -8661,7 +8661,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>[hashtable]::Synchronized(@{})</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8671,9 +8671,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>DomainsBySid</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8683,9 +8683,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>DomainsByFqdn</maml:name>
           <maml:description>
             <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8695,7 +8695,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -8800,7 +8800,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>DomainsByFqdn</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8810,9 +8810,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8822,9 +8822,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>DomainsBySid</maml:name>
         <maml:description>
           <maml:para>Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values</maml:para>
@@ -8834,7 +8834,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>IdentityReference</maml:name>
@@ -9248,7 +9248,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
           <maml:name>DomainsByNetbios</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -9258,7 +9258,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:name>System.Management.Automation.PSReference</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+          <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
           <maml:name>ProgressAction</maml:name>
@@ -9336,7 +9336,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>DomainsByNetbios</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainsByNetbios Description }}</maml:para>
@@ -9346,7 +9346,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <maml:name>System.Management.Automation.PSReference</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())</dev:defaultValue>
+        <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Filter</maml:name>
