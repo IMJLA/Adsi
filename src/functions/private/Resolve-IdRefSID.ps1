@@ -136,7 +136,7 @@ function Resolve-IdRefSID {
         if (
 
             $DomainFromSplit.Contains(' ') -or
-            $DomainFromSplit.Contains('BUILTIN\')
+            $DomainFromSplit -eq 'BUILTIN'
 
         ) {
 
