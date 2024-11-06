@@ -101,10 +101,10 @@ function Resolve-IdentityReference {
     }
 
     $ServerNetBIOS = $AdsiServer.Netbios
+    $DomainCache = @{ DomainsByFqdn = $DomainsByFqdn ; DomainsByNetbios = $DomainsByNetbios ; DomainsBySid = $DomainsBySid }
     $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $LogBuffer ; WhoAmI = $WhoAmI }
     $LogThis = @{ ThisHostname = $ThisHostname ; LogBuffer = $LogBuffer ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $splat1 = @{ WellKnownSidBySid = $WellKnownSidBySid ; WellKnownSidByCaption = $WellKnownSidByCaption }
-    $splat2 = @{ DomainsByFqdn = $DomainsByFqdn ; DomainsByNetbios = $DomainsByNetbios ; DomainsBySid = $DomainsBySid }
     $splat3 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
     $splat4 = @{ DomainsByFqdn = $DomainsByFqdn ; DomainsBySid = $DomainsBySid }
     $splat5 = @{ DirectoryEntryCache = $DirectoryEntryCache; DomainsByNetbios = $DomainsByNetbios; ThisFqdn = $ThisFqdn }
@@ -117,7 +117,7 @@ function Resolve-IdentityReference {
     # and update the Win32_AccountBySID and Win32_AccountByCaption caches.
     # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
     # Search these caches now.
-    $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference @splat2 @splat3 @LogThis
+    $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference @splat3 @DomainCache @LogThis
 
     if ($CacheResult) {
 
