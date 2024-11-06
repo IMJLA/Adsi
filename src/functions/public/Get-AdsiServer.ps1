@@ -410,7 +410,7 @@ function Get-AdsiServer {
 
             } else {
 
-                $ParentDomainDnsName = Get-ParentDomainDnsName -DomainsByNetbios $DomainNetBIOS -CimSession $CimSession -ThisFqdn $ThisFqdn -CimCache $CimCache @LogThis
+                $ParentDomainDnsName = Get-ParentDomainDnsName -DomainNetbios $DomainNetBIOS -CimSession $CimSession -ThisFqdn $ThisFqdn -CimCache $CimCache @LogThis
                 $DomainDnsName = "$DomainNetBIOS.$ParentDomainDnsName"
 
             }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.347] - 2024-11-05 - bugfix incorrect param name
+
 ## [4.0.346] - 2024-11-04 - convert logbuffer to a reference var
 
 ## [4.0.345] - 2024-11-03 - bugfix handle output of trygetvalue

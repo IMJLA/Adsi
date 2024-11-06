@@ -42,7 +42,7 @@ function Get-ParentDomainDnsName {
     $LogParams = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        Buffer = $LogBuffer
+        Buffer       = $LogBuffer
         WhoAmI       = $WhoAmI
     }
 
