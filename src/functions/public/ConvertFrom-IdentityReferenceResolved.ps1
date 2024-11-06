@@ -123,6 +123,12 @@ function ConvertFrom-IdentityReferenceResolved {
             DomainsByNetbios  = $DomainsByNetbios
             DomainNetBios     = $DomainNetBIOS
         }
+        
+        $DomainCache = @{
+            DomainsByFqdn    = $DomainsByFqdn
+            DomainsByNetbios = $DomainsByNetbios
+            DomainsBySid     = $DomainsBySid
+        }
 
         $CachedWellKnownSID = Find-CachedWellKnownSID @WellKnownSidParams
 
@@ -180,7 +186,8 @@ function ConvertFrom-IdentityReferenceResolved {
                     #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
 
                     if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
-                        #$DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
+                        # The line below was commented out; why?  Isn't DN needed to be obtained for domain users?
+                        $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS @DomainCache @LoggingParams
                     }
 
                     $FqdnParams = @{
@@ -327,7 +334,7 @@ function ConvertFrom-IdentityReferenceResolved {
                             $DomainDN = $DomainObject.DistinguishedName
                         } else {
                             $GetDirectoryEntryParams['DirectoryPath'] = "WinNT://$DomainNetBIOS/Users"
-                            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -DomainsByNetbios $DomainsByNetbios @LoggingParams
+                            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS @DomainCache @LoggingParams
                         }
 
                         Write-LogMsg @LogParams -Text 'Get-DirectoryEntry' -Expand $GetDirectoryEntryParams, $LoggingParams

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.353] - 2024-11-06 - bugfix missing params for ConvertTo-DistinguishedName
+
 ## [4.0.352] - 2024-11-06 - bugfix missing params for get-directoryentry
 
 ## [4.0.351] - 2024-11-06 - bugfix splat name
