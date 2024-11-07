@@ -38,7 +38,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [switch]$NoGroupMembers,
 
         # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
+        [hashtable]$AceGuidByID = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
         [hashtable]$PrincipalById = ([hashtable]::Synchronized(@{})),
@@ -111,7 +111,7 @@ function ConvertFrom-IdentityReferenceResolved {
             WhoAmI       = $WhoAmI
         }
 
-        $AccessControlEntries = $ACEsByResolvedID[$IdentityReference]
+        $AccessControlEntries = $AceGuidByID[$IdentityReference]
 
         #Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
         $split = $IdentityReference.Split('\')
@@ -505,7 +505,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                         $PrincipalById[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
-                        $ACEsByResolvedID[$ResolvedAccountName] = $AccessControlEntries
+                        $AceGuidByID[$ResolvedAccountName] = $AccessControlEntries
                         $ResolvedAccountName
 
                     }

@@ -14,7 +14,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
- [[-ACEsByResolvedID] <Hashtable>] [[-PrincipalById] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-AceGuidByID] <Hashtable>] [[-PrincipalById] <Hashtable>] [[-DebugOutputStream] <String>]
  [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [-DomainsByNetbios] <PSReference>
  [-DomainsBySid] <PSReference> [-DomainsByFqdn] <PSReference> [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
  [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-CurrentDomain] <String>]
@@ -39,7 +39,7 @@ Incomplete example but it shows the chain of functions to generate the expected 
 
 ## PARAMETERS
 
-### -ACEsByResolvedID
+### -AceGuidByID
 Cache of access control entries keyed by their resolved identities
 
 ```yaml

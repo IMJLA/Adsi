@@ -2045,7 +2045,7 @@ function ConvertFrom-IdentityReferenceResolved {
         [switch]$NoGroupMembers,
 
         # Cache of access control entries keyed by their resolved identities
-        [hashtable]$ACEsByResolvedID = ([hashtable]::Synchronized(@{})),
+        [hashtable]$AceGuidByID = ([hashtable]::Synchronized(@{})),
 
         # Thread-safe hashtable to use for caching directory entries and avoiding duplicate directory queries
         [hashtable]$PrincipalById = ([hashtable]::Synchronized(@{})),
@@ -2118,7 +2118,7 @@ function ConvertFrom-IdentityReferenceResolved {
             WhoAmI       = $WhoAmI
         }
 
-        $AccessControlEntries = $ACEsByResolvedID[$IdentityReference]
+        $AccessControlEntries = $AceGuidByID[$IdentityReference]
 
         #Write-LogMsg @LogParams -Text " # ADSI Principal cache miss for '$IdentityReference'"
         $split = $IdentityReference.Split('\')
@@ -2512,7 +2512,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                         $PrincipalById[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
-                        $ACEsByResolvedID[$ResolvedAccountName] = $AccessControlEntries
+                        $AceGuidByID[$ResolvedAccountName] = $AccessControlEntries
                         $ResolvedAccountName
 
                     }
@@ -7003,6 +7003,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
