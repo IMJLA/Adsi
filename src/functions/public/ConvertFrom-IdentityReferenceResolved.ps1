@@ -123,11 +123,10 @@ function ConvertFrom-IdentityReferenceResolved {
             DomainsByNetbios  = $DomainsByNetbios
             DomainNetBios     = $DomainNetBIOS
         }
-        
+
         $DomainCache = @{
             DomainsByFqdn    = $DomainsByFqdn
             DomainsByNetbios = $DomainsByNetbios
-            DomainsBySid     = $DomainsBySid
         }
 
         $CachedWellKnownSID = Find-CachedWellKnownSID @WellKnownSidParams
