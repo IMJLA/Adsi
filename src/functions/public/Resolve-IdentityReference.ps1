@@ -113,7 +113,6 @@ function Resolve-IdentityReference {
         CimCache = $CimCache ; DirectoryEntryCache = $DirectoryEntryCache ; DomainsByFqdn = $DomainsByFqdn ;
         DomainsByNetbios = $DomainsByNetbios ; DomainsBySid = $DomainsBySid ; ThisFqdn = $ThisFqdn
     }
-    $splat10 = @{ GetDirectoryEntryParams = $GetDirectoryEntryParams }
 
     # Many Well-Known SIDs cannot be translated with the Translate method.
     # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server

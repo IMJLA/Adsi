@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.356] - 2024-11-08 - nullify undesirable method output
+
 ## [4.0.355] - 2024-11-06 - rename ACEsByResolvedID
 
 ## [4.0.354] - 2024-11-06 - bugfix no domainsbysid param for convertto-distinguishedname

@@ -376,9 +376,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName
             }
 
-            $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, { param($key, $val) $val } )
-            $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
-            $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
             $OutputObject
 
         }
@@ -447,9 +447,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName
             }
 
-            $DomainsByFqdn.Value.AddOrUpdate( $OutputObject.Dns, $OutputObject, { param($key, $val) $val } )
-            $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
-            $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByFqdn.Value.AddOrUpdate( $OutputObject.Dns, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
             $OutputObject
 
         }

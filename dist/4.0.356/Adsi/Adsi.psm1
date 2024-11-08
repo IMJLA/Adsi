@@ -974,9 +974,9 @@ function Resolve-IdRefAppPkgAuth {
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
-    $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
-    $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
-    $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -1102,9 +1102,9 @@ function Resolve-IdRefBuiltIn {
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
-    $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
-    $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
-    $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -1491,9 +1491,9 @@ function Resolve-IdRefSID {
     if ($Win32Acct) {
         $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
         $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
-        $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
-        $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
-        $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
+        $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
+        $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
+        $null = $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
     }
 
     if ($NTAccount) {
@@ -1626,9 +1626,9 @@ function Resolve-IdRefSvc {
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Svc
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Svc
-    $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
-    $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
-    $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -3278,7 +3278,7 @@ function ConvertTo-Fqdn {
 
                 #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$ThisNetBios'"
                 $DomainObject = Get-AdsiServer -Netbios $ThisNetBios -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
-                $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, { param($key, $val) $val } )
+                $null = $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, { param($key, $val) $val } ) #doesn't get-adsiserver already update the cache?
 
             }
 
@@ -4634,9 +4634,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName
             }
 
-            $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, { param($key, $val) $val } )
-            $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
-            $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
             $OutputObject
 
         }
@@ -4705,9 +4705,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName
             }
 
-            $DomainsByFqdn.Value.AddOrUpdate( $OutputObject.Dns, $OutputObject, { param($key, $val) $val } )
-            $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
-            $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByFqdn.Value.AddOrUpdate( $OutputObject.Dns, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsByNetbios.Value.AddOrUpdate( $OutputObject.Netbios, $OutputObject, { param($key, $val) $val } )
+            $null = $DomainsBySid.Value.AddOrUpdate( $OutputObject.Sid, $OutputObject, { param($key, $val) $val } )
             $OutputObject
 
         }
@@ -5053,7 +5053,7 @@ function Get-DirectoryEntry {
 
     }
 
-    $DirectoryEntryCache.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, { param($key, $val) $val } )
+    $null = $DirectoryEntryCache.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, { param($key, $val) $val } )
     return $DirectoryEntry
 
 }
@@ -6707,7 +6707,6 @@ function Resolve-IdentityReference {
         CimCache = $CimCache ; DirectoryEntryCache = $DirectoryEntryCache ; DomainsByFqdn = $DomainsByFqdn ;
         DomainsByNetbios = $DomainsByNetbios ; DomainsBySid = $DomainsBySid ; ThisFqdn = $ThisFqdn
     }
-    $splat10 = @{ GetDirectoryEntryParams = $GetDirectoryEntryParams }
 
     # Many Well-Known SIDs cannot be translated with the Translate method.
     # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server
@@ -7003,6 +7002,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-AdsiProvider','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

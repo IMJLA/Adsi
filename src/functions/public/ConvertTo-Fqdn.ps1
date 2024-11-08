@@ -114,7 +114,7 @@ function ConvertTo-Fqdn {
 
                 #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$ThisNetBios'"
                 $DomainObject = Get-AdsiServer -Netbios $ThisNetBios -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
-                $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, { param($key, $val) $val } )
+                $null = $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, { param($key, $val) $val } ) #doesn't get-adsiserver already update the cache?
 
             }
 
