@@ -152,7 +152,7 @@ function Get-WinNTGroupMember {
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
 
                     Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$ThisMember' $LogSuffix"
-                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @GetSearch @MemberParams @LogThis
+                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember -DomainsByNetbios $DomainsByNetbios @GetSearch @MemberParams @LogThis @ExpandParams
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry @MemberParams @ExpandParams @LogThis
 
                 }
