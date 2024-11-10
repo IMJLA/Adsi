@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.358
+Help Version: 4.0.360
 Locale: en-US
 ---
 
@@ -71,12 +71,9 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 ### [Expand-WinNTGroupMember](Expand-WinNTGroupMember.md)
 Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
 
-### [Find-AdsiProvider](Find-AdsiProvider.md)
-{{ Fill in the Description }}
-
 ### [Find-LocalAdsiServerSid](Find-LocalAdsiServerSid.md)
 
-Find-LocalAdsiServerSid [[-ComputerName] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [-LogBuffer] <ref> [[-DebugOutputStream] <string>] [<CommonParameters>]
+Find-LocalAdsiServerSid [[-ThisHostName] <string>] [[-ComputerName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-DebugOutputStream] <string>] [-Cache] <ref> [<CommonParameters>]
 
 
 ### [Get-AdsiGroup](Get-AdsiGroup.md)

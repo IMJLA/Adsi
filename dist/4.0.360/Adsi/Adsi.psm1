@@ -1964,13 +1964,13 @@ function ConvertFrom-IdentityReferenceResolved {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # The current domain
-        # Can be passed as a parameter to reduce calls to Get-CurrentDomain
-        [string]$CurrentDomain = (Get-CurrentDomain),
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # The current domain
+        # Can be passed as a parameter to reduce calls to Get-CurrentDomain
+        [string]$CurrentDomain = (Get-CurrentDomain -Cache $Cache)
 
     )
 
@@ -3355,13 +3355,9 @@ function Expand-WinNTGroupMember {
 }
 function Find-LocalAdsiServerSid {
 
+    [OutputType([System.String])]
+
     param (
-
-        # Name of the computer to query via CIM
-        [string]$ComputerName,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
 
         <#
         Hostname of the computer running this function.
@@ -3369,6 +3365,9 @@ function Find-LocalAdsiServerSid {
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
         [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Name of the computer to query via CIM
+        [string]$ComputerName = $ThisHostName,
 
         <#
         FQDN of the computer running this function.
@@ -3380,28 +3379,22 @@ function Find-LocalAdsiServerSid {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
 
     $CimParams = @{
-        CimCache          = $CimCache
-        ComputerName      = $ThisHostName
+        Cache             = $Cache
+        ComputerName      = $ComputerName
         DebugOutputStream = $DebugOutputStream
-        LogBuffer         = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -3416,7 +3409,7 @@ function Find-LocalAdsiServerSid {
         return
     }
 
-    return $LocalAdminAccount.SID.Substring(0, $LocalAdminAccount.SID.LastIndexOf("-"))
+    return $LocalAdminAccount.SID.Substring(0, $LocalAdminAccount.SID.LastIndexOf('-'))
 
 }
 function Get-AdsiGroup {
@@ -4159,6 +4152,7 @@ function Get-AdsiServer {
 
 }
 function Get-CurrentDomain {
+
     <#
         .SYNOPSIS
         Use ADSI to get the current domain
@@ -4179,18 +4173,15 @@ function Get-CurrentDomain {
 
     param (
 
-        # Name of the computer to query via CIM
-        [string]$ComputerName,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
         <#
         Hostname of the computer running this function.
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
         [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Name of the computer to query via CIM
+        [string]$ComputerName = $ThisHostName,
 
         <#
         FQDN of the computer running this function.
@@ -4202,21 +4193,20 @@ function Get-CurrentDomain {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
     $CimParams = @{
-        CimCache          = $CimCache
+        Cache             = $Cache
         ComputerName      = $ComputerName
         DebugOutputStream = $DebugOutputStream
-        LogBuffer         = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -6319,6 +6309,8 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
+
 
 
 

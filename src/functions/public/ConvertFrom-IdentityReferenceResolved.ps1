@@ -57,13 +57,13 @@ function ConvertFrom-IdentityReferenceResolved {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # The current domain
-        # Can be passed as a parameter to reduce calls to Get-CurrentDomain
-        [string]$CurrentDomain = (Get-CurrentDomain),
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # The current domain
+        # Can be passed as a parameter to reduce calls to Get-CurrentDomain
+        [string]$CurrentDomain = (Get-CurrentDomain -Cache $Cache)
 
     )
 

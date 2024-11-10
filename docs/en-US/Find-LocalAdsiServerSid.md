@@ -13,8 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Find-LocalAdsiServerSid [[-ComputerName] <String>] [[-CimCache] <Hashtable>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
+Find-LocalAdsiServerSid [[-ThisHostName] <String>] [[-ComputerName] <String>] [[-ThisFqdn] <String>]
+ [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-Cache] <PSReference>
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -32,16 +32,16 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -CimCache
-{{ Fill CimCache Description }}
+### -Cache
+{{ Fill Cache Description }}
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 1
+Required: True
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -56,7 +56,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -72,22 +72,7 @@ Aliases:
 Accepted values: Silent, Quiet, Success, Debug, Verbose, Output, Host, Warning, Error, Information, 
 
 Required: False
-Position: 6
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-{{ Fill LogBuffer Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 5
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -117,7 +102,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -132,7 +117,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -147,7 +132,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -162,7 +147,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### System.Object
+### System.String
+
 ## NOTES
 
 ## RELATED LINKS

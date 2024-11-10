@@ -13,8 +13,8 @@ Use ADSI to get the current domain
 ## SYNTAX
 
 ```
-Get-CurrentDomain [[-ComputerName] <String>] [[-CimCache] <Hashtable>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
+Get-CurrentDomain [[-ThisHostName] <String>] [[-ComputerName] <String>] [[-ThisFqdn] <String>]
+ [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-Cache] <PSReference>
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -32,17 +32,17 @@ Get the domain of the current computer
 
 ## PARAMETERS
 
-### -CimCache
-Cache of CIM sessions and instances to reduce connections and queries
+### -Cache
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 2
-Default value: ([hashtable]::Synchronized(@{}))
+Required: True
+Position: 6
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -56,8 +56,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: None
+Position: 2
+Default value: $ThisHostName
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -71,23 +71,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 5
 Default value: Debug
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 6
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -118,7 +103,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -135,7 +120,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 1
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -150,7 +135,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -15,7 +15,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
  [[-DebugOutputStream] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-CurrentDomain] <String>] [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [[-CurrentDomain] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,7 +45,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 7
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -61,8 +61,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
-Default value: (Get-CurrentDomain)
+Position: 7
+Default value: (Get-CurrentDomain -Cache $Cache)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

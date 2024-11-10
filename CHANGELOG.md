@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.360] - 2024-11-10 - bugfix cache
+
+## [4.0.359] - 2024-11-10 - bugfix cache
+
 ## [4.0.358] - 2024-11-10 - unified in-process cache
 
 ## [4.0.357] - 2024-11-09 - add missing cache params for get-directoryentry

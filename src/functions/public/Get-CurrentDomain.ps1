@@ -1,4 +1,5 @@
 function Get-CurrentDomain {
+
     <#
         .SYNOPSIS
         Use ADSI to get the current domain
@@ -19,18 +20,15 @@ function Get-CurrentDomain {
 
     param (
 
-        # Name of the computer to query via CIM
-        [string]$ComputerName,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
         <#
         Hostname of the computer running this function.
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
         #>
         [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Name of the computer to query via CIM
+        [string]$ComputerName = $ThisHostName,
 
         <#
         FQDN of the computer running this function.
@@ -42,21 +40,20 @@ function Get-CurrentDomain {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
     $CimParams = @{
-        CimCache          = $CimCache
+        Cache             = $Cache
         ComputerName      = $ComputerName
         DebugOutputStream = $DebugOutputStream
-        LogBuffer         = $LogBuffer
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
