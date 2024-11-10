@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.363] - 2024-11-10 - bugfix the tiny efficiency improvement from prev commit...lol
+
 ## [4.0.362] - 2024-11-10 - tiny efficiency improvement
 
 ## [4.0.361] - 2024-11-10 - bugfix repetitive params
