@@ -13,9 +13,7 @@ function Resolve-IdRefCached {
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-        [string]$ServerNetBIOS = $AdsiServer.Netbios,
-
-        [hashtable]$Log
+        [string]$ServerNetBIOS = $AdsiServer.Netbios
 
     )
 
