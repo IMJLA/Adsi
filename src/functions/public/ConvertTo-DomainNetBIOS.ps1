@@ -4,28 +4,6 @@ function ConvertTo-DomainNetBIOS {
 
         [string]$AdsiProvider,
 
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
-        <#
-        Dictionary to cache directory entries to avoid redundant lookups
-
-        Defaults to a thread-safe dictionary with string keys and object values
-        #>
-        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
-
         <#
         FQDN of the computer running this function.
 
@@ -43,68 +21,63 @@ function ConvertTo-DomainNetBIOS {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
-    $LogParams = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
+    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $DomainCacheResult = $null
-    $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$DomainCacheResult)
+    $TryGetValueResult = $Cache.Value['DomainByFqdn'].Value.TryGetValue($DomainFQDN, [ref]$DomainCacheResult)
 
     if ($TryGetValueResult) {
 
-        #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$DomainFQDN'"
+        #Write-LogMsg @LogThis -Text " # Domain FQDN cache hit for '$DomainFQDN'"
         return $DomainCacheResult.Netbios
 
     }
 
-    #Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$DomainFQDN'"
+    #Write-LogMsg @LogThis -Text " # Domain FQDN cache miss for '$DomainFQDN'"
 
     if ($AdsiProvider -eq 'LDAP') {
 
         $GetDirectoryEntryParams = @{
-            DirectoryEntryCache = $DirectoryEntryCache
-            DomainsByNetbios    = $DomainsByNetbios
-            DomainsBySid        = $DomainsBySid
-            ThisFqdn            = $ThisFqdn
-            ThisHostname        = $ThisHostname
-            CimCache            = $CimCache
-            LogBuffer           = $LogBuffer
-            WhoAmI              = $WhoAmI
-            DebugOutputStream   = $DebugOutputStream
+            DebugOutputStream = $DebugOutputStream
+            ThisFqdn          = $ThisFqdn
+            ThisHostname      = $ThisHostname
+            WhoAmI            = $WhoAmI
         }
 
-        $RootDSE = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/rootDSE" @GetDirectoryEntryParams
-        Write-LogMsg @LogParams -Text "`$RootDSE.InvokeGet('defaultNamingContext')"
+        $RootDSE = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/rootDSE" @GetDirectoryEntryParams @LogThis
+        Write-LogMsg @LogThis -Text "`$RootDSE.InvokeGet('defaultNamingContext')"
         $DomainDistinguishedName = $RootDSE.InvokeGet('defaultNamingContext')
-        Write-LogMsg @LogParams -Text "`$RootDSE.InvokeGet('configurationNamingContext')"
+        Write-LogMsg @LogThis -Text "`$RootDSE.InvokeGet('configurationNamingContext')"
         $ConfigurationDN = $rootDSE.InvokeGet('configurationNamingContext')
-        $partitions = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN" @GetDirectoryEntryParams
+        $partitions = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN" @GetDirectoryEntryParams @LogThis
 
         ForEach ($Child In $Partitions.Children) {
+
             If ($Child.nCName -contains $DomainDistinguishedName) {
                 return $Child.nETBIOSName
             }
+
         }
+
     } else {
+
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
+
         if ($LengthOfNetBIOSName -eq -1) {
             $DomainFQDN
         } else {
             $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
         }
+
     }
 
 }

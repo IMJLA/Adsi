@@ -13,11 +13,9 @@ Get information about a directory server including the ADSI provider it hosts an
 ## SYNTAX
 
 ```
-Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-CimCache] <Hashtable>]
- [[-DirectoryEntryCache] <PSReference>] [-DomainsByNetbios] <PSReference> [-DomainsBySid] <PSReference>
- [-DomainsByFqdn] <PSReference> [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>] [-RemoveCimSession]
- [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByName] <Hashtable>] [-ProgressAction <ActionPreference>]
+Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
+ [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-RemoveCimSession] [[-WellKnownSidBySid] <Hashtable>]
+ [[-WellKnownSidByName] <Hashtable>] [-Cache] <PSReference> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
@@ -43,17 +41,17 @@ Find the ADSI provider of the AD domain 'ad.contoso.com'
 
 ## PARAMETERS
 
-### -CimCache
-Cache of CIM sessions and instances to reduce connections and queries
+### -Cache
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 3
-Default value: ([hashtable]::Synchronized(@{}))
+Required: True
+Position: 9
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -67,70 +65,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
-Default value: Debug
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DirectoryEntryCache
-Dictionary to cache directory entries to avoid redundant lookups
-
-Defaults to a thread-safe dictionary with string keys and object values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByFqdn
-Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName,AdsiProvider,Win32Accounts properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 7
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByNetbios
-Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 5
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsBySid
-Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
 Position: 6
-Default value: None
+Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -147,21 +83,6 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 11
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -196,7 +117,7 @@ Accept wildcard characters: False
 ```
 
 ### -RemoveCimSession
-{{ Fill RemoveCimSession Description }}
+Remove the CIM session used to get ADSI server information
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -221,7 +142,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 4
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -238,7 +159,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 3
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -253,7 +174,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 14
+Position: 8
 Default value: @{}
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -268,7 +189,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 7
 Default value: (Get-KnownSidHashTable)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -283,7 +204,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 5
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False

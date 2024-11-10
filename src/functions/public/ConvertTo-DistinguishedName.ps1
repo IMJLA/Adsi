@@ -21,12 +21,6 @@ function ConvertTo-DistinguishedName {
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'NetBIOS')]
         [string[]]$Domain,
 
-        #[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')]
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
-
         # FQDN of the domain
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'FQDN')]
         [string[]]$DomainFQDN,
@@ -51,9 +45,16 @@ function ConvertTo-DistinguishedName {
 
         This parameter can be used to reduce calls to Find-AdsiProvider
 
-        Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
+        Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet
         #>
         [string]$AdsiProvider,
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
 
         <#
         Hostname of the computer running this function.
@@ -65,29 +66,22 @@ function ConvertTo-DistinguishedName {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
+
     begin {
 
-        $LogParams = @{
-            ThisHostname = $ThisHostname
-            Type         = $DebugOutputStream
-            Buffer       = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
-
-        $LoggingParams = @{
-            ThisHostname = $ThisHostname
-            LogBuffer    = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
+        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
+        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+        $DomainByNetbios = $Cache.Value['DomainByNetbios']
+        $DomainByFqdn = $Cache.Value['DomainByFqdn']
 
         # Declare constants for these Windows enums
         # We need to because PowerShell makes it hard to directly use the Win32 API and read the enum definition
@@ -97,6 +91,7 @@ function ConvertTo-DistinguishedName {
             ADS_NAME_INITTYPE_SERVER = 2 #Initializes a NameTranslate object by setting the server that the object binds to.
             ADS_NAME_INITTYPE_GC     = 3 #Initializes a NameTranslate object by locating the global catalog that the object binds to.
         }
+
         $ADS_NAME_TYPE_dict = @{
             ADS_NAME_TYPE_1779                    = 1 #Name format as specified in RFC 1779. For example, "CN=Jeff Smith,CN=users,DC=Fabrikam,DC=com".
             ADS_NAME_TYPE_CANONICAL               = 2 #Canonical name format. For example, "Fabrikam.com/Users/Jeff Smith".
@@ -111,67 +106,83 @@ function ConvertTo-DistinguishedName {
             ADS_NAME_TYPE_SERVICE_PRINCIPAL_NAME  = 11 #Service principal name format. For example, "www/www.fabrikam.com@fabrikam.com".
             ADS_NAME_TYPE_SID_OR_SID_HISTORY_NAME = 12 #A SID string, as defined in the Security Descriptor Definition Language (SDDL), for either the SID of the current object or one from the object SID history. For example, "O:AOG:DAD:(A;;RPWPCCDCLCSWRCWDWOGA;;;S-1-0-0)"
         }
+
         $ChosenInitType = $ADS_NAME_INITTYPE_dict[$InitType]
         $ChosenInputType = $ADS_NAME_TYPE_dict[$InputType]
         $ChosenOutputType = $ADS_NAME_TYPE_dict[$OutputType]
 
     }
+
     process {
 
         ForEach ($ThisDomain in $Domain) {
 
             $DomainCacheResult = $null
-            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainByNetbios.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
 
             if ($TryGetValueResult) {
-                #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache hit for '$ThisDomain'"
+
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
+
             } else {
-                #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($DomainsByNetBios.Keys -join ',')"
-                Write-LogMsg @LogParams -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
+
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($Cache.Value['DomainByNetbios'].Value.Keys -join ',')"
+                Write-LogMsg @Log -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
                 $IADsNameTranslateComObject = New-Object -ComObject 'NameTranslate'
-                Write-LogMsg @LogParams -Text "`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"
+                Write-LogMsg @Log -Text "`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"
                 $IADsNameTranslateInterface = $IADsNameTranslateComObject.GetType()
-                Write-LogMsg @LogParams -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'"
+                Write-LogMsg @Log -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'"
                 # Handle errors for this method
                 #    Exception calling "InvokeMember" with "5" argument(s): "The specified domain either does not exist or could not be contacted. (0x8007054B)"
                 try {
                     $null = $IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
                 } catch {
-                    Write-LogMsg @LogParams -Text " #Error: $($_.Exception.Message) # For $ThisDomain"
+
+                    Write-LogMsg @Log -Text " #Error: $($_.Exception.Message) # For $ThisDomain"
                     continue
+
                 }
 
                 # For a non-domain-joined system there is no DistinguishedName for the domain
                 # Suppress errors when calling these next 2 methods
                 #     Exception calling "InvokeMember" with "5" argument(s): "Name translation: Could not find the name or insufficient right to see name. (Exception from HRESULT: 0x80072116)"
-                Write-LogMsg @LogParams -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInputType, '$ThisDomain\')) # For '$ThisDomain'"
+                Write-LogMsg @Log -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInputType, '$ThisDomain\')) # For '$ThisDomain'"
                 $null = { $IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInputType, "$ThisDomain\")) } 2>$null
                 #     Exception calling "InvokeMember" with "5" argument(s): "Unspecified error (Exception from HRESULT: 0x80004005 (E_FAIL))"
-                Write-LogMsg @LogParams -Text "`$IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, $ChosenOutputType) # For '$ThisDomain'"
+                Write-LogMsg @Log -Text "`$IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, $ChosenOutputType) # For '$ThisDomain'"
                 $null = { $null = { $IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', $Null, $IADsNameTranslateComObject, $ChosenOutputType) } 2>$null } 2>$null
+
             }
+
         }
+
         ForEach ($ThisDomain in $DomainFQDN) {
 
             $DomainCacheResult = $null
-            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
+            $TryGetValueResult = $DomainByFqdn.Value.TryGetValue($ThisDomain, [ref]$DomainCacheResult)
 
             if ($TryGetValueResult) {
-                #Write-LogMsg @LogParams -Text " # Domain FQDN cache hit for '$ThisDomain'"
+
+                #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$ThisDomain'"
                 $DomainCacheResult.DistinguishedName
+
             } else {
 
-                #Write-LogMsg @LogParams -Text " # Domain FQDN cache miss for '$ThisDomain'"
+                #Write-LogMsg @Log -Text " # Domain FQDN cache miss for '$ThisDomain'"
 
                 if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
-                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain @LoggingParams
+                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain -ThisFqdn $ThisFqdn @LogThis
                 }
 
                 if ($AdsiProvider -ne 'WinNT') {
                     "dc=$($ThisDomain -replace '\.',',dc=')"
                 }
+
             }
+
         }
+
     }
+
 }

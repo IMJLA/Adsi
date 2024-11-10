@@ -13,10 +13,8 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-ConvertTo-DomainSidString [-DomainDnsName] <String> [[-DirectoryEntryCache] <PSReference>]
- [-DomainsByNetbios] <PSReference> [-DomainsBySid] <PSReference> [-DomainsByFqdn] <PSReference>
- [[-AdsiProvider] <String>] [[-CimCache] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
+ConvertTo-DomainSidString [-DomainDnsName] <String> [[-AdsiProvider] <String>] [[-ThisHostName] <String>]
+ [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-Cache] <PSReference>
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -43,21 +41,21 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CimCache
-{{ Fill CimCache Description }}
+### -Cache
+{{ Fill Cache Description }}
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 6
 Default value: None
 Accept pipeline input: False
@@ -74,22 +72,7 @@ Aliases:
 Accepted values: Silent, Quiet, Success, Debug, Verbose, Output, Host, Warning, Error, Information, 
 
 Required: False
-Position: 11
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DirectoryEntryCache
-{{ Fill DirectoryEntryCache Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -105,66 +88,6 @@ Aliases:
 
 Required: True
 Position: 0
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByFqdn
-{{ Fill DomainsByFqdn Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 4
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByNetbios
-{{ Fill DomainsByNetbios Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsBySid
-{{ Fill DomainsBySid Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-{{ Fill LogBuffer Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 10
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -194,7 +117,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -209,7 +132,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -224,7 +147,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

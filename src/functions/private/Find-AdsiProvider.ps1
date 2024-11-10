@@ -44,37 +44,31 @@ function Find-AdsiProvider {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
-    $AdsiProvider = $null
+    ###$Log = @{
+    ###    ThisHostname = $ThisHostname
+    ###    Type         = $DebugOutputStream
+    ###    Buffer       = $Cache.Value['LogBuffer']
+    ###    WhoAmI       = $WhoAmI
+    ###}
 
     $CommandParameters = @{
+        Cache             = $Cache
         ComputerName      = $AdsiServer
-        Namespace         = 'ROOT/StandardCimv2'
-        Query             = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
-        KeyProperty       = 'LocalPort'
-        CimCache          = $CimCache
         DebugOutputStream = $DebugOutputStream
         ErrorAction       = 'Ignore'
-        LogBuffer         = $LogBuffer
+        KeyProperty       = 'LocalPort'
+        Namespace         = 'ROOT/StandardCimv2'
+        Query             = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
         ThisFqdn          = $ThisFqdn
         ThisHostname      = $ThisHostname
         WhoAmI            = $WhoAmI
@@ -83,36 +77,9 @@ function Find-AdsiProvider {
     ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
 
     if (Get-CachedCimInstance @CommandParameters) {
-        #$AdsiPath = "LDAP://$AdsiServer"
-        #Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
-        #try {
-        #    $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
-        $AdsiProvider = 'LDAP'
-        #} catch { Write-LogMsg @LogParams -Text " # $AdsiServer did not respond to LDAP" }
+        return 'LDAP'
+    } else {
+        return 'WinNT'
     }
-
-    if (!$AdsiProvider) {
-        #$AdsiPath = "WinNT://$AdsiServer"
-        #Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
-        #try {
-        #    $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
-        $AdsiProvider = 'WinNT'
-        #} catch {
-        #    Write-LogMsg @LogParams -Text " # $AdsiServer did not respond to WinNT"
-        #}
-    }
-    #if (!$AdsiProvider) {
-    #    $AdsiPath = "LDAP://$AdsiServer"
-    #    Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath')"
-    #    try {
-    #        $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
-    #        $AdsiProvider = 'LDAP'
-    #    } catch { Write-LogMsg @LogParams -Text " # $AdsiServer did not respond to LDAP" }
-    #}
-    #if (!$AdsiProvider) {
-    #    $AdsiProvider = 'none'
-    #}
-
-    return $AdsiProvider
 
 }

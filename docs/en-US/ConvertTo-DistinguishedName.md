@@ -14,18 +14,18 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### NetBIOS
 ```
-ConvertTo-DistinguishedName -Domain <String[]> -DomainsByNetbios <PSReference> -DomainsByFqdn <PSReference>
- [-InitType <String>] [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>]
- [-ThisHostName <String>] [-WhoAmI <String>] -LogBuffer <PSReference> [-DebugOutputStream <String>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ConvertTo-DistinguishedName -Domain <String[]> [-InitType <String>] [-InputType <String>]
+ [-OutputType <String>] [-AdsiProvider <String>] [-ThisFqdn <String>] [-ThisHostName <String>]
+ [-WhoAmI <String>] [-DebugOutputStream <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### FQDN
 ```
-ConvertTo-DistinguishedName -DomainsByNetbios <PSReference> -DomainsByFqdn <PSReference> -DomainFQDN <String[]>
- [-InitType <String>] [-InputType <String>] [-OutputType <String>] [-AdsiProvider <String>]
- [-ThisHostName <String>] [-WhoAmI <String>] -LogBuffer <PSReference> [-DebugOutputStream <String>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
+ [-OutputType <String>] [-AdsiProvider <String>] [-ThisFqdn <String>] [-ThisHostName <String>]
+ [-WhoAmI <String>] [-DebugOutputStream <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -48,7 +48,7 @@ AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs o
 
 This parameter can be used to reduce calls to Find-AdsiProvider
 
-Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
+Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet
 
 ```yaml
 Type: System.String
@@ -56,6 +56,21 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Cache
+In-process cache to reduce calls to other processes or to disk
+
+```yaml
+Type: System.Management.Automation.PSReference
+Parameter Sets: (All)
+Aliases:
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -107,36 +122,6 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -DomainsByFqdn
-{{ Fill DomainsByFqdn Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByNetbios
-\[Parameter(ParameterSetName = 'NetBIOS', 'FQDN')\]
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -InitType
 Type of initialization to be performed
 Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Init method (iads.h)
@@ -171,21 +156,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -OutputType
 Format of the name of the directory object that will be used for the output
 Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
@@ -214,6 +184,23 @@ Aliases: proga
 Required: False
 Position: Named
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ThisFqdn
+FQDN of the computer running this function.
+
+Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

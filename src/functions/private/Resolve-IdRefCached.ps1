@@ -1,6 +1,7 @@
 function Resolve-IdRefCached {
 
     [OutputType([PSCustomObject])]
+
     param (
 
         # IdentityReference from an Access Control Entry
@@ -14,44 +15,9 @@ function Resolve-IdRefCached {
         # NetBIOS name of the ADSI server
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [hashtable]$Log
 
     )
-
-    #$Log = @{
-    #    ThisHostname = $ThisHostname
-    #    Type         = $DebugOutputStream
-    #    Buffer       = $LogBuffer
-    #    WhoAmI       = $WhoAmI
-    #}
 
     ForEach ($Cache in 'WellKnownSidBySid', 'WellKnownSIDByName') {
 

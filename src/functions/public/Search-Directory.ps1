@@ -37,19 +37,6 @@ function Search-Directory {
         # Scope of the search
         [string]$SearchScope = 'subtree',
 
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
-        <#
-        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-
-        Defaults to a thread-safe dictionary with string keys and object values
-        #>
-        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
         <#
         FQDN of the computer running this function.
 
@@ -67,31 +54,27 @@ function Search-Directory {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
-    $LogParams = @{
+    $Log = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
+        Buffer       = $Cache.Value['LogBuffer']
         WhoAmI       = $WhoAmI
     }
 
     $DirectoryEntryParameters = @{
-        DirectoryEntryCache = $DirectoryEntryCache
-        DomainsByNetbios    = $DomainsByNetbios
-        ThisHostname        = $ThisHostname
-        LogBuffer           = $LogBuffer
-        WhoAmI              = $WhoAmI
-        CimCache            = $CimCache
-        ThisFqdn            = $ThisFqdn
+        ThisHostname = $ThisHostname
+        WhoAmI       = $WhoAmI
+        ThisFqdn     = $ThisFqdn
     }
 
     if ($Credential) {
@@ -99,43 +82,42 @@ function Search-Directory {
     }
 
     if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {
+
         $CimParams = @{
-            CimCache          = $CimCache
             ComputerName      = $ThisFqdn
             DebugOutputStream = $DebugOutputStream
             ThisFqdn          = $ThisFqdn
         }
-        $LoggingParams = @{
-            ThisHostname = $ThisHostname
-            LogBuffer    = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
-        $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
+
+        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+
+        $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LogThis).Workgroup
         $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
+
     }
-    $DirectoryEntryParameters['DirectoryPath'] = $DirectoryPath
 
-    $DirectoryEntry = Get-DirectoryEntry @DirectoryEntryParameters
-
-    Write-LogMsg @LogParams -Text "`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))"
+    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryEntryParameters @LogThis
+    Write-LogMsg @Log -Text "`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))"
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
 
     if ($Filter) {
-        Write-LogMsg @LogParams -Text "`$DirectorySearcher.Filter = '$Filter'"
+        Write-LogMsg @Log -Text "`$DirectorySearcher.Filter = '$Filter'"
         $DirectorySearcher.Filter = $Filter
     }
 
-    Write-LogMsg @LogParams -Text "`$DirectorySearcher.PageSize = '$PageSize'"
+    Write-LogMsg @Log -Text "`$DirectorySearcher.PageSize = '$PageSize'"
     $DirectorySearcher.PageSize = $PageSize
-    Write-LogMsg @LogParams -Text "`$DirectorySearcher.SearchScope = '$SearchScope'"
+    Write-LogMsg @Log -Text "`$DirectorySearcher.SearchScope = '$SearchScope'"
     $DirectorySearcher.SearchScope = $SearchScope
 
     ForEach ($Property in $PropertiesToLoad) {
-        Write-LogMsg @LogParams -Text "`$DirectorySearcher.PropertiesToLoad.Add('$Property')"
+
+        Write-LogMsg @Log -Text "`$DirectorySearcher.PropertiesToLoad.Add('$Property')"
         $null = $DirectorySearcher.PropertiesToLoad.Add($Property)
+
     }
 
-    Write-LogMsg @LogParams -Text "`$DirectorySearcher.FindAll()"
+    Write-LogMsg @Log -Text "`$DirectorySearcher.FindAll()"
     $SearchResultCollection = $DirectorySearcher.FindAll()
     # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
     # Error: Cannot access a disposed object.

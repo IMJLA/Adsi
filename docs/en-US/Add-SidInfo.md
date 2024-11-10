@@ -13,8 +13,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 ## SYNTAX
 
 ```
-Add-SidInfo [[-InputObject] <Object>] [-DomainsBySid] <PSReference> [[-ThisHostName] <String>]
- [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
+Add-SidInfo [[-InputObject] <Object>] [[-Log] <Hashtable>] [[-DomainsBySid] <PSReference>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -35,31 +34,16 @@ Upon closer inspection it now has SidString, Domain, and SamAccountName properti
 
 ## PARAMETERS
 
-### -DebugOutputStream
-Output stream to send the log messages to
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 6
-Default value: Debug
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -DomainsBySid
-Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: True
-Position: 2
+Required: False
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -81,16 +65,16 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -LogBuffer
-Log messages which have not yet been written to disk
+### -Log
+{{ Fill Log Description }}
 
 ```yaml
-Type: System.Management.Automation.PSReference
+Type: System.Collections.Hashtable
 Parameter Sets: (All)
 Aliases:
 
-Required: True
-Position: 5
+Required: False
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -107,38 +91,6 @@ Aliases: proga
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostName
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -25,24 +25,6 @@ function Expand-AdsiGroupMember {
         [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
 
         <#
-        Hashtable containing cached directory entries so they don't need to be retrieved from the directory again
-
-        Defaults to a thread-safe dictionary with string keys and object values
-        #>
-        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [hashtable]$DomainsBySid,
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
-
-        <#
         Hostname of the computer running this function.
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
@@ -59,63 +41,38 @@ function Expand-AdsiGroupMember {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
+
     begin {
 
-        $LogParams = @{
-            ThisHostname = $ThisHostname
-            Type         = $DebugOutputStream
-            Buffer       = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
+        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
+        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+        $DomainBySid = $Cache.Value['DomainBySid']
 
-        $LoggingParams = @{
-            ThisHostname = $ThisHostname
-            LogBuffer    = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
+        # The DomainBySid cache must be populated with trusted domains in order to translate foreign security principals
+        if ( $DomainBySid.Keys.Count -lt 1 ) {
 
-        # The DomainsBySID cache must be populated with trusted domains in order to translate foreign security principals
-        if ( $DomainsBySid.Keys.Count -lt 1 ) {
-            Write-LogMsg @LogParams -Text '# No valid DomainsBySid cache found'
-            $DomainsBySid = ([hashtable]::Synchronized(@{}))
+            Write-LogMsg @Log -Text '# No domains in the DomainBySid cache'
 
-            $GetAdsiServerParams = @{
-                DirectoryEntryCache = $DirectoryEntryCache
-                DomainsByNetbios    = $DomainsByNetbios
-                DomainsBySid        = $DomainsBySid
-                DomainsByFqdn       = $DomainsByFqdn
-                ThisFqdn            = $ThisFqdn
-                CimCache            = $CimCache
+            ForEach ($TrustedDomain in Get-TrustedDomain) {
+                #Write-LogMsg @Log -Text "Get-AdsiServer -Fqdn $($TrustedDomain.DomainFqdn)"
+                $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -ThisFqdn $ThisFqdn @LogThis
             }
 
-            Get-TrustedDomain |
-            ForEach-Object {
-                Write-LogMsg @LogParams -Text "Get-AdsiServer -Fqdn $($_.DomainFqdn)"
-                $null = Get-AdsiServer -Fqdn $_.DomainFqdn @GetAdsiServerParams @LoggingParams
-            }
         } else {
-            Write-LogMsg @LogParams -Text '# Valid DomainsBySid cache found'
-        }
-
-        $CacheParams = @{
-            DirectoryEntryCache = $DirectoryEntryCache
-            DomainsByNetbios    = $DomainsByNetbios
-            DomainsBySid        = $DomainsBySid
+            #Write-LogMsg @Log -Text '# Valid DomainBySid cache found'
         }
 
         $i = 0
+
     }
 
     process {
@@ -123,44 +80,36 @@ function Expand-AdsiGroupMember {
         ForEach ($Entry in $DirectoryEntry) {
 
             $i++
-
-            #$status = ("$(Get-Date -Format s)`t$ThisHostname`tExpand-AdsiGroupMember`tStatus: Using ADSI to get info on group member $i`: " + $Entry.Name)
-            #Write-LogMsg @LogParams -Text "$status"
-
             $Principal = $null
+            #Write-LogMsg @Log -Text "Status: Using ADSI to get info on group member $i`: $($Entry.Name)"
 
             if ($Entry.objectClass -contains 'foreignSecurityPrincipal') {
 
                 if ($Entry.distinguishedName.Value -match '(?>^CN=)(?<SID>[^,]*)') {
 
-                    [string]$SID = $Matches.SID
-
                     #The SID of the domain is the SID of the user minus the last block of numbers
+                    [string]$SID = $Matches.SID
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf('-'))
                     $Domain = $null
-                    $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
-
-                    $GetDirectoryEntryParams = @{
-                        ThisFqdn          = $ThisFqdn
-                        CimCache          = $CimCache
-                        DebugOutputStream = $DebugOutputStream
-                    }
-
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" @GetDirectoryEntryParams @CacheParams @LoggingParams
+                    $null = $DomainBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
+                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -ThisFqdn $ThisFqdn @LogThis
 
                     try {
                         $null = $Principal.RefreshCache($PropertiesToLoad)
                     } catch {
+
                         #$Success = $false
                         $Principal = $Entry
-                        Write-LogMsg @LogParams -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
+                        Write-LogMsg @Log -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
+
                     }
 
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
-                        Write-LogMsg @LogParams -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
-                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn @CacheParams @LoggingParams
-                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -CimCache $CimCache -DomainsByFqdn $DomainsByFqdn -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName @CacheParams
+
+                        Write-LogMsg @Log -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
+                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn @LogThis
+                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName @LogThis
 
                     }
 
@@ -170,7 +119,7 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
-            Add-SidInfo -InputObject $Principal -DomainsBySid $DomainsBySid @LoggingParams
+            Add-SidInfo -InputObject $Principal -DomainBySid $DomainBySid @LogThis
 
         }
     }

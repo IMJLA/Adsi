@@ -10,31 +10,33 @@ function Get-CachedDirectoryEntry {
         #>
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
-        # Cache of CIM sessions and instances for this specific server to reduce connections and queries
-        [hashtable]$CimServer = ([hashtable]::Synchronized(@{})),
-
-        [hashtable]$Log,
-
         [string]$Server,
 
         [string]$AccountName,
 
-        # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        # This is not actually used but is here so the parameter can be included in a splat shared with other functions
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
+        [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
+        <#
+        Hostname of the computer running this function.
 
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
 
-        [hashtable]$SidTypeMap = (Get-SidTypeMap)
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
+
+    #$Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
 
     <#
     The WinNT provider only throws an error if you try to retrieve certain accounts/identities
@@ -42,7 +44,7 @@ function Get-CachedDirectoryEntry {
     #>
     $ID = "$Server\$AccountName"
     $DomainCacheResult = $null
-    $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+    $TryGetValueResult = $Cache.Value['DomainByFqdn'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
     if ($TryGetValueResult) {
 
@@ -82,7 +84,7 @@ function Get-CachedDirectoryEntry {
     } else {
 
         $DomainCacheResult = $null
-        $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+        $TryGetValueResult = $Cache.Value['DomainByNetbios'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
         if ($TryGetValueResult) {
 
@@ -122,7 +124,7 @@ function Get-CachedDirectoryEntry {
         } else {
 
             $DomainCacheResult = $null
-            $TryGetValueResult = $DomainsBySid.Value.TryGetValue($Server, [ref]$DomainCacheResult)
+            $TryGetValueResult = $Cache.Value['DomainsBySid'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
             if ($TryGetValueResult) {
 

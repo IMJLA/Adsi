@@ -14,7 +14,7 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 
 ```
 Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-CimCache] <Hashtable>] [[-DebugOutputStream] <String>]
+ [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-Cache] <PSReference>
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -36,17 +36,17 @@ Add the domain FQDN to a single LDAP directory path
 
 ## PARAMETERS
 
-### -CimCache
-Cache of CIM sessions and instances to reduce connections and queries
+### -Cache
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 6
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -60,7 +60,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 5
 Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -78,21 +78,6 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 5
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

@@ -35,28 +35,6 @@ function Get-AdsiGroup {
         # Properties of the group members to retrieve
         [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
 
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
-        <#
-        Dictionary to cache directory entries to avoid redundant lookups
-
-        Defaults to a thread-safe dictionary with string keys and object values
-        #>
-        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
-
         <#
         Hostname of the computer running this function.
 
@@ -74,63 +52,53 @@ function Get-AdsiGroup {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
+        # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$LogBuffer
+        [ref]$Cache
 
     )
 
+    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+
     $GroupParams = @{
-        DirectoryPath       = $DirectoryPath
-        PropertiesToLoad    = $PropertiesToLoad
-        DirectoryEntryCache = $DirectoryEntryCache
-        DomainsByFqdn       = $DomainsByFqdn
-        DomainsByNetbios    = $DomainsByNetbios
-        DomainsBySid        = $DomainsBySid
-        ThisHostname        = $ThisHostname
-        LogBuffer           = $LogBuffer
-        WhoAmI              = $WhoAmI
-        ThisFqdn            = $ThisFqdn
-        CimCache            = $CimCache
-        DebugOutputStream   = $DebugOutputStream
+        DirectoryPath     = $DirectoryPath
+        PropertiesToLoad  = $PropertiesToLoad
+        ThisFqdn          = $ThisFqdn
+        DebugOutputStream = $DebugOutputStream
     }
 
     $GroupMemberParams = @{
-        PropertiesToLoad    = $PropertiesToLoad
-        DirectoryEntryCache = $DirectoryEntryCache
-        DomainsByFqdn       = $DomainsByFqdn
-        DomainsByNetbios    = $DomainsByNetbios
-        DomainsBySid        = $DomainsBySid
-        ThisHostName        = $ThisHostName
-        ThisFqdn            = $ThisFqdn
-        LogBuffer           = $LogBuffer
-        CimCache            = $CimCache
-        WhoAmI              = $WhoAmI
+        PropertiesToLoad = $PropertiesToLoad
+        ThisFqdn         = $ThisFqdn
     }
 
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
-            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
-            $FullMembers = Get-WinNTGroupMember @GroupMemberParams
+            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams @LogThis
+            $FullMembers = Get-WinNTGroupMember @GroupMemberParams @LogThis
             break
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
-            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
-            $FullMembers = Get-WinNTGroupMember @GroupMemberParams
+            $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams @LogThis
+            $FullMembers = Get-WinNTGroupMember @GroupMemberParams @LogThis
             break
         }
         default {
+
             if ($GroupName) {
                 $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
             } else {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
-            $GroupMemberParams['Group'] = Search-Directory @GroupParams
-            $FullMembers = Get-AdsiGroupMember @GroupMemberParams
+
+            $GroupMemberParams['Group'] = Search-Directory @GroupParams @LogThis
+            $FullMembers = Get-AdsiGroupMember @GroupMemberParams @LogThis
+
         }
+
     }
 
     $FullMembers

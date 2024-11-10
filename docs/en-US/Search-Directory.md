@@ -15,9 +15,8 @@ Use Active Directory Service Interfaces to search an LDAP directory
 ```
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
  [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>] [[-SearchScope] <String>]
- [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [-DomainsByNetbios] <PSReference>
- [[-ThisFqdn] <String>] [[-ThisHostName] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference>
- [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-ThisFqdn] <String>] [[-ThisHostName] <String>] [[-WhoAmI] <String>] [[-DebugOutputStream] <String>]
+ [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -35,17 +34,17 @@ As the current user on a domain-joined computer, bind to the current domain and 
 
 ## PARAMETERS
 
-### -CimCache
-Cache of CIM sessions and instances to reduce connections and queries
+### -Cache
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
-Position: 7
-Default value: ([hashtable]::Synchronized(@{}))
+Required: True
+Position: 11
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -74,25 +73,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 14
+Position: 10
 Default value: Debug
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DirectoryEntryCache
-Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-
-Defaults to a thread-safe dictionary with string keys and object values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 8
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -113,21 +95,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DomainsByNetbios
-{{ Fill DomainsByNetbios Description }}
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 9
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Filter
 Filter for the LDAP search
 
@@ -138,21 +105,6 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 13
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -229,7 +181,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 7
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -246,7 +198,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: 8
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -261,7 +213,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 12
+Position: 9
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -1,35 +1,16 @@
 # This function is not currently in use by Export-Permission
 
 function ConvertFrom-SidString {
+
     #[OutputType([System.Security.Principal.NTAccount])]
+
     param (
+
         [string]$SID,
 
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
-        <#
-        Dictionary to cache directory entries to avoid redundant lookups
-
-        Defaults to a thread-safe dictionary with string keys and object values
-        #>
-        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -48,20 +29,18 @@ function ConvertFrom-SidString {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
+        # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$LogBuffer
+        [ref]$Cache
+
     )
 
     $GetDirectoryEntryParams = @{
-        DirectoryEntryCache = $DirectoryEntryCache
-        DomainsByNetbios    = $DomainsByNetbios
-        ThisFqdn            = $ThisFqdn
-        ThisHostname        = $ThisHostname
-        CimCache            = $CimCache
-        LogBuffer           = $LogBuffer
-        WhoAmI              = $WhoAmI
-        DebugOutputStream   = $DebugOutputStream
+        Cache             = $Cache
+        DebugOutputStream = $DebugOutputStream
+        ThisFqdn          = $ThisFqdn
+        ThisHostname      = $ThisHostname
+        WhoAmI            = $WhoAmI
     }
 
     #[System.Security.Principal.SecurityIdentifier]::new($SID)

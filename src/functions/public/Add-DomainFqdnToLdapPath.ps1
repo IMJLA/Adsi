@@ -41,71 +41,66 @@ function Add-DomainFqdnToLdapPath {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
+
     begin {
 
-        <#
-        $LogParams = @{
-            ThisHostname = $ThisHostname
-            Type         = $DebugOutputStream
-            LogBuffer  = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
-        #>
-
-        $LoggingParams = @{
-            ThisHostname = $ThisHostname
-            LogBuffer  = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
-
-        $PathRegEx = '(?<Path>LDAP:\/\/[^\/]*)'
+        #$Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
+        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $DomainRegEx = '(?i)DC=\w{1,}?\b'
 
     }
+
     process {
 
         ForEach ($ThisPath in $DirectoryPath) {
 
-            if ($ThisPath -match $PathRegEx) {
+            if ($ThisPath.Substring(0, 7) -eq 'LDAP://') {
 
                 $RegExMatches = $null
                 $RegExMatches = [regex]::Matches($ThisPath, $DomainRegEx)
 
                 if ($RegExMatches) {
+
                     $DomainDN = $null
                     $DomainFqdn = $null
-
-                    $RegExMatches = $RegExMatches |
-                    ForEach-Object { $_.Value }
-
+                    $RegExMatches = ForEach ($Match in $RegExMatches) { $Match.Value }
                     $DomainDN = $RegExMatches -join ','
-                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisFqdn $ThisFqdn -CimCache $CimCache @LoggingParams
-                    if ($ThisPath -match "LDAP:\/\/$DomainFqdn\/") {
-                        #Write-LogMsg @LogParams -Text " # Domain FQDN already found in the directory path: '$ThisPath'"
+                    $DomainFqdn = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisFqdn $ThisFqdn @LogThis
+                    $DomainLdapPath = "LDAP://$DomainFqdn/"
+
+                    if ($ThisPath.Substring(0, $DomainLdapPath.Length) -eq $DomainLdapPath) {
+
+                        #Write-LogMsg @Log -Text " # Domain FQDN already found in the directory path: '$ThisPath'"
                         $ThisPath
+
                     } else {
-                        $ThisPath -replace 'LDAP:\/\/', "LDAP://$DomainFqdn/"
+                        $ThisPath.Replace( 'LDAP://', $DomainLdapPath )
                     }
                 } else {
-                    #Write-LogMsg @LogParams -Text " # Domain DN not found in the directory path: '$ThisPath'"
+
+                    #Write-LogMsg @Log -Text " # Domain DN not found in the directory path: '$ThisPath'"
                     $ThisPath
+
                 }
+
             } else {
-                #Write-LogMsg @LogParams -Text " # Not an expected directory path: '$ThisPath'"
+
+                #Write-LogMsg @Log -Text " # Not an expected directory path: '$ThisPath'"
                 $ThisPath
+
             }
+
         }
+
     }
+
 }

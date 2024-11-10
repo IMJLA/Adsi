@@ -14,19 +14,14 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 
 ### DistinguishedName
 ```
-ConvertTo-Fqdn [-DistinguishedName <String[]>] [-DirectoryEntryCache <PSReference>]
- -DomainsByNetbios <PSReference> -DomainsBySid <PSReference> -DomainsByFqdn <PSReference>
- [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>] -LogBuffer <PSReference>
- [-CimCache <Hashtable>] [-DebugOutputStream <String>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ConvertTo-Fqdn [-DistinguishedName <String[]>] [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>]
+ [-DebugOutputStream <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
-ConvertTo-Fqdn [-NetBIOS <String[]>] [-DirectoryEntryCache <PSReference>] -DomainsByNetbios <PSReference>
- -DomainsBySid <PSReference> -DomainsByFqdn <PSReference> [-ThisHostName <String>] [-ThisFqdn <String>]
- [-WhoAmI <String>] -LogBuffer <PSReference> [-CimCache <Hashtable>] [-DebugOutputStream <String>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ConvertTo-Fqdn [-NetBIOS <String[]>] [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>]
+ [-DebugOutputStream <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,17 +40,17 @@ Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN forma
 
 ## PARAMETERS
 
-### -CimCache
-Cache of CIM sessions and instances to reduce connections and queries
+### -Cache
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
-Type: System.Collections.Hashtable
+Type: System.Management.Automation.PSReference
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: Named
-Default value: ([hashtable]::Synchronized(@{}))
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -75,23 +70,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DirectoryEntryCache
-Dictionary to cache directory entries to avoid redundant lookups
-
-Defaults to a thread-safe dictionary with string keys and object values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -DistinguishedName
 distinguishedName of the domain
 
@@ -104,66 +82,6 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -DomainsByFqdn
-Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByNetbios
-Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsBySid
-Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

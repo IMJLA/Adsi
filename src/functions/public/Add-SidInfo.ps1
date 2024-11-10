@@ -1,4 +1,5 @@
 function Add-SidInfo {
+
     <#
         .SYNOPSIS
         Add some useful properties to a DirectoryEntry object for easier access
@@ -16,7 +17,9 @@ function Add-SidInfo {
         The output object's default format is not modified so with default formatting it appears identical to the original.
         Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
+
     param (
 
         # Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry.
@@ -24,42 +27,12 @@ function Add-SidInfo {
         [Parameter(ValueFromPipeline)]
         $InputObject,
 
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
+        [hashtable]$Log,
 
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        # In-process cache to reduce calls to other processes or to disk
+        [ref]$DomainsBySid
 
     )
-    
-    <#
-    begin {
-
-        $LogParams = @{
-            ThisHostname = $ThisHostname
-            Type         = $DebugOutputStream
-            Buffer       = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
-
-    }
-    #>
 
     process {
 
@@ -72,6 +45,7 @@ function Add-SidInfo {
             if ($null -eq $Object) {
                 continue
             } elseif ($Object.objectSid.Value) {
+
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
                 # The following exception occurred while retrieving the string representation for method "objectSid":
@@ -79,7 +53,9 @@ function Add-SidInfo {
                 if ( $Object.objectSid.Value.GetType().FullName -ne 'System.Management.Automation.PSMethod' ) {
                     [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid.Value, 0)
                 }
+
             } elseif ($Object.objectSid) {
+
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
                 # The following exception occurred while retrieving the string representation for method "objectSid":
@@ -87,31 +63,42 @@ function Add-SidInfo {
                 if ($Object.objectSid.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
                     [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid, 0)
                 }
+
             } elseif ($Object.Properties) {
+
                 if ($Object.Properties['objectSid'].Value) {
                     [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.Properties['objectSid'].Value, 0)
                 } elseif ($Object.Properties['objectSid']) {
                     [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]($Object.Properties['objectSid'] | ForEach-Object { $_ }), 0)
                 }
+
                 if ($Object.Properties['samaccountname']) {
                     $SamAccountName = $Object.Properties['samaccountname']
                 } else {
+
                     #DirectoryEntries from the WinNT provider for local accounts do not have a samaccountname attribute so we use name instead
                     $SamAccountName = $Object.Properties['name']
+
                 }
+
             } elseif ($Object.objectSid) {
                 [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid, 0)
             }
 
             if ($Object.Domain.Sid) {
+
                 #if ($Object.Domain.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
                 # This would only have come from Add-SidInfo in the first place
                 # This means it was added with Add-Member in Get-DirectoryEntry for the root of the computer's directory
+
                 if ($null -eq $SID) {
                     [string]$SID = $Object.Domain.Sid
                 }
+
                 $DomainObject = $Object.Domain
+
                 #}
+
             }
             if (-not $DomainObject) {
 
@@ -120,7 +107,8 @@ function Add-SidInfo {
 
                 # Lookup other information about the domain using its SID as the key
                 $DomainObject = $null
-                $TryGetValueResult = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
+                $null = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
+
             }
 
             #Write-LogMsg @LogParams -Text "$SamAccountName`t$SID"
@@ -130,6 +118,9 @@ function Add-SidInfo {
                 Domain         = $DomainObject
                 SamAccountName = $SamAccountName
             }
+
         }
+
     }
+
 }

@@ -14,10 +14,9 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ```
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
- [[-CimCache] <Hashtable>] [[-DirectoryEntryCache] <PSReference>] [-DomainsByFqdn] <PSReference>
- [-DomainsByNetbios] <PSReference> [-DomainsBySid] <PSReference> [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference> [[-DebugOutputStream] <String>]
- [[-SidTypeMap] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-CimCache] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
+ [[-DebugOutputStream] <String>] [[-SidTypeMap] <Hashtable>] [-Cache] <PSReference>
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -44,6 +43,21 @@ Path              : WinNT://ComputerName
 As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
 
 ## PARAMETERS
+
+### -Cache
+In-process cache to reduce calls to other processes or to disk
+
+```yaml
+Type: System.Management.Automation.PSReference
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 10
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -CimCache
 Cache of CIM sessions and instances to reduce connections and queries
@@ -85,25 +99,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 8
 Default value: Debug
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DirectoryEntryCache
-Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-
-Defaults to a thread-safe dictionary with string keys and object values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 5
-Default value: ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new())
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -120,67 +117,6 @@ Aliases:
 Required: False
 Position: 1
 Default value: (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByFqdn
-Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-This is not actually used but is here so the parameter can be included in a splat shared with other functions
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 6
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsByNetbios
-Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 7
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainsBySid
-Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 8
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 12
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -224,7 +160,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 14
+Position: 9
 Default value: (Get-SidTypeMap)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -241,7 +177,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 6
 Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -258,7 +194,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
+Position: 5
 Default value: (HOSTNAME.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -273,7 +209,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: 7
 Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False

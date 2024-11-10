@@ -1,4 +1,5 @@
 function ConvertTo-Fqdn {
+
     <#
         .SYNOPSIS
         Convert a domain distinguishedName name or NetBIOS name to its FQDN
@@ -15,8 +16,11 @@ function ConvertTo-Fqdn {
 
         Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
     #>
+
     [OutputType([System.String])]
+
     param (
+
         # distinguishedName of the domain
         [Parameter(
             ParameterSetName = 'DistinguishedName',
@@ -30,25 +34,6 @@ function ConvertTo-Fqdn {
             ValueFromPipeline
         )]
         [string[]]$NetBIOS,
-
-        <#
-        Dictionary to cache directory entries to avoid redundant lookups
-
-        Defaults to a thread-safe dictionary with string keys and object values
-        #>
-        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
-
-        # Hashtable with known domain DNS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
 
         <#
         Hostname of the computer running this function.
@@ -67,40 +52,31 @@ function ConvertTo-Fqdn {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
+
     begin {
 
-        $LogParams = @{
-            ThisHostname = $ThisHostname
-            Type         = $DebugOutputStream
-            Buffer       = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
-
-        $LoggingParams = @{
-            ThisHostname = $ThisHostname
-            LogBuffer    = $LogBuffer
-            WhoAmI       = $WhoAmI
-        }
+        #$Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
+        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+        $AddOrUpdateScriptblock = { param($key, $val) $val }
 
     }
 
     process {
 
         ForEach ($DN in $DistinguishedName) {
-            $DN -replace ',DC=', '.' -replace 'DC=', ''
+            $DN.Replace( ',DC=', '.' ).Replace( 'DC=', '' )
         }
+
+        $DomainsByNetbios = $Cache.Value['DomainByNetbios']
 
         ForEach ($ThisNetBios in $NetBIOS) {
 
@@ -112,9 +88,9 @@ function ConvertTo-Fqdn {
                 -not [string]::IsNullOrEmpty($ThisNetBios)
             ) {
 
-                #Write-LogMsg @LogParams -Text " # Domain NetBIOS cache miss for '$ThisNetBios'"
-                $DomainObject = Get-AdsiServer -Netbios $ThisNetBios -CimCache $CimCache -DirectoryEntryCache $DirectoryEntryCache -DomainsByFqdn $DomainsByFqdn -DomainsByNetbios $DomainsByNetbios -DomainsBySid $DomainsBySid -ThisFqdn $ThisFqdn @LoggingParams
-                $null = $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, { param($key, $val) $val } ) #doesn't get-adsiserver already update the cache?
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ThisNetBios'"
+                $DomainObject = Get-AdsiServer -Netbios $ThisNetBios -ThisFqdn $ThisFqdn @LogThis
+                $null = $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, $AddOrUpdateScriptblock ) #doesn't get-adsiserver already update the cache?
 
             }
 

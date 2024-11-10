@@ -48,26 +48,6 @@ function Get-DirectoryEntry {
         [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
 
         <#
-        Hashtable containing cached directory entries so they don't have to be retrieved from the directory again
-
-        Defaults to a thread-safe dictionary with string keys and object values
-        #>
-        [ref]$DirectoryEntryCache = ([System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()),
-
-        # Hashtable with known domain FQDNs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        # This is not actually used but is here so the parameter can be included in a splat shared with other functions
-        [Parameter(Mandatory)]
-        [ref]$DomainsByFqdn,
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
-
-        # Hashtable with known domain SIDs as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
-        [Parameter(Mandatory)]
-        [ref]$DomainsBySid,
-
-        <#
         Hostname of the computer running this function.
 
         Can be provided as a string to avoid calls to HOSTNAME.EXE
@@ -84,26 +64,22 @@ function Get-DirectoryEntry {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
         [string]$DebugOutputStream = 'Debug',
 
-        [hashtable]$SidTypeMap = (Get-SidTypeMap)
+        [hashtable]$SidTypeMap = (Get-SidTypeMap),
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
+    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $CacheResult = $null
+    $DirectoryEntryCache = $Cache.Value['DirectoryEntryCache']
     $TryGetValueResult = $DirectoryEntryCache.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
 
     if ($TryGetValueResult) {
@@ -114,29 +90,18 @@ function Get-DirectoryEntry {
     }
 
     Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
-
-    $LoggingParams = @{
-        ThisHostname = $ThisHostname
-        LogBuffer    = $LogBuffer
-        WhoAmI       = $WhoAmI
-    }
-
     $SplitDirectoryPath = Split-DirectoryPath -DirectoryPath $DirectoryPath
     $Server = $SplitDirectoryPath['Domain']
 
     $CacheSearch = @{
-        AccountName      = $SplitDirectoryPath['Account']
-        CimServer        = $CimCache[$Server]
-        DirectoryPath    = $DirectoryPath
-        Log              = $Log
-        Server           = $Server
-        DomainsByFqdn    = $DomainsByFqdn
-        DomainsByNetbios = $DomainsByNetbios
-        DomainsBySid     = $DomainsBySid
-        SidTypeMap       = $SidTypeMap
+        AccountName   = $SplitDirectoryPath['Account']
+        CimServer     = $Cache.Value['CimCache'][$Server]
+        DirectoryPath = $DirectoryPath
+        Server        = $Server
+        SidTypeMap    = $SidTypeMap
     }
 
-    $DirectoryEntry = Get-CachedDirectoryEntry @CacheSearch
+    $DirectoryEntry = Get-CachedDirectoryEntry @CacheSearch @LogThis
 
     if ($null -eq $DirectoryEntry) {
 
@@ -148,22 +113,22 @@ function Get-DirectoryEntry {
             Write-LogMsg @Log -Text " # The SearchRoot Path is empty, indicating '$ThisHostname' is not domain-joined. Defaulting to WinNT provider for localhost instead. # for '$DirectoryPath'"
 
             $CimParams = @{
-                CimCache          = $CimCache
-                ComputerName      = $ThisFqdn
-                DebugOutputStream = $DebugOutputStream
-                ThisFqdn          = $ThisFqdn
+                ComputerName = $ThisFqdn
+                ThisFqdn     = $ThisFqdn
             }
 
-            $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LoggingParams).Workgroup
+            $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LogThis).Workgroup
             $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
             Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
 
             if ($Credential) {
+
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new(
                     $DirectoryPath,
                     $($Credential.UserName),
                     $($Credential.GetNetworkCredential().password)
                 )
+
             } else {
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
             }
@@ -172,7 +137,7 @@ function Get-DirectoryEntry {
                 $DirectoryEntry.PSBase.Children |
                 Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
             )[0] |
-            Add-SidInfo -DomainsBySid $DomainsBySid @LoggingParams
+            Add-SidInfo @LogThis
 
             $DirectoryEntry |
             Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
@@ -214,7 +179,6 @@ function Get-DirectoryEntry {
             # The following exception occurred while retrieving member "RefreshCache": "The group name could not be found.`r`n"
             $UpdatedMsg = $_.Exception.Message.Trim().Replace('The following exception occurred while retrieving member "RefreshCache": ', '').Replace('"', '')
             Write-LogMsg @Log -Text " # '$DirectoryPath' could not be retrieved. Error: $UpdatedMsg"
-
             return
 
         }
