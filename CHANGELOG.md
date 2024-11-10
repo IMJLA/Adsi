@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.361] - 2024-11-10 - bugfix repetitive params
+
 ## [4.0.360] - 2024-11-10 - bugfix cache
 
 ## [4.0.359] - 2024-11-10 - bugfix cache

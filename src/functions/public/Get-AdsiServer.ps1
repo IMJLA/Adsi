@@ -70,12 +70,7 @@ function Get-AdsiServer {
 
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-
-        $CimParams = @{
-            DebugOutputStream = $DebugOutputStream
-            ThisFqdn          = $ThisFqdn
-        }
-
+        $CimParams = @{ ThisFqdn = $ThisFqdn }
         $DomainsByFqdn = $Cache.Value['DomainByFqdn']
         $DomainsByNetbios = $Cache.Value['DomainByNetbios']
         $DomainsBySid = $Cache.Value['DomainBySid']
