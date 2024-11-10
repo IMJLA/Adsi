@@ -80,6 +80,7 @@ function Get-WinNTGroupMember {
         Sort-Object -Unique
 
         $GetSearch = @{ PropertiesToLoad = $PropertiesToLoad }
+        $FindWinNT = @{ Log = $Log ; DomainsByNetbios = $Cache.Value['DomainByNetBios'] }
 
     }
 
@@ -103,7 +104,7 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $DirectoryEntry -SourceDomain $SourceDomain -Log $Log
+                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -SourceDomain $SourceDomain @FindWinNT
 
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
