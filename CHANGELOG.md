@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.365] - 2024-11-10 - bugfix need to populate var before using it...who knew
+
 ## [4.0.364] - 2024-11-10 - bugfix extra params not needed on resolve-idrefcached
 
 ## [4.0.363] - 2024-11-10 - bugfix the tiny efficiency improvement from prev commit...lol

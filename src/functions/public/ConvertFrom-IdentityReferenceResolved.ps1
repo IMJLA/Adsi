@@ -67,6 +67,8 @@ function ConvertFrom-IdentityReferenceResolved {
 
     )
 
+    $PrincipalById = $Cache.Value['PrincipalById']
+
     if ( -not $PrincipalById.Value.TryGetValue( $IdentityReference, [ref]$null ) ) {
 
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
@@ -74,7 +76,6 @@ function ConvertFrom-IdentityReferenceResolved {
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $AccessControlEntries = $null
         $AddOrUpdateScriptblock = { param($key, $val) $val }
-        $PrincipalById = $Cache.Value['PrincipalById']
         $AceGuidByID = $Cache.Value['AceGuidByID']
         $null = $AceGuidByID.Value.TryGetValue( $IdentityReference , [ref]$AccessControlEntries )
         $split = $IdentityReference.Split('\')
