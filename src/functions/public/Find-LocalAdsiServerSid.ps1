@@ -46,7 +46,7 @@ function Find-LocalAdsiServerSid {
         Query             = "SELECT SID FROM Win32_UserAccount WHERE LocalAccount = 'True' AND SID LIKE 'S-1-5-21-%-500'"
         KeyProperty       = 'SID'
     }
-
+    Pause
     Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CimParams
     $LocalAdminAccount = Get-CachedCimInstance @CimParams
 
