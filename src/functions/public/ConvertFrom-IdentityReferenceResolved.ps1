@@ -98,11 +98,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -eq $DirectoryEntry) {
 
-            $DirectorySplat = @{
-                DebugOutputStream = $DebugOutputStream
-                ThisFqdn          = $ThisFqdn
-            }
-
+            $DirectorySplat = @{ ThisFqdn = $ThisFqdn }
             $SearchSplat = @{}
 
             if (
