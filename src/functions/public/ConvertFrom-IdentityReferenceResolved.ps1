@@ -275,7 +275,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         }
 
-                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis
+                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -ExpandKeyMap @{ Cache = '$Cache' }
 
                         try {
                             $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
