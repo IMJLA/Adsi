@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.372] - 2024-11-10 - remove debug pause
+
 ## [4.0.371] - 2024-11-10 - bugfix add-sidinfo to use ref var for domainsbysid
 
 ## [4.0.370] - 2024-11-10 - bugfix removed param
