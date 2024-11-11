@@ -793,7 +793,7 @@ function Get-CachedDirectoryEntry {
         } else {
 
             $DomainCacheResult = $null
-            $TryGetValueResult = $Cache.Value['DomainsBySid'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
+            $TryGetValueResult = $Cache.Value['DomainBySid'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
             if ($TryGetValueResult) {
 
@@ -1045,7 +1045,7 @@ function Resolve-IdRefAppPkgAuth {
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
     $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
     $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
-    $null = $Cache.Value['DomainsBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -1138,7 +1138,7 @@ function Resolve-IdRefBuiltIn {
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
     $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
     $null = $Cache.Value['DomainByNetbios'].Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
-    $null = $Cache.Value['DomainsBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -1363,7 +1363,7 @@ function Resolve-IdRefSID {
     }
 
     #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'"
-    $DomainsBySid = $Cache.Value['DomainsBySid']
+    $DomainsBySid = $Cache.Value['DomainBySid']
     
     # Search the cache of domains, first by SID, then by NetBIOS name
     if (-not $DomainCacheResult) {
@@ -6293,6 +6293,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

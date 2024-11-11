@@ -124,7 +124,7 @@ function Get-CachedDirectoryEntry {
         } else {
 
             $DomainCacheResult = $null
-            $TryGetValueResult = $Cache.Value['DomainsBySid'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
+            $TryGetValueResult = $Cache.Value['DomainBySid'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
 
             if ($TryGetValueResult) {
 

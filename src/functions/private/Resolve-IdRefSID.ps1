@@ -89,7 +89,7 @@ function Resolve-IdRefSID {
     }
 
     #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'"
-    $DomainsBySid = $Cache.Value['DomainsBySid']
+    $DomainsBySid = $Cache.Value['DomainBySid']
     
     # Search the cache of domains, first by SID, then by NetBIOS name
     if (-not $DomainCacheResult) {

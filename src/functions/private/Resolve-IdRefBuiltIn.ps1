@@ -81,7 +81,7 @@ function Resolve-IdRefBuiltIn {
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
     $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, { param($key, $val) $val } )
     $null = $Cache.Value['DomainByNetbios'].Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, { param($key, $val) $val } )
-    $null = $Cache.Value['DomainsBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
+    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, { param($key, $val) $val } )
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
