@@ -325,7 +325,7 @@ function ConvertFrom-IdentityReferenceResolved {
                     )
 
                     Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $DirectorySplat, $LogThis
-
+                    if ($IdentityReference -eq 'JLA-LoftHTPC\Users') { Pause }
                     try {
                         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
                     } catch {

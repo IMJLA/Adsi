@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.368] - 2024-11-10 - debug pause
+
 ## [4.0.367] - 2024-11-10 - bugfix redundant param
 
 ## [4.0.366] - 2024-11-10 - bugfix missing param
