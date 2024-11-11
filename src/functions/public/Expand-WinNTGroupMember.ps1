@@ -51,6 +51,7 @@ function Expand-WinNTGroupMember {
 
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+        $DomainBySid = [ref]$Cache.Value['DomainBySid']
 
     }
 
@@ -68,7 +69,7 @@ function Expand-WinNTGroupMember {
 
                 Write-LogMsg @Log -Text " # Is an ADSI group # For '$($ThisEntry.Path)'"
                 $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn @LogThis
-                Add-SidInfo -InputObject $AdsiGroup.FullMembers @LogThis
+                Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
             } else {
 
@@ -79,14 +80,14 @@ function Expand-WinNTGroupMember {
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
 
                         Write-LogMsg @Log -Text " # Is a special group with no direct memberships # '$($ThisEntry.Path)'"
-                        Add-SidInfo -InputObject $ThisEntry @LogThis
+                        Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                     }
 
                 } else {
 
                     Write-LogMsg @Log -Text " # Is a user account # For '$($ThisEntry.Path)'"
-                    Add-SidInfo -InputObject $ThisEntry @LogThis
+                    Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                 }
 

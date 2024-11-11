@@ -133,7 +133,7 @@ function Get-DirectoryEntry {
                 $DirectoryEntry.PSBase.Children |
                 Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
             )[0] |
-            Add-SidInfo @LogThis
+            Add-SidInfo -DomainsBySid [ref]$Cache.Value['DomainBySid']
 
             $DirectoryEntry |
             Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force

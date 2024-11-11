@@ -13,8 +13,8 @@ Add some useful properties to a DirectoryEntry object for easier access
 ## SYNTAX
 
 ```
-Add-SidInfo [[-InputObject] <Object>] [[-Log] <Hashtable>] [[-DomainsBySid] <PSReference>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <PSReference>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -43,7 +43,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -62,21 +62,6 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Log
-{{ Fill Log Description }}
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

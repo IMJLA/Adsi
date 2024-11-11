@@ -60,7 +60,7 @@ function Resolve-IdRefBuiltIn {
     } else {
 
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -ThisFqdn $ThisFqdn @LogThis
-        $SIDString = (Add-SidInfo -InputObject $DirectoryEntry @LogThis).SidString
+        $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $Cache.Value['DomainBySid']).SidString
         $Caption = "$ServerNetBIOS\$Name"
 
     }

@@ -45,7 +45,7 @@ function Resolve-IdRefSearchDir {
 
     }
 
-    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry @LogThis
+    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $LogThis['Cache'].Value['DomainBySid']
     return $DirectoryEntryWithSidInfo.SidString
 
 }

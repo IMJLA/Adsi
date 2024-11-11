@@ -27,8 +27,6 @@ function Add-SidInfo {
         [Parameter(ValueFromPipeline)]
         $InputObject,
 
-        [hashtable]$Log,
-
         # In-process cache to reduce calls to other processes or to disk
         [ref]$DomainsBySid
 
@@ -110,8 +108,6 @@ function Add-SidInfo {
                 $null = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
 
             }
-
-            #Write-LogMsg @LogParams -Text "$SamAccountName`t$SID"
 
             Add-Member -InputObject $Object -PassThru -Force @{
                 SidString      = $SID

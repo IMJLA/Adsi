@@ -1117,7 +1117,7 @@ function Resolve-IdRefBuiltIn {
     } else {
 
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -ThisFqdn $ThisFqdn @LogThis
-        $SIDString = (Add-SidInfo -InputObject $DirectoryEntry @LogThis).SidString
+        $SIDString = (Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $Cache.Value['DomainBySid']).SidString
         $Caption = "$ServerNetBIOS\$Name"
 
     }
@@ -1217,7 +1217,7 @@ function Resolve-IdRefGetDirEntry {
 
     $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
     $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @GetDirectoryEntryParams @LogThis
-    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry @LogThis
+    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $LogThis['Cache'].Value['DomainBySid']
     return $DirectoryEntryWithSidInfo.SidString
 
 }
@@ -1268,7 +1268,7 @@ function Resolve-IdRefSearchDir {
 
     }
 
-    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry @LogThis
+    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $LogThis['Cache'].Value['DomainBySid']
     return $DirectoryEntryWithSidInfo.SidString
 
 }
@@ -1772,8 +1772,6 @@ function Add-SidInfo {
         [Parameter(ValueFromPipeline)]
         $InputObject,
 
-        [hashtable]$Log,
-
         # In-process cache to reduce calls to other processes or to disk
         [ref]$DomainsBySid
 
@@ -1855,8 +1853,6 @@ function Add-SidInfo {
                 $null = $DomainsBySid.Value.TryGetValue($DomainSid, [ref]$DomainObject)
 
             }
-
-            #Write-LogMsg @LogParams -Text "$SamAccountName`t$SID"
 
             Add-Member -InputObject $Object -PassThru -Force @{
                 SidString      = $SID
@@ -3302,6 +3298,7 @@ function Expand-WinNTGroupMember {
 
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+        $DomainBySid = [ref]$Cache.Value['DomainBySid']
 
     }
 
@@ -3319,7 +3316,7 @@ function Expand-WinNTGroupMember {
 
                 Write-LogMsg @Log -Text " # Is an ADSI group # For '$($ThisEntry.Path)'"
                 $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn @LogThis
-                Add-SidInfo -InputObject $AdsiGroup.FullMembers @LogThis
+                Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
             } else {
 
@@ -3330,14 +3327,14 @@ function Expand-WinNTGroupMember {
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
 
                         Write-LogMsg @Log -Text " # Is a special group with no direct memberships # '$($ThisEntry.Path)'"
-                        Add-SidInfo -InputObject $ThisEntry @LogThis
+                        Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                     }
 
                 } else {
 
                     Write-LogMsg @Log -Text " # Is a user account # For '$($ThisEntry.Path)'"
-                    Add-SidInfo -InputObject $ThisEntry @LogThis
+                    Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                 }
 
@@ -4388,7 +4385,7 @@ function Get-DirectoryEntry {
                 $DirectoryEntry.PSBase.Children |
                 Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
             )[0] |
-            Add-SidInfo @LogThis
+            Add-SidInfo -DomainsBySid [ref]$Cache.Value['DomainBySid']
 
             $DirectoryEntry |
             Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
@@ -6296,6 +6293,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

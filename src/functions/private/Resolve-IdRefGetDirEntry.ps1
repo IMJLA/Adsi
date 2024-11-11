@@ -19,7 +19,7 @@ function Resolve-IdRefGetDirEntry {
 
     $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
     $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @GetDirectoryEntryParams @LogThis
-    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry @LogThis
+    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $LogThis['Cache'].Value['DomainBySid']
     return $DirectoryEntryWithSidInfo.SidString
 
 }
