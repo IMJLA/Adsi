@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.377] - 2024-11-10 - minor efficiency improvement
+
 ## [4.0.376] - 2024-11-10 - bugfix cache name
 
 ## [4.0.375] - 2024-11-10 - debug log cleanup
