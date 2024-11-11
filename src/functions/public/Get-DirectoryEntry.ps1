@@ -92,7 +92,6 @@ function Get-DirectoryEntry {
 
     $CacheSearch = @{
         AccountName   = $SplitDirectoryPath['Account']
-        CimServer     = $Cache.Value['CimCache'][$Server]
         DirectoryPath = $DirectoryPath
         Server        = $Server
         SidTypeMap    = $SidTypeMap
