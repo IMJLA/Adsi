@@ -4299,9 +4299,6 @@ function Get-DirectoryEntry {
         # Properties of the target object to retrieve
         [string[]]$PropertiesToLoad,
 
-        # Cache of CIM sessions and instances to reduce connections and queries
-        [hashtable]$CimCache = ([hashtable]::Synchronized(@{})),
-
         <#
         Hostname of the computer running this function.
 
@@ -4334,17 +4331,17 @@ function Get-DirectoryEntry {
     $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $CacheResult = $null
-    $DirectoryEntryCache = $Cache.Value['DirectoryEntryCache']
-    $TryGetValueResult = $DirectoryEntryCache.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
+    $DirectoryEntryByPath = $Cache.Value['DirectoryEntryByPath']
+    $TryGetValueResult = $DirectoryEntryByPath.Value.TryGetValue($DirectoryPath, [ref]$CacheResult)
 
     if ($TryGetValueResult) {
 
-        Write-LogMsg @Log -Text " # DirectoryEntryCache hit # for '$DirectoryPath'"
+        #Write-LogMsg @Log -Text " # DirectoryEntryByPath hit # for '$DirectoryPath'"
         return $CacheResult
 
     }
 
-    Write-LogMsg @Log -Text " # DirectoryEntryCache miss # for '$DirectoryPath'"
+    #Write-LogMsg @Log -Text " # DirectoryEntryByPath miss # for '$DirectoryPath'"
     $SplitDirectoryPath = Split-DirectoryPath -DirectoryPath $DirectoryPath
     $Server = $SplitDirectoryPath['Domain']
 
@@ -4440,7 +4437,7 @@ function Get-DirectoryEntry {
 
     }
 
-    $null = $DirectoryEntryCache.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, { param($key, $val) $val } )
+    $null = $DirectoryEntryByPath.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, { param($key, $val) $val } )
     return $DirectoryEntry
 
 }
@@ -6300,6 +6297,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
