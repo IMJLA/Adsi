@@ -75,15 +75,6 @@ function Resolve-IdentityReference {
     $splat3 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
     $splat5 = @{ ThisFqdn = $ThisFqdn }
     $splat8 = @{ IdentityReference = $IdentityReference }
-    $LastSlashIndex = $IdentityReference.LastIndexOf('\')
-
-    if ($LastSlashIndex -eq -1) {
-        $Name = $IdentityReference
-    } else {
-        $StartIndex = $LastSlashIndex + 1
-        $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
-        $Domain = $IdentityReference.Substring( 0 , $StartIndex - 1 )
-    }
 
     # Many Well-Known SIDs cannot be translated with the Translate method.
     # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server
@@ -103,6 +94,17 @@ function Resolve-IdentityReference {
 
     # If no match was found in any cache, the path forward depends on the IdentityReference.
     # First resolve accounts from well-known SID authorities.
+
+    $LastSlashIndex = $IdentityReference.LastIndexOf('\')
+
+    if ($LastSlashIndex -eq -1) {
+        $Name = $IdentityReference
+    } else {
+        $StartIndex = $LastSlashIndex + 1
+        $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
+        $Domain = $IdentityReference.Substring( 0 , $StartIndex - 1 )
+    }
+
     $ScriptBlocks = @{
 
         'NT SERVICE'                    = {
@@ -140,40 +142,6 @@ function Resolve-IdentityReference {
 
     }
 
-    <#
-    switch -Wildcard ($IdentityReference) {
-
-        'S-1-*' {
-
-            # IdentityReference is a Revision 1 SID
-            $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns @splat3 @splat5 @splat8 @LogThis
-            return $Resolved
-
-        }
-
-        'NT SERVICE\*' {
-
-            $Resolved = Resolve-IdRefSvc -Name $Name @splat3 @splat5 @splat8 @LogThis
-            return $Resolved
-
-        }
-
-        'APPLICATION PACKAGE AUTHORITY\*' {
-
-            $Resolved = Resolve-IdRefAppPkgAuth -Name $Name @splat1 @splat3 @splat5 @splat8 @LogThis
-            return $Resolved
-
-        }
-
-        'BUILTIN\*' {
-
-            $Resolved = Resolve-IdRefBuiltIn -Name $Name @splat3 @splat5 @splat8 @LogThis
-            return $Resolved
-
-        }
-
-    }
-#>
     # If no match was found with any of the known patterns for SIDs or well-known SID authorities, the IdentityReference is an NTAccount.
     # Translate the NTAccount to a SID.
 

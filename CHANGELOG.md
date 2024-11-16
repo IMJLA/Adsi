@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.379] - 2024-11-16 - avoid string parsing in case of cache matches without it
+
 ## [4.0.378] - 2024-11-16 - efficiency improvement over switch statement
 
 ## [4.0.377] - 2024-11-10 - minor efficiency improvement
