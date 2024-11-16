@@ -6011,14 +6011,10 @@ function Resolve-IdentityReference {
     $splat5 = @{ ThisFqdn = $ThisFqdn }
     $splat8 = @{ IdentityReference = $IdentityReference }
 
-    # Many Well-Known SIDs cannot be translated with the Translate method.
-    # Instead Get-AdsiServer used CIM to find instances of the Win32_Account class on the server
-    # and update the Win32_AccountBySID and Win32_AccountByCaption caches.
-    # Get-KnownSidHashTable and Get-KnownSID are hard-coded with additional well-known SIDs.
-    # Search these caches now.
+    # Search for the IdentityReference in the cache of Win32_Account CIM instances and well-known SIDs on the ADSI server. Many cannot be translated with the Translate method.
     $CacheResult = Resolve-IdRefCached -IdentityReference $IdentityReference @splat3
 
-    if ($CacheResult) {
+    if ($null -ne $CacheResult) {
 
         #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Cache hit"
         return $CacheResult
@@ -6027,52 +6023,53 @@ function Resolve-IdentityReference {
 
     #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Cache miss"
 
-    # If no match was found in any cache, the path forward depends on the IdentityReference.
-    # First resolve accounts from well-known SID authorities.
+    <#
+    If no match was found in any cache, the resolution method depends on the IdentityReference.
+    First, determine whether the IdentityReference is an NTAccount (DOMAIN\Name vs Name).
+    #>
 
     $LastSlashIndex = $IdentityReference.LastIndexOf('\')
 
     if ($LastSlashIndex -eq -1) {
+
         $Name = $IdentityReference
         $Domain = ''
+
     } else {
+
         $StartIndex = $LastSlashIndex + 1
         $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
         $Domain = $IdentityReference.Substring( 0 , $StartIndex - 1 )
+
     }
 
+    # Determine whether the IdentityReference's domain is a well-known SID authority.
     $ScriptBlocks = @{
+        'NT SERVICE'                    = { Resolve-IdRefSvc -Name $Name @splat3 @splat5 @splat8 @LogThis }
+        'APPLICATION PACKAGE AUTHORITY' = { Resolve-IdRefAppPkgAuth -Name $Name @splat1 @splat3 @splat5 @splat8 @LogThis }
+        'BUILTIN'                       = { Resolve-IdRefBuiltIn -Name $Name @splat3 @splat5 @splat8 @LogThis }
+    }
 
-        'NT SERVICE'                    = {
+    $ScriptToRun = $ScriptBlocks[$Domain]
 
-            $Resolved = Resolve-IdRefSvc -Name $Name @splat3 @splat5 @splat8 @LogThis
-            return $Resolved
+    # If the IdentityReference's domain is a well-known SID authority, resolve the IdentityReference accordingly.
+    if ($null -ne $ScriptToRun) {
 
-        }
+        $KnownAuthorityResult = & $ScriptToRun
 
-        'APPLICATION PACKAGE AUTHORITY' = {
+        if ($null -ne $KnownAuthorityResult) {
 
-            $Resolved = Resolve-IdRefAppPkgAuth -Name $Name @splat1 @splat3 @splat5 @splat8 @LogThis
-            return $Resolved
-
-        }
-
-        'BUILTIN'                       = {
-
-            $Resolved = Resolve-IdRefBuiltIn -Name $Name @splat3 @splat5 @splat8 @LogThis
-            return $Resolved
+            #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Known SID authority used for successful IdentityReference resolution"
+            return $KnownAuthorityResult
 
         }
 
     }
 
-    # If the domain was not a well-known SID authority, determine whether the identity reference is a SID.
-    $ScriptToRun = $ScriptBlocks[$Domain]
-    if ($ScriptToRun) { & $ScriptToRun }
-
+    # If the IdentityReference's domain is not a well-known SID authority, determine whether the IdentityReference is a Revision 1 SID.
     if ($Name.Substring(0, 4) -eq 'S-1-') {
 
-        # IdentityReference is a Revision 1 SID
+        # If the IdentityReference is a Revision 1 SID, translate the SID to an NTAccount.
         $Resolved = Resolve-IdRefSID -AdsiServersByDns $AdsiServersByDns @splat3 @splat5 @splat8 @LogThis
         return $Resolved
 
@@ -6080,10 +6077,9 @@ function Resolve-IdentityReference {
 
     # If no match was found with any of the known patterns for SIDs or well-known SID authorities, the IdentityReference is an NTAccount.
     # Translate the NTAccount to a SID.
+    if ($null -ne $ServerNetBIOS) {
 
-    if ($ServerNetBIOS) {
-
-        # Start by determining the domain DN and DNS name
+        # Start by determining the domain DN and DNS name.
         $CacheResult = $null
         $TryGetValueResult = $Cache.Value['DomainByNetbios'].Value.TryGetValue( $ServerNetBIOS, [ref]$CacheResult )
 
@@ -6099,25 +6095,25 @@ function Resolve-IdentityReference {
         $DomainDn = $CacheResult.DistinguishedName
         $DomainDns = $CacheResult.Dns
 
-        # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
+        # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account).
         $SIDString = ConvertTo-SidString -Name $Name -ServerNetBIOS $ServerNetBIOS -DebugOutputStream $DebugOutputStream -Log $Log
 
         if (-not $SIDString) {
 
-            # Try to resolve the account against the domain indicated in its NT Account Name
-            # Add this domain to our list of known domains
+            # Try to resolve the account against the domain indicated in its NT Account Name.
+            # Add this domain to our list of known domains.
             $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogThis $LogThis -Name $Name @splat5 @splat8
 
         }
 
         if (-not $SIDString) {
 
-            # Try to find the DirectoryEntry object directly on the server
+            # Try to find the DirectoryEntry object directly on the server.
             $SIDString = Resolve-IdRefGetDirEntry -Name $Name -splat5 $splat5 -Log $Log @splat3
 
         }
 
-        # This covers unresolved SIDs for deleted accounts, broken domain trusts, etc.
+        # The IdentityReference is an unresolved SID (deleted account, account in a domain with a broken domain trust, etc.)
         if ( '' -eq "$Name" ) {
 
             $Name = $IdentityReference
@@ -6130,7 +6126,7 @@ function Resolve-IdentityReference {
         return [PSCustomObject]@{
             IdentityReference        = $IdentityReference
             SIDString                = $SIDString
-            IdentityReferenceNetBios = "$ServerNetBIOS\$Name" #-replace "^$ThisHostname\\", "$ThisHostname\" # to correct capitalization in a PS5-friendly way
+            IdentityReferenceNetBios = "$ServerNetBIOS\$Name"
             IdentityReferenceDns     = "$DomainDns\$Name"
         }
 
@@ -6310,6 +6306,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
