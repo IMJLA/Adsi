@@ -99,10 +99,11 @@ function Resolve-IdentityReference {
 
     if ($LastSlashIndex -eq -1) {
         $Name = $IdentityReference
+        $Domain = ''
     } else {
         $StartIndex = $LastSlashIndex + 1
         $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
-        [string]$Domain = $IdentityReference.Substring( 0 , $StartIndex - 1 )
+        $Domain = $IdentityReference.Substring( 0 , $StartIndex - 1 )
     }
 
     $ScriptBlocks = @{

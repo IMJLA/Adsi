@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.381] - 2024-11-16 - bugfix prevent null values for future hashtable lookup
+
 ## [4.0.380] - 2024-11-16 - bugfix prevent null values for future hashtable lookup
 
 ## [4.0.379] - 2024-11-16 - avoid string parsing in case of cache matches without it
