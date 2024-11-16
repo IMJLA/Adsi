@@ -102,7 +102,7 @@ function Resolve-IdentityReference {
     } else {
         $StartIndex = $LastSlashIndex + 1
         $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
-        $Domain = $IdentityReference.Substring( 0 , $StartIndex - 1 )
+        [string]$Domain = $IdentityReference.Substring( 0 , $StartIndex - 1 )
     }
 
     $ScriptBlocks = @{
