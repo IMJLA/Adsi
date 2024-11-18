@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.384] - 2024-11-17 - fix debug output
+
 ## [4.0.383] - 2024-11-17 - improve error handling
 
 ## [4.0.382] - 2024-11-16 - comment cleanup
