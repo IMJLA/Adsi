@@ -505,6 +505,11 @@ function Find-AdsiProvider {
 
     ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
 
+    if ($Cache.Value['CimCache'].Value[$AdsiServer].Value['CimFailure']) {
+        Write-LogMsg @Log -Text " # could not find ADSI provider # for '$AdsiServer'"
+        return
+    }
+
     if (Get-CachedCimInstance @CommandParameters) {
         return 'LDAP'
     } else {
@@ -3824,6 +3829,13 @@ function Get-AdsiServer {
             #Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' # Domain FQDN cache miss for '$DomainFqdn'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn -ThisFqdn $ThisFqdn @LogThis
 
+            if (-not $AdsiProvider) {
+                $Log['Type'] = 'Warning'
+                Write-LogMsg @Log -Text "CIM connection failure for '$AdsiServer'.  Skipping this server."
+                $Log['Type'] = $DebugOutputStream
+                continue
+            }
+
             Write-LogMsg @Log -Text "ConvertTo-DistinguishedName -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' # for '$DomainFqdn'"
             $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -ThisFqdn $ThisFqdn @LogThis
 
@@ -6306,6 +6318,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
