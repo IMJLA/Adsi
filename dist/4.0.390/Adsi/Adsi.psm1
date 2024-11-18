@@ -1334,7 +1334,21 @@ function Resolve-IdRefSID {
 
     $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+    $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $IdentityReference -DomainNetBIOS $ServerNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
     $KnownSid = Get-KnownSid -SID $IdentityReference
+
+    if ($CachedWellKnownSID) {
+
+        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Well-known SID match"
+        $NTAccount = $CachedWellKnownSID.IdentityReferenceNetBios
+        $DomainNetBIOS = $ServerNetBIOS
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn @LogThis
+        $done = $true
+
+    } else {
+        $KnownSid = Get-KnownSid -SID $IdentityReference
+    }
 
     if ($KnownSid) {
 
@@ -1343,8 +1357,11 @@ function Resolve-IdRefSID {
         $DomainNetBIOS = $ServerNetBIOS
         $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
         $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn @LogThis
+        $done = $true
 
-    } else {
+    }
+
+    if (-not $done) {
 
         #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # No match with known SID patterns"
         # The SID of the domain is everything up to (but not including) the last hyphen
@@ -1374,7 +1391,7 @@ function Resolve-IdRefSID {
 
     #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'"
     $DomainsBySid = $Cache.Value['DomainBySid']
-    
+
     # Search the cache of domains, first by SID, then by NetBIOS name
     if (-not $DomainCacheResult) {
         $DomainCacheResult = $null
@@ -6330,6 +6347,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
