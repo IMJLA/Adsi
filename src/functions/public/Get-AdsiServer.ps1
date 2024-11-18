@@ -366,6 +366,13 @@ function Get-AdsiServer {
             Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName' # for '$DomainNetbios'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
 
+            if ($null -eq $AdsiProvider) {
+                $Log['Type'] = 'Warning'
+                Write-LogMsg @Log -Text " # CIM connection failure for '$DomainDnsName'"
+                $Log['Type'] = $DebugOutputStream
+                continue
+            }
+
             Write-LogMsg @Log -Text "ConvertTo-DistinguishedName -Domain '$DomainNetBIOS' # for '$DomainNetbios'"
             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
 
