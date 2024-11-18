@@ -98,7 +98,7 @@ function Get-AdsiServer {
 
             if ($null -eq $AdsiProvider) {
                 $Log['Type'] = 'Warning'
-                Write-LogMsg @Log -Text " # CIM connection failure for '$DomainFqdn'"
+                Write-LogMsg @Log -Text " # Could not find the ADSI provider for '$DomainFqdn'"
                 $Log['Type'] = $DebugOutputStream
                 continue
             }
@@ -368,7 +368,7 @@ function Get-AdsiServer {
 
             if ($null -eq $AdsiProvider) {
                 $Log['Type'] = 'Warning'
-                Write-LogMsg @Log -Text " # CIM connection failure for '$DomainDnsName'"
+                Write-LogMsg @Log -Text " # Could not find the ADSI provider for '$DomainDnsName'"
                 $Log['Type'] = $DebugOutputStream
                 continue
             }
@@ -423,6 +423,8 @@ function Get-AdsiServer {
             $OutputObject
 
         }
+        
+        Pause
 
     }
 

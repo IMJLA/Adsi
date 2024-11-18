@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.389] - 2024-11-17 - add debug pause
+
 ## [4.0.388] - 2024-11-17 - add error handling
 
 ## [4.0.387] - 2024-11-17 - bugfix error handling
