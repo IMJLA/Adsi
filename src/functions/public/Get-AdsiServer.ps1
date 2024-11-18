@@ -98,7 +98,7 @@ function Get-AdsiServer {
 
             if ($null -eq $AdsiProvider) {
                 $Log['Type'] = 'Warning'
-                Write-LogMsg @Log -Text "CIM connection failure for '$AdsiServer'.  Skipping this server."
+                Write-LogMsg @Log -Text " # CIM connection failure for '$DomainFqdn'"
                 $Log['Type'] = $DebugOutputStream
                 continue
             }

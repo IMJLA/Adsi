@@ -75,13 +75,16 @@ function Find-AdsiProvider {
     }
 
     ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
-    Pause
-    if ($Cache.Value['CimCache'].Value[$AdsiServer].Value['CimFailure']) {
-        Write-LogMsg @Log -Text " # could not find ADSI provider # for '$AdsiServer'"
+
+    $CimInstance = Get-CachedCimInstance @CommandParameters
+
+    if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {
+        $Log['Type'] = 'Warning'
+        Write-LogMsg @Log -Text " # CIM connection failure # for '$AdsiServer'"
         return
     }
 
-    if (Get-CachedCimInstance @CommandParameters) {
+    if ($CimInstance) {
         return 'LDAP'
     } else {
         return 'WinNT'

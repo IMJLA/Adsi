@@ -504,13 +504,16 @@ function Find-AdsiProvider {
     }
 
     ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
-    Pause
-    if ($Cache.Value['CimCache'].Value[$AdsiServer].Value['CimFailure']) {
-        Write-LogMsg @Log -Text " # could not find ADSI provider # for '$AdsiServer'"
+
+    $CimInstance = Get-CachedCimInstance @CommandParameters
+
+    if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {
+        $Log['Type'] = 'Warning'
+        Write-LogMsg @Log -Text " # CIM connection failure # for '$AdsiServer'"
         return
     }
 
-    if (Get-CachedCimInstance @CommandParameters) {
+    if ($CimInstance) {
         return 'LDAP'
     } else {
         return 'WinNT'
@@ -3831,7 +3834,7 @@ function Get-AdsiServer {
 
             if ($null -eq $AdsiProvider) {
                 $Log['Type'] = 'Warning'
-                Write-LogMsg @Log -Text "CIM connection failure for '$AdsiServer'.  Skipping this server."
+                Write-LogMsg @Log -Text " # CIM connection failure for '$DomainFqdn'"
                 $Log['Type'] = $DebugOutputStream
                 continue
             }
@@ -6318,6 +6321,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
