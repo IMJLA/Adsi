@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.391] - 2024-11-18 - don't check for known sid unless needed
+
 ## [4.0.390] - 2024-11-17 - improve sid cache search
 
 ## [4.0.389] - 2024-11-17 - add debug pause
