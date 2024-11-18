@@ -96,7 +96,7 @@ function Get-AdsiServer {
             Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' -ThisFqdn '$ThisFqdn' # Domain FQDN cache miss for '$DomainFqdn'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn -ThisFqdn $ThisFqdn @LogThis
 
-            if (-not $AdsiProvider) {
+            if ($null -eq $AdsiProvider) {
                 $Log['Type'] = 'Warning'
                 Write-LogMsg @Log -Text "CIM connection failure for '$AdsiServer'.  Skipping this server."
                 $Log['Type'] = $DebugOutputStream
