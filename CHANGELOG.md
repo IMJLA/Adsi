@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.395] - 2024-11-18 - debug pause
+
 ## [4.0.394] - 2024-11-18 - bugfix splat name
 
 ## [4.0.393] - 2024-11-18 - revert to adsi when cim unavailable for adsi provider detection
