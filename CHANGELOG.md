@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.400] - 2024-11-18 - bugfix splats
+
 ## [4.0.399] - 2024-11-18 - bugfix splats
 
 ## [4.0.398] - 2024-11-18 - remove duplicative debugoutputstream param
