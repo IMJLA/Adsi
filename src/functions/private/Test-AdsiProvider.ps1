@@ -53,8 +53,6 @@ function Test-AdsiProvider {
         WhoAmI       = $WhoAmI
     }
 
-    Pause
-
     $AdsiPath = "LDAP://$AdsiServer"
     Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath') # for '$AdsiServer'"
 
