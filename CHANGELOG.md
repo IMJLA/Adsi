@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.402] - 2024-11-18 - debug cleanup
+
 ## [4.0.401] - 2024-11-18 - splat fix and error handling
 
 ## [4.0.400] - 2024-11-18 - bugfix splats

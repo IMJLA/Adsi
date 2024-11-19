@@ -93,7 +93,7 @@ function Get-CurrentDomain {
         try {
             $null = $CurrentDomain.RefreshCache('objectSid')
         } catch {
-            Write-LogMsg @Log -Text "Error using ADSI to find the current domain: $($_.Exception.Message) # for '$ComputerName'"
+            Write-LogMsg @Log -Text " # Error using ADSI to find the current domain: $($_.Exception.Message) # for '$ComputerName'"
             return
         }
 
