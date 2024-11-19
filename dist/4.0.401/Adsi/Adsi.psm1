@@ -4295,6 +4295,13 @@ function Get-CurrentDomain {
 
     )
 
+    $Log = @{
+        ThisHostname = $ThisHostname
+        Type         = $DebugOutputStream
+        Buffer       = $Cache.Value['LogBuffer']
+        WhoAmI       = $WhoAmI
+    }
+
     $CimParams = @{
         Cache             = $Cache
         ComputerName      = $ComputerName
@@ -4326,11 +4333,17 @@ function Get-CurrentDomain {
 
         # Use ADSI to find the domain
 
+        Write-LogMsg @Log -Text "[adsi]::new().RefreshCache('objectSid')"
         $CurrentDomain = [adsi]::new()
-        $null = $CurrentDomain.RefreshCache('objectSid')
+        try {
+            $null = $CurrentDomain.RefreshCache('objectSid')
+        } catch {
+            Write-LogMsg @Log -Text "Error using ADSI to find the current domain: $($_.Exception.Message) # for '$ComputerName'"
+            return
+        }
 
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
-        Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
+        Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)# for '$ComputerName'"
         $OutputProperties = @{
             SIDString = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
         }
@@ -6408,6 +6421,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

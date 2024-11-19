@@ -50,6 +50,13 @@ function Get-CurrentDomain {
 
     )
 
+    $Log = @{
+        ThisHostname = $ThisHostname
+        Type         = $DebugOutputStream
+        Buffer       = $Cache.Value['LogBuffer']
+        WhoAmI       = $WhoAmI
+    }
+
     $CimParams = @{
         Cache             = $Cache
         ComputerName      = $ComputerName
@@ -81,11 +88,17 @@ function Get-CurrentDomain {
 
         # Use ADSI to find the domain
 
+        Write-LogMsg @Log -Text "[adsi]::new().RefreshCache('objectSid')"
         $CurrentDomain = [adsi]::new()
-        $null = $CurrentDomain.RefreshCache('objectSid')
+        try {
+            $null = $CurrentDomain.RefreshCache('objectSid')
+        } catch {
+            Write-LogMsg @Log -Text "Error using ADSI to find the current domain: $($_.Exception.Message) # for '$ComputerName'"
+            return
+        }
 
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
-        Write-LogMsg @LogParams -Text '[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)'
+        Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)# for '$ComputerName'"
         $OutputProperties = @{
             SIDString = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
         }
