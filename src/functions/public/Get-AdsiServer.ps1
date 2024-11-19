@@ -354,8 +354,10 @@ function Get-AdsiServer {
             if ($TryGetValueResult) {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
-                if ($OutputObject.AdsiProvider) { continue }
-                continue
+                if ($OutputObject.AdsiProvider) {
+                    $OutputObject
+                    continue
+                }
 
             }
 
