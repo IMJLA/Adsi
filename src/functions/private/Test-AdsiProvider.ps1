@@ -62,7 +62,7 @@ function Test-AdsiProvider {
     } catch { Write-LogMsg @Log -Text " # No response to LDAP # for '$AdsiServer'" }
 
     $AdsiPath = "WinNT://$AdsiServer"
-    Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath') # for '$AdsiServer'"
+    Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath') # for '$AdsiServer'"
 
     try {
         $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
