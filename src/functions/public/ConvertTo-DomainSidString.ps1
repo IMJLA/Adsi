@@ -60,12 +60,7 @@ function ConvertTo-DomainSidString {
         $AdsiProvider -eq 'LDAP'
     ) {
 
-        $GetDirectoryEntryParams = @{
-            DebugOutputStream = $DebugOutputStream
-            ThisFqdn          = $ThisFqdn
-        }
-
-        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" @GetDirectoryEntryParams @LogThis
+        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -ThisFqdn $ThisFqdn @LogThis
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
