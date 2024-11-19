@@ -423,8 +423,6 @@ function Get-AdsiServer {
             $OutputObject
 
         }
-        
-        Pause
 
     }
 
