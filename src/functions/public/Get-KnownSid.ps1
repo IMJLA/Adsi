@@ -44,6 +44,7 @@ function Get-KnownSid {
         }
     }
 
+    if ($SID.Length -lt 9) { Pause } # This should not happen; any such SIDs should have ben found first by Find-CachedWellKnownSid. Pausing for now for debug. ToDo: make this more robust based on dynamic string length detection after it stops highlighting my issues with Find-CachedWellKnownSid.
     $TheNine = $SID.Substring(0, 9)
     $Match = $StartingPatterns[$TheNine]
 
@@ -92,7 +93,7 @@ function Get-KnownSid {
         'S-1-5-*-513' {
             return [PSCustomObject]@{
                 'Name'            = 'Domain Users'
-                'Description'     = "A global group that includes all users in a domain. When you create a new User object in Active Directory, the user is automatically added to this group."
+                'Description'     = 'A global group that includes all users in a domain. When you create a new User object in Active Directory, the user is automatically added to this group.'
                 'NTAccount'       = 'BUILTIN\Domain Users'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -110,7 +111,7 @@ function Get-KnownSid {
         'S-1-5-*-515' {
             return [PSCustomObject]@{
                 'Name'            = 'Domain Computers'
-                'Description'     = "A global group that includes all computers that have joined the domain, excluding domain controllers."
+                'Description'     = 'A global group that includes all computers that have joined the domain, excluding domain controllers.'
                 'NTAccount'       = 'BUILTIN\Domain Computers'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -119,7 +120,7 @@ function Get-KnownSid {
         'S-1-5-*-516' {
             return [PSCustomObject]@{
                 'Name'            = 'Domain Controllers'
-                'Description'     = "A global group that includes all domain controllers in the domain. New domain controllers are added to this group automatically."
+                'Description'     = 'A global group that includes all domain controllers in the domain. New domain controllers are added to this group automatically.'
                 'NTAccount'       = 'BUILTIN\Domain Controllers'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -128,7 +129,7 @@ function Get-KnownSid {
         'S-1-5-*-517' {
             return [PSCustomObject]@{
                 'Name'            = 'Cert Publishers'
-                'Description'     = "A global group that includes all computers that host an enterprise certification authority. Cert Publishers are authorized to publish certificates for User objects in Active Directory."
+                'Description'     = 'A global group that includes all computers that host an enterprise certification authority. Cert Publishers are authorized to publish certificates for User objects in Active Directory.'
                 'NTAccount'       = 'BUILTIN\Cert Publishers'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -164,7 +165,7 @@ function Get-KnownSid {
         'S-1-5-*-521' {
             return [PSCustomObject]@{
                 'Name'            = 'Read-only Domain Controllers'
-                'Description'     = "A global group that includes all read-only domain controllers."
+                'Description'     = 'A global group that includes all read-only domain controllers.'
                 'NTAccount'       = 'BUILTIN\Read-only Domain Controllers'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -173,7 +174,7 @@ function Get-KnownSid {
         'S-1-5-*-522' {
             return [PSCustomObject]@{
                 'Name'            = 'Clonable Controllers'
-                'Description'     = "A global group that includes all domain controllers in the domain that can be cloned."
+                'Description'     = 'A global group that includes all domain controllers in the domain that can be cloned.'
                 'NTAccount'       = 'BUILTIN\Clonable Controllers'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -182,7 +183,7 @@ function Get-KnownSid {
         'S-1-5-*-525' {
             return [PSCustomObject]@{
                 'Name'            = 'Protected Users'
-                'Description'     = "A global group that is afforded additional protections against authentication security threats."
+                'Description'     = 'A global group that is afforded additional protections against authentication security threats.'
                 'NTAccount'       = 'BUILTIN\Protected Users'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -191,7 +192,7 @@ function Get-KnownSid {
         'S-1-5-*-526' {
             return [PSCustomObject]@{
                 'Name'            = 'Key Admins'
-                'Description'     = "This group is intended for use in scenarios where trusted external authorities are responsible for modifying this attribute. Only trusted administrators should be made a member of this group."
+                'Description'     = 'This group is intended for use in scenarios where trusted external authorities are responsible for modifying this attribute. Only trusted administrators should be made a member of this group.'
                 'NTAccount'       = 'BUILTIN\Key Admins'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -200,7 +201,7 @@ function Get-KnownSid {
         'S-1-5-*-527' {
             return [PSCustomObject]@{
                 'Name'            = 'Enterprise Key Admins'
-                'Description'     = "This group is intended for use in scenarios where trusted external authorities are responsible for modifying this attribute. Only trusted enterprise administrators should be made a member of this group."
+                'Description'     = 'This group is intended for use in scenarios where trusted external authorities are responsible for modifying this attribute. Only trusted enterprise administrators should be made a member of this group.'
                 'NTAccount'       = 'BUILTIN\Enterprise Key Admins'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -209,7 +210,7 @@ function Get-KnownSid {
         'S-1-5-*-553' {
             return [PSCustomObject]@{
                 'Name'            = 'RAS and IAS Servers'
-                'Description'     = "A local domain group. By default, this group has no members. Computers that are running the Routing and Remote Access service are added to the group automatically. Members have access to certain properties of User objects, such as Read Account Restrictions, Read Logon Information, and Read Remote Access Information."
+                'Description'     = 'A local domain group. By default, this group has no members. Computers that are running the Routing and Remote Access service are added to the group automatically. Members have access to certain properties of User objects, such as Read Account Restrictions, Read Logon Information, and Read Remote Access Information.'
                 'NTAccount'       = 'BUILTIN\RAS and IAS Servers'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
@@ -218,7 +219,7 @@ function Get-KnownSid {
         'S-1-5-*-571' {
             return [PSCustomObject]@{
                 'Name'            = 'Allowed RODC Password Replication Group'
-                'Description'     = "Members in this group can have their passwords replicated to all read-only domain controllers in the domain."
+                'Description'     = 'Members in this group can have their passwords replicated to all read-only domain controllers in the domain.'
                 'NTAccount'       = 'BUILTIN\Allowed RODC Password Replication Group'
                 'SchemaClassName' = 'group'
                 'SID'             = $SID
