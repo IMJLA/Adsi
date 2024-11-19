@@ -93,7 +93,7 @@ function Get-CurrentDomain {
         try {
             $null = $CurrentDomain.RefreshCache('objectSid')
         } catch {
-            Write-LogMsg @Log -Text " # Error using ADSI to find the current domain: $($_.Exception.Message) # for '$ComputerName'"
+            Write-LogMsg @Log -Text " # $($_.Exception.Message) # for '$ComputerName'"
             return
         }
 
@@ -114,7 +114,7 @@ function Get-CurrentDomain {
 
         # Include any existing properties found earlier
         ForEach ($ThisProperty in $InputProperties) {
-            $OutputProperties[$ThisProperty] = $ThisPrincipal.$ThisProperty
+            $OutputProperties[$ThisProperty] = $FirstDomain.$ThisProperty
         }
 
     }

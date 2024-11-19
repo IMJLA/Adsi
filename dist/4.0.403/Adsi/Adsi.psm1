@@ -4338,7 +4338,7 @@ function Get-CurrentDomain {
         try {
             $null = $CurrentDomain.RefreshCache('objectSid')
         } catch {
-            Write-LogMsg @Log -Text " # Error using ADSI to find the current domain: $($_.Exception.Message) # for '$ComputerName'"
+            Write-LogMsg @Log -Text " # $($_.Exception.Message) # for '$ComputerName'"
             return
         }
 
@@ -4359,7 +4359,7 @@ function Get-CurrentDomain {
 
         # Include any existing properties found earlier
         ForEach ($ThisProperty in $InputProperties) {
-            $OutputProperties[$ThisProperty] = $ThisPrincipal.$ThisProperty
+            $OutputProperties[$ThisProperty] = $FirstDomain.$ThisProperty
         }
 
     }
@@ -6421,6 +6421,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
