@@ -46,19 +46,12 @@ function ConvertTo-DomainNetBIOS {
 
     if ($AdsiProvider -eq 'LDAP') {
 
-        $GetDirectoryEntryParams = @{
-            DebugOutputStream = $DebugOutputStream
-            ThisFqdn          = $ThisFqdn
-            ThisHostname      = $ThisHostname
-            WhoAmI            = $WhoAmI
-        }
-
-        $RootDSE = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/rootDSE" @GetDirectoryEntryParams @LogThis
+        $RootDSE = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/rootDSE" -ThisFqdn $ThisFqdn @LogThis
         Write-LogMsg @LogThis -Text "`$RootDSE.InvokeGet('defaultNamingContext')"
         $DomainDistinguishedName = $RootDSE.InvokeGet('defaultNamingContext')
         Write-LogMsg @LogThis -Text "`$RootDSE.InvokeGet('configurationNamingContext')"
         $ConfigurationDN = $rootDSE.InvokeGet('configurationNamingContext')
-        $partitions = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN" @GetDirectoryEntryParams @LogThis
+        $partitions = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN" -ThisFqdn $ThisFqdn @LogThis
 
         ForEach ($Child In $Partitions.Children) {
 
