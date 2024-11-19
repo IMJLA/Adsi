@@ -57,6 +57,7 @@ function Get-TrustedDomain {
     $RegExForEachTrust = '(?<index>[\d]*): (?<netbios>\S*) (?<dns>\S*).*'
     $DomainByFqdn = $Cache.Value['DomainByFqdn']
     $DomainByNetbios = $Cache.Value['DomainByNetbios']
+    $AddOrUpdateScriptBlock = { param($key, $val) $val }
 
     ForEach ($Result in $nltestresults) {
 

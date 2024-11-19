@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.409] - 2024-11-19 - bugfix forgot to initialize var
+
 ## [4.0.408] - 2024-11-19 - bugfix forgot to initialize var
 
 ## [4.0.407] - 2024-11-19 - oops apply bugfix in 2 places

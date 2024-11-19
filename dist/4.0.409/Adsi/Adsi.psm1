@@ -4315,7 +4315,6 @@ function Get-CurrentDomain {
         WhoAmI            = $WhoAmI
     }
 
-    $AddOrUpdateScriptBlock = { param($key, $val) $val }
     $Comp = Get-CachedCimInstance -ClassName Win32_ComputerSystem -KeyProperty Name @CimParams
 
     if ($Comp.Domain -eq 'WORKGROUP') {
@@ -4371,6 +4370,7 @@ function Get-CurrentDomain {
 
     # Output the object
     $OutputObject = [PSCustomObject]$OutputProperties
+    $AddOrUpdateScriptBlock = { param($key, $val) $val }
     $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
     $null = $Cache.Value['DomainByNetbios'].Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
     $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainSid, $OutputObject, $AddOrUpdateScriptblock )
@@ -5714,6 +5714,7 @@ function Get-TrustedDomain {
     $RegExForEachTrust = '(?<index>[\d]*): (?<netbios>\S*) (?<dns>\S*).*'
     $DomainByFqdn = $Cache.Value['DomainByFqdn']
     $DomainByNetbios = $Cache.Value['DomainByNetbios']
+    $AddOrUpdateScriptBlock = { param($key, $val) $val }
 
     ForEach ($Result in $nltestresults) {
 
@@ -6444,6 +6445,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
