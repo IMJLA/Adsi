@@ -121,6 +121,7 @@ function Get-CurrentDomain {
 
     # Output the object
     $OutputObject = [PSCustomObject]$OutputProperties
+    $AddOrUpdateScriptBlock = { param($key, $val) $val }
     $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
     $null = $Cache.Value['DomainByNetbios'].Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
     $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainSid, $OutputObject, $AddOrUpdateScriptblock )
