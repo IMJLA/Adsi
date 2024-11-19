@@ -3904,8 +3904,7 @@ function Get-AdsiServer {
             if ($TryGetValueResult) {
 
                 #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$DomainFqdn'"
-                $OutputObject
-                continue
+                if ($OutputObject.AdsiProvider) { continue }
 
             }
 
@@ -4171,7 +4170,7 @@ function Get-AdsiServer {
             if ($TryGetValueResult) {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
-                $OutputObject
+                if ($OutputObject.AdsiProvider) { continue }
                 continue
 
             }
@@ -4365,7 +4364,10 @@ function Get-CurrentDomain {
     }
 
     # Output the object
-    return [PSCustomObject]$OutputProperties
+    $OutputObject = [PSCustomObject]$OutputProperties
+    $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
+    $null = $Cache.Value['DomainByNetbios'].Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
+    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainSid, $OutputObject, $AddOrUpdateScriptblock )
 
 }
 function Get-DirectoryEntry {
@@ -5680,39 +5682,53 @@ function Get-TrustedDomain {
         # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
         [string]$WhoAmI = (whoami.EXE),
 
-        # Log messages which have not yet been written to disk
-        [Parameter(Mandatory)]
-        [ref]$LogBuffer,
-
         # Output stream to send the log messages to
         [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
-    $LogParams = @{
+    $Log = @{
         ThisHostname = $ThisHostname
         Type         = $DebugOutputStream
-        Buffer       = $LogBuffer
+        Buffer       = $Cache.Value['LogBuffer']
         WhoAmI       = $WhoAmI
     }
 
     # Errors are expected on non-domain-joined systems
     # Redirecting the error stream to null only suppresses the error in the console; it will still be in the transcript
     # Instead, redirect the error stream to the output stream and filter out the errors by type
-    Write-LogMsg @LogParams -Text "$('& nltest /domain_trusts 2>&1')"
+    Write-LogMsg @Log -Text "$('& nltest /domain_trusts 2>&1')"
     $nltestresults = & nltest /domain_trusts 2>&1
-
     $RegExForEachTrust = '(?<index>[\d]*): (?<netbios>\S*) (?<dns>\S*).*'
+    $DomainByFqdn = $Cache.Value['DomainByFqdn']
+    $DomainByNetbios = $Cache.Value['DomainByNetbios']
+
     ForEach ($Result in $nltestresults) {
+
         if ($Result.GetType() -eq [string]) {
+
             if ($Result -match $RegExForEachTrust) {
-                [PSCustomObject]@{
-                    DomainFqdn    = $Matches.dns
-                    DomainNetbios = $Matches.netbios
+
+                $DN = ConvertTo-DistinguishedName -DomainFQDN $Matches.dns -AdsiProvider 'LDAP' -WhoAmI $WhoAmI -ThisHostName $ThisHostname -DebugOutputStream $DebugOutputStream -Cache $Cache
+
+                $OutputObject = [PSCustomObject]@{
+                    Netbios           = $Matches.dns
+                    Dns               = $Matches.netbios
+                    DistinguishedName = $DN
                 }
+
+                $null = $DomainByFqdn.Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
+                $null = $DomainByNetbios.Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
+
             }
+
         }
+
     }
 }
 function Get-WinNTGroupMember {
@@ -6421,6 +6437,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

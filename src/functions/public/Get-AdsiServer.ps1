@@ -88,8 +88,7 @@ function Get-AdsiServer {
             if ($TryGetValueResult) {
 
                 #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$DomainFqdn'"
-                $OutputObject
-                continue
+                if ($OutputObject.AdsiProvider) { continue }
 
             }
 
@@ -355,7 +354,7 @@ function Get-AdsiServer {
             if ($TryGetValueResult) {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
-                $OutputObject
+                if ($OutputObject.AdsiProvider) { continue }
                 continue
 
             }

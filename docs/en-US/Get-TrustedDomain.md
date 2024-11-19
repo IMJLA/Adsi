@@ -13,8 +13,8 @@ Returns a dictionary of trusted domains by the current computer
 ## SYNTAX
 
 ```
-Get-TrustedDomain [[-ThisHostname] <Object>] [[-WhoAmI] <String>] [-LogBuffer] <PSReference>
- [[-DebugOutputStream] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Get-TrustedDomain [[-ThisHostname] <Object>] [[-WhoAmI] <String>] [[-DebugOutputStream] <String>]
+ [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -35,6 +35,21 @@ Get the trusted domains of the current computer
 
 ## PARAMETERS
 
+### -Cache
+In-process cache to reduce calls to other processes or to disk
+
+```yaml
+Type: System.Management.Automation.PSReference
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DebugOutputStream
 Output stream to send the log messages to
 
@@ -44,23 +59,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
-Default value: Debug
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -LogBuffer
-Log messages which have not yet been written to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
 Position: 3
-Default value: None
+Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

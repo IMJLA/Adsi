@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.404] - 2024-11-19 - expand usage of the domain cache
+
 ## [4.0.403] - 2024-11-18 - bugfix var name copy pasta error. i mean who would do something like that honestly
 
 ## [4.0.402] - 2024-11-18 - debug cleanup
