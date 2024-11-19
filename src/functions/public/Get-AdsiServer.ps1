@@ -88,7 +88,10 @@ function Get-AdsiServer {
             if ($TryGetValueResult) {
 
                 #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$DomainFqdn'"
-                if ($OutputObject.AdsiProvider) { continue }
+                if ($OutputObject.AdsiProvider) {
+                    $OutputObject
+                    continue
+                }
 
             }
 
