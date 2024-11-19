@@ -432,7 +432,8 @@ function Find-AdsiProvider {
         .SYNOPSIS
         Determine whether a directory server is an LDAP or a WinNT server
         .DESCRIPTION
-        Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
+        Uses CIM to look for open TCP port 389 indicating LDAP, otherwise assumes WinNT.
+        If CIM is unavailable, uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second.
         .INPUTS
         [System.String] AdsiServer parameter.
         .OUTPUTS
@@ -508,9 +509,9 @@ function Find-AdsiProvider {
     $CimInstance = Get-CachedCimInstance @CommandParameters
 
     if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {
-        $Log['Type'] = 'Warning'
-        Write-LogMsg @Log -Text " # CIM connection failure # for '$AdsiServer'"
-        return
+        ###Write-LogMsg @Log -Text " # CIM connection failure # for '$AdsiServer'"
+        $TestResult = Test-AdsiProvider -AdsiServer $AdsiServer -ThisHostName $ThisHostName -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream -Cache ([ref]$Cache)
+        return $TestResult
     }
 
     if ($CimInstance) {
@@ -1661,6 +1662,80 @@ function Split-DirectoryPath {
         Domain        = $Split[ ( $Split.Count - 2 ) ]
         ParentDomain  = $ParentDomain # Not currently in use by dependent functions
         Middle        = $Middle # Not currently in use by dependent functions
+    }
+
+}
+function Test-AdsiProvider {
+    <#
+        .SYNOPSIS
+        Determine whether a directory server is an LDAP or a WinNT server
+        .DESCRIPTION
+        Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
+        .INPUTS
+        [System.String] AdsiServer parameter.
+        .OUTPUTS
+        [System.String] Possible return values are:
+            LDAP
+            WinNT
+        .EXAMPLE
+        Test-AdsiProvider -AdsiServer localhost
+
+        Find the ADSI provider of the local computer
+        .EXAMPLE
+        Test-AdsiProvider -AdsiServer 'ad.contoso.com'
+
+        Find the ADSI provider of the AD domain 'ad.contoso.com'
+    #>
+    [OutputType([System.String])]
+
+    param (
+
+        # IP address or hostname of the directory server whose ADSI provider type to determine
+        [string]$AdsiServer,
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug',
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
+
+    )
+
+    $Log = @{
+        ThisHostname = $ThisHostname
+        Type         = $DebugOutputStream
+        Buffer       = $Cache.Value['LogBuffer']
+        WhoAmI       = $WhoAmI
+    }
+
+    $AdsiPath = "LDAP://$AdsiServer"
+    Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath') # for '$AdsiServer'"
+
+    try {
+        $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
+        return 'LDAP'
+    } catch { Write-LogMsg @Log -Text " # No response to LDAP # for '$AdsiServer'" }
+
+    $AdsiPath = "WinNT://$AdsiServer"
+    Write-LogMsg @LogParams -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath') # for '$AdsiServer'"
+
+    try {
+        $null = [System.DirectoryServices.DirectoryEntry]::Exists($AdsiPath)
+        return 'WinNT'
+    } catch {
+        Write-LogMsg @Log -Text " # No response to WinNT. # for '$AdsiServer'"
     }
 
 }
@@ -6344,6 +6419,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.393] - 2024-11-18 - revert to adsi when cim unavailable for adsi provider detection
+
 ## [4.0.392] - 2024-11-18 - remove debug pause
 
 ## [4.0.391] - 2024-11-18 - don't check for known sid unless needed

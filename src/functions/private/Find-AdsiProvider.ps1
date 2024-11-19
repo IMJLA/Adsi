@@ -3,7 +3,8 @@ function Find-AdsiProvider {
         .SYNOPSIS
         Determine whether a directory server is an LDAP or a WinNT server
         .DESCRIPTION
-        Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
+        Uses CIM to look for open TCP port 389 indicating LDAP, otherwise assumes WinNT.
+        If CIM is unavailable, uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second.
         .INPUTS
         [System.String] AdsiServer parameter.
         .OUTPUTS
@@ -79,9 +80,9 @@ function Find-AdsiProvider {
     $CimInstance = Get-CachedCimInstance @CommandParameters
 
     if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {
-        $Log['Type'] = 'Warning'
-        Write-LogMsg @Log -Text " # CIM connection failure # for '$AdsiServer'"
-        return
+        ###Write-LogMsg @Log -Text " # CIM connection failure # for '$AdsiServer'"
+        $TestResult = Test-AdsiProvider -AdsiServer $AdsiServer -ThisHostName $ThisHostName -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream -Cache ([ref]$Cache)
+        return $TestResult
     }
 
     if ($CimInstance) {
