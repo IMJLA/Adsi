@@ -73,8 +73,8 @@ function Get-TrustedDomain {
                     DistinguishedName = $DN
                 }
 
-                $null = $DomainByFqdn.Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
-                $null = $DomainByNetbios.Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
+                $null = $DomainByFqdn.Value.AddOrUpdate( $Matches.dns, $OutputObject, $AddOrUpdateScriptblock )
+                $null = $DomainByNetbios.Value.AddOrUpdate( $atches.netbios, $OutputObject, $AddOrUpdateScriptblock )
 
             }
 
