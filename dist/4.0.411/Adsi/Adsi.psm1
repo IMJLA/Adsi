@@ -612,15 +612,17 @@ function Find-WinNTGroupMember {
         # Split the DirectoryPath into its constituent components.
         $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
         $MemberName = $DirectorySplit['Account']
-
-        # Resolve well-known SID authorities to the name of the computer the DirectoryEntry came from.
-        Resolve-SidAuthority -DirectorySplit $DirectorySplit -DirectoryEntry $DirectoryEntry
         $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
         $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
 
-        if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
+        # Resolve well-known SID authorities to the name of the computer the DirectoryEntry came from.
+        Resolve-SidAuthority -DirectorySplit $DirectorySplit -DirectoryEntry $DirectoryEntry
 
+        if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
             Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
+        } else {
+
+            Write-LogMsg @Log -Text " # '$MemberDomainNetbios' may or may not be a workgroup computer (inconclusive) $MemberLogSuffix $LogSuffix"
             $DomainCacheResult = $null
             $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($MemberDomainNetbios, [ref]$DomainCacheResult)
 
@@ -628,30 +630,54 @@ function Find-WinNTGroupMember {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
 
-                if ( $MemberDomainNetbios -ne $SourceDomain ) {
+                if ($DomainCacheResult.AdsiProvider -eq 'LDAP') {
 
-                    Write-LogMsg @Log -Text " # $MemberDomainNetbios -ne $SourceDomain but why does my logic think this means LDAP group member rather than WinNT? $MemberLogSuffix $LogSuffix"
+                    Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is an LDAP server $MemberLogSuffix $LogSuffix"
                     $MemberDomainDn = $DomainCacheResult.DistinguishedName
 
-                } else {
-                    Write-LogMsg @Log -Text " # $MemberDomainNetbios -eq $SourceDomain but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
                 }
 
             } else {
+
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') $MemberLogSuffix $LogSuffix"
+
+                if ( $MemberDomainNetbios -ne $SourceDomain ) {
+
+                    Write-LogMsg @Log -Text " # member domain is different from the group domain (LDAP member of WinNT group or LDAP member of LDAP group in a trusted domain) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+                    $MemberDomainDn = ConvertTo-DistinguishedName -Domain $MemberDomainNetbios -AdsiProvider LDAP -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+
+                } else {
+
+                    Write-LogMsg @Log -Text " # member domain is the same as the group domain (either LDAP member of LDAP group or WinNT member of WinNT group) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+                    $AdsiServer = Get-AdsiServer -Netbios $SourceDomain -WellKnownSidBySid $WellKnownSidBySid -WellKnownSidByName $WellKnownSidByName -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+
+                    if ($AdsiServer) {
+
+                        if ($AdsiServer.AdsiProvider -eq 'LDAP') {
+
+                            Write-LogMsg @Log -Text " # ADSI provider is LDAP for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+                            $MemberDomainDn = $AdsiServer.DistinguishedName
+
+                        } elseif ($AdsiServer.AdsiProvider -eq 'WinNT') {
+                            Write-LogMsg @Log -Text " # ADSI provider is WinNT for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+                        } else {
+
+                            $Log['Type'] = 'Warning'
+                            Write-LogMsg @Log -Text " # ADSI provider could not be found # for domain NetBIOS so WinNT will be assumed # for ADSI server '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+
+                        }
+
+                    } else {
+
+                        $Log['Type'] = 'Warning'
+                        Write-LogMsg @Log -Text " # ADSI server could not be found # for domain NetBIOS so WinNT will be assumed '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+
+                    }
+
+                }
+
             }
 
-            if ($DirectorySplit['Domain'] -eq $SourceDomain) {
-
-                Write-LogMsg @Log -Text " # Member's parsed domain $($DirectorySplit['Domain']) equals the group's parsed domain '$SourceDomain' but why does my logic think this means WinNT group member rather than LDAP? $MemberLogSuffix $LogSuffix"
-                $MemberDomainDn = $null
-
-            } else {
-                Write-LogMsg @Log -Text " # Member's parsed domain $($DirectorySplit['Domain']) does not equal the group's parsed domain '$SourceDomain' but why does my logic think this means LDAP or unconfirmed WinNT group member? $MemberLogSuffix $LogSuffix"
-            }
-
-        } else {
-            Write-LogMsg @Log -Text " # '$MemberDomainNetbios' may or may not be a workgroup computer (inconclusive) $MemberLogSuffix $LogSuffix"
         }
 
         # LDAP directories have a distinguishedName
@@ -6445,6 +6471,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

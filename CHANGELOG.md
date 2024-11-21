@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.411] - 2024-11-20 - update ldap vs winnt detection logic
+
 ## [4.0.410] - 2024-11-19 - bugfix cache keys
 
 ## [4.0.409] - 2024-11-19 - bugfix forgot to initialize var
