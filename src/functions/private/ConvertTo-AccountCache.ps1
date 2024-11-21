@@ -2,13 +2,13 @@ function ConvertTo-AccountCache {
 
     param (
         $Account,
-        [hashtable]$SidCache = @{},
-        [hashtable]$NameCache = @{}
+        [ref]$SidCache,
+        [ref]$NameCache
     )
 
     ForEach ($ThisAccount in $Account) {
-        $SidCache[$ThisAccount.SID] = $ThisAccount
-        $NameCache[$ThisAccount.Name] = $ThisAccount
+        $SidCache.Value[$ThisAccount.SID] = $ThisAccount
+        $NameCache.Value[$ThisAccount.Name] = $ThisAccount
     }
 
 }

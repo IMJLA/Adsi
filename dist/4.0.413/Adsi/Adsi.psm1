@@ -337,13 +337,13 @@ function ConvertTo-AccountCache {
 
     param (
         $Account,
-        [hashtable]$SidCache = @{},
-        [hashtable]$NameCache = @{}
+        [ref]$SidCache,
+        [ref]$NameCache
     )
 
     ForEach ($ThisAccount in $Account) {
-        $SidCache[$ThisAccount.SID] = $ThisAccount
-        $NameCache[$ThisAccount.Name] = $ThisAccount
+        $SidCache.Value[$ThisAccount.SID] = $ThisAccount
+        $NameCache.Value[$ThisAccount.Name] = $ThisAccount
     }
 
 }
@@ -585,19 +585,39 @@ function Find-WinNTGroupMember {
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
         $DirectoryEntry,
 
+        # COM Objects representing the DirectoryPaths of the group members
         $ComObject,
 
         [hashtable]$Out,
 
         [string]$LogSuffix,
 
-        [hashtable]$Log,
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
+        [ref]$Cache,
 
-        [string]$SourceDomain
+        [string]$GroupDomain,
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug'
 
     )
 
@@ -641,15 +661,15 @@ function Find-WinNTGroupMember {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') $MemberLogSuffix $LogSuffix"
 
-                if ( $MemberDomainNetbios -ne $SourceDomain ) {
+                if ( $MemberDomainNetbios -ne $GroupDomain ) {
 
                     Write-LogMsg @Log -Text " # member domain is different from the group domain (LDAP member of WinNT group or LDAP member of LDAP group in a trusted domain) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                    $MemberDomainDn = ConvertTo-DistinguishedName -Domain $MemberDomainNetbios -AdsiProvider LDAP -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+                    $MemberDomainDn = ConvertTo-DistinguishedName -Domain $MemberDomainNetbios -AdsiProvider 'LDAP' -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
 
                 } else {
 
                     Write-LogMsg @Log -Text " # member domain is the same as the group domain (either LDAP member of LDAP group or WinNT member of WinNT group) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                    $AdsiServer = Get-AdsiServer -Netbios $SourceDomain -WellKnownSidBySid $WellKnownSidBySid -WellKnownSidByName $WellKnownSidByName -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+                    $AdsiServer = Get-AdsiServer -Netbios $GroupDomain -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
 
                     if ($AdsiServer) {
 
@@ -3896,12 +3916,6 @@ function Get-AdsiServer {
         # Remove the CIM session used to get ADSI server information
         [switch]$RemoveCimSession,
 
-        # Output from Get-KnownSidHashTable
-        [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
-
-        # Output from Get-KnownSidHashTable but keyed by account Name
-        [hashtable]$WellKnownSidByName = @{},
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
@@ -3917,6 +3931,8 @@ function Get-AdsiServer {
         $DomainsByNetbios = $Cache.Value['DomainByNetbios']
         $DomainsBySid = $Cache.Value['DomainBySid']
         $AddOrUpdateScriptblock = { param($key, $val) $val }
+        $WellKnownSidBySid = $Cache.Value['WellKnownSidBySid']
+        $WellKnownSidByName = $Cache.Value['WellKnownSidByName']
 
     }
 
@@ -4180,8 +4196,8 @@ function Get-AdsiServer {
                 Sid                = $DomainSid
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
-                WellKnownSidBySid  = $WellKnownSidBySid
-                WellKnownSidByName = $WellKnownSidByName
+                WellKnownSidBySid  = $WellKnownSidBySid.Value
+                WellKnownSidByName = $WellKnownSidByName.Value
             }
 
             $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, $AddOrUpdateScriptblock )
@@ -4259,8 +4275,8 @@ function Get-AdsiServer {
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
                 Win32Services      = $ResolvedWin32Services
-                WellKnownSidBySid  = $WellKnownSidBySid
-                WellKnownSidByName = $WellKnownSidByName
+                WellKnownSidBySid  = $WellKnownSidBySid.Value
+                WellKnownSidByName = $WellKnownSidByName.Value
             }
 
             $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
@@ -4857,6 +4873,24 @@ function Get-KnownSid {
         }
 
     }
+
+}
+function Get-KnownSidByName {
+
+    param (
+        [hashtable]$WellKnownSIDBySID
+    )
+
+    $WellKnownSIDByName = @{}
+
+    ForEach ($KnownSID in $WellKnownSIDBySID.Keys) {
+
+        $Known = $WellKnownSIDBySID[$KnownSID]
+        $WellKnownSIDByName[$Known.Name] = $Known
+
+    }
+
+    return $WellKnownSIDByName
 
 }
 function Get-KnownSidHashTable {
@@ -5847,7 +5881,6 @@ function Get-WinNTGroupMember {
         Sort-Object -Unique
 
         $GetSearch = @{ PropertiesToLoad = $PropertiesToLoad }
-        $FindWinNT = @{ Log = $Log ; DomainsByNetbios = $Cache.Value['DomainByNetBios'] }
 
     }
 
@@ -5871,7 +5904,7 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -SourceDomain $SourceDomain @FindWinNT
+                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $SourceDomain -ThisFqdn $ThisFqdn @LogThis
 
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
@@ -6470,7 +6503,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

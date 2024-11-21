@@ -14,9 +14,8 @@ Get information about a directory server including the ADSI provider it hosts an
 
 ```
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-RemoveCimSession] [[-WellKnownSidBySid] <Hashtable>]
- [[-WellKnownSidByName] <Hashtable>] [-Cache] <PSReference> [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-RemoveCimSession] [-Cache] <PSReference>
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -50,7 +49,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 9
+Position: 7
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -161,36 +160,6 @@ Aliases:
 Required: False
 Position: 3
 Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WellKnownSidByName
-Output from Get-KnownSidHashTable but keyed by account Name
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 8
-Default value: @{}
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WellKnownSidBySid
-Output from Get-KnownSidHashTable
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 7
-Default value: (Get-KnownSidHashTable)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

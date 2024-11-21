@@ -9,19 +9,39 @@ function Find-WinNTGroupMember {
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
         $DirectoryEntry,
 
+        # COM Objects representing the DirectoryPaths of the group members
         $ComObject,
 
         [hashtable]$Out,
 
         [string]$LogSuffix,
 
-        [hashtable]$Log,
-
-        # Hashtable with known domain NetBIOS names as keys and objects with Dns,NetBIOS,SID,DistinguishedName properties as values
+        # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$DomainsByNetbios,
+        [ref]$Cache,
 
-        [string]$SourceDomain
+        [string]$GroupDomain,
+
+        <#
+        Hostname of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE
+        #>
+        [string]$ThisHostName = (HOSTNAME.EXE),
+
+        <#
+        FQDN of the computer running this function.
+
+        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
+        #>
+        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
+
+        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
+        [string]$WhoAmI = (whoami.EXE),
+
+        # Output stream to send the log messages to
+        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
+        [string]$DebugOutputStream = 'Debug'
 
     )
 
@@ -65,15 +85,15 @@ function Find-WinNTGroupMember {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') $MemberLogSuffix $LogSuffix"
 
-                if ( $MemberDomainNetbios -ne $SourceDomain ) {
+                if ( $MemberDomainNetbios -ne $GroupDomain ) {
 
                     Write-LogMsg @Log -Text " # member domain is different from the group domain (LDAP member of WinNT group or LDAP member of LDAP group in a trusted domain) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                    $MemberDomainDn = ConvertTo-DistinguishedName -Domain $MemberDomainNetbios -AdsiProvider LDAP -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+                    $MemberDomainDn = ConvertTo-DistinguishedName -Domain $MemberDomainNetbios -AdsiProvider 'LDAP' -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
 
                 } else {
 
                     Write-LogMsg @Log -Text " # member domain is the same as the group domain (either LDAP member of LDAP group or WinNT member of WinNT group) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                    $AdsiServer = Get-AdsiServer -Netbios $SourceDomain -WellKnownSidBySid $WellKnownSidBySid -WellKnownSidByName $WellKnownSidByName -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+                    $AdsiServer = Get-AdsiServer -Netbios $GroupDomain -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
 
                     if ($AdsiServer) {
 

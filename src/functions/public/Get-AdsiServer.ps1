@@ -54,12 +54,6 @@ function Get-AdsiServer {
         # Remove the CIM session used to get ADSI server information
         [switch]$RemoveCimSession,
 
-        # Output from Get-KnownSidHashTable
-        [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
-
-        # Output from Get-KnownSidHashTable but keyed by account Name
-        [hashtable]$WellKnownSidByName = @{},
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
@@ -75,6 +69,8 @@ function Get-AdsiServer {
         $DomainsByNetbios = $Cache.Value['DomainByNetbios']
         $DomainsBySid = $Cache.Value['DomainBySid']
         $AddOrUpdateScriptblock = { param($key, $val) $val }
+        $WellKnownSidBySid = $Cache.Value['WellKnownSidBySid']
+        $WellKnownSidByName = $Cache.Value['WellKnownSidByName']
 
     }
 
@@ -338,8 +334,8 @@ function Get-AdsiServer {
                 Sid                = $DomainSid
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
-                WellKnownSidBySid  = $WellKnownSidBySid
-                WellKnownSidByName = $WellKnownSidByName
+                WellKnownSidBySid  = $WellKnownSidBySid.Value
+                WellKnownSidByName = $WellKnownSidByName.Value
             }
 
             $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, $AddOrUpdateScriptblock )
@@ -417,8 +413,8 @@ function Get-AdsiServer {
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts
                 Win32Services      = $ResolvedWin32Services
-                WellKnownSidBySid  = $WellKnownSidBySid
-                WellKnownSidByName = $WellKnownSidByName
+                WellKnownSidBySid  = $WellKnownSidBySid.Value
+                WellKnownSidByName = $WellKnownSidByName.Value
             }
 
             $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
