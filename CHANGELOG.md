@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.422] - 2024-11-21 - bugfix
+
 ## [4.0.421] - 2024-11-20 - bugfix debug output
 
 ## [4.0.420] - 2024-11-20 - bugfix group domain to handle both fqdn and dns

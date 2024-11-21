@@ -363,8 +363,8 @@ function Get-AdsiServer {
             #Write-LogMsg @Log -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' # Domain NetBIOS cache miss for '$DomainNetbios'"
             $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn @LogThis
 
-            Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainDnsName' # for '$DomainNetbios'"
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainNetbios' # for '$DomainNetbios'"
+            $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainNetbios -ThisFqdn $ThisFqdn @LogThis
 
             if ($null -eq $AdsiProvider) {
                 $Log['Type'] = 'Warning'
