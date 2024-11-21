@@ -36,11 +36,11 @@ function Find-WinNTGroupMember {
         # Split the DirectoryPath into its constituent components.
         $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
         $MemberName = $DirectorySplit['Account']
-        $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
-        $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
 
         # Resolve well-known SID authorities to the name of the computer the DirectoryEntry came from.
         Resolve-SidAuthority -DirectorySplit $DirectorySplit -DirectoryEntry $DirectoryEntry
+        $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
+        $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
 
         if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
             Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
