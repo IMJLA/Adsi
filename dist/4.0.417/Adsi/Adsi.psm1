@@ -2121,7 +2121,9 @@ function ConvertFrom-IdentityReferenceResolved {
     if ( -not $PrincipalById.Value.TryGetValue( $IdentityReference, [ref]$null ) ) {
 
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-        #Write-LogMsg @Log -Text " # ADSI Principal cache miss for '$IdentityReference'"
+        $LogSuffix = "for IdentityReference '$IdentityReference'"
+        $LogSuffixComment = " # $LogSuffix"
+        #Write-LogMsg @Log -Text " # ADSI Principal cache miss $LogSuffix"
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $AccessControlEntries = $null
         $AddOrUpdateScriptblock = { param($key, $val) $val }
@@ -2142,7 +2144,7 @@ function ConvertFrom-IdentityReferenceResolved {
             $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
 
         } else {
-            Write-LogMsg @Log -Text " # Known SID cache miss for '$IdentityReference' on '$DomainNetBIOS'"
+            Write-LogMsg @Log -Text " # Known SID cache miss $LogSuffix"
         }
 
         if ($null -eq $DirectoryEntry) {
@@ -2157,17 +2159,17 @@ function ConvertFrom-IdentityReferenceResolved {
 
             ) {
 
-                Write-LogMsg @Log -Text " # '$IdentityReference' is a domain security principal"
+                Write-LogMsg @Log -Text " # LDAP security principal detected $LogSuffix"
 
                 if ($DomainNetbiosCacheResult) {
 
-                    #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' for '$IdentityReference'"
+                    #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' $LogSuffix"
                     $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
                     $SearchSplat['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
 
                 } else {
 
-                    #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' for '$IdentityReference'"
+                    #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' $LogSuffix"
 
                     if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
                         # The line below was commented out; why?  Isn't DN needed to be obtained for domain users?
@@ -2200,14 +2202,14 @@ function ConvertFrom-IdentityReferenceResolved {
                     'primaryGroupToken'
                 )
 
-                Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis
+                Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis -Suffix $LogSuffixComment
 
                 try {
                     $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat @LogThis
                 } catch {
 
                     $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                    Write-LogMsg @Log -Text " # Did not find '$IdentityReference' in a directory search: $($_.Exception.Message.Trim())"
+                    Write-LogMsg @Log -Text " # Unsuccessful directory search $LogSuffix`: $($_.Exception.Message.Trim())"
                     $Log['Type'] = $DebugOutputStream
 
                 }
@@ -2216,7 +2218,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
             ) {
 
-                Write-LogMsg @Log -Text " # '$IdentityReference' is an unresolved SID from the current domain"
+                Write-LogMsg @Log -Text " # Detected an unresolved SID from the current domain $LogSuffix"
 
                 # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
                 $DomainDN = $CurrentDomain.distinguishedName.Value
@@ -2224,12 +2226,12 @@ function ConvertFrom-IdentityReferenceResolved {
                 $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
                 $SearchSplat['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
                 $SearchSplat['PropertiesToLoad'] = 'netbiosname'
-                Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis
+                Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis -Suffix $LogSuffixComment
                 $DomainCrossReference = Search-Directory @DirectoryParams @SearchSplat @LogThis
 
                 if ($DomainCrossReference.Properties ) {
 
-                    Write-LogMsg @Log -Text " # The domain '$DomainFQDN' is online for '$IdentityReference'"
+                    Write-LogMsg @Log -Text " # The domain '$DomainFQDN' is online $LogSuffix"
                     [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
 
                     # TODO: The domain is online; see if any domain trusts have issues?
@@ -2260,21 +2262,21 @@ function ConvertFrom-IdentityReferenceResolved {
                     'primaryGroupToken'
                 )
 
-                Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis
+                Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis -Suffix $LogSuffixComment
 
                 try {
                     $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat @LogThis
                 } catch {
 
                     $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                    Write-LogMsg @Log -Text " # Couldn't find '$IdentityReference' in a directory search: $($_.Exception.Message.Trim())"
+                    Write-LogMsg @Log -Text " # Unsuccessful directory search $LogSuffix`: $($_.Exception.Message.Trim())"
                     $Log['Type'] = $DebugOutputStream
 
                 }
 
             } else {
 
-                Write-LogMsg @Log -Text " # '$IdentityReference' is a local security principal or unresolved SID."
+                Write-LogMsg @Log -Text " # Detected a local security principal or unresolved SID $LogSuffix"
 
                 if ($null -eq $SamAccountNameOrSid) { $SamAccountNameOrSid = $IdentityReference }
 
@@ -2282,7 +2284,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                     if ($DomainNetBIOS -in 'APPLICATION PACKAGE AUTHORITY', 'BUILTIN', 'NT SERVICE') {
 
-                        Write-LogMsg @Log -Text " # '$($IdentityReference)' is a Capability SID or Service SID which could not be resolved to a friendly name."
+                        Write-LogMsg @Log -Text " # Detected a Capability SID or Service SID which could not be resolved to a friendly name $LogSuffix"
 
                         $Known = Get-KnownSid -SID $SamAccountNameOrSid
 
@@ -2295,7 +2297,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                     } else {
 
-                        Write-LogMsg @Log -Text " # '$($IdentityReference)' is an unresolved SID"
+                        Write-LogMsg @Log -Text " # Detected an unresolved SID $LogSuffix"
 
                         # The SID of the domain is the SID of the user minus the last block of numbers
                         $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf('-'))
@@ -2324,14 +2326,14 @@ function ConvertFrom-IdentityReferenceResolved {
 
                         }
 
-                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -ExpandKeyMap @{ Cache = '$Cache' }
+                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -ExpandKeyMap @{ Cache = '$Cache' } -Suffix $LogSuffixComment
 
                         try {
                             $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
                         } catch {
 
                             $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                            Write-LogMsg @Log -Text "Couldn't get '$($DirectoryPath)' using PSRemoting. Error: $_"
+                            Write-LogMsg @Log -Text " # Couldn't get '$($DirectoryPath)' using PSRemoting $LogSuffix. Error: $_"
                             $Log['Type'] = $DebugOutputStream
 
                         }
@@ -2347,7 +2349,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 } else {
 
-                    Write-LogMsg @Log -Text " # '$IdentityReference' is a local security principal"
+                    Write-LogMsg @Log -Text " # Detected a local security principal $LogSuffix"
                     $DomainNetbiosCacheResult = $null
                     $TryGetValueResult = $Cache.Value['DomainByNetbios'].Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
@@ -2373,14 +2375,14 @@ function ConvertFrom-IdentityReferenceResolved {
                         'primaryGroupToken'
                     )
 
-                    Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $DirectorySplat, $LogThis
+                    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -Suffix $LogSuffixComment
 
                     try {
                         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
                     } catch {
 
                         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                        Write-LogMsg @Log -Text " # '$($DirectoryPath)' Couldn't be resolved for '$IdentityReference'. Error: $($_.Exception.Message.Trim())"
+                        Write-LogMsg @Log -Text " # '$($DirectoryPath)' Couldn't be resolved $LogSuffix. Error: $($_.Exception.Message.Trim())"
                         $Log['Type'] = $DebugOutputStream
 
                     }
@@ -2440,16 +2442,16 @@ function ConvertFrom-IdentityReferenceResolved {
                 ) {
 
                     # Retrieve the members of groups from the LDAP provider
-                    Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal for '$IdentityReference'"
+                    Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal $LogSuffix"
                     $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis).FullMembers
 
                 } else {
 
-                    Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal for '$IdentityReference'"
+                    Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal $LogSuffix"
 
                     if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
-                        Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT group for '$IdentityReference'"
+                        Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT group $LogSuffix"
                         $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis
 
                     }
@@ -2504,7 +2506,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 }
 
-                Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members for '$IdentityReference'"
+                Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' has $(($Members | Measure-Object).Count) members $LogSuffix"
 
             }
 
@@ -2513,7 +2515,7 @@ function ConvertFrom-IdentityReferenceResolved {
         } else {
 
             $Log['Type'] = 'Verbose' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-            Write-LogMsg @Log -Text " # '$IdentityReference' Couldn't be matched to a DirectoryEntry"
+            Write-LogMsg @Log -Text " # No matching DirectoryEntry $LogSuffix"
             $Log['Type'] = $DebugOutputStream
 
         }
@@ -6499,6 +6501,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
