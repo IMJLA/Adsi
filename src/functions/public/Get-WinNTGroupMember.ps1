@@ -89,7 +89,11 @@ function Get-WinNTGroupMember {
 
             $LogSuffix = "# For '$($ThisDirEntry.Path)'"
             $ThisSplitPath = Split-DirectoryPath -DirectoryPath $ThisDirEntry.Path
-            $SourceDomain = $ThisSplitPath['Domain']
+            $SourceDomainNetbiosOrFqdn = $ThisSplitPath['Domain']
+            $GroupDomain = Get-AdsiServer -Netbios $SourceDomainNetbiosOrFqdn -ThisFqdn $ThisFqdn @LogThis
+            if (-not $GroupDomain) {
+                $GroupDomain = Get-AdsiServer -Fqdn $SourceDomainNetbiosOrFqdn -ThisFqdn $ThisFqdn @LogThis
+            }
 
             if (
                 $null -ne $ThisDirEntry.Properties['groupType'] -or
@@ -103,7 +107,7 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $SourceDomain -ThisFqdn $ThisFqdn @LogThis
+                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $GroupDomain -ThisFqdn $ThisFqdn @LogThis
 
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {

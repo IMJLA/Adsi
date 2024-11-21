@@ -596,7 +596,7 @@ function Find-WinNTGroupMember {
         [Parameter(Mandatory)]
         [ref]$Cache,
 
-        [string]$GroupDomain,
+        $GroupDomain,
 
         <#
         Hostname of the computer running this function.
@@ -661,15 +661,15 @@ function Find-WinNTGroupMember {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
 
-                if ( $MemberDomainNetbios -ne $GroupDomain ) {
+                if ( $MemberDomainNetbios -ne $GroupDomain.Dns -and $MemberDomainNetbios -ne $GroupDomain.NetBIOS ) {
 
                     Write-LogMsg @Log -Text " # member domain is different from the group domain (LDAP member of WinNT group or LDAP member of LDAP group in a trusted domain) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
                     $MemberDomainDn = ConvertTo-DistinguishedName -Domain $MemberDomainNetbios -AdsiProvider 'LDAP' -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
 
                 } else {
 
-                    Write-LogMsg @Log -Text " # member domain is the same as the group domain (either LDAP member of LDAP group or WinNT member of WinNT group) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                    $AdsiServer = Get-AdsiServer -Netbios $GroupDomain -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+                    Write-LogMsg @Log -Text " # member domain is the same as the group domain (either LDAP member of LDAP group or WinNT member of WinNT group) for domain '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+                    $AdsiServer = Get-AdsiServer -Netbios $MemberDomainNetbios -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
 
                     if ($AdsiServer) {
 
@@ -5887,7 +5887,11 @@ function Get-WinNTGroupMember {
 
             $LogSuffix = "# For '$($ThisDirEntry.Path)'"
             $ThisSplitPath = Split-DirectoryPath -DirectoryPath $ThisDirEntry.Path
-            $SourceDomain = $ThisSplitPath['Domain']
+            $SourceDomainNetbiosOrFqdn = $ThisSplitPath['Domain']
+            $GroupDomain = Get-AdsiServer -Netbios $SourceDomainNetbiosOrFqdn -ThisFqdn $ThisFqdn @LogThis
+            if (-not $GroupDomain) {
+                $GroupDomain = Get-AdsiServer -Fqdn $SourceDomainNetbiosOrFqdn -ThisFqdn $ThisFqdn @LogThis
+            }
 
             if (
                 $null -ne $ThisDirEntry.Properties['groupType'] -or
@@ -5901,7 +5905,7 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $SourceDomain -ThisFqdn $ThisFqdn @LogThis
+                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $GroupDomain -ThisFqdn $ThisFqdn @LogThis
 
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
@@ -6501,6 +6505,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
