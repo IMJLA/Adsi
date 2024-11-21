@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.413
+Help Version: 4.0.414
 Locale: en-US
 ---
 
@@ -113,7 +113,7 @@ Get-KnownSidHashTable
 
 ### [Get-ParentDomainDnsName](Get-ParentDomainDnsName.md)
 
-Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-CimCache] <hashtable>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [-LogBuffer] <ref> [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>] [-RemoveCimSession] [<CommonParameters>]
+Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>] [-Cache] <ref> [-RemoveCimSession] [<CommonParameters>]
 
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
