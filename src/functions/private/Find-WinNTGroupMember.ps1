@@ -83,7 +83,7 @@ function Find-WinNTGroupMember {
 
             } else {
 
-                #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios'. Available keys: $($DomainsByNetBios.Keys -join ',') $MemberLogSuffix $LogSuffix"
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
 
                 if ( $MemberDomainNetbios -ne $GroupDomain ) {
 
