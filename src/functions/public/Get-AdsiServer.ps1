@@ -399,7 +399,7 @@ function Get-AdsiServer {
 
             Write-LogMsg @Log -Text "Resolve-ServiceNameToSID -InputObject `$Win32Services # for '$DomainNetbios'"
             $ResolvedWin32Services = Resolve-ServiceNameToSID -InputObject $Win32Services
-            Add-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -InputObject $ResolvedWin32Services -CacheByProperty @('Name', 'SID') @CimParams @LogThis
+            Add-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -InputObject $ResolvedWin32Services -CacheByProperty @('Name', 'SID') @LogThis
 
             if ($RemoveCimSession) {
                 Remove-CimSession -CimSession $CimSession
