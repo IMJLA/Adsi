@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.418] - 2024-11-20 - bugfix cache usage
+
 ## [4.0.417] - 2024-11-20 - fix debug output
 
 ## [4.0.416] - 2024-11-20 - implement consistent use of convertto-accountcache

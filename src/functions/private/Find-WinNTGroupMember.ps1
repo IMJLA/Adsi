@@ -68,7 +68,7 @@ function Find-WinNTGroupMember {
 
             Write-LogMsg @Log -Text " # '$MemberDomainNetbios' may or may not be a workgroup computer (inconclusive) $MemberLogSuffix $LogSuffix"
             $DomainCacheResult = $null
-            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($MemberDomainNetbios, [ref]$DomainCacheResult)
+            $TryGetValueResult = $Cache.Value['DomainByNetbios'].Value.TryGetValue($MemberDomainNetbios, [ref]$DomainCacheResult)
 
             if ($TryGetValueResult) {
 
