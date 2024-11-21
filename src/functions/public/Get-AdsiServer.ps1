@@ -91,6 +91,18 @@ function Get-AdsiServer {
 
             }
 
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
+
+            if ($TryGetValueResult) {
+
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
+                if ($OutputObject.AdsiProvider) {
+                    $OutputObject
+                    continue
+                }
+
+            }
+
             Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' -ThisFqdn '$ThisFqdn' # Domain FQDN cache miss for '$DomainFqdn'"
             $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn -ThisFqdn $ThisFqdn @LogThis
 
@@ -349,6 +361,18 @@ function Get-AdsiServer {
 
             $OutputObject = $null
             $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainNetbios, [ref]$OutputObject)
+
+            if ($TryGetValueResult) {
+
+                #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetbios'"
+                if ($OutputObject.AdsiProvider) {
+                    $OutputObject
+                    continue
+                }
+
+            }
+
+            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainNetbios, [ref]$OutputObject)
 
             if ($TryGetValueResult) {
 
