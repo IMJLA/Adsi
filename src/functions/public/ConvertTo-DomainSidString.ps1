@@ -45,9 +45,9 @@ function ConvertTo-DomainSidString {
     $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $CacheResult = $null
-    $TryGetValueResult = $Cache.Value['DomainByFqdn'].Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
+    $null = $Cache.Value['DomainByFqdn'].Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
 
-    if ($TryGetValueResult) {
+    if ($CacheResult.Sid) {
 
         #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$DomainDnsName'"
         return $CacheResult.Sid
