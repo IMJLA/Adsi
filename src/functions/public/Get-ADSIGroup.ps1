@@ -65,10 +65,9 @@ function Get-AdsiGroup {
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
 
     $GroupParams = @{
-        DirectoryPath     = $DirectoryPath
-        PropertiesToLoad  = $PropertiesToLoad
-        ThisFqdn          = $ThisFqdn
-        DebugOutputStream = $DebugOutputStream
+        DirectoryPath    = $DirectoryPath
+        PropertiesToLoad = $PropertiesToLoad
+        ThisFqdn         = $ThisFqdn
     }
 
     $GroupMemberParams = @{
