@@ -139,9 +139,8 @@ function Get-AdsiGroupMember {
             if ($GroupMemberSearch.Count -gt 0) {
 
                 $DirectoryEntryParams = @{
-                    DebugOutputStream = $DebugOutputStream
-                    PropertiesToLoad  = $PropertiesToLoad
-                    ThisFqdn          = $ThisFqdn
+                    PropertiesToLoad = $PropertiesToLoad
+                    ThisFqdn         = $ThisFqdn
                 }
 
                 $CurrentADGroupMembers = [System.Collections.Generic.List[System.DirectoryServices.DirectoryEntry]]::new()
@@ -150,9 +149,8 @@ function Get-AdsiGroupMember {
                 Where-Object -FilterScript { $_.Properties['objectClass'] -contains 'group' }
 
                 $DirectoryEntryParams = @{
-                    DebugOutputStream = $DebugOutputStream
-                    PropertiesToLoad  = $PropertiesToLoad
-                    ThisFqdn          = $ThisFqdn
+                    PropertiesToLoad = $PropertiesToLoad
+                    ThisFqdn         = $ThisFqdn
                 }
 
                 if ($MembersThatAreGroups.Count -gt 0) {
