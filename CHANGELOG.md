@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.424] - 2024-11-21 - bugfix typos
+
 ## [4.0.423] - 2024-11-21 - search both caches
 
 ## [4.0.422] - 2024-11-21 - bugfix

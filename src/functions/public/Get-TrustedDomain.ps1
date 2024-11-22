@@ -68,13 +68,13 @@ function Get-TrustedDomain {
                 $DN = ConvertTo-DistinguishedName -DomainFQDN $Matches.dns -AdsiProvider 'LDAP' -WhoAmI $WhoAmI -ThisHostName $ThisHostname -DebugOutputStream $DebugOutputStream -Cache $Cache
 
                 $OutputObject = [PSCustomObject]@{
-                    Netbios           = $Matches.dns
-                    Dns               = $Matches.netbios
+                    Netbios           = $Matches.netbios
+                    Dns               = $Matches.dns
                     DistinguishedName = $DN
                 }
 
                 $null = $DomainByFqdn.Value.AddOrUpdate( $Matches.dns, $OutputObject, $AddOrUpdateScriptblock )
-                $null = $DomainByNetbios.Value.AddOrUpdate( $atches.netbios, $OutputObject, $AddOrUpdateScriptblock )
+                $null = $DomainByNetbios.Value.AddOrUpdate( $Matches.netbios, $OutputObject, $AddOrUpdateScriptblock )
 
             }
 
