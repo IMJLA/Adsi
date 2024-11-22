@@ -637,85 +637,29 @@ function Find-WinNTGroupMember {
         Resolve-SidAuthority -DirectorySplit $DirectorySplit -DirectoryEntry $DirectoryEntry
         $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
         $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
+        $AdsiServer = Get-AdsiServer -Netbios $MemberDomainNetbios -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
 
-        if ($DirectorySplit['ParentDomain'] -eq 'WORKGROUP') {
-            Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is a workgroup computer $MemberLogSuffix $LogSuffix"
-        } else {
+        if ($AdsiServer) {
 
-            Write-LogMsg @Log -Text " # '$MemberDomainNetbios' may or may not be a workgroup computer (inconclusive) $MemberLogSuffix $LogSuffix"
-            $DomainCacheResult = $null
-            $TryGetValueResult = $Cache.Value['DomainByNetbios'].Value.TryGetValue($MemberDomainNetbios, [ref]$DomainCacheResult)
+            if ($AdsiServer.AdsiProvider -eq 'LDAP') {
 
-            if ($TryGetValueResult) {
+                Write-LogMsg @Log -Text " # ADSI provider is LDAP for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+                $Out["LDAP://$($AdsiServer.Dns)"] += "(samaccountname=$MemberName)"
 
-                #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
-
-                if ($DomainCacheResult.AdsiProvider -eq 'LDAP') {
-
-                    Write-LogMsg @Log -Text " # '$MemberDomainNetbios' is an LDAP server $MemberLogSuffix $LogSuffix"
-                    $MemberDomainDn = $DomainCacheResult.DistinguishedName
-
-                }
-
+            } elseif ($AdsiServer.AdsiProvider -eq 'WinNT') {
+                Write-LogMsg @Log -Text " # ADSI provider is WinNT for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
+                $Out['WinNTMembers'] += $ResolvedDirectoryPath
             } else {
 
-                #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$MemberDomainNetBios' $MemberLogSuffix $LogSuffix"
-
-                if ( $MemberDomainNetbios -ne $GroupDomain.Dns -and $MemberDomainNetbios -ne $GroupDomain.NetBIOS ) {
-
-                    Write-LogMsg @Log -Text " # member domain is different from the group domain (LDAP member of WinNT group or LDAP member of LDAP group in a trusted domain) for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                    $MemberDomainDn = ConvertTo-DistinguishedName -Domain $MemberDomainNetbios -AdsiProvider 'LDAP' -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
-
-                } else {
-
-                    Write-LogMsg @Log -Text " # member domain is the same as the group domain (either LDAP member of LDAP group or WinNT member of WinNT group) for domain '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                    $AdsiServer = Get-AdsiServer -Netbios $MemberDomainNetbios -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
-
-                    if ($AdsiServer) {
-
-                        if ($AdsiServer.AdsiProvider -eq 'LDAP') {
-
-                            Write-LogMsg @Log -Text " # ADSI provider is LDAP for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                            $MemberDomainDn = $AdsiServer.DistinguishedName
-
-                        } elseif ($AdsiServer.AdsiProvider -eq 'WinNT') {
-                            Write-LogMsg @Log -Text " # ADSI provider is WinNT for domain NetBIOS '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-                        } else {
-
-                            $Log['Type'] = 'Warning'
-                            Write-LogMsg @Log -Text " # ADSI provider could not be found # for domain NetBIOS so WinNT will be assumed # for ADSI server '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-
-                        }
-
-                    } else {
-
-                        $Log['Type'] = 'Warning'
-                        Write-LogMsg @Log -Text " # ADSI server could not be found # for domain NetBIOS so WinNT will be assumed '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
-
-                    }
-
-                }
+                $Log['Type'] = 'Warning'
+                Write-LogMsg @Log -Text " # ADSI provider could not be found # for domain NetBIOS so WinNT will be assumed # for ADSI server '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
 
             }
 
-        }
-
-        # LDAP directories have a distinguishedName
-        if ($MemberDomainDn) {
-
-            # LDAP directories support searching
-            # Combine all members' samAccountNames into a single search per directory distinguishedName
-            # Use a hashtable with the directory path as the key and a string as the definition
-            # The string is a partial LDAP filter, just the segments of the LDAP filter for each samAccountName
-            Write-LogMsg @Log -Text " # '$MemberName' is a domain security principal $MemberLogSuffix $LogSuffix"
-            $Out["LDAP://$MemberDomainDn"] += "(samaccountname=$MemberName)"
-
         } else {
 
-            # WinNT directories do not support searching so we will retrieve each member individually
-            # Use a hashtable with 'WinNTMembers' as the key and an array of WinNT directory paths as the value
-            Write-LogMsg @Log -Text " # Is a local security principal $MemberLogSuffix $LogSuffix"
-            $Out['WinNTMembers'] += $ResolvedDirectoryPath
+            $Log['Type'] = 'Warning'
+            Write-LogMsg @Log -Text " # ADSI server could not be found # for domain NetBIOS so WinNT will be assumed '$MemberDomainNetbios' $MemberLogSuffix $LogSuffix"
 
         }
 
@@ -6526,6 +6470,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
