@@ -68,7 +68,6 @@ function Get-AdsiServer {
         $DomainsByFqdn = $Cache.Value['DomainByFqdn']
         $DomainsByNetbios = $Cache.Value['DomainByNetbios']
         $DomainsBySid = $Cache.Value['DomainBySid']
-        $AddOrUpdateScriptblock = { param($key, $val) $val }
         $WellKnownSidBySid = $Cache.Value['WellKnownSidBySid']
         $WellKnownSidByName = $Cache.Value['WellKnownSidByName']
 
@@ -350,9 +349,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName.Value
             }
 
-            $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainFqdn, $OutputObject, $AddOrUpdateScriptblock )
-            $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
-            $null = $DomainsBySid.Value.AddOrUpdate( $DomainSid, $OutputObject, $AddOrUpdateScriptblock )
+            $null = $DomainsByFqdn.Value[$DomainFqdn] = $OutputObject
+            $null = $DomainsByNetbios.Value[$DomainNetBIOS] = $OutputObject
+            $null = $DomainsBySid.Value[$DomainSid] = $OutputObject
             $OutputObject
 
         }
@@ -443,9 +442,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName.Value
             }
 
-            $null = $DomainsByFqdn.Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
-            $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
-            $null = $DomainsBySid.Value.AddOrUpdate( $DomainSid, $OutputObject, $AddOrUpdateScriptblock )
+            $null = $DomainsByFqdn.Value[$DomainFqdn] = $OutputObject
+            $null = $DomainsByNetbios.Value[$DomainNetBIOS] = $OutputObject
+            $null = $DomainsBySid.Value[$DomainSid] = $OutputObject
             $OutputObject
 
         }
