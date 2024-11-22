@@ -442,7 +442,7 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName.Value
             }
 
-            $null = $DomainsByFqdn.Value[$DomainFqdn] = $OutputObject
+            $null = $DomainsByFqdn.Value[$DomainDnsName] = $OutputObject
             $null = $DomainsByNetbios.Value[$DomainNetBIOS] = $OutputObject
             $null = $DomainsBySid.Value[$DomainSid] = $OutputObject
             $OutputObject
