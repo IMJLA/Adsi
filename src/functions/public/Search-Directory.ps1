@@ -72,9 +72,7 @@ function Search-Directory {
     }
 
     $DirectoryEntryParameters = @{
-        ThisHostname = $ThisHostname
-        WhoAmI       = $WhoAmI
-        ThisFqdn     = $ThisFqdn
+        ThisFqdn = $ThisFqdn
     }
 
     if ($Credential) {
