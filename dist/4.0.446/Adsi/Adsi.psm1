@@ -4363,7 +4363,7 @@ function Get-CurrentDomain {
     $OutputObject = [PSCustomObject]$OutputProperties
     $Cache.Value['DomainByFqdn'].Value[$DomainDns] = $OutputObject
     $Cache.Value['DomainByNetbios'].Value[$DomainNetBIOS] = $OutputObject
-    $Cache.Value['DomainBySid'].Value[$DomainSid] = $OutputObject
+    $Cache.Value['DomainBySid'].Value[$SIDString] = $OutputObject
     return $OutputObject
 
 }
@@ -6442,6 +6442,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
