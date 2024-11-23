@@ -55,7 +55,8 @@ function Expand-AdsiGroupMember {
 
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-        $DomainBySid = $Cache.Value['DomainBySid'].Value
+        $DomainSidRef = $Cache.Value['DomainBySid']
+        $DomainBySid = $DomainSidRef.Value
 
         # The DomainBySid cache must be populated with trusted domains in order to translate foreign security principals
         if ( $DomainBySid.Keys.Count -lt 1 ) {
@@ -119,7 +120,7 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
-            Add-SidInfo -InputObject $Principal -DomainsBySid $DomainBySid @LogThis
+            Add-SidInfo -InputObject $Principal -DomainsBySid $DomainSidRef @LogThis
 
         }
     }
