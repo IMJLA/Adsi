@@ -15,7 +15,8 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
  [[-DebugOutputStream] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [-Cache] <PSReference> [[-CurrentDomain] <PSObject>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [[-CurrentDomain] <PSObject>] [[-AccountProperty] <String[]>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -35,6 +36,21 @@ ConvertFrom-IdentityReferenceResolved
 Incomplete example but it shows the chain of functions to generate the expected input for this
 
 ## PARAMETERS
+
+### -AccountProperty
+Properties of each Account to display on the report
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 8
+Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -Cache
 In-process cache to reduce calls to other processes or to disk

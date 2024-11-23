@@ -2053,7 +2053,10 @@ function ConvertFrom-IdentityReferenceResolved {
 
         # The current domain
         # Can be passed as a parameter to reduce calls to Get-CurrentDomain
-        [PSCustomObject]$CurrentDomain = (Get-CurrentDomain -Cache $Cache)
+        [PSCustomObject]$CurrentDomain = (Get-CurrentDomain -Cache $Cache),
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
 
@@ -2089,8 +2092,20 @@ function ConvertFrom-IdentityReferenceResolved {
 
         if ($null -eq $DirectoryEntry) {
 
-            $DirectorySplat = @{ ThisFqdn = $ThisFqdn }
-            $SearchSplat = @{}
+            [string[]]$PropertiesToLoad = $AccountProperty + @(
+                'objectClass',
+                'objectSid',
+                'samAccountName',
+                'distinguishedName',
+                'name',
+                'grouptype',
+                'description',
+                'member',
+                'primaryGroupToken'
+            )
+
+            $DirectorySplat = @{ ThisFqdn = $ThisFqdn ; PropertiesToLoad = $PropertiesToLoad }
+            $SearchSplat = @{ PropertiesToLoad = $PropertiesToLoad }
 
             if (
 
@@ -2126,22 +2141,6 @@ function ConvertFrom-IdentityReferenceResolved {
 
                 # Search the domain for the principal
                 $SearchSplat['Filter'] = "(samaccountname=$SamAccountNameOrSid)"
-
-                $SearchSplat['PropertiesToLoad'] = @(
-                    'objectClass',
-                    'objectSid',
-                    'samAccountName',
-                    'distinguishedName',
-                    'name',
-                    'grouptype',
-                    'description',
-                    'managedby',
-                    'member',
-                    'Department',
-                    'Title',
-                    'primaryGroupToken'
-                )
-
                 Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis -Suffix $LogSuffixComment
 
                 try {
@@ -2187,21 +2186,7 @@ function ConvertFrom-IdentityReferenceResolved {
                 $ObjectSid = ConvertTo-HexStringRepresentationForLDAPFilterString -SIDByteArray $SidBytes
                 $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/$DomainDn"
                 $SearchSplat['Filter'] = "(objectsid=$ObjectSid)"
-                $SearchSplat['PropertiesToLoad'] = @(
-                    'objectClass',
-                    'objectSid',
-                    'samAccountName',
-                    'distinguishedName',
-                    'name',
-                    'grouptype',
-                    'description',
-                    'managedby',
-                    'member',
-                    'Department',
-                    'Title',
-                    'primaryGroupToken'
-                )
-
+                $SearchSplat['PropertiesToLoad'] = $PropertiesToLoad
                 Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchSplat, $LogThis -Suffix $LogSuffixComment
 
                 try {
@@ -2298,22 +2283,6 @@ function ConvertFrom-IdentityReferenceResolved {
                     } else {
                         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
                     }
-
-                    $DirectorySplat['PropertiesToLoad'] = @(
-                        'members',
-                        'objectClass',
-                        'objectSid',
-                        'samAccountName',
-                        'distinguishedName',
-                        'name',
-                        'grouptype',
-                        'description',
-                        'managedby',
-                        'member',
-                        'Department',
-                        'Title',
-                        'primaryGroupToken'
-                    )
 
                     Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -Suffix $LogSuffixComment
 
@@ -6473,6 +6442,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
