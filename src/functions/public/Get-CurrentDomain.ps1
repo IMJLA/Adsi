@@ -91,6 +91,10 @@ function Get-CurrentDomain {
     } else {
 
         $DomainDns = $Comp.Domain
+        $AdsiServer = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn -Cache $Cache
+        if ($AdsiServer) {
+            return $AdsiServer
+        }
 
         # Use ADSI to find the domain
         Write-LogMsg @Log -Text "[adsi]::new().RefreshCache('objectSid')"
