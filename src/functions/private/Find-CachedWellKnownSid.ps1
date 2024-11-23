@@ -1,6 +1,7 @@
 function Find-CachedWellKnownSID {
 
     param (
+
         [Parameter(Mandatory)]
         [ref]$DomainByNetbios,
 
@@ -9,7 +10,7 @@ function Find-CachedWellKnownSID {
         [string]$DomainNetBIOS
 
     )
-
+    Pause
     $DomainNetbiosCacheResult = $null
     $TryGetValueResult = $DomainByNetbios.Value.TryGetValue($DomainNetBIOS, [ref]$DomainNetbiosCacheResult)
 
