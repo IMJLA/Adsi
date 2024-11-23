@@ -70,72 +70,12 @@ function Get-CurrentDomain {
 
     if ($Comp.Domain -eq 'WORKGROUP') {
 
-        # Use CIM to find the domain
-        $SIDString = Find-LocalAdsiServerSid @CimParams
-        $SID = $SIDString | ConvertTo-SidByteArray
-        $DomainDns = $ComputerName
-        $DomainNetBIOS = $ComputerName
-
-        $OutputProperties = @{
-            Dns               = $DomainDns
-            Netbios           = $DomainNetBIOS
-            SIDString         = $SIDString
-            ObjectSid         = [PSCustomObject]@{
-                Value = $Sid
-            }
-            DistinguishedName = [PSCustomObject]@{
-                Value = "DC=$ComputerName"
-            }
-        }
+        Get-AdsiServer -Fqdn $ComputerName -ThisFqdn $ThisFqdn -Cache $Cache
 
     } else {
 
-        $DomainDns = $Comp.Domain
-        $AdsiServer = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn -Cache $Cache
-        if ($AdsiServer) {
-            return $AdsiServer
-        }
-
-        # Use ADSI to find the domain
-        Write-LogMsg @Log -Text "[adsi]::new().RefreshCache('objectSid')"
-        $CurrentDomain = [adsi]::new()
-        try {
-            $null = $CurrentDomain.RefreshCache('objectSid')
-        } catch {
-            Write-LogMsg @Log -Text " # $($_.Exception.Message) # for ComputerName '$ComputerName'"
-            return
-        }
-
-        # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
-        Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)# for '$ComputerName'"
-        $SIDString = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
-        $OutputProperties = @{
-            Dns       = $DomainDns
-            Netbios   = $DomainNetBIOS
-            SIDString = $SIDString
-        }
-
-        # Get any existing properties for inclusion later
-        if ($CurrentDomain -is [System.Collections.IEnumerable]) {
-            $FirstDomain = $CurrentDomain[0]
-        } else {
-            $FirstDomain = $CurrentDomain
-        }
-
-        $InputProperties = $FirstDomain.PSObject.Properties.GetEnumerator().Name
-
-        # Include any existing properties found earlier
-        ForEach ($ThisProperty in $InputProperties) {
-            $OutputProperties[$ThisProperty] = $FirstDomain.$ThisProperty
-        }
+        Get-AdsiServer -Fqdn $Comp.Domain -ThisFqdn $ThisFqdn -Cache $Cache
 
     }
-
-    # Output the object
-    $OutputObject = [PSCustomObject]$OutputProperties
-    $Cache.Value['DomainByFqdn'].Value[$DomainDns] = $OutputObject
-    $Cache.Value['DomainByNetbios'].Value[$DomainNetBIOS] = $OutputObject
-    $Cache.Value['DomainBySid'].Value[$SIDString] = $OutputObject
-    return $OutputObject
 
 }
