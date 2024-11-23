@@ -181,7 +181,7 @@ function Get-DirectoryEntry {
 
     }
 
-    $null = $DirectoryEntryByPath.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, { param($key, $val) $val } )
+    $DirectoryEntryByPath.Value[$DirectoryPath] = $DirectoryEntry
     return $DirectoryEntry
 
 }

@@ -1045,10 +1045,9 @@ function Resolve-IdRefAppPkgAuth {
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
-    $AddOrUpdateScriptBlock = { param($key, $val) $val }
-    $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, $AddOrUpdateScriptBlock )
-    $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, $AddOrUpdateScriptBlock )
-    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, $AddOrUpdateScriptBlock )
+    $Cache.Value['DomainByFqdn'].Value[$DomainCacheResult.Dns] = $DomainCacheResult
+    $DomainsByNetbios.Value[$DomainCacheResult].Value.Netbios = $DomainCacheResult
+    $Cache.Value['DomainBySid'].Value[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -1139,10 +1138,9 @@ function Resolve-IdRefBuiltIn {
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
-    $AddOrUpdateScriptBlock = { param($key, $val) $val }
-    $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, $AddOrUpdateScriptBlock )
-    $null = $Cache.Value['DomainByNetbios'].Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, $AddOrUpdateScriptBlock )
-    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, $AddOrUpdateScriptBlock )
+    $Cache.Value['DomainByFqdn'].Value[$DomainCacheResult.Dns] = $DomainCacheResult
+    $Cache.Value['DomainByNetbios'].Value[$DomainCacheResult.Netbios] = $DomainCacheResult
+    $Cache.Value['DomainBySid'].Value[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -1449,10 +1447,9 @@ function Resolve-IdRefSID {
     if ($Win32Acct) {
         $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
         $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
-        $AddOrUpdateScriptblock = { param($key, $val) $val }
-        $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, $AddOrUpdateScriptblock )
-        $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, $AddOrUpdateScriptblock )
-        $null = $DomainsBySid.Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, $AddOrUpdateScriptblock )
+        $Cache.Value['DomainByFqdn'].Value[$DomainCacheResult.Dns] = $DomainCacheResult
+        $DomainsByNetbios.Value[$DomainCacheResult.Netbios] = $DomainCacheResult
+        $DomainsBySid.Value[$DomainCacheResult.Sid] = $DomainCacheResult
     }
 
     if ($NTAccount) {
@@ -1559,10 +1556,9 @@ function Resolve-IdRefSvc {
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Svc
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Svc
-    $AddOrUpdateScriptBlock = { param($key, $val) $val }
-    $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainCacheResult.Dns, $DomainCacheResult, $AddOrUpdateScriptBlock )
-    $null = $DomainsByNetbios.Value.AddOrUpdate( $DomainCacheResult.Netbios, $DomainCacheResult, $AddOrUpdateScriptBlock )
-    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainCacheResult.Sid, $DomainCacheResult, $AddOrUpdateScriptBlock )
+    $Cache.Value['DomainByFqdn'].Value[$DomainCacheResult.Dns] = $DomainCacheResult
+    $DomainsByNetbios.Value[$DomainCacheResult.Netbios] = $DomainCacheResult
+    $Cache.Value['DomainBySid'].Value[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
         IdentityReference        = $IdentityReference
@@ -3076,7 +3072,6 @@ function ConvertTo-Fqdn {
 
         #$Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-        $AddOrUpdateScriptblock = { param($key, $val) $val }
 
     }
 
@@ -3100,7 +3095,6 @@ function ConvertTo-Fqdn {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ThisNetBios'"
                 $DomainObject = Get-AdsiServer -Netbios $ThisNetBios -ThisFqdn $ThisFqdn @LogThis
-                $null = $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, $AddOrUpdateScriptblock ) #doesn't get-adsiserver already update the cache?
 
             }
 
@@ -4587,7 +4581,7 @@ function Get-DirectoryEntry {
 
     }
 
-    $null = $DirectoryEntryByPath.Value.AddOrUpdate( $DirectoryPath, $DirectoryEntry, { param($key, $val) $val } )
+    $DirectoryEntryByPath.Value[$DirectoryPath] = $DirectoryEntry
     return $DirectoryEntry
 
 }
@@ -5753,7 +5747,6 @@ function Get-TrustedDomain {
     $RegExForEachTrust = '(?<index>[\d]*): (?<netbios>\S*) (?<dns>\S*).*'
     $DomainByFqdn = $Cache.Value['DomainByFqdn']
     $DomainByNetbios = $Cache.Value['DomainByNetbios']
-    $AddOrUpdateScriptBlock = { param($key, $val) $val }
 
     ForEach ($Result in $nltestresults) {
 
@@ -5769,14 +5762,15 @@ function Get-TrustedDomain {
                     DistinguishedName = $DN
                 }
 
-                $null = $DomainByFqdn.Value.AddOrUpdate( $Matches.dns, $OutputObject, $AddOrUpdateScriptblock )
-                $null = $DomainByNetbios.Value.AddOrUpdate( $Matches.netbios, $OutputObject, $AddOrUpdateScriptblock )
+                $DomainByFqdn.Value[$Matches.dns] = $OutputObject
+                $DomainByNetbios.Value[$Matches.netbios] = $OutputObject
 
             }
 
         }
 
     }
+
 }
 function Get-WinNTGroupMember {
 
@@ -6479,6 +6473,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.443] - 2024-11-22 - remove addorupdate method in favor of direct access
+
 ## [4.0.442] - 2024-11-22 - remove unnecessary set stmt
 
 ## [4.0.441] - 2024-11-22 - add sidstring property

@@ -66,7 +66,6 @@ function ConvertTo-Fqdn {
 
         #$Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-        $AddOrUpdateScriptblock = { param($key, $val) $val }
 
     }
 
@@ -90,7 +89,6 @@ function ConvertTo-Fqdn {
 
                 #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ThisNetBios'"
                 $DomainObject = Get-AdsiServer -Netbios $ThisNetBios -ThisFqdn $ThisFqdn @LogThis
-                $null = $DomainsByNetbios.Value.AddOrUpdate( $ThisNetBios, $DomainObject, $AddOrUpdateScriptblock ) #doesn't get-adsiserver already update the cache?
 
             }
 
