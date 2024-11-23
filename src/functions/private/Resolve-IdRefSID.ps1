@@ -1,6 +1,7 @@
 function Resolve-IdRefSID {
 
     [OutputType([PSCustomObject])]
+
     param (
 
         # IdentityReference from an Access Control Entry
@@ -98,7 +99,7 @@ function Resolve-IdRefSID {
 
             $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
             Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
-            $Log['Type'] = $DebugOutputStream
+            # $Log['Type'] = $DebugOutputStream
 
         }
 

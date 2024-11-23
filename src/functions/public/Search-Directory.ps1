@@ -1,19 +1,21 @@
 function Search-Directory {
-    <#
-        .SYNOPSIS
-        Use Active Directory Service Interfaces to search an LDAP directory
-        .DESCRIPTION
-        Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
-        Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
-        .INPUTS
-        None. Pipeline input is not accepted.
-        .OUTPUTS
-        [System.DirectoryServices.DirectoryEntry]
-        .EXAMPLE
-        Search-Directory -Filter ''
 
-        As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
+    <#
+    .SYNOPSIS
+    Use Active Directory Service Interfaces to search an LDAP directory
+    .DESCRIPTION
+    Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
+    Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
+    .INPUTS
+    None. Pipeline input is not accepted.
+    .OUTPUTS
+    [System.DirectoryServices.DirectoryEntry]
+    .EXAMPLE
+    Search-Directory -Filter ''
+
+    As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
     #>
+
     param (
 
         <#
@@ -64,13 +66,6 @@ function Search-Directory {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $Cache.Value['LogBuffer']
-        WhoAmI       = $WhoAmI
-    }
-
     $DirectoryEntryParameters = @{
         ThisFqdn = $ThisFqdn
     }
@@ -82,13 +77,12 @@ function Search-Directory {
     if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {
 
         $CimParams = @{
-            ComputerName      = $ThisFqdn
-            DebugOutputStream = $DebugOutputStream
-            ThisFqdn          = $ThisFqdn
+            ComputerName = $ThisFqdn
+            ThisFqdn     = $ThisFqdn
         }
 
+        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-
         $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LogThis).Workgroup
         $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
 

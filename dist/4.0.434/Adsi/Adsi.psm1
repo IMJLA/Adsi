@@ -410,7 +410,11 @@ function ConvertTo-ServiceSID {
 }
 function ConvertTo-SidString {
 
-    param ($ServerNetBIOS, $Name, $Log, $DebugOutputStream)
+    param (
+        [string]$ServerNetBIOS,
+        [string]$Name,
+        [hashtable]$Log
+    )
 
     # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
     Write-LogMsg @Log -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
@@ -422,7 +426,6 @@ function ConvertTo-SidString {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
         Write-LogMsg @Log -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)"
-        $Log['Type'] = $DebugOutputStream
 
     }
 
@@ -1276,6 +1279,7 @@ function Resolve-IdRefSearchDir {
 function Resolve-IdRefSID {
 
     [OutputType([PSCustomObject])]
+
     param (
 
         # IdentityReference from an Access Control Entry
@@ -1373,7 +1377,7 @@ function Resolve-IdRefSID {
 
             $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
             Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
-            $Log['Type'] = $DebugOutputStream
+            # $Log['Type'] = $DebugOutputStream
 
         }
 
@@ -1656,26 +1660,28 @@ function Split-DirectoryPath {
 
 }
 function Test-AdsiProvider {
+
     <#
-        .SYNOPSIS
-        Determine whether a directory server is an LDAP or a WinNT server
-        .DESCRIPTION
-        Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
-        .INPUTS
-        [System.String] AdsiServer parameter.
-        .OUTPUTS
-        [System.String] Possible return values are:
-            LDAP
-            WinNT
-        .EXAMPLE
-        Test-AdsiProvider -AdsiServer localhost
+    .SYNOPSIS
+    Determine whether a directory server is an LDAP or a WinNT server
+    .DESCRIPTION
+    Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
+    .INPUTS
+    [System.String] AdsiServer parameter.
+    .OUTPUTS
+    [System.String] Possible return values are:
+        LDAP
+        WinNT
+    .EXAMPLE
+    Test-AdsiProvider -AdsiServer localhost
 
-        Find the ADSI provider of the local computer
-        .EXAMPLE
-        Test-AdsiProvider -AdsiServer 'ad.contoso.com'
+    Find the ADSI provider of the local computer
+    .EXAMPLE
+    Test-AdsiProvider -AdsiServer 'ad.contoso.com'
 
-        Find the ADSI provider of the AD domain 'ad.contoso.com'
+    Find the ADSI provider of the AD domain 'ad.contoso.com'
     #>
+
     [OutputType([System.String])]
 
     param (
@@ -1703,13 +1709,8 @@ function Test-AdsiProvider {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $Cache.Value['LogBuffer']
-        WhoAmI       = $WhoAmI
-    }
 
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
     $AdsiPath = "LDAP://$AdsiServer"
     Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath') # for '$AdsiServer'"
 
@@ -6263,7 +6264,7 @@ function Resolve-IdentityReference {
         $DomainDns = $CacheResult.Dns
 
         # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account).
-        $SIDString = ConvertTo-SidString -Name $Name -ServerNetBIOS $ServerNetBIOS -DebugOutputStream $DebugOutputStream -Log $Log
+        $SIDString = ConvertTo-SidString -Name $Name -ServerNetBIOS $ServerNetBIOS -Log $Log
 
         if (-not $SIDString) {
 
@@ -6335,21 +6336,23 @@ function Resolve-ServiceNameToSID {
 
 }
 function Search-Directory {
-    <#
-        .SYNOPSIS
-        Use Active Directory Service Interfaces to search an LDAP directory
-        .DESCRIPTION
-        Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
-        Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
-        .INPUTS
-        None. Pipeline input is not accepted.
-        .OUTPUTS
-        [System.DirectoryServices.DirectoryEntry]
-        .EXAMPLE
-        Search-Directory -Filter ''
 
-        As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
+    <#
+    .SYNOPSIS
+    Use Active Directory Service Interfaces to search an LDAP directory
+    .DESCRIPTION
+    Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
+    Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
+    .INPUTS
+    None. Pipeline input is not accepted.
+    .OUTPUTS
+    [System.DirectoryServices.DirectoryEntry]
+    .EXAMPLE
+    Search-Directory -Filter ''
+
+    As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
     #>
+
     param (
 
         <#
@@ -6400,13 +6403,6 @@ function Search-Directory {
 
     )
 
-    $Log = @{
-        ThisHostname = $ThisHostname
-        Type         = $DebugOutputStream
-        Buffer       = $Cache.Value['LogBuffer']
-        WhoAmI       = $WhoAmI
-    }
-
     $DirectoryEntryParameters = @{
         ThisFqdn = $ThisFqdn
     }
@@ -6418,13 +6414,12 @@ function Search-Directory {
     if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {
 
         $CimParams = @{
-            ComputerName      = $ThisFqdn
-            DebugOutputStream = $DebugOutputStream
-            ThisFqdn          = $ThisFqdn
+            ComputerName = $ThisFqdn
+            ThisFqdn     = $ThisFqdn
         }
 
+        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-
         $Workgroup = (Get-CachedCimInstance -ClassName 'Win32_ComputerSystem' -KeyProperty Name @CimParams @LogThis).Workgroup
         $DirectoryPath = "WinNT://$Workgroup/$ThisHostname"
 
@@ -6471,6 +6466,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

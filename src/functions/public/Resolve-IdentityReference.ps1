@@ -161,7 +161,7 @@ function Resolve-IdentityReference {
         $DomainDns = $CacheResult.Dns
 
         # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account).
-        $SIDString = ConvertTo-SidString -Name $Name -ServerNetBIOS $ServerNetBIOS -DebugOutputStream $DebugOutputStream -Log $Log
+        $SIDString = ConvertTo-SidString -Name $Name -ServerNetBIOS $ServerNetBIOS -Log $Log
 
         if (-not $SIDString) {
 
