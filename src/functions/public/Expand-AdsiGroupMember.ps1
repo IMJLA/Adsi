@@ -119,7 +119,7 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
-            Add-SidInfo -InputObject $Principal -DomainBySid $DomainBySid @LogThis
+            Add-SidInfo -InputObject $Principal -DomainsBySid $DomainBySid @LogThis
 
         }
     }
