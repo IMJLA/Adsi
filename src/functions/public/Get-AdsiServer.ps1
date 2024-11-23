@@ -433,7 +433,8 @@ function Get-AdsiServer {
             $OutputObject = [PSCustomObject]@{
                 DistinguishedName  = $DomainDn
                 Dns                = $DomainDnsName
-                Sid                = $DomainSid
+                Sid                = $DomainSid # TODO : This should be a sid object since there is a sidstring property but downstream consumers first need to be updated to use sidstring
+                SidString          = $DomainSid
                 Netbios            = $DomainNetBIOS
                 AdsiProvider       = $AdsiProvider
                 Win32Accounts      = $Win32Accounts

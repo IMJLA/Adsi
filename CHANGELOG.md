@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.441] - 2024-11-22 - add sidstring property
+
 ## [4.0.440] - 2024-11-22 - use cache for get-currentdomain
 
 ## [4.0.439] - 2024-11-22 - bugfix get-currentdomain should return an object
