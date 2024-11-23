@@ -55,14 +55,14 @@ function Expand-AdsiGroupMember {
 
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-        $DomainBySid = $Cache.Value['DomainBySid']
+        $DomainBySid = $Cache.Value['DomainBySid'].Value
 
         # The DomainBySid cache must be populated with trusted domains in order to translate foreign security principals
         if ( $DomainBySid.Keys.Count -lt 1 ) {
 
             Write-LogMsg @Log -Text '# No domains in the DomainBySid cache'
 
-            ForEach ($TrustedDomain in Get-TrustedDomain) {
+            ForEach ($TrustedDomain in (Get-TrustedDomain -Cache $Cache)) {
                 #Write-LogMsg @Log -Text "Get-AdsiServer -Fqdn $($TrustedDomain.DomainFqdn)"
                 $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -ThisFqdn $ThisFqdn @LogThis
             }

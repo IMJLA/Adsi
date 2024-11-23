@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.435] - 2024-11-22 - bugfix accessing value of psreference
+
 ## [4.0.434] - 2024-11-22 - bugfix debugoutputstream param
 
 ## [4.0.433] - 2024-11-22 - remove duplicate param
