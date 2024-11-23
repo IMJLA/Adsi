@@ -349,9 +349,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName.Value
             }
 
-            $null = $DomainsByFqdn.Value[$DomainFqdn] = $OutputObject
-            $null = $DomainsByNetbios.Value[$DomainNetBIOS] = $OutputObject
-            $null = $DomainsBySid.Value[$DomainSid] = $OutputObject
+            $DomainsByFqdn.Value[$DomainFqdn] = $OutputObject
+            $DomainsByNetbios.Value[$DomainNetBIOS] = $OutputObject
+            $DomainsBySid.Value[$DomainSid] = $OutputObject
             $OutputObject
 
         }
@@ -443,9 +443,9 @@ function Get-AdsiServer {
                 WellKnownSidByName = $WellKnownSidByName.Value
             }
 
-            $null = $DomainsByFqdn.Value[$DomainDnsName] = $OutputObject
-            $null = $DomainsByNetbios.Value[$DomainNetBIOS] = $OutputObject
-            $null = $DomainsBySid.Value[$DomainSid] = $OutputObject
+            $DomainsByFqdn.Value[$DomainDnsName] = $OutputObject
+            $DomainsByNetbios.Value[$DomainNetBIOS] = $OutputObject
+            $DomainsBySid.Value[$DomainSid] = $OutputObject
             $OutputObject
 
         }
