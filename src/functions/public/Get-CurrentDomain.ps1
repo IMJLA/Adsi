@@ -133,7 +133,7 @@ function Get-CurrentDomain {
 
     # Output the object
     $OutputObject = [PSCustomObject]$OutputProperties
-    $Cache.Value['DomainByFqdn'].Value[$DomainDnsName] = $OutputObject
+    $Cache.Value['DomainByFqdn'].Value[$DomainDns] = $OutputObject
     $Cache.Value['DomainByNetbios'].Value[$DomainNetBIOS] = $OutputObject
     $Cache.Value['DomainBySid'].Value[$DomainSid] = $OutputObject
     return $OutputObject
