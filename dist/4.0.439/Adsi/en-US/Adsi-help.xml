@@ -536,9 +536,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:description>
             <maml:para>The current domain Can be passed as a parameter to reduce calls to Get-CurrentDomain</maml:para>
           </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject</command:parameterValue>
           <dev:type>
-            <maml:name>System.String</maml:name>
+            <maml:name>System.Management.Automation.PSObject</maml:name>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>(Get-CurrentDomain -Cache $Cache)</dev:defaultValue>
@@ -586,9 +586,9 @@ Path              : WinNT://localhost/Administrator</dev:code>
         <maml:description>
           <maml:para>The current domain Can be passed as a parameter to reduce calls to Get-CurrentDomain</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject</command:parameterValue>
         <dev:type>
-          <maml:name>System.String</maml:name>
+          <maml:name>System.Management.Automation.PSObject</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>(Get-CurrentDomain -Cache $Cache)</dev:defaultValue>

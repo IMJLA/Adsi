@@ -73,8 +73,12 @@ function Get-CurrentDomain {
         # Use CIM to find the domain
         $SIDString = Find-LocalAdsiServerSid @CimParams
         $SID = $SIDString | ConvertTo-SidByteArray
+        $DomainDns = $ComputerName
+        $DomainNetBIOS = $ComputerName
 
         $OutputProperties = @{
+            Dns               = $DomainDns
+            Netbios           = $DomainNetBIOS
             SIDString         = $SIDString
             ObjectSid         = [PSCustomObject]@{
                 Value = $Sid
@@ -86,21 +90,25 @@ function Get-CurrentDomain {
 
     } else {
 
-        # Use ADSI to find the domain
+        $DomainDns = $Comp.Domain
 
+        # Use ADSI to find the domain
         Write-LogMsg @Log -Text "[adsi]::new().RefreshCache('objectSid')"
         $CurrentDomain = [adsi]::new()
         try {
             $null = $CurrentDomain.RefreshCache('objectSid')
         } catch {
-            Write-LogMsg @Log -Text " # $($_.Exception.Message) # for '$ComputerName'"
+            Write-LogMsg @Log -Text " # $($_.Exception.Message) # for ComputerName '$ComputerName'"
             return
         }
 
         # Convert the objectSID attribute (byte array) to a security descriptor string formatted according to SDDL syntax (Security Descriptor Definition Language)
         Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0)# for '$ComputerName'"
+        $SIDString = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
         $OutputProperties = @{
-            SIDString = & { [System.Security.Principal.SecurityIdentifier]::new([byte[]]$CurrentDomain.objectSid.Value, 0) } 2>$null
+            Dns       = $DomainDns
+            Netbios   = $DomainNetBIOS
+            SIDString = $SIDString
         }
 
         # Get any existing properties for inclusion later
@@ -121,9 +129,9 @@ function Get-CurrentDomain {
 
     # Output the object
     $OutputObject = [PSCustomObject]$OutputProperties
-    $AddOrUpdateScriptBlock = { param($key, $val) $val }
-    $null = $Cache.Value['DomainByFqdn'].Value.AddOrUpdate( $DomainDnsName, $OutputObject, $AddOrUpdateScriptblock )
-    $null = $Cache.Value['DomainByNetbios'].Value.AddOrUpdate( $DomainNetBIOS, $OutputObject, $AddOrUpdateScriptblock )
-    $null = $Cache.Value['DomainBySid'].Value.AddOrUpdate( $DomainSid, $OutputObject, $AddOrUpdateScriptblock )
+    $Cache.Value['DomainByFqdn'].Value[$DomainDnsName] = $OutputObject
+    $Cache.Value['DomainByNetbios'].Value[$DomainNetBIOS] = $OutputObject
+    $Cache.Value['DomainBySid'].Value[$DomainSid] = $OutputObject
+    return $OutputObject
 
 }

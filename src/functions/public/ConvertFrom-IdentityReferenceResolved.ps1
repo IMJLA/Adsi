@@ -63,7 +63,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         # The current domain
         # Can be passed as a parameter to reduce calls to Get-CurrentDomain
-        [string]$CurrentDomain = (Get-CurrentDomain -Cache $Cache)
+        [PSCustomObject]$CurrentDomain = (Get-CurrentDomain -Cache $Cache)
 
     )
 
@@ -77,7 +77,6 @@ function ConvertFrom-IdentityReferenceResolved {
         #Write-LogMsg @Log -Text " # ADSI Principal cache miss $LogSuffix"
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $AccessControlEntries = $null
-        $AddOrUpdateScriptblock = { param($key, $val) $val }
         $AceGuidByID = $Cache.Value['AceGuidByID']
         $null = $AceGuidByID.Value.TryGetValue( $IdentityReference , [ref]$AccessControlEntries )
         $split = $IdentityReference.Split('\')
@@ -449,8 +448,8 @@ function ConvertFrom-IdentityReferenceResolved {
                         }
 
                         $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
-                        $null = $PrincipalById.Value.AddOrUpdate( $ResolvedAccountName , [PSCustomObject]$OutputProperties, $AddOrUpdateScriptblock )
-                        $null = $AceGuidByID.Value.AddOrUpdate( $ResolvedAccountName , $AccessControlEntries, $AddOrUpdateScriptblock )
+                        $PrincipalById.Value[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
+                        $AceGuidByID.Value[$ResolvedAccountName] = $AccessControlEntries
                         $ResolvedAccountName
 
                     }
@@ -471,7 +470,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         }
 
-        $null = $PrincipalById.Value.AddOrUpdate( $IdentityReference , [PSCustomObject]$PropertiesToAdd, $AddOrUpdateScriptblock )
+        $PrincipalById.Value[$IdentityReference] = [PSCustomObject]$PropertiesToAdd
 
     }
 

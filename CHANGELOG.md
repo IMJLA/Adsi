@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.439] - 2024-11-22 - bugfix get-currentdomain should return an object
+
 ## [4.0.438] - 2024-11-22 - bugfix extra param
 
 ## [4.0.437] - 2024-11-22 - bugfix ref param

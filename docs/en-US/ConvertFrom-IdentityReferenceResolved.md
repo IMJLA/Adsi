@@ -15,7 +15,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
  [[-DebugOutputStream] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [-Cache] <PSReference> [[-CurrentDomain] <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [[-CurrentDomain] <PSObject>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -56,7 +56,7 @@ The current domain
 Can be passed as a parameter to reduce calls to Get-CurrentDomain
 
 ```yaml
-Type: System.String
+Type: System.Management.Automation.PSObject
 Parameter Sets: (All)
 Aliases:
 
