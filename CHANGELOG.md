@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.471] - 2024-11-24 - bugfix handle single quotes in debug output
+
 ## [4.0.470] - 2024-11-24 - improve debug output
 
 ## [4.0.469] - 2024-11-24 - debug capitalization only
