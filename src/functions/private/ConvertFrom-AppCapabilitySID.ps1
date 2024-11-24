@@ -195,6 +195,8 @@ You can programmatically generate these app capability SIDs by calling Derive­C
             'Description'     = "Apps w/ access to app capability {$Guid}"
             'SchemaClassName' = 'group'
             'Name'            = $SID
+            'DisplayName'     = $SID
+            'SamAccountName'  = $SID
             'NTAccount'       = "APPLICATION PACKAGE AUTHORITY\$SID"
         }
     }
