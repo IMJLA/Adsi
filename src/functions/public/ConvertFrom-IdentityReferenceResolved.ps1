@@ -107,6 +107,7 @@ function ConvertFrom-IdentityReferenceResolved {
             CurrentDomain      = $CurrentDomain
             LogSuffixComment   = $LogSuffixComment
         }
+
         Write-LogMsg @Log -Text 'ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -Suffix $LogSuffixComment -ExpandKeyMap @{ Cache = '$Cache' }
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
         Pause # to debug and confirm DomainDn is populated
@@ -115,6 +116,8 @@ function ConvertFrom-IdentityReferenceResolved {
             NoGroupMembers = $NoGroupMembers
             PrincipalById  = $PrincipalById
         }
+
+        Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -Suffix $LogSuffixComment
         ConvertTo-PermissionPrincipal @PermissionPrincipalConversion @CommonSplat
 
     }
