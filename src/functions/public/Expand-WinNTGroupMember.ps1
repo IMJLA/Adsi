@@ -69,26 +69,27 @@ function Expand-WinNTGroupMember {
 
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
-                Write-LogMsg @Log -Text " # Is an ADSI group$SamAccountNameOrSid"
+                Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup -DirectoryPath '$($ThisEntry.Path)' -ThisFqdn '$ThisFqdn' # Is an ADSI group"
                 $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn @LogThis
+                Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid'] # Is an ADSI group"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
             } else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
 
-                    Write-LogMsg @Log -Text " # Is a WinNT group$SamAccountNameOrSid"
+                    #Write-LogMsg @Log -Text " # Is a WinNT group"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
 
-                        Write-LogMsg @Log -Text " # Is a special group with no direct memberships # '$($ThisEntry.Path)'"
+                        #Write-LogMsg @Log -Text " # Is a special group with no direct memberships # '$($ThisEntry.Path)'"
                         Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                     }
 
                 } else {
 
-                    Write-LogMsg @Log -Text " # Is a user account$SamAccountNameOrSid"
+                    Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$ThisEntry -DomainsBySid [ref]`$Cache.Value['DomainBySid'] # Is a user account"
                     Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                 }
