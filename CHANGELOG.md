@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.456] - 2024-11-24 - implement convertto-directoryentry and convertto-permissionprincipal
+
 ## [4.0.455] - 2024-11-23 - update known sids
 
 ## [4.0.454] - 2024-11-23 - update known sids
