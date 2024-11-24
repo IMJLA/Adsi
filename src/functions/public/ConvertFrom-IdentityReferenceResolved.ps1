@@ -110,7 +110,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         Write-LogMsg @Log -Text 'ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -Suffix $LogSuffixComment -ExpandKeyMap @{ Cache = '$Cache' }
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
-        Pause # to debug and confirm DomainDn is populated
+
         $PermissionPrincipalConversion = @{
             DirectoryEntry = $DirectoryEntry
             NoGroupMembers = $NoGroupMembers

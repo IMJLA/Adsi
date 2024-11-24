@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.462] - 2024-11-24 - remove debug pause
+
 ## [4.0.461] - 2024-11-24 - updated early exists
 
 ## [4.0.460] - 2024-11-24 - bugfix early exits
