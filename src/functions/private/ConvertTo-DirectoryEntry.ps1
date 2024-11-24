@@ -236,7 +236,7 @@ function ConvertTo-DirectoryEntry {
     Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -Suffix $LogSuffixComment
 
     try {
-        Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
+        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -245,5 +245,7 @@ function ConvertTo-DirectoryEntry {
         return
 
     }
+
+    if ($DirectoryEntry) { return $DirectoryEntry }
 
 }
