@@ -108,13 +108,12 @@ function Get-WinNTGroupMember {
 
                 Write-LogMsg @Log -Text "`$DirectoryMembers = Invoke-IADsGroupMembersMethod -DirectoryEntry `$ThisDirEntry"
                 $DirectoryMembers = Invoke-IADsGroupMembersMethod -DirectoryEntry $ThisDirEntry
-                #Write-LogMsg @Log -Text " # $(@($DirectoryMembers).Count) members found"
 
                 $MembersToGet = @{
                     'WinNTMembers' = @()
                 }
 
-                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix '$LogSuffix' -DirectoryEntry `$ThisDirEntry -GroupDomain `$GroupDomain -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
+                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix '$LogSuffix' -DirectoryEntry `$ThisDirEntry -GroupDomain `$GroupDomain -ThisFqdn '$ThisFqdn' # for $(@($DirectoryMembers).Count) members" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                 Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $GroupDomain -ThisFqdn $ThisFqdn @LogThis
 
                 # Get and Expand the directory entries for the WinNT group members

@@ -3002,48 +3002,58 @@ function ConvertTo-DomainSidString {
 
     )
 
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
+    $LogSuffix = "# for domain FQDN '$DomainDnsName'"
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI ; Suffix = " $LogSuffix" }
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $CacheResult = $null
     $null = $Cache.Value['DomainByFqdn'].Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
 
     if ($CacheResult.Sid) {
 
-        #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$DomainDnsName'"
+        #Write-LogMsg @Log -Text " # Domain FQDN cache hit"
         return $CacheResult.Sid
 
     }
-    #Write-LogMsg @Log -Text " # Domain FQDN cache miss for '$DomainDnsName'"
+    #Write-LogMsg @Log -Text " # Domain FQDN cache miss"
 
     if (
         -not $AdsiProvider -or
         $AdsiProvider -eq 'LDAP'
     ) {
 
+        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath 'LDAP://$DomainDnsName' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
         $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -ThisFqdn $ThisFqdn @LogThis
+
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
-            Write-LogMsg @Log -Text " # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
-            Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+
+            Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn' # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim())" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
             return $DomainSid
+
         }
+
     } else {
-        Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+
+        Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
         return $DomainSid
+
     }
 
     $DomainSid = $null
 
     if ($DomainDirectoryEntry.Properties) {
+
         $objectSIDProperty = $DomainDirectoryEntry.Properties['objectSid']
+
         if ($objectSIDProperty.Value) {
             $SidByteArray = [byte[]]$objectSIDProperty.Value
         } else {
             $SidByteArray = [byte[]]$objectSIDProperty
         }
+
     } else {
         $SidByteArray = [byte[]]$DomainDirectoryEntry.objectSid
     }
@@ -3054,9 +3064,10 @@ function ConvertTo-DomainSidString {
     if ($DomainSid) {
         return $DomainSid
     } else {
+
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
-        $Log['Type'] = $DebugOutputStream
+        Write-LogMsg @Log -Text ' # Could not find valid SID for LDAP Domain'
+
     }
 
 }
@@ -6278,13 +6289,12 @@ function Get-WinNTGroupMember {
 
                 Write-LogMsg @Log -Text "`$DirectoryMembers = Invoke-IADsGroupMembersMethod -DirectoryEntry `$ThisDirEntry"
                 $DirectoryMembers = Invoke-IADsGroupMembersMethod -DirectoryEntry $ThisDirEntry
-                #Write-LogMsg @Log -Text " # $(@($DirectoryMembers).Count) members found"
 
                 $MembersToGet = @{
                     'WinNTMembers' = @()
                 }
 
-                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix '$LogSuffix' -DirectoryEntry `$ThisDirEntry -GroupDomain `$GroupDomain -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
+                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix '$LogSuffix' -DirectoryEntry `$ThisDirEntry -GroupDomain `$GroupDomain -ThisFqdn '$ThisFqdn' # for $(@($DirectoryMembers).Count) members" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                 Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $GroupDomain -ThisFqdn $ThisFqdn @LogThis
 
                 # Get and Expand the directory entries for the WinNT group members
@@ -6879,6 +6889,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

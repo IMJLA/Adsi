@@ -42,48 +42,58 @@ function ConvertTo-DomainSidString {
 
     )
 
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
+    $LogSuffix = "# for domain FQDN '$DomainDnsName'"
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI ; Suffix = " $LogSuffix" }
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $CacheResult = $null
     $null = $Cache.Value['DomainByFqdn'].Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
 
     if ($CacheResult.Sid) {
 
-        #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$DomainDnsName'"
+        #Write-LogMsg @Log -Text " # Domain FQDN cache hit"
         return $CacheResult.Sid
 
     }
-    #Write-LogMsg @Log -Text " # Domain FQDN cache miss for '$DomainDnsName'"
+    #Write-LogMsg @Log -Text " # Domain FQDN cache miss"
 
     if (
         -not $AdsiProvider -or
         $AdsiProvider -eq 'LDAP'
     ) {
 
+        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath 'LDAP://$DomainDnsName' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
         $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -ThisFqdn $ThisFqdn @LogThis
+
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
-            Write-LogMsg @Log -Text " # LDAP connection failed to '$DomainDnsName' - $($_.Exception.Message)"
-            Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+
+            Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn' # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim())" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
             return $DomainSid
+
         }
+
     } else {
-        Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName'"
+
+        Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
         return $DomainSid
+
     }
 
     $DomainSid = $null
 
     if ($DomainDirectoryEntry.Properties) {
+
         $objectSIDProperty = $DomainDirectoryEntry.Properties['objectSid']
+
         if ($objectSIDProperty.Value) {
             $SidByteArray = [byte[]]$objectSIDProperty.Value
         } else {
             $SidByteArray = [byte[]]$objectSIDProperty
         }
+
     } else {
         $SidByteArray = [byte[]]$DomainDirectoryEntry.objectSid
     }
@@ -94,9 +104,10 @@ function ConvertTo-DomainSidString {
     if ($DomainSid) {
         return $DomainSid
     } else {
+
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # LDAP Domain: '$DomainDnsName' has an invalid SID - $($_.Exception.Message)"
-        $Log['Type'] = $DebugOutputStream
+        Write-LogMsg @Log -Text ' # Could not find valid SID for LDAP Domain'
+
     }
 
 }
