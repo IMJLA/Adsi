@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.469] - 2024-11-24 - debug capitalization only
+
 ## [4.0.468] - 2024-11-24 - bugfix missing named param what is this argument nonsense
 
 ## [4.0.467] - 2024-11-24 - bugfix null and string conflict

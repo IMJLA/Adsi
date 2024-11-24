@@ -77,9 +77,9 @@ function Get-AdsiServer {
 
         ForEach ($DomainFqdn in $Fqdn) {
 
-            $Log['Suffix'] = " # for domain FQDN '$DomainDnsName'"
+            $Log['Suffix'] = " # for domain FQDN '$DomainFqdn'"
             $OutputObject = $null
-            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
+            $TryGetValueResult = $DomainsByFqdn.Value.TryGetValue($DomainFqdn, [ref]$OutputObject)
 
             if ($TryGetValueResult) {
 
@@ -91,7 +91,7 @@ function Get-AdsiServer {
 
             }
 
-            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainFQDN, [ref]$OutputObject)
+            $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($DomainFqdn, [ref]$OutputObject)
 
             if ($TryGetValueResult) {
 
