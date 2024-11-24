@@ -1,4 +1,4 @@
-function Convert-ToPermissionPrincipal {
+function ConvertTo-PermissionPrincipal {
 
     param (
         $DomainDn,

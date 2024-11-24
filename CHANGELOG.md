@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.459] - 2024-11-24 - put the hyphen in the wrong place lulz
+
 ## [4.0.458] - 2024-11-24 - bugfix func name
 
 ## [4.0.457] - 2024-11-24 - fix debut output
