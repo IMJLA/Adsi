@@ -85,7 +85,7 @@ function ConvertFrom-IdentityReferenceResolved {
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
         $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
-        [string]$DomainDn = $null
+        $DomainDn = $null
 
         $CommonSplat = @{
             AccessControlEntries = $AccessControlEntries
