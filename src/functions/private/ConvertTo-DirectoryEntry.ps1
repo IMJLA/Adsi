@@ -26,7 +26,7 @@ function ConvertTo-DirectoryEntry {
         }
 
         $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
-        return $DirectoryEntry
+        if ($DirectoryEntry) { return $DirectoryEntry }
 
     }
 
@@ -95,7 +95,7 @@ function ConvertTo-DirectoryEntry {
 
         }
 
-        return $DirectoryEntry
+        if ($DirectoryEntry) { return $DirectoryEntry }
 
     } elseif (
         $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
@@ -145,7 +145,7 @@ function ConvertTo-DirectoryEntry {
 
         }
 
-        return $DirectoryEntry
+        if ($DirectoryEntry) { return $DirectoryEntry }
 
     }
 
@@ -236,10 +236,7 @@ function ConvertTo-DirectoryEntry {
     Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -Suffix $LogSuffixComment
 
     try {
-
-        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
-        return $DirectoryEntry
-
+        Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
