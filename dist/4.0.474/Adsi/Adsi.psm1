@@ -6869,14 +6869,8 @@ function Search-Directory {
     $DirectorySearcher.PageSize = $PageSize
     Write-LogMsg @Log -Text "`$DirectorySearcher.SearchScope = '$SearchScope'"
     $DirectorySearcher.SearchScope = $SearchScope
-
-    ForEach ($Property in $PropertiesToLoad) {
-
-        Write-LogMsg @Log -Text "`$DirectorySearcher.PropertiesToLoad.Add('$Property')"
-        $null = $DirectorySearcher.PropertiesToLoad.Add($Property)
-
-    }
-
+    Write-LogMsg @Log -Text "`$DirectorySearcher.PropertiesToLoad.AddRange(@('$($PropertiesToLoad -join "','")'))"
+    $null = $DirectorySearcher.PropertiesToLoad.AddRange($PropertiesToLoad)
     Write-LogMsg @Log -Text "`$DirectorySearcher.FindAll()"
     $SearchResultCollection = $DirectorySearcher.FindAll()
     # TODO: Fix this.  Problems in integration testing trying to use the objects later if I dispose them here now.
@@ -6897,6 +6891,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
