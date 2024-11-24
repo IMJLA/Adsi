@@ -59,15 +59,17 @@ function Expand-WinNTGroupMember {
 
         ForEach ($ThisEntry in $DirectoryEntry) {
 
-            if (!($ThisEntry.Properties)) {
+            $Log['Suffix'] = " # for DirectoryEntry '$($ThisEntry.Path)'"
+
+            if ( -not $ThisEntry.Properties ) {
 
                 $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                Write-LogMsg @Log -Text " # '$ThisEntry' has no properties # For '$($ThisEntry.Path)'"
+                Write-LogMsg @Log -Text " # '$ThisEntry' has no properties$SamAccountNameOrSid"
                 $Log['Type'] = $DebugOutputStream
 
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
-                Write-LogMsg @Log -Text " # Is an ADSI group # For '$($ThisEntry.Path)'"
+                Write-LogMsg @Log -Text " # Is an ADSI group$SamAccountNameOrSid"
                 $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn @LogThis
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
@@ -75,7 +77,7 @@ function Expand-WinNTGroupMember {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
 
-                    Write-LogMsg @Log -Text " # Is a WinNT group # For '$($ThisEntry.Path)'"
+                    Write-LogMsg @Log -Text " # Is a WinNT group$SamAccountNameOrSid"
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
 
@@ -86,7 +88,7 @@ function Expand-WinNTGroupMember {
 
                 } else {
 
-                    Write-LogMsg @Log -Text " # Is a user account # For '$($ThisEntry.Path)'"
+                    Write-LogMsg @Log -Text " # Is a user account$SamAccountNameOrSid"
                     Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                 }
