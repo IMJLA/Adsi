@@ -106,6 +106,7 @@ function New-FakeDirectoryEntry {
     $Properties = @{
         Name            = $Name
         Description     = $Description
+        SamAccountName  = $Name
         SchemaClassName = $SchemaClassName
     }
 
