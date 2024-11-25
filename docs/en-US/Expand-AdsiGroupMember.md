@@ -103,7 +103,7 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))
+Default value: @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

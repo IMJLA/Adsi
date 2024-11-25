@@ -613,7 +613,11 @@ function ConvertTo-PermissionPrincipal {
         $LogThis,
         $LogSuffix,
         $SamAccountNameOrSid,
-        $AccessControlEntries
+        $AccessControlEntries,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+
     )
 
     $PropertiesToAdd = @{
@@ -621,6 +625,21 @@ function ConvertTo-PermissionPrincipal {
         DomainNetbios       = $DomainNetBIOS
         ResolvedAccountName = $IdentityReference
     }
+
+    # Add the bare minimum required properties
+    $PropertiesToLoad = $AccountProperty + @(
+        'distinguishedName',
+        'grouptype',
+        'member',
+        'name',
+        'objectClass',
+        'objectSid',
+        'primaryGroupToken',
+        'samAccountName'
+    )
+
+    $PropertiesToLoad = $PropertiesToLoad |
+    Sort-Object -Unique
 
     if ($null -ne $DirectoryEntry) {
 
@@ -666,7 +685,7 @@ function ConvertTo-PermissionPrincipal {
 
                 # Retrieve the members of groups from the LDAP provider
                 Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is an LDAP security principal $LogSuffix"
-                $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis).FullMembers
+                $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis).FullMembers
 
             } else {
 
@@ -675,7 +694,7 @@ function ConvertTo-PermissionPrincipal {
                 if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
                     Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is a WinNT group $LogSuffix"
-                    $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis
+                    $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
 
                 }
 
@@ -1662,7 +1681,7 @@ function Resolve-IdRefSearchDir {
     $SearchParams = @{
         DirectoryPath    = $SearchPath
         Filter           = "(samaccountname=$Name)"
-        PropertiesToLoad = @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')
+        PropertiesToLoad = $AccountProperty + @('objectClass', 'distinguishedName', 'name', 'grouptype', 'member', 'objectClass')
         ThisFqdn         = $ThisFqdn
     }
 
@@ -2478,6 +2497,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $CommonSplat = @{
             AccessControlEntries = $AccessControlEntries
+            AccountProperty      = $AccountProperty
             DebugOutputStream    = $DebugOutputStream
             DomainDn             = $DomainDn
             DomainNetBIOS        = $DomainNetBIOS
@@ -2490,7 +2510,6 @@ function ConvertFrom-IdentityReferenceResolved {
         }
 
         $DirectoryEntryConversion = @{
-            AccountProperty    = $AccountProperty
             Cache              = $Cache
             CachedWellKnownSID = $CachedWellKnownSID
             CurrentDomain      = $CurrentDomain
@@ -3277,7 +3296,7 @@ function Expand-AdsiGroupMember {
         $DirectoryEntry,
 
         # Properties of the group members to retrieve
-        [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -3312,6 +3331,21 @@ function Expand-AdsiGroupMember {
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $DomainSidRef = $Cache.Value['DomainBySid']
         $DomainBySid = $DomainSidRef.Value
+
+        # Add the bare minimum required properties
+        $PropertiesToLoad = $PropertiesToLoad + @(
+            'distinguishedName',
+            'grouptype',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'primaryGroupToken',
+            'samAccountName'
+        )
+
+        $PropertiesToLoad = $PropertiesToLoad |
+        Sort-Object -Unique
 
         # The DomainBySid cache must be populated with trusted domains in order to translate foreign security principals
         if ( $DomainBySid.Keys.Count -lt 1 ) {
@@ -3364,8 +3398,8 @@ function Expand-AdsiGroupMember {
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
 
                         Write-LogMsg @Log -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
-                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn @LogThis
-                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName @LogThis
+                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
+                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -PropertiesToLoad $PropertiesToLoad @LogThis
 
                     }
 
@@ -3426,7 +3460,10 @@ function Expand-WinNTGroupMember {
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
 
@@ -3435,6 +3472,21 @@ function Expand-WinNTGroupMember {
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $DomainBySid = [ref]$Cache.Value['DomainBySid']
+
+        # Add the bare minimum required properties
+        $PropertiesToLoad = $AccountProperty + @(
+            'distinguishedName',
+            'grouptype',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'primaryGroupToken',
+            'samAccountName'
+        )
+    
+        $PropertiesToLoad = $PropertiesToLoad |
+        Sort-Object -Unique
 
     }
 
@@ -3453,7 +3505,7 @@ function Expand-WinNTGroupMember {
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup -DirectoryPath '$($ThisEntry.Path)' -ThisFqdn '$ThisFqdn' # Is an ADSI group"
-                $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn @LogThis
+                $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
                 Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid'] # Is an ADSI group"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
@@ -3578,7 +3630,7 @@ function Get-AdsiGroup {
         [string]$GroupName,
 
         # Properties of the group members to retrieve
-        [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -3619,6 +3671,21 @@ function Get-AdsiGroup {
         PropertiesToLoad = $PropertiesToLoad
         ThisFqdn         = $ThisFqdn
     }
+
+    # Add the bare minimum required properties
+    $PropertiesToLoad = $PropertiesToLoad + @(
+        'distinguishedName',
+        'grouptype',
+        'member',
+        'name',
+        'objectClass',
+        'objectSid',
+        'primaryGroupToken',
+        'samAccountName'
+    )
+
+    $PropertiesToLoad = $PropertiesToLoad |
+    Sort-Object -Unique
 
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
@@ -3676,7 +3743,7 @@ function Get-AdsiGroupMember {
         $Group,
 
         # Properties of the group members to find in the directory
-        [string[]]$PropertiesToLoad,
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -3727,7 +3794,18 @@ function Get-AdsiGroupMember {
 
         $PathRegEx = '(?<Path>LDAP:\/\/[^\/]*)'
         $DomainRegEx = '(?i)DC=\w{1,}?\b'
-        $PropertiesToLoad += 'primaryGroupToken', 'objectSid', 'objectClass'
+
+        # Add the bare minimum required properties
+        $PropertiesToLoad = $PropertiesToLoad + @(
+            'distinguishedName',
+            'grouptype',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'primaryGroupToken',
+            'samAccountName'
+        )
 
         $PropertiesToLoad = $PropertiesToLoad |
         Sort-Object -Unique
@@ -3856,7 +3934,7 @@ function Get-AdsiGroupMember {
             }
 
             Write-LogMsg @Log -Text "Expand-AdsiGroupMember -DirectoryEntry `$CurrentADGroupMembers # for $(@($CurrentADGroupMembers).Count) members"
-            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -ThisFqdn $ThisFqdn @LogThis
+            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
             Add-Member -InputObject $ThisGroup -MemberType NoteProperty -Name FullMembers -Value $ProcessedGroupMembers -Force -PassThru
 
         }
@@ -6204,7 +6282,7 @@ function Get-WinNTGroupMember {
         $DirectoryEntry,
 
         # Properties of the group members to find in the directory
-        [string[]]$PropertiesToLoad,
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -6238,21 +6316,16 @@ function Get-WinNTGroupMember {
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
 
-        # Add the bare minimum required properties (TODO: distinguished desirable but not mandatory properties e.g. Department)
+        # Add the bare minimum required properties
         $PropertiesToLoad = $PropertiesToLoad + @(
-            'Department',
-            'description',
             'distinguishedName',
             'grouptype',
-            'managedby',
             'member',
             'name',
             'objectClass',
             'objectSid',
-            'operatingSystem',
             'primaryGroupToken',
-            'samAccountName',
-            'Title'
+            'samAccountName'
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
@@ -6301,7 +6374,7 @@ function Get-WinNTGroupMember {
                     Write-LogMsg @Log -Text "`$MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath '$ThisMember' -ThisFqdn '$ThisFqdn'" -Expand $GetSearch, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                     $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember -ThisFqdn $ThisFqdn @GetSearch @LogThis
                     Write-LogMsg @Log -Text "Expand-WinNTGroupMember = Get-DirectoryEntry -DirectoryEntry `$MemberDirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -ThisFqdn $ThisFqdn @LogThis
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -ThisFqdn $ThisFqdn -AccountProperty $PropertiesToLoad @LogThis
 
                 }
 
@@ -6315,7 +6388,7 @@ function Get-WinNTGroupMember {
                     Write-LogMsg @Log -Text "`$MemberDirectoryEntries = Search-Directory -DirectoryPath '$MemberPath' -Filter '(|$ThisMemberToGet)' -ThisFqdn '$ThisFqdn'" -Expand $GetSearch, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                     $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$ThisMemberToGet)" -ThisFqdn $ThisFqdn @GetSearch @LogThis
                     Write-LogMsg @Log -Text "Expand-WinNTGroupMember -DirectoryEntry `$MemberDirectoryEntries -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -ThisFqdn $ThisFqdn @LogThis
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -ThisFqdn $ThisFqdn -AccountProperty $PropertiesToLoad @LogThis
 
                 }
 
@@ -6589,7 +6662,10 @@ function Resolve-IdentityReference {
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
 
@@ -6692,7 +6768,7 @@ function Resolve-IdentityReference {
 
             # Try to resolve the account against the domain indicated in its NT Account Name.
             # Add this domain to our list of known domains.
-            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogThis $LogThis -Name $Name @splat5 @splat8
+            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogThis $LogThis -Name $Name -AccountProperty $AccountProperty @splat5 @splat8
 
         }
 
@@ -6882,6 +6958,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

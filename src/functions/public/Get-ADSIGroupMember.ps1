@@ -22,7 +22,7 @@ function Get-AdsiGroupMember {
         $Group,
 
         # Properties of the group members to find in the directory
-        [string[]]$PropertiesToLoad,
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -73,7 +73,18 @@ function Get-AdsiGroupMember {
 
         $PathRegEx = '(?<Path>LDAP:\/\/[^\/]*)'
         $DomainRegEx = '(?i)DC=\w{1,}?\b'
-        $PropertiesToLoad += 'primaryGroupToken', 'objectSid', 'objectClass'
+
+        # Add the bare minimum required properties
+        $PropertiesToLoad = $PropertiesToLoad + @(
+            'distinguishedName',
+            'grouptype',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'primaryGroupToken',
+            'samAccountName'
+        )
 
         $PropertiesToLoad = $PropertiesToLoad |
         Sort-Object -Unique
@@ -202,7 +213,7 @@ function Get-AdsiGroupMember {
             }
 
             Write-LogMsg @Log -Text "Expand-AdsiGroupMember -DirectoryEntry `$CurrentADGroupMembers # for $(@($CurrentADGroupMembers).Count) members"
-            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -ThisFqdn $ThisFqdn @LogThis
+            $ProcessedGroupMembers = Expand-AdsiGroupMember -DirectoryEntry $CurrentADGroupMembers -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
             Add-Member -InputObject $ThisGroup -MemberType NoteProperty -Name FullMembers -Value $ProcessedGroupMembers -Force -PassThru
 
         }

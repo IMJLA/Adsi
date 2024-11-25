@@ -64,7 +64,10 @@ function Resolve-IdentityReference {
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
 
@@ -167,7 +170,7 @@ function Resolve-IdentityReference {
 
             # Try to resolve the account against the domain indicated in its NT Account Name.
             # Add this domain to our list of known domains.
-            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogThis $LogThis -Name $Name @splat5 @splat8
+            $SIDString = Resolve-IdRefSearchDir -DomainDn $DomainDn -Log $Log -LogThis $LogThis -Name $Name -AccountProperty $AccountProperty @splat5 @splat8
 
         }
 

@@ -43,7 +43,10 @@ function Expand-WinNTGroupMember {
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
 
@@ -52,6 +55,21 @@ function Expand-WinNTGroupMember {
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $DomainBySid = [ref]$Cache.Value['DomainBySid']
+
+        # Add the bare minimum required properties
+        $PropertiesToLoad = $AccountProperty + @(
+            'distinguishedName',
+            'grouptype',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'primaryGroupToken',
+            'samAccountName'
+        )
+    
+        $PropertiesToLoad = $PropertiesToLoad |
+        Sort-Object -Unique
 
     }
 
@@ -70,7 +88,7 @@ function Expand-WinNTGroupMember {
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup -DirectoryPath '$($ThisEntry.Path)' -ThisFqdn '$ThisFqdn' # Is an ADSI group"
-                $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn @LogThis
+                $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
                 Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid'] # Is an ADSI group"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 

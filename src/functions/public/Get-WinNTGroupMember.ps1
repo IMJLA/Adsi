@@ -25,7 +25,7 @@ function Get-WinNTGroupMember {
         $DirectoryEntry,
 
         # Properties of the group members to find in the directory
-        [string[]]$PropertiesToLoad,
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -59,21 +59,16 @@ function Get-WinNTGroupMember {
         $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
 
-        # Add the bare minimum required properties (TODO: distinguished desirable but not mandatory properties e.g. Department)
+        # Add the bare minimum required properties
         $PropertiesToLoad = $PropertiesToLoad + @(
-            'Department',
-            'description',
             'distinguishedName',
             'grouptype',
-            'managedby',
             'member',
             'name',
             'objectClass',
             'objectSid',
-            'operatingSystem',
             'primaryGroupToken',
-            'samAccountName',
-            'Title'
+            'samAccountName'
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
@@ -122,7 +117,7 @@ function Get-WinNTGroupMember {
                     Write-LogMsg @Log -Text "`$MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath '$ThisMember' -ThisFqdn '$ThisFqdn'" -Expand $GetSearch, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                     $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember -ThisFqdn $ThisFqdn @GetSearch @LogThis
                     Write-LogMsg @Log -Text "Expand-WinNTGroupMember = Get-DirectoryEntry -DirectoryEntry `$MemberDirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -ThisFqdn $ThisFqdn @LogThis
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -ThisFqdn $ThisFqdn -AccountProperty $PropertiesToLoad @LogThis
 
                 }
 
@@ -136,7 +131,7 @@ function Get-WinNTGroupMember {
                     Write-LogMsg @Log -Text "`$MemberDirectoryEntries = Search-Directory -DirectoryPath '$MemberPath' -Filter '(|$ThisMemberToGet)' -ThisFqdn '$ThisFqdn'" -Expand $GetSearch, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                     $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$ThisMemberToGet)" -ThisFqdn $ThisFqdn @GetSearch @LogThis
                     Write-LogMsg @Log -Text "Expand-WinNTGroupMember -DirectoryEntry `$MemberDirectoryEntries -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -ThisFqdn $ThisFqdn @LogThis
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -ThisFqdn $ThisFqdn -AccountProperty $PropertiesToLoad @LogThis
 
                 }
 

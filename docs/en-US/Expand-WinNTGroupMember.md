@@ -14,7 +14,7 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ```
 Expand-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>]
- [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-Cache] <PSReference>
+ [[-WhoAmI] <String>] [[-DebugOutputStream] <String>] [-Cache] <PSReference> [[-AccountProperty] <String[]>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -31,6 +31,21 @@ Recursively retrieves group members and detailed information about them
 Need to fix example and add notes
 
 ## PARAMETERS
+
+### -AccountProperty
+Properties of each Account to display on the report
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
+Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -Cache
 In-process cache to reduce calls to other processes or to disk

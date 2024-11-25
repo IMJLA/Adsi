@@ -11,7 +11,11 @@ function ConvertTo-PermissionPrincipal {
         $LogThis,
         $LogSuffix,
         $SamAccountNameOrSid,
-        $AccessControlEntries
+        $AccessControlEntries,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+
     )
 
     $PropertiesToAdd = @{
@@ -19,6 +23,21 @@ function ConvertTo-PermissionPrincipal {
         DomainNetbios       = $DomainNetBIOS
         ResolvedAccountName = $IdentityReference
     }
+
+    # Add the bare minimum required properties
+    $PropertiesToLoad = $AccountProperty + @(
+        'distinguishedName',
+        'grouptype',
+        'member',
+        'name',
+        'objectClass',
+        'objectSid',
+        'primaryGroupToken',
+        'samAccountName'
+    )
+
+    $PropertiesToLoad = $PropertiesToLoad |
+    Sort-Object -Unique
 
     if ($null -ne $DirectoryEntry) {
 
@@ -64,7 +83,7 @@ function ConvertTo-PermissionPrincipal {
 
                 # Retrieve the members of groups from the LDAP provider
                 Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is an LDAP security principal $LogSuffix"
-                $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis).FullMembers
+                $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis).FullMembers
 
             } else {
 
@@ -73,7 +92,7 @@ function ConvertTo-PermissionPrincipal {
                 if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
                     Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is a WinNT group $LogSuffix"
-                    $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis
+                    $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
 
                 }
 

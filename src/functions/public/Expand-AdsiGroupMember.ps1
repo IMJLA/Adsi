@@ -22,7 +22,7 @@ function Expand-AdsiGroupMember {
         $DirectoryEntry,
 
         # Properties of the group members to retrieve
-        [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -57,6 +57,21 @@ function Expand-AdsiGroupMember {
         $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $DomainSidRef = $Cache.Value['DomainBySid']
         $DomainBySid = $DomainSidRef.Value
+
+        # Add the bare minimum required properties
+        $PropertiesToLoad = $PropertiesToLoad + @(
+            'distinguishedName',
+            'grouptype',
+            'member',
+            'name',
+            'objectClass',
+            'objectSid',
+            'primaryGroupToken',
+            'samAccountName'
+        )
+
+        $PropertiesToLoad = $PropertiesToLoad |
+        Sort-Object -Unique
 
         # The DomainBySid cache must be populated with trusted domains in order to translate foreign security principals
         if ( $DomainBySid.Keys.Count -lt 1 ) {
@@ -109,8 +124,8 @@ function Expand-AdsiGroupMember {
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
 
                         Write-LogMsg @Log -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
-                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn @LogThis
-                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName @LogThis
+                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
+                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -PropertiesToLoad $PropertiesToLoad @LogThis
 
                     }
 

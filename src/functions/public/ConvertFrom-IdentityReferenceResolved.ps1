@@ -89,6 +89,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $CommonSplat = @{
             AccessControlEntries = $AccessControlEntries
+            AccountProperty      = $AccountProperty
             DebugOutputStream    = $DebugOutputStream
             DomainDn             = $DomainDn
             DomainNetBIOS        = $DomainNetBIOS
@@ -101,7 +102,6 @@ function ConvertFrom-IdentityReferenceResolved {
         }
 
         $DirectoryEntryConversion = @{
-            AccountProperty    = $AccountProperty
             Cache              = $Cache
             CachedWellKnownSID = $CachedWellKnownSID
             CurrentDomain      = $CurrentDomain

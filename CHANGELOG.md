@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.477] - 2024-11-24 - implement accountproperty with propertiestoload
+
 ## [4.0.476] - 2024-11-24 - bugfix cast PropertyValueCollection to string
 
 ## [4.0.475] - 2024-11-24 - bugfix samaccountname logic

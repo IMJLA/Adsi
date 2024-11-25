@@ -103,7 +103,7 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
+Default value: @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

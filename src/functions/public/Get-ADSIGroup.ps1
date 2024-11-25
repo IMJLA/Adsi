@@ -33,7 +33,7 @@ function Get-AdsiGroup {
         [string]$GroupName,
 
         # Properties of the group members to retrieve
-        [string[]]$PropertiesToLoad = (@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title')),
+        [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
         Hostname of the computer running this function.
@@ -74,6 +74,21 @@ function Get-AdsiGroup {
         PropertiesToLoad = $PropertiesToLoad
         ThisFqdn         = $ThisFqdn
     }
+
+    # Add the bare minimum required properties
+    $PropertiesToLoad = $PropertiesToLoad + @(
+        'distinguishedName',
+        'grouptype',
+        'member',
+        'name',
+        'objectClass',
+        'objectSid',
+        'primaryGroupToken',
+        'samAccountName'
+    )
+
+    $PropertiesToLoad = $PropertiesToLoad |
+    Sort-Object -Unique
 
     switch -Regex ($DirectoryPath) {
         '^WinNT' {

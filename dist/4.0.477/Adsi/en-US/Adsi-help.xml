@@ -2993,7 +2993,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>(@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))</dev:defaultValue>
+          <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -3130,7 +3130,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>(@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))</dev:defaultValue>
+        <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>ThisFqdn</maml:name>
@@ -3296,6 +3296,18 @@ ad.contoso.com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+          <maml:name>AccountProperty</maml:name>
+          <maml:description>
+            <maml:para>Properties of each Account to display on the report</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String[]</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>@('DisplayName', 'Company', 'Department', 'Title', 'Description')</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
           <maml:name>ProgressAction</maml:name>
           <maml:description>
@@ -3311,6 +3323,18 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <maml:name>AccountProperty</maml:name>
+        <maml:description>
+          <maml:para>Properties of each Account to display on the report</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>@('DisplayName', 'Company', 'Department', 'Title', 'Description')</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
@@ -3719,7 +3743,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>(@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))</dev:defaultValue>
+          <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -3868,7 +3892,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>(@('Department', 'description', 'distinguishedName', 'grouptype', 'managedby', 'member', 'name', 'objectClass', 'objectSid', 'operatingSystem', 'primaryGroupToken', 'samAccountName', 'Title'))</dev:defaultValue>
+        <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>ThisFqdn</maml:name>
@@ -3989,7 +4013,7 @@ ad.contoso.com</dev:code>
             <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -4176,7 +4200,7 @@ ad.contoso.com</dev:code>
           <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>ThisFqdn</maml:name>
@@ -5867,7 +5891,7 @@ Path              : WinNT://ComputerName</dev:code>
             <maml:name>System.String[]</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>ThisHostName</maml:name>
@@ -6004,7 +6028,7 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:name>System.String[]</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>@('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>ThisFqdn</maml:name>
@@ -6566,6 +6590,18 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+          <maml:name>AccountProperty</maml:name>
+          <maml:description>
+            <maml:para>Properties of each Account to display on the report</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String[]</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>@('DisplayName', 'Company', 'Department', 'Title', 'Description')</dev:defaultValue>
+        </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>AdsiServer</maml:name>
           <maml:description>
@@ -6680,6 +6716,18 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="11" aliases="none">
+        <maml:name>AccountProperty</maml:name>
+        <maml:description>
+          <maml:para>Properties of each Account to display on the report</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String[]</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>@('DisplayName', 'Company', 'Department', 'Title', 'Description')</dev:defaultValue>
+      </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>AdsiServer</maml:name>
         <maml:description>

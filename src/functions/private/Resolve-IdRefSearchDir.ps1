@@ -31,7 +31,7 @@ function Resolve-IdRefSearchDir {
     $SearchParams = @{
         DirectoryPath    = $SearchPath
         Filter           = "(samaccountname=$Name)"
-        PropertiesToLoad = @('objectClass', 'distinguishedName', 'name', 'grouptype', 'description', 'managedby', 'member', 'objectClass', 'Department', 'Title')
+        PropertiesToLoad = $AccountProperty + @('objectClass', 'distinguishedName', 'name', 'grouptype', 'member', 'objectClass')
         ThisFqdn         = $ThisFqdn
     }
 

@@ -16,7 +16,8 @@ Use CIM and ADSI to lookup info about IdentityReferences from Access Control Ent
 Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>]
  [[-AdsiServersByDns] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
  [[-DebugOutputStream] <String>] [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByCaption] <Hashtable>]
- [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -35,6 +36,21 @@ Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer
 Get information about the local Administrator account
 
 ## PARAMETERS
+
+### -AccountProperty
+Properties of each Account to display on the report
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 11
+Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -AdsiServer
 Object from Get-AdsiServer representing the directory server and its attributes
