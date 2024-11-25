@@ -37,7 +37,7 @@ function Add-SidInfo {
         ForEach ($Object in $InputObject) {
 
             $SID = $null
-            $SamAccountName = $Object.SamAccountName
+            [string]$SamAccountName = $Object.SamAccountName
             $DomainObject = $null
 
             if ($null -eq $Object) {
