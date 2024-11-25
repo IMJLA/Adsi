@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.475] - 2024-11-24 - bugfix samaccountname logic
+
 ## [4.0.474] - 2024-11-24 - simplify and reduce log verbosity with addrange
 
 ## [4.0.473] - 2024-11-24 - improve debug output

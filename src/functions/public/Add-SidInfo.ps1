@@ -37,12 +37,14 @@ function Add-SidInfo {
         ForEach ($Object in $InputObject) {
 
             $SID = $null
-            $SamAccountName = $null
+            $SamAccountName = $Object.SamAccountName
             $DomainObject = $null
 
             if ($null -eq $Object) {
                 continue
-            } elseif ($Object.objectSid.Value) {
+            }
+
+            if ($Object.objectSid.Value) {
 
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
@@ -79,15 +81,7 @@ function Add-SidInfo {
 
                 }
 
-            } elseif ($Object.objectSid) {
-                [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid, 0)
-            }
-
-            if ($Object.Domain.Sid) {
-
-                #if ($Object.Domain.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
-                # This would only have come from Add-SidInfo in the first place
-                # This means it was added with Add-Member in Get-DirectoryEntry for the root of the computer's directory
+            } elseif ($Object.Domain.Sid) {
 
                 if ($null -eq $SID) {
                     [string]$SID = $Object.Domain.Sid
@@ -95,9 +89,8 @@ function Add-SidInfo {
 
                 $DomainObject = $Object.Domain
 
-                #}
-
             }
+
             if (-not $DomainObject) {
 
                 # The SID of the domain is the SID of the user minus the last block of numbers

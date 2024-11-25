@@ -665,8 +665,7 @@ function ConvertTo-PermissionPrincipal {
             ) {
 
                 # Retrieve the members of groups from the LDAP provider
-                #Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is an LDAP security principal $LogSuffix"
-                Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -Suffix $LogSuffixComment
+                Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is an LDAP security principal $LogSuffix"
                 $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis).FullMembers
 
             } else {
@@ -675,8 +674,7 @@ function ConvertTo-PermissionPrincipal {
 
                 if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
-                    #Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT group $LogSuffix"
-                    Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -Suffix $LogSuffixComment
+                    Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is a WinNT group $LogSuffix"
                     $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -ThisFqdn $ThisFqdn @LogThis
 
                 }
@@ -2279,12 +2277,14 @@ function Add-SidInfo {
         ForEach ($Object in $InputObject) {
 
             $SID = $null
-            $SamAccountName = $null
+            $SamAccountName = $Object.SamAccountName
             $DomainObject = $null
 
             if ($null -eq $Object) {
                 continue
-            } elseif ($Object.objectSid.Value) {
+            }
+
+            if ($Object.objectSid.Value) {
 
                 # With WinNT directory entries for the root (WinNT://localhost), objectSid is a method rather than a property
                 # So we need to filter out those instances here to avoid this error:
@@ -2321,15 +2321,7 @@ function Add-SidInfo {
 
                 }
 
-            } elseif ($Object.objectSid) {
-                [string]$SID = [System.Security.Principal.SecurityIdentifier]::new([byte[]]$Object.objectSid, 0)
-            }
-
-            if ($Object.Domain.Sid) {
-
-                #if ($Object.Domain.GetType().FullName -ne 'System.Management.Automation.PSMethod') {
-                # This would only have come from Add-SidInfo in the first place
-                # This means it was added with Add-Member in Get-DirectoryEntry for the root of the computer's directory
+            } elseif ($Object.Domain.Sid) {
 
                 if ($null -eq $SID) {
                     [string]$SID = $Object.Domain.Sid
@@ -2337,9 +2329,8 @@ function Add-SidInfo {
 
                 $DomainObject = $Object.Domain
 
-                #}
-
             }
+
             if (-not $DomainObject) {
 
                 # The SID of the domain is the SID of the user minus the last block of numbers
@@ -6891,6 +6882,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
