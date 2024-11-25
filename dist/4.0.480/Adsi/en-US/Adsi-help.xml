@@ -1408,18 +1408,6 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>DebugOutputStream</maml:name>
-          <maml:description>
-            <maml:para>Output stream to send the log messages to</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>Debug</dev:defaultValue>
-        </command:parameter>
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
           <maml:name>Domain</maml:name>
           <maml:description>
@@ -1480,44 +1468,6 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>ThisFqdn</maml:name>
-          <maml:description>
-            <maml:para>FQDN of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>ThisHostName</maml:name>
-          <maml:description>
-            <maml:para>Hostname of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>WhoAmI</maml:name>
-          <maml:description>
-            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-        </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>ConvertTo-DistinguishedName</maml:name>
@@ -1546,18 +1496,6 @@ ForEach-Object {
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>DebugOutputStream</maml:name>
-          <maml:description>
-            <maml:para>Output stream to send the log messages to</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>Debug</dev:defaultValue>
         </command:parameter>
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
           <maml:name>DomainFQDN</maml:name>
@@ -1619,44 +1557,6 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>ThisFqdn</maml:name>
-          <maml:description>
-            <maml:para>FQDN of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>ThisHostName</maml:name>
-          <maml:description>
-            <maml:para>Hostname of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>WhoAmI</maml:name>
-          <maml:description>
-            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -1685,18 +1585,6 @@ ForEach-Object {
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>DebugOutputStream</maml:name>
-        <maml:description>
-          <maml:para>Output stream to send the log messages to</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
         <maml:name>Domain</maml:name>
@@ -1769,44 +1657,6 @@ ForEach-Object {
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>ThisFqdn</maml:name>
-        <maml:description>
-          <maml:para>FQDN of the computer running this function.</maml:para>
-          <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>ThisHostName</maml:name>
-        <maml:description>
-          <maml:para>Hostname of the computer running this function.</maml:para>
-          <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>WhoAmI</maml:name>
-        <maml:description>
-          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
@@ -5692,44 +5542,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-TrustedDomain</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>ThisHostname</maml:name>
-          <maml:description>
-            <maml:para>Hostname of the computer running this function.</maml:para>
-            <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Object</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>WhoAmI</maml:name>
-          <maml:description>
-            <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>DebugOutputStream</maml:name>
-          <maml:description>
-            <maml:para>Output stream to send the log messages to</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>Debug</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>Cache</maml:name>
           <maml:description>
             <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
@@ -5756,7 +5569,7 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
           <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
@@ -5767,18 +5580,6 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>DebugOutputStream</maml:name>
-        <maml:description>
-          <maml:para>Output stream to send the log messages to</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>Debug</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>
@@ -5791,31 +5592,6 @@ Path              : WinNT://ComputerName</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>ThisHostname</maml:name>
-        <maml:description>
-          <maml:para>Hostname of the computer running this function.</maml:para>
-          <maml:para>Can be provided as a string to avoid calls to HOSTNAME.EXE</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Object</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>WhoAmI</maml:name>
-        <maml:description>
-          <maml:para>Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>(whoami.EXE)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>

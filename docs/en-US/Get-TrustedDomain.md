@@ -13,8 +13,7 @@ Returns a dictionary of trusted domains by the current computer
 ## SYNTAX
 
 ```
-Get-TrustedDomain [[-ThisHostname] <Object>] [[-WhoAmI] <String>] [[-DebugOutputStream] <String>]
- [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Get-TrustedDomain [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -44,23 +43,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 4
+Position: 1
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DebugOutputStream
-Output stream to send the log messages to
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -76,38 +60,6 @@ Aliases: proga
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostname
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.Object
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

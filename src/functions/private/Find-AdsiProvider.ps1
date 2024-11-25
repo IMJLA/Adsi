@@ -28,27 +28,6 @@ function Find-AdsiProvider {
         # IP address or hostname of the directory server whose ADSI provider type to determine
         [string]$AdsiServer,
 
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
@@ -63,16 +42,12 @@ function Find-AdsiProvider {
     ###}
 
     $CommandParameters = @{
-        Cache             = $Cache
-        ComputerName      = $AdsiServer
-        DebugOutputStream = $DebugOutputStream
-        ErrorAction       = 'Ignore'
-        KeyProperty       = 'LocalPort'
-        Namespace         = 'ROOT/StandardCimv2'
-        Query             = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
-        ThisFqdn          = $ThisFqdn
-        ThisHostname      = $ThisHostname
-        WhoAmI            = $WhoAmI
+        Cache        = $Cache
+        ComputerName = $AdsiServer
+        ErrorAction  = 'Ignore'
+        KeyProperty  = 'LocalPort'
+        Namespace    = 'ROOT/StandardCimv2'
+        Query        = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
     }
 
     ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters

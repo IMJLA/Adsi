@@ -49,27 +49,6 @@ function ConvertTo-DistinguishedName {
         #>
         [string]$AdsiProvider,
 
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
@@ -78,8 +57,6 @@ function ConvertTo-DistinguishedName {
 
     begin {
 
-        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
         $DomainByNetbios = $Cache.Value['DomainByNetbios']
         $DomainByFqdn = $Cache.Value['DomainByFqdn']
 
@@ -122,24 +99,24 @@ function ConvertTo-DistinguishedName {
 
             if ($TryGetValueResult) {
 
-                #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$ThisDomain'"
+                #Write-LogMsg -Text " # Domain NetBIOS cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
             } else {
 
-                #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($Cache.Value['DomainByNetbios'].Value.Keys -join ',')"
-                Write-LogMsg @Log -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'"
+                #Write-LogMsg -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($Cache.Value['DomainByNetbios'].Value.Keys -join ',')"
+                Write-LogMsg -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'" -Cache $Cache
                 $IADsNameTranslateComObject = New-Object -ComObject 'NameTranslate'
-                Write-LogMsg @Log -Text "`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'"
+                Write-LogMsg -Text "`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'" -Cache $Cache
                 $IADsNameTranslateInterface = $IADsNameTranslateComObject.GetType()
-                Write-LogMsg @Log -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'"
+                Write-LogMsg -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'" -Cache $Cache
                 # Handle errors for this method
                 #    Exception calling "InvokeMember" with "5" argument(s): "The specified domain either does not exist or could not be contacted. (0x8007054B)"
                 try {
                     $null = $IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
                 } catch {
 
-                    Write-LogMsg @Log -Text " #Error: $($_.Exception.Message) # For $ThisDomain"
+                    Write-LogMsg -Text " #Error: $($_.Exception.Message) # For $ThisDomain" -Cache $Cache
                     continue
 
                 }
@@ -147,10 +124,10 @@ function ConvertTo-DistinguishedName {
                 # For a non-domain-joined system there is no DistinguishedName for the domain
                 # Suppress errors when calling these next 2 methods
                 #     Exception calling "InvokeMember" with "5" argument(s): "Name translation: Could not find the name or insufficient right to see name. (Exception from HRESULT: 0x80072116)"
-                Write-LogMsg @Log -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInputType, '$ThisDomain\')) # For '$ThisDomain'"
+                Write-LogMsg -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInputType, '$ThisDomain\')) # For '$ThisDomain'" -Cache $Cache
                 $null = { $IADsNameTranslateInterface.InvokeMember('Set', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInputType, "$ThisDomain\")) } 2>$null
                 #     Exception calling "InvokeMember" with "5" argument(s): "Unspecified error (Exception from HRESULT: 0x80004005 (E_FAIL))"
-                Write-LogMsg @Log -Text "`$IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, $ChosenOutputType) # For '$ThisDomain'"
+                Write-LogMsg -Text "`$IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, $ChosenOutputType) # For '$ThisDomain'" -Cache $Cache
                 $null = { $null = { $IADsNameTranslateInterface.InvokeMember('Get', 'InvokeMethod', $Null, $IADsNameTranslateComObject, $ChosenOutputType) } 2>$null } 2>$null
 
             }
@@ -164,15 +141,15 @@ function ConvertTo-DistinguishedName {
 
             if ($TryGetValueResult) {
 
-                #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$ThisDomain'"
+                #Write-LogMsg -Text " # Domain FQDN cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
             } else {
 
-                #Write-LogMsg @Log -Text " # Domain FQDN cache miss for '$ThisDomain'"
+                #Write-LogMsg -Text " # Domain FQDN cache miss for '$ThisDomain'" -Cache $Cache
 
                 if (-not $PSBoundParameters.ContainsKey('AdsiProvider')) {
-                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain -ThisFqdn $ThisFqdn @LogThis
+                    $AdsiProvider = Find-AdsiProvider -AdsiServer $ThisDomain -Cache $Cache
                 }
 
                 if ($AdsiProvider -ne 'WinNT') {
