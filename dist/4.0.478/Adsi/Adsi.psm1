@@ -3371,6 +3371,8 @@ function Expand-AdsiGroupMember {
 
             $i++
             $Principal = $null
+            $Suffix = " # for DirectoryEntry with path '$($Entry.Path)'"
+            $Log['Suffix'] = $Suffix
             #Write-LogMsg @Log -Text "Status: Using ADSI to get info on group member $i`: $($Entry.Name)"
 
             if ($Entry.objectClass -contains 'foreignSecurityPrincipal') {
@@ -3382,13 +3384,18 @@ function Expand-AdsiGroupMember {
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf('-'))
                     $Domain = $null
                     $null = $DomainBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -ThisFqdn $ThisFqdn @LogThis
+                    $Log['Suffix'] = " # foreignSecurityPrincipal's distinguishedName points to a SID $Suffix"
+                    $DirectoryPath = "LDAP://$($Domain.Dns)/<SID=$SID>"
+                    Write-LogMsg @Log -Text "`$Principal = Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
+                    $Principal = Get-DirectoryEntry -DirectoryPath $DirectoryPath -ThisFqdn $ThisFqdn @LogThis
 
                     try {
+
+                        Write-LogMsg @Log -Text "`$Principal.RefreshCache('$($PropertiesToLoad -join "','")')"
                         $null = $Principal.RefreshCache($PropertiesToLoad)
+
                     } catch {
 
-                        #$Success = $false
                         $Principal = $Entry
                         Write-LogMsg @Log -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
 
@@ -3397,9 +3404,12 @@ function Expand-AdsiGroupMember {
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
 
-                        Write-LogMsg @Log -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
+                        $Log['Suffix'] = " # '$($Principal.properties['name'])' is a group in '$Domain' $Suffix"
+                        Write-LogMsg @Log -Text "`$AdsiGroupWithMembers = Get-AdsiGroupMember -Group `$Principal -ThisFqdn '$ThisFqdn' -PropertiesToLoad @('$($PropertiesToLoad -join "','")')" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                         $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
-                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -PropertiesToLoad $PropertiesToLoad @LogThis
+                        $Log['Suffix'] = " # for $(@($AdsiGroupWithMembers.FullMembers).Count) members $Suffix"
+                        Write-LogMsg @Log -Text "`$Principal = Expand-AdsiGroupMember -DirectoryEntry `$AdsiGroupWithMembers.FullMembers -ThisFqdn '$ThisFqdn' -PropertiesToLoad @('$($PropertiesToLoad -join "','")')" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
+                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
 
                     }
 
@@ -3409,9 +3419,11 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
+            Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$Principal -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
             Add-SidInfo -InputObject $Principal -DomainsBySid $DomainSidRef
 
         }
+
     }
 
 }
@@ -3484,9 +3496,14 @@ function Expand-WinNTGroupMember {
             'primaryGroupToken',
             'samAccountName'
         )
-    
+
         $PropertiesToLoad = $PropertiesToLoad |
         Sort-Object -Unique
+
+        $AdsiGroupSplat = @{
+            'ThisFqdn'         = $ThisFqdn
+            'PropertiesToLoad' = $PropertiesToLoad
+        }
 
     }
 
@@ -3494,19 +3511,24 @@ function Expand-WinNTGroupMember {
 
         ForEach ($ThisEntry in $DirectoryEntry) {
 
-            $Log['Suffix'] = " # for DirectoryEntry '$($ThisEntry.Path)'"
+            $ThisPath = $ThisEntry.Path
+            $AdsiGroupSplat['DirectoryPath'] = $ThisPath
+            $Suffix = " # for DirectoryEntry '$ThisPath'"
+            $Log['Suffix'] = $Suffix
 
             if ( -not $ThisEntry.Properties ) {
 
                 $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                Write-LogMsg @Log -Text " # '$ThisEntry' has no properties$SamAccountNameOrSid"
+                Write-LogMsg @Log -Text " # '$ThisEntry' has no properties"
                 $Log['Type'] = $DebugOutputStream
 
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
-                Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup -DirectoryPath '$($ThisEntry.Path)' -ThisFqdn '$ThisFqdn' # Is an ADSI group"
-                $AdsiGroup = Get-AdsiGroup -DirectoryPath $ThisEntry.Path -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
-                Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid'] # Is an ADSI group"
+                $Log['Suffix'] = " # Is an ADSI group $Suffix"
+                Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
+                $AdsiGroup = Get-AdsiGroup @AdsiGroupSplat @LogThis
+                $Log['Suffix'] = " # for $(@($AdsiGroup.FullMembers).Count) members $Suffix"
+                Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
             } else {
@@ -3517,14 +3539,16 @@ function Expand-WinNTGroupMember {
 
                     if ($ThisEntry.GetType().FullName -eq 'System.Collections.Hashtable') {
 
-                        #Write-LogMsg @Log -Text " # Is a special group with no direct memberships # '$($ThisEntry.Path)'"
+                        $Log['Suffix'] = " # Is a special group with no direct memberships $Suffix"
+                        Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$ThisEntry -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
                         Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                     }
 
                 } else {
 
-                    Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$ThisEntry -DomainsBySid [ref]`$Cache.Value['DomainBySid'] # Is a user account"
+                    $Log['Suffix'] = " # Is a user account $Suffix"
+                    Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$ThisEntry -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
                     Add-SidInfo -InputObject $ThisEntry -DomainsBySid $DomainBySid
 
                 }
@@ -3659,6 +3683,7 @@ function Get-AdsiGroup {
 
     )
 
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
 
     $GroupParams = @{
@@ -3690,14 +3715,18 @@ function Get-AdsiGroup {
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
+            Write-LogMsg -Text 'Get-DirectoryEntry' -Expand $GroupParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams @LogThis
+            Write-LogMsg -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams @LogThis
             break
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
+            Write-LogMsg -Text 'Get-DirectoryEntry' -Expand $GroupParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams @LogThis
+            Write-LogMsg -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams @LogThis
             break
         }
@@ -3709,14 +3738,16 @@ function Get-AdsiGroup {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 
+            Write-LogMsg -Text 'Search-Directory' -Expand $GroupParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $GroupMemberParams['Group'] = Search-Directory @GroupParams @LogThis
+            Write-LogMsg -Text 'Get-AdsiGroupMember' -Expand $GroupMemberParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $FullMembers = Get-AdsiGroupMember @GroupMemberParams @LogThis
 
         }
 
     }
 
-    $FullMembers
+    return $FullMembers
 
 }
 function Get-AdsiGroupMember {
@@ -6958,6 +6989,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

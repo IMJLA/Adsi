@@ -62,6 +62,7 @@ function Get-AdsiGroup {
 
     )
 
+    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
     $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
 
     $GroupParams = @{
@@ -93,14 +94,18 @@ function Get-AdsiGroup {
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
+            Write-LogMsg -Text 'Get-DirectoryEntry' -Expand $GroupParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams @LogThis
+            Write-LogMsg -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams @LogThis
             break
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
+            Write-LogMsg -Text 'Get-DirectoryEntry' -Expand $GroupParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams @LogThis
+            Write-LogMsg -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams @LogThis
             break
         }
@@ -112,13 +117,15 @@ function Get-AdsiGroup {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 
+            Write-LogMsg -Text 'Search-Directory' -Expand $GroupParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $GroupMemberParams['Group'] = Search-Directory @GroupParams @LogThis
+            Write-LogMsg -Text 'Get-AdsiGroupMember' -Expand $GroupMemberParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
             $FullMembers = Get-AdsiGroupMember @GroupMemberParams @LogThis
 
         }
 
     }
 
-    $FullMembers
+    return $FullMembers
 
 }

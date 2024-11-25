@@ -97,6 +97,8 @@ function Expand-AdsiGroupMember {
 
             $i++
             $Principal = $null
+            $Suffix = " # for DirectoryEntry with path '$($Entry.Path)'"
+            $Log['Suffix'] = $Suffix
             #Write-LogMsg @Log -Text "Status: Using ADSI to get info on group member $i`: $($Entry.Name)"
 
             if ($Entry.objectClass -contains 'foreignSecurityPrincipal') {
@@ -108,13 +110,18 @@ function Expand-AdsiGroupMember {
                     $DomainSid = $SID.Substring(0, $Sid.LastIndexOf('-'))
                     $Domain = $null
                     $null = $DomainBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
-                    $Principal = Get-DirectoryEntry -DirectoryPath "LDAP://$($Domain.Dns)/<SID=$SID>" -ThisFqdn $ThisFqdn @LogThis
+                    $Log['Suffix'] = " # foreignSecurityPrincipal's distinguishedName points to a SID $Suffix"
+                    $DirectoryPath = "LDAP://$($Domain.Dns)/<SID=$SID>"
+                    Write-LogMsg @Log -Text "`$Principal = Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
+                    $Principal = Get-DirectoryEntry -DirectoryPath $DirectoryPath -ThisFqdn $ThisFqdn @LogThis
 
                     try {
+
+                        Write-LogMsg @Log -Text "`$Principal.RefreshCache('$($PropertiesToLoad -join "','")')"
                         $null = $Principal.RefreshCache($PropertiesToLoad)
+
                     } catch {
 
-                        #$Success = $false
                         $Principal = $Entry
                         Write-LogMsg @Log -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
 
@@ -123,9 +130,12 @@ function Expand-AdsiGroupMember {
                     # Recursively enumerate group members
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
 
-                        Write-LogMsg @Log -Text "'$($Principal.properties['name'])' is a group in '$Domain'"
+                        $Log['Suffix'] = " # '$($Principal.properties['name'])' is a group in '$Domain' $Suffix"
+                        Write-LogMsg @Log -Text "`$AdsiGroupWithMembers = Get-AdsiGroupMember -Group `$Principal -ThisFqdn '$ThisFqdn' -PropertiesToLoad @('$($PropertiesToLoad -join "','")')" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
                         $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
-                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -ThisHostName $ThisHostName -PropertiesToLoad $PropertiesToLoad @LogThis
+                        $Log['Suffix'] = " # for $(@($AdsiGroupWithMembers.FullMembers).Count) members $Suffix"
+                        Write-LogMsg @Log -Text "`$Principal = Expand-AdsiGroupMember -DirectoryEntry `$AdsiGroupWithMembers.FullMembers -ThisFqdn '$ThisFqdn' -PropertiesToLoad @('$($PropertiesToLoad -join "','")')" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
+                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
 
                     }
 
@@ -135,9 +145,11 @@ function Expand-AdsiGroupMember {
                 $Principal = $Entry
             }
 
+            Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$Principal -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
             Add-SidInfo -InputObject $Principal -DomainsBySid $DomainSidRef
 
         }
+
     }
 
 }
