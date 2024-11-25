@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.479] - 2024-11-24 - bugfix forgotten splat
+
 ## [4.0.478] - 2024-11-24 - improve debug output
 
 ## [4.0.477] - 2024-11-24 - implement accountproperty with propertiestoload
