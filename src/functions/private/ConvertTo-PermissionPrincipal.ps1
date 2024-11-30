@@ -122,9 +122,9 @@ function ConvertTo-PermissionPrincipal {
                         $OutputProperties = @{
 
                             Domain = [pscustomobject]@{
-                                Dns     = $DomainNetBIOS
-                                Netbios = $DomainNetBIOS
-                                Sid     = @($SamAccountNameOrSid -split '-')[-1]
+                                'Dns'     = $DomainNetBIOS
+                                'Netbios' = $DomainNetBIOS
+                                'Sid'     = @($SamAccountNameOrSid -split '-')[-1]
                             }
 
                         }
