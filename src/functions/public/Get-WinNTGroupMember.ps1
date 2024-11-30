@@ -63,15 +63,6 @@ function Get-WinNTGroupMember {
             $Log['Suffix'] = " $LogSuffix"
             $ThisSplitPath = Split-DirectoryPath -DirectoryPath $ThisDirEntry.Path
             $SourceDomainNetbiosOrFqdn = $ThisSplitPath['Domain']
-            Write-LogMsg @Log -Text "`$GroupDomain = Get-AdsiServer -Netbios '$SourceDomainNetbiosOrFqdn' -Cache `$Cache"
-            $GroupDomain = Get-AdsiServer -Netbios $SourceDomainNetbiosOrFqdn -Cache $Cache
-
-            if (-not $GroupDomain) {
-
-                Write-LogMsg @Log -Text "`$GroupDomain = Get-AdsiServer -Fqdn '$SourceDomainNetbiosOrFqdn' -Cache `$Cache"
-                $GroupDomain = Get-AdsiServer -Fqdn $SourceDomainNetbiosOrFqdn -Cache $Cache
-
-            }
 
             if (
                 $null -ne $ThisDirEntry.Properties['groupType'] -or
@@ -85,8 +76,8 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix `"$LogSuffix`" -DirectoryEntry `$ThisDirEntry -GroupDomain `$GroupDomain -Cache `$Cache # for $(@($DirectoryMembers).Count) members"
-                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $GroupDomain -Cache $Cache
+                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix `"$LogSuffix`" -DirectoryEntry `$ThisDirEntry -Cache `$Cache # for $(@($DirectoryMembers).Count) members"
+                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -Cache $Cache
 
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {

@@ -1,6 +1,7 @@
 function ConvertTo-PermissionPrincipal {
 
     param (
+
         $DomainDn,
         $DomainNetBIOS,
         $IdentityReference,
