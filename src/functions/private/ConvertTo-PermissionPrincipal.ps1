@@ -25,9 +25,9 @@ function ConvertTo-PermissionPrincipal {
     }
 
     $PropertiesToAdd = @{
-        DomainDn            = $DomainDn
-        DomainNetbios       = $DomainNetBIOS
-        ResolvedAccountName = $IdentityReference
+        'DomainDn'            = $DomainDn
+        'DomainNetbios'       = $DomainNetBIOS
+        'ResolvedAccountName' = $IdentityReference
     }
 
     # Add the bare minimum required properties
@@ -44,6 +44,8 @@ function ConvertTo-PermissionPrincipal {
 
     $PropertiesToLoad = $PropertiesToLoad |
     Sort-Object -Unique
+
+    $PrincipalById = $Cache.Value['PrincipalById']
 
     if ($null -ne $DirectoryEntry) {
 

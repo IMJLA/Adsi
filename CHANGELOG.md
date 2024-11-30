@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.487] - 2024-11-30 - bugfix missing principalbyid cache
+
 ## [4.0.486] - 2024-11-30 - bugfix convertto-directoryentry params
 
 ## [4.0.485] - 2024-11-30 - bugfix find+replace shenanigans
