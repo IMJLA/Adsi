@@ -2266,7 +2266,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $LogSuffix = "for IdentityReference '$IdentityReference'"
         $LogSuffixComment = " # $LogSuffix"
-        $Log = @{ Cache = $Cache ; Suffix = $LogSuffixComment }
+        $Log = @{ 'Cache' = $Cache ; 'Suffix' = $LogSuffixComment }
         #Write-LogMsg @Log -Text " # ADSI Principal cache miss $LogSuffix"
         $AceGuidByID = $Cache.Value['AceGuidByID']
         $AccessControlEntries = $AceGuidByID.Value[ $IdentityReference ]
@@ -2277,28 +2277,27 @@ function ConvertFrom-IdentityReferenceResolved {
         $DomainDn = $null
 
         $CommonSplat = @{
-            AccessControlEntries = $AccessControlEntries
-            AccountProperty      = $AccountProperty
-            Cache                = $Cache
-            DomainDn             = $DomainDn
-            DomainNetBIOS        = $DomainNetBIOS
-            IdentityReference    = $IdentityReference
-            LogSuffix            = $LogSuffix
-            LogSuffixComment     = $LogSuffixComment
-            SamAccountNameOrSid  = $SamAccountNameOrSid
+            'AccessControlEntries' = $AccessControlEntries
+            'AccountProperty'      = $AccountProperty
+            'Cache'                = $Cache
+            'DomainDn'             = $DomainDn
+            'DomainNetBIOS'        = $DomainNetBIOS
+            'IdentityReference'    = $IdentityReference
+            'LogSuffixComment'     = $LogSuffixComment
+            'SamAccountNameOrSid'  = $SamAccountNameOrSid
         }
 
         $DirectoryEntryConversion = @{
-            CachedWellKnownSID = $CachedWellKnownSID
-            CurrentDomain      = $CurrentDomain
+            'CachedWellKnownSID' = $CachedWellKnownSID
+            'CurrentDomain'      = $CurrentDomain
         }
 
         Write-LogMsg @Log -Text 'ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogCacheMap'
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
 
         $PermissionPrincipalConversion = @{
-            DirectoryEntry = $DirectoryEntry
-            NoGroupMembers = $NoGroupMembers
+            'DirectoryEntry' = $DirectoryEntry
+            'NoGroupMembers' = $NoGroupMembers
         }
 
         Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -MapKeyName 'LogCacheMap'
@@ -6363,6 +6362,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

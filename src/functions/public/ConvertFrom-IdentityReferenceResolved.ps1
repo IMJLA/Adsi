@@ -53,7 +53,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $LogSuffix = "for IdentityReference '$IdentityReference'"
         $LogSuffixComment = " # $LogSuffix"
-        $Log = @{ Cache = $Cache ; Suffix = $LogSuffixComment }
+        $Log = @{ 'Cache' = $Cache ; 'Suffix' = $LogSuffixComment }
         #Write-LogMsg @Log -Text " # ADSI Principal cache miss $LogSuffix"
         $AceGuidByID = $Cache.Value['AceGuidByID']
         $AccessControlEntries = $AceGuidByID.Value[ $IdentityReference ]
@@ -64,28 +64,27 @@ function ConvertFrom-IdentityReferenceResolved {
         $DomainDn = $null
 
         $CommonSplat = @{
-            AccessControlEntries = $AccessControlEntries
-            AccountProperty      = $AccountProperty
-            Cache                = $Cache
-            DomainDn             = $DomainDn
-            DomainNetBIOS        = $DomainNetBIOS
-            IdentityReference    = $IdentityReference
-            LogSuffix            = $LogSuffix
-            LogSuffixComment     = $LogSuffixComment
-            SamAccountNameOrSid  = $SamAccountNameOrSid
+            'AccessControlEntries' = $AccessControlEntries
+            'AccountProperty'      = $AccountProperty
+            'Cache'                = $Cache
+            'DomainDn'             = $DomainDn
+            'DomainNetBIOS'        = $DomainNetBIOS
+            'IdentityReference'    = $IdentityReference
+            'LogSuffixComment'     = $LogSuffixComment
+            'SamAccountNameOrSid'  = $SamAccountNameOrSid
         }
 
         $DirectoryEntryConversion = @{
-            CachedWellKnownSID = $CachedWellKnownSID
-            CurrentDomain      = $CurrentDomain
+            'CachedWellKnownSID' = $CachedWellKnownSID
+            'CurrentDomain'      = $CurrentDomain
         }
 
         Write-LogMsg @Log -Text 'ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogCacheMap'
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
 
         $PermissionPrincipalConversion = @{
-            DirectoryEntry = $DirectoryEntry
-            NoGroupMembers = $NoGroupMembers
+            'DirectoryEntry' = $DirectoryEntry
+            'NoGroupMembers' = $NoGroupMembers
         }
 
         Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -MapKeyName 'LogCacheMap'
