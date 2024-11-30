@@ -1,13 +1,18 @@
 function ConvertTo-SidString {
 
     param (
+
         [string]$ServerNetBIOS,
         [string]$Name,
-        [hashtable]$Log
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
+
     )
 
     # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
-    Write-LogMsg @Log -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])"
+    Write-LogMsg -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])" -Cache $Cache
     $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)
 
     try {
@@ -15,7 +20,7 @@ function ConvertTo-SidString {
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)"
+        Write-LogMsg -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)" -Cache $Cache
 
     }
 

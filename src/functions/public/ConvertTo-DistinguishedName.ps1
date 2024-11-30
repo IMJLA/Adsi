@@ -1,20 +1,23 @@
 function ConvertTo-DistinguishedName {
-    <#
-        .SYNOPSIS
-        Convert a domain NetBIOS name to its distinguishedName
-        .DESCRIPTION
-        https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
-        .INPUTS
-        [System.String]$Domain
-        .OUTPUTS
-        [System.String] distinguishedName of the domain
-        .EXAMPLE
-        ConvertTo-DistinguishedName -Domain 'CONTOSO'
-        DC=ad,DC=contoso,DC=com
 
-        Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
+    <#
+    .SYNOPSIS
+    Convert a domain NetBIOS name to its distinguishedName
+    .DESCRIPTION
+    https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
+    .INPUTS
+    [System.String]$Domain
+    .OUTPUTS
+    [System.String] distinguishedName of the domain
+    .EXAMPLE
+    ConvertTo-DistinguishedName -Domain 'CONTOSO'
+    DC=ad,DC=contoso,DC=com
+
+    Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
     #>
+
     [OutputType([System.String])]
+
     param (
 
         # NetBIOS name of the domain
@@ -110,6 +113,7 @@ function ConvertTo-DistinguishedName {
                 Write-LogMsg -Text "`$IADsNameTranslateInterface = `$IADsNameTranslateComObject.GetType() # For '$ThisDomain'" -Cache $Cache
                 $IADsNameTranslateInterface = $IADsNameTranslateComObject.GetType()
                 Write-LogMsg -Text "`$null = `$IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', `$Null, `$IADsNameTranslateComObject, ($ChosenInitType, `$Null)) # For '$ThisDomain'" -Cache $Cache
+
                 # Handle errors for this method
                 #    Exception calling "InvokeMember" with "5" argument(s): "The specified domain either does not exist or could not be contacted. (0x8007054B)"
                 try {
@@ -153,7 +157,7 @@ function ConvertTo-DistinguishedName {
                 }
 
                 if ($AdsiProvider -ne 'WinNT') {
-                    "dc=$($ThisDomain -replace '\.',',dc=')"
+                    "dc=$($ThisDomain.Replace('.', ',dc='))"
                 }
 
             }

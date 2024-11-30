@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.481
+Help Version: 4.0.482
 Locale: en-US
 ---
 
@@ -34,7 +34,7 @@ Convert a SearchResult to a PSCustomObject
 
 ### [ConvertFrom-SidString](ConvertFrom-SidString.md)
 
-ConvertFrom-SidString [[-SID] <string>] [[-DebugOutputStream] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [-Cache] <ref> [<CommonParameters>]
+ConvertFrom-SidString [[-SID] <string>] [-Cache] <ref> [<CommonParameters>]
 
 
 ### [ConvertTo-DecStringRepresentation](ConvertTo-DecStringRepresentation.md)
@@ -45,12 +45,12 @@ Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
 
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [[-ThisFqdn] <string>] [[-ThisHostName] <string>] [[-WhoAmI] <string>] [[-DebugOutputStream] <string>] [-Cache] <ref> [<CommonParameters>]
+ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [-Cache] <ref> [<CommonParameters>]
 
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
 
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-AdsiProvider] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-DebugOutputStream] <string>] [-Cache] <ref> [<CommonParameters>]
+ConvertTo-DomainSidString [-DomainDnsName] <string> [[-AdsiProvider] <string>] [-Cache] <ref> [<CommonParameters>]
 
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
@@ -113,7 +113,7 @@ Get-KnownSidHashTable
 
 ### [Get-ParentDomainDnsName](Get-ParentDomainDnsName.md)
 
-Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-ThisHostName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-CimSession] <CimSession>] [[-DebugOutputStream] <string>] [-Cache] <ref> [-RemoveCimSession] [<CommonParameters>]
+Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-CimSession] <CimSession>] [-Cache] <ref> [-RemoveCimSession] [<CommonParameters>]
 
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)

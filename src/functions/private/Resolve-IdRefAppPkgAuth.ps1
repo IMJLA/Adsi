@@ -1,6 +1,7 @@
 function Resolve-IdRefAppPkgAuth {
 
     [OutputType([PSCustomObject])]
+
     param (
 
         # IdentityReference from an Access Control Entry
@@ -17,41 +18,11 @@ function Resolve-IdRefAppPkgAuth {
         # Name of the IdentityReference with the DOMAIN\ prefix removed
         [string]$Name,
 
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Output from Get-KnownSidHashTable
-        [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable),
-
-        # Output from Get-KnownCaptionHashTable
-        [hashtable]$WellKnownSidByCaption = (Get-KnownCaptionHashTable -WellKnownSidBySid $WellKnownSidBySid),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
-
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
 
     <#
     These SIDs cannot be resolved from the NTAccount name:
@@ -66,7 +37,7 @@ function Resolve-IdRefAppPkgAuth {
         APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
     So we will instead hardcode a map of SIDs
     #>
-    $Known = $WellKnownSidByCaption[$IdentityReference]
+    $Known = $Cache.Value['WellKnownSidByCaption'].Value[$IdentityReference]
 
     if ($Known) {
         $SIDString = $Known.SID
@@ -83,9 +54,10 @@ function Resolve-IdRefAppPkgAuth {
         $DomainDns = $DomainCacheResult.Dns
     } else {
 
-        Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS '$ServerNetBIOS' # cache miss"
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -ThisFqdn $ThisFqdn @LogThis
-        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn @LogThis
+        Write-LogMsg -Text "ConvertTo-Fqdn -NetBIOS '$ServerNetBIOS' -Cache `$Cache # cache miss # IdentityReference '$IdentityReference' # Domain NetBIOS '$ServerNetBIOS'" -Cache $Cache
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -Cache $Cache
+        Write-LogMsg -Text "Get-AdsiServer -Fqdn '$ServerNetBIOS' -Cache `$Cache # cache miss # IdentityReference '$IdentityReference' # Domain NetBIOS '$ServerNetBIOS'" -Cache $Cache
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -Cache $Cache
 
     }
 

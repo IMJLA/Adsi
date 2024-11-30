@@ -11,15 +11,16 @@ function Resolve-IdRefGetDirEntry {
 
         [string]$Name,
 
-        [hashtable]$GetDirectoryEntryParams,
-
-        [hashtable]$LogThis
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
     $DirectoryPath = "$($AdsiServer.AdsiProvider)`://$ServerNetBIOS/$Name"
-    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @GetDirectoryEntryParams @LogThis
-    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $LogThis['Cache'].Value['DomainBySid']
+    Write-LogMsg -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache" -Cache $Cache
+    $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath -Cache $Cache
+    $DirectoryEntryWithSidInfo = Add-SidInfo -InputObject $DirectoryEntry -DomainsBySid $Cache.Value['DomainBySid']
     return $DirectoryEntryWithSidInfo.SidString
 
 }

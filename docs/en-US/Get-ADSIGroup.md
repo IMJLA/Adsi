@@ -14,7 +14,6 @@ Get the directory entries for a group and its members using ADSI
 
 ```
 Get-AdsiGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesToLoad] <String[]>]
- [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [[-DebugOutputStream] <String>]
  [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -50,23 +49,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 8
+Position: 4
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DebugOutputStream
-Output stream to send the log messages to
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 7
-Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -128,55 +112,6 @@ Aliases:
 Required: False
 Position: 3
 Default value: @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisFqdn
-FQDN of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 5
-Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostName
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 6
-Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

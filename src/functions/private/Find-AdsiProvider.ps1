@@ -1,4 +1,5 @@
 function Find-AdsiProvider {
+
     <#
         .SYNOPSIS
         Determine whether a directory server is an LDAP or a WinNT server
@@ -21,6 +22,7 @@ function Find-AdsiProvider {
 
         Find the ADSI provider of the AD domain 'ad.contoso.com'
     #>
+
     [OutputType([System.String])]
 
     param (
@@ -34,13 +36,6 @@ function Find-AdsiProvider {
 
     )
 
-    ###$Log = @{
-    ###    ThisHostname = $ThisHostname
-    ###    Type         = $DebugOutputStream
-    ###    Buffer       = $Cache.Value['LogBuffer']
-    ###    WhoAmI       = $WhoAmI
-    ###}
-
     $CommandParameters = @{
         Cache        = $Cache
         ComputerName = $AdsiServer
@@ -50,12 +45,11 @@ function Find-AdsiProvider {
         Query        = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
     }
 
-    ###Write-LogMsg @Log -Text 'Get-CachedCimInstance' -Expand $CommandParameters
-
+    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CommandParameters -MapKeyName 'LogCacheMap' -Cache $Cache
     $CimInstance = Get-CachedCimInstance @CommandParameters
 
     if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {
-        ###Write-LogMsg @Log -Text " # CIM connection failure # for '$AdsiServer'"
+        ###Write-LogMsg -Text " # CIM connection failure # for '$AdsiServer'" -Cache $Cache
         $TestResult = Test-AdsiProvider -AdsiServer $AdsiServer -ThisHostName $ThisHostName -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream -Cache $Cache
         return $TestResult
     }

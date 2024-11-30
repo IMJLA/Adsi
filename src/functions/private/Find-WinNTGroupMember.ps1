@@ -18,34 +18,9 @@ function Find-WinNTGroupMember {
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache,
-
-        $GroupDomain,
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug'
+        [ref]$Cache
 
     )
-
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
 
     ForEach ($DirectoryMember in $ComObject) {
 
@@ -62,34 +37,36 @@ function Find-WinNTGroupMember {
         Resolve-SidAuthority -DirectorySplit $DirectorySplit -DirectoryEntry $DirectoryEntry
         $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
         $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
-        Write-LogMsg @Log -Text "Get-AdsiServer -Netbios '$MemberDomainNetbios' -ThisFqdn '$ThisFqdn' -Cache `$Cache -ThisHostName '$ThisHostname' -ThisFqdn '$ThisFqdn' -WhoAmI '$WhoAmI' -DebugOutputStream '$DebugOutputStream'"
-        $AdsiServer = Get-AdsiServer -Netbios $MemberDomainNetbios -Cache $Cache -ThisHostName $ThisHostname -ThisFqdn $ThisFqdn -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream
+        Write-LogMsg -Text "Get-AdsiServer -Netbios '$MemberDomainNetbios' -Cache `$Cache" -Cache $Cache
+        $AdsiServer = Get-AdsiServer -Netbios $MemberDomainNetbios -Cache $Cache
 
         if ($AdsiServer) {
 
             if ($AdsiServer.AdsiProvider -eq 'LDAP') {
 
-                #Write-LogMsg @Log -Text " # ADSI provider is LDAP for domain NetBIOS '$MemberDomainNetbios'"
+                #Write-LogMsg -Text " # ADSI provider is LDAP for domain NetBIOS '$MemberDomainNetbios'"
                 $Out["LDAP://$($AdsiServer.Dns)"] += "(samaccountname=$MemberName)"
 
             } elseif ($AdsiServer.AdsiProvider -eq 'WinNT') {
 
-                #Write-LogMsg @Log -Text " # ADSI provider is WinNT for domain NetBIOS '$MemberDomainNetbios'"
+                #Write-LogMsg -Text " # ADSI provider is WinNT for domain NetBIOS '$MemberDomainNetbios'"
                 $Out['WinNTMembers'] += $ResolvedDirectoryPath
 
             } else {
 
-                $Log['Type'] = 'Warning'
-                Write-LogMsg @Log -Text " # Could not find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
-                $Log['Type'] = $DebugOutputStream
+                $StartingLogType = $Cache.Value['LogType'].Value
+                $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+                Write-LogMsg -Text " # Could not find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
+                $Cache.Value['LogType'].Value = $StartingLogType
 
             }
 
         } else {
 
-            $Log['Type'] = 'Warning'
-            Write-LogMsg @Log -Text " # Could not find ADSI server to find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
-            $Log['Type'] = $DebugOutputStream
+            $StartingLogType = $Cache.Value['LogType'].Value
+            $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+            Write-LogMsg -Text " # Could not find ADSI server to find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
+            $Cache.Value['LogType'].Value = $StartingLogType
 
         }
 

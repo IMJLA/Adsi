@@ -1,6 +1,7 @@
 function Resolve-IdRefSvc {
 
     [OutputType([PSCustomObject])]
+
     param (
 
         # IdentityReference from an Access Control Entry
@@ -17,35 +18,12 @@ function Resolve-IdRefSvc {
         # Name of the IdentityReference with the DOMAIN\ prefix removed
         [string]$Name,
 
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
 
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $SIDString = ConvertTo-ServiceSID -ServiceName $Name
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null
@@ -56,9 +34,9 @@ function Resolve-IdRefSvc {
         $DomainDns = $DomainCacheResult.Dns
     } else {
 
-        Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' # For '$IdentityReference'"
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -ThisFqdn $ThisFqdn @LogThis
-        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn @LogThis
+        Write-LogMsg -Text " # Domain NetBIOS cache miss for '$ServerNetBIOS' # For '$IdentityReference'" -Cache $Cache
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -Cache $Cache
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -Cache $Cache
 
     }
 

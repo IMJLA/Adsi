@@ -1,4 +1,5 @@
 function ConvertFrom-SearchResult {
+
     <#
     .SYNOPSIS
     Convert a SearchResult to a PSCustomObject
@@ -10,11 +11,13 @@ function ConvertFrom-SearchResult {
     #>
 
     param (
+
         [Parameter(
             Position = 0,
             ValueFromPipeline
         )]
         [System.DirectoryServices.SearchResult[]]$SearchResult
+
     )
 
     process {
@@ -36,5 +39,7 @@ function ConvertFrom-SearchResult {
             [PSCustomObject]$OutputObject
 
         }
+
     }
+
 }

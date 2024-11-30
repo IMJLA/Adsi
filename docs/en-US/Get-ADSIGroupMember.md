@@ -13,8 +13,7 @@ Get members of a group from the LDAP provider
 ## SYNTAX
 
 ```
-Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [[-ThisHostName] <String>]
- [[-ThisFqdn] <String>] [[-WhoAmI] <String>] [-NoRecurse] [-PrimaryGroupOnly] [[-DebugOutputStream] <String>]
+Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [-NoRecurse] [-PrimaryGroupOnly]
  [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -42,23 +41,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 7
+Position: 3
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DebugOutputStream
-Output stream to send the log messages to
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 6
-Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -138,55 +122,6 @@ Aliases:
 Required: False
 Position: 2
 Default value: @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisFqdn
-FQDN of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostName
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 5
-Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

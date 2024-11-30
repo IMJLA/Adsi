@@ -13,11 +13,8 @@ Use CIM and ADSI to lookup info about IdentityReferences from Access Control Ent
 ## SYNTAX
 
 ```
-Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>]
- [[-AdsiServersByDns] <Hashtable>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [[-DebugOutputStream] <String>] [[-WellKnownSidBySid] <Hashtable>] [[-WellKnownSidByCaption] <Hashtable>]
- [-Cache] <PSReference> [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>] [-Cache] <PSReference>
+ [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,7 +43,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 11
+Position: 4
 Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -67,23 +64,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AdsiServersByDns
-Dictionary to cache known servers to avoid redundant lookups
-
-Defaults to an empty thread-safe hashtable
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: [hashtable]::Synchronized(@{})
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Cache
 In-process cache to reduce calls to other processes or to disk
 
@@ -93,23 +73,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 10
+Position: 3
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DebugOutputStream
-Output stream to send the log messages to
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 7
-Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -141,85 +106,6 @@ Aliases: proga
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisFqdn
-FQDN of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 5
-Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostName
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WellKnownSidByCaption
-Output from Get-KnownCaptionHashTable
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 9
-Default value: (Get-KnownCaptionHashTable -WellKnownSidBySid $WellKnownSidBySid)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WellKnownSidBySid
-Output from Get-KnownSidHashTable
-
-```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 8
-Default value: (Get-KnownSidHashTable)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 6
-Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

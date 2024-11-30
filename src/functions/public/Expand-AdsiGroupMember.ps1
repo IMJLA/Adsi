@@ -1,18 +1,18 @@
 function Expand-AdsiGroupMember {
     <#
-        .SYNOPSIS
-        Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
-        .DESCRIPTION
-        Recursively retrieves group members and detailed information about them
-        Specifically gets the SID, and resolves foreign security principals to their DirectoryEntry from the trusted domain
-        .INPUTS
-        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
-        .OUTPUTS
-        [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
-        .EXAMPLE
-        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
+    .SYNOPSIS
+    Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
+    .DESCRIPTION
+    Recursively retrieves group members and detailed information about them
+    Specifically gets the SID, and resolves foreign security principals to their DirectoryEntry from the trusted domain
+    .INPUTS
+    [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
+    .OUTPUTS
+    [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
+    .EXAMPLE
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
 
-        Need to fix example and add notes
+    Need to fix example and add notes
     #>
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
@@ -24,27 +24,6 @@ function Expand-AdsiGroupMember {
         # Properties of the group members to retrieve
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
@@ -53,8 +32,7 @@ function Expand-AdsiGroupMember {
 
     begin {
 
-        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+        $Log = @{ Cache = $Cache }
         $DomainSidRef = $Cache.Value['DomainBySid']
         $DomainBySid = $DomainSidRef.Value
 
@@ -80,7 +58,7 @@ function Expand-AdsiGroupMember {
 
             ForEach ($TrustedDomain in (Get-TrustedDomain -Cache $Cache)) {
                 #Write-LogMsg @Log -Text "Get-AdsiServer -Fqdn $($TrustedDomain.DomainFqdn)"
-                $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -ThisFqdn $ThisFqdn @LogThis
+                $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -Cache $Cache
             }
 
         } else {
@@ -112,8 +90,8 @@ function Expand-AdsiGroupMember {
                     $null = $DomainBySid.Value.TryGetValue($DomainSid, [ref]$Domain)
                     $Log['Suffix'] = " # foreignSecurityPrincipal's distinguishedName points to a SID $Suffix"
                     $DirectoryPath = "LDAP://$($Domain.Dns)/<SID=$SID>"
-                    Write-LogMsg @Log -Text "`$Principal = Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    $Principal = Get-DirectoryEntry -DirectoryPath $DirectoryPath -ThisFqdn $ThisFqdn @LogThis
+                    Write-LogMsg @Log -Text "`$Principal = Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache"
+                    $Principal = Get-DirectoryEntry -DirectoryPath $DirectoryPath -Cache $Cache
 
                     try {
 
@@ -131,11 +109,11 @@ function Expand-AdsiGroupMember {
                     if ($Principal.properties['objectClass'].Value -contains 'group') {
 
                         $Log['Suffix'] = " # '$($Principal.properties['name'])' is a group in '$Domain' $Suffix"
-                        Write-LogMsg @Log -Text "`$AdsiGroupWithMembers = Get-AdsiGroupMember -Group `$Principal -ThisFqdn '$ThisFqdn' -PropertiesToLoad @('$($PropertiesToLoad -join "','")')" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
+                        Write-LogMsg @Log -Text "`$AdsiGroupWithMembers = Get-AdsiGroupMember -Group `$Principal -PropertiesToLoad @('$($PropertiesToLoad -join "','")') -Cache `$Cache"
+                        $AdsiGroupWithMembers = Get-AdsiGroupMember -Group $Principal -PropertiesToLoad $PropertiesToLoad -Cache $Cache
                         $Log['Suffix'] = " # for $(@($AdsiGroupWithMembers.FullMembers).Count) members $Suffix"
-                        Write-LogMsg @Log -Text "`$Principal = Expand-AdsiGroupMember -DirectoryEntry `$AdsiGroupWithMembers.FullMembers -ThisFqdn '$ThisFqdn' -PropertiesToLoad @('$($PropertiesToLoad -join "','")')" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
+                        Write-LogMsg @Log -Text "`$Principal = Expand-AdsiGroupMember -DirectoryEntry `$AdsiGroupWithMembers.FullMembers -PropertiesToLoad @('$($PropertiesToLoad -join "','")') -Cache `$Cache"
+                        $Principal = Expand-AdsiGroupMember -DirectoryEntry $AdsiGroupWithMembers.FullMembers -PropertiesToLoad $PropertiesToLoad -Cache $Cache
 
                     }
 

@@ -9,38 +9,31 @@ function Resolve-IdRefSearchDir {
         [Parameter(Mandatory)]
         [string]$IdentityReference,
 
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
         [string]$Name,
 
         [string]$DomainDn,
 
-        [hashtable]$Log,
-
-        [hashtable]$LogThis
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
 
-    $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn" -ThisFqdn $ThisFqdn @LogThis
+    $SearchPath = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainDn" -Cache $Cache
 
     $SearchParams = @{
-        DirectoryPath    = $SearchPath
-        Filter           = "(samaccountname=$Name)"
-        PropertiesToLoad = $AccountProperty + @('objectClass', 'distinguishedName', 'name', 'grouptype', 'member', 'objectClass')
-        ThisFqdn         = $ThisFqdn
+        'Cache'            = $Cache
+        'DirectoryPath'    = $SearchPath
+        'Filter'           = "(samaccountname=$Name)"
+        'PropertiesToLoad' = $AccountProperty + @('objectClass', 'distinguishedName', 'name', 'grouptype', 'member', 'objectClass')
     }
 
     try {
-        $DirectoryEntry = Search-Directory @SearchParams @LogThis
+        $DirectoryEntry = Search-Directory @SearchParams
     } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text "'$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message)"
+        Write-LogMsg -Text "'$IdentityReference' could not be resolved against its directory. Error: $($_.Exception.Message)" -Cache $Cache
         $Log['Type'] = $LogThis['DebugOutputStream']
 
     }

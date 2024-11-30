@@ -6,17 +6,23 @@ function ConvertTo-PermissionPrincipal {
         $IdentityReference,
         $DirectoryEntry,
         $NoGroupMembers,
-        $ThisFqdn,
-        $Log,
-        $LogThis,
-        $LogSuffix,
+        $LogSuffixComment,
         $SamAccountNameOrSid,
         $AccessControlEntries,
 
         # Properties of each Account to display on the report
-        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description'),
+
+        # In-process cache to reduce calls to other processes or to disk
+        [Parameter(Mandatory)]
+        [ref]$Cache
 
     )
+
+    $Log = @{
+        'Cache'  = $Cache
+        'Suffix' = $LogSuffixComment
+    }
 
     $PropertiesToAdd = @{
         DomainDn            = $DomainDn
@@ -82,8 +88,8 @@ function ConvertTo-PermissionPrincipal {
             ) {
 
                 # Retrieve the members of groups from the LDAP provider
-                Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is an LDAP security principal $LogSuffix"
-                $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis).FullMembers
+                Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -Cache `$Cache # is an LDAP security principal $LogSuffix"
+                $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -PropertiesToLoad $PropertiesToLoad -Cache $Cache).FullMembers
 
             } else {
 
@@ -91,8 +97,8 @@ function ConvertTo-PermissionPrincipal {
 
                 if ( $DirectoryEntry.SchemaClassName -in @('group', 'SidTypeWellKnownGroup', 'SidTypeAlias')) {
 
-                    Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$DirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' } -Suffix " # is a WinNT group $LogSuffix"
-                    $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -ThisFqdn $ThisFqdn -PropertiesToLoad $PropertiesToLoad @LogThis
+                    Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$DirectoryEntry -Cache `$Cache # is a WinNT group $LogSuffix"
+                    $Members = Get-WinNTGroupMember -DirectoryEntry $DirectoryEntry -PropertiesToLoad $PropertiesToLoad -Cache $Cache
 
                 }
 
@@ -154,9 +160,10 @@ function ConvertTo-PermissionPrincipal {
 
     } else {
 
-        $Log['Type'] = 'Verbose' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+        $StartingLogType = $Cache.Value['LogType'].Value
+        $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
         Write-LogMsg @Log -Text " # No matching DirectoryEntry $LogSuffix"
-        $Log['Type'] = $DebugOutputStream
+        $Cache.Value['LogType'].Value = $StartingLogType
 
     }
 

@@ -1,19 +1,19 @@
 function Get-WinNTGroupMember {
 
     <#
-        .SYNOPSIS
-        Get members of a group from the WinNT provider
-        .DESCRIPTION
-        Get members of a group from the WinNT provider
-        Convert them from COM objects into usable DirectoryEntry objects
-        .INPUTS
-        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
-        .OUTPUTS
-        [System.DirectoryServices.DirectoryEntry] for each group member
-        .EXAMPLE
-        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember
+    .SYNOPSIS
+    Get members of a group from the WinNT provider
+    .DESCRIPTION
+    Get members of a group from the WinNT provider
+    Convert them from COM objects into usable DirectoryEntry objects
+    .INPUTS
+    [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
+    .OUTPUTS
+    [System.DirectoryServices.DirectoryEntry] for each group member
+    .EXAMPLE
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember
 
-        Get members of the local Administrators group
+    Get members of the local Administrators group
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -27,27 +27,6 @@ function Get-WinNTGroupMember {
         # Properties of the group members to find in the directory
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
@@ -55,9 +34,6 @@ function Get-WinNTGroupMember {
     )
 
     begin {
-
-        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
 
         # Add the bare minimum required properties
         $PropertiesToLoad = $PropertiesToLoad + @(
@@ -74,7 +50,8 @@ function Get-WinNTGroupMember {
         $PropertiesToLoad = $PropertiesToLoad |
         Sort-Object -Unique
 
-        $GetSearch = @{ PropertiesToLoad = $PropertiesToLoad }
+        $Log = @{ 'Cache' = $Cache }
+        $DirectoryParams = @{ 'Cache' = $Cache ; 'PropertiesToLoad' = $PropertiesToLoad }
 
     }
 
@@ -86,13 +63,13 @@ function Get-WinNTGroupMember {
             $Log['Suffix'] = " $LogSuffix"
             $ThisSplitPath = Split-DirectoryPath -DirectoryPath $ThisDirEntry.Path
             $SourceDomainNetbiosOrFqdn = $ThisSplitPath['Domain']
-            Write-LogMsg @Log -Text "`$GroupDomain = Get-AdsiServer -Netbios '$SourceDomainNetbiosOrFqdn' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $GroupDomain = Get-AdsiServer -Netbios $SourceDomainNetbiosOrFqdn -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "`$GroupDomain = Get-AdsiServer -Netbios '$SourceDomainNetbiosOrFqdn' -Cache `$Cache"
+            $GroupDomain = Get-AdsiServer -Netbios $SourceDomainNetbiosOrFqdn -Cache $Cache
 
             if (-not $GroupDomain) {
 
-                Write-LogMsg @Log -Text "`$GroupDomain = Get-AdsiServer -Fqdn '$SourceDomainNetbiosOrFqdn' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                $GroupDomain = Get-AdsiServer -Fqdn $SourceDomainNetbiosOrFqdn -ThisFqdn $ThisFqdn @LogThis
+                Write-LogMsg @Log -Text "`$GroupDomain = Get-AdsiServer -Fqdn '$SourceDomainNetbiosOrFqdn' -Cache `$Cache"
+                $GroupDomain = Get-AdsiServer -Fqdn $SourceDomainNetbiosOrFqdn -Cache $Cache
 
             }
 
@@ -108,16 +85,16 @@ function Get-WinNTGroupMember {
                     'WinNTMembers' = @()
                 }
 
-                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix `"$LogSuffix`" -DirectoryEntry `$ThisDirEntry -GroupDomain `$GroupDomain -ThisFqdn '$ThisFqdn' # for $(@($DirectoryMembers).Count) members" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $GroupDomain -ThisFqdn $ThisFqdn @LogThis
+                Write-LogMsg @Log -Text "Find-WinNTGroupMember -ComObject `$DirectoryMembers -Out $MembersToGet -LogSuffix `"$LogSuffix`" -DirectoryEntry `$ThisDirEntry -GroupDomain `$GroupDomain -Cache `$Cache # for $(@($DirectoryMembers).Count) members"
+                Find-WinNTGroupMember -ComObject $DirectoryMembers -Out $MembersToGet -LogSuffix $LogSuffix -DirectoryEntry $ThisDirEntry -GroupDomain $GroupDomain -Cache $Cache
 
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
 
-                    Write-LogMsg @Log -Text "`$MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath '$ThisMember' -ThisFqdn '$ThisFqdn'" -Expand $GetSearch, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember -ThisFqdn $ThisFqdn @GetSearch @LogThis
-                    Write-LogMsg @Log -Text "Expand-WinNTGroupMember = Get-DirectoryEntry -DirectoryEntry `$MemberDirectoryEntry -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -ThisFqdn $ThisFqdn -AccountProperty $PropertiesToLoad @LogThis
+                    Write-LogMsg @Log -Text "`$MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath '$ThisMember'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+                    $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @DirectoryParams
+                    Write-LogMsg @Log -Text "Expand-WinNTGroupMember = Get-DirectoryEntry -DirectoryEntry `$MemberDirectoryEntry -Cache `$Cache"
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -AccountProperty $PropertiesToLoad -Cache $Cache
 
                 }
 
@@ -128,10 +105,10 @@ function Get-WinNTGroupMember {
                 ForEach ($MemberPath in $MembersToGet.Keys) {
 
                     $ThisMemberToGet = $MembersToGet[$MemberPath]
-                    Write-LogMsg @Log -Text "`$MemberDirectoryEntries = Search-Directory -DirectoryPath '$MemberPath' -Filter '(|$ThisMemberToGet)' -ThisFqdn '$ThisFqdn'" -Expand $GetSearch, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$ThisMemberToGet)" -ThisFqdn $ThisFqdn @GetSearch @LogThis
-                    Write-LogMsg @Log -Text "Expand-WinNTGroupMember -DirectoryEntry `$MemberDirectoryEntries -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -ThisFqdn $ThisFqdn -AccountProperty $PropertiesToLoad @LogThis
+                    Write-LogMsg @Log -Text "`$MemberDirectoryEntries = Search-Directory -DirectoryPath '$MemberPath' -Filter '(|$ThisMemberToGet)'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+                    $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$ThisMemberToGet)" @DirectoryParams
+                    Write-LogMsg @Log -Text "Expand-WinNTGroupMember -DirectoryEntry `$MemberDirectoryEntries -Cache `$Cache"
+                    Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -AccountProperty $PropertiesToLoad -Cache $Cache
 
                 }
 

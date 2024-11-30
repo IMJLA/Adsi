@@ -4,16 +4,11 @@ function ConvertTo-DirectoryEntry {
         $CachedWellKnownSID,
         $DomainNetBIOS,
         $AccountProperty,
-        $ThisFqdn,
         $SamAccountNameOrSid,
         $AccessControlEntries,
-        $Log,
-        $LogThis,
-        $LogSuffix,
         $LogSuffixComment,
         $IdentityReference,
         $CurrentDomain,
-        $DebugOutputStream,
         $DomainDn,
         [ref]$Cache
     )
@@ -30,7 +25,9 @@ function ConvertTo-DirectoryEntry {
 
     }
 
-    #Write-LogMsg @Log -Text " # Known SID cache miss $LogSuffix"
+    $Log = @{ 'Cache' = $Cache ; 'Suffix' = $LogSuffixComment }
+
+    #Write-LogMsg @Log -Text " # Known SID cache miss" -Cache $Cache
 
     [string[]]$PropertiesToLoad = $AccountProperty + @(
         'objectClass',
@@ -44,7 +41,7 @@ function ConvertTo-DirectoryEntry {
         'primaryGroupToken'
     )
 
-    $DirectorySplat = @{ ThisFqdn = $ThisFqdn ; PropertiesToLoad = $PropertiesToLoad }
+    $DirectoryParams = @{ Cache = $Cache ; PropertiesToLoad = $PropertiesToLoad }
     $SearchSplat = @{ PropertiesToLoad = $PropertiesToLoad }
 
     if (
@@ -54,43 +51,39 @@ function ConvertTo-DirectoryEntry {
 
     ) {
 
-        #Write-LogMsg @Log -Text " # LDAP security principal detected $LogSuffix"
+        #Write-LogMsg @Log -Text " # LDAP security principal detected" -Cache $Cache
         $DomainNetbiosCacheResult = $Cache.Value['DomainByNetbios'].Value[$DomainNetBIOS]
 
         if ($DomainNetbiosCacheResult) {
 
-            #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS' $LogSuffix"
+            #Write-LogMsg @Log -Text " # Domain NetBIOS cache hit for '$DomainNetBIOS'" -Cache $Cache
             $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
             $SearchSplat['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
 
         } else {
 
-            #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS' $LogSuffix"
+            #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'" -Cache $Cache
 
             if ( -not [string]::IsNullOrEmpty($DomainNetBIOS) ) {
-                $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
+                $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -Cache $Cache
             }
 
-            $FqdnParams = @{
-                DirectoryPath = "LDAP://$DomainNetBIOS"
-                ThisFqdn      = $ThisFqdn
-            }
-
-            $SearchSplat['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath @FqdnParams @LogThis
+            $SearchSplat['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$DomainNetBIOS" -Cache $Cache
 
         }
 
         # Search the domain for the principal
         $SearchSplat['Filter'] = "(samaccountname=$SamAccountNameOrSid)"
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectorySplat, $SearchSplat, $LogThis -Suffix $LogSuffixComment
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
 
         try {
-            $DirectoryEntry = Search-Directory @DirectorySplat @SearchSplat @LogThis
+            $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
         } catch {
 
-            $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-            Write-LogMsg @Log -Text " # Unsuccessful directory search $LogSuffix`: $($_.Exception.Message.Trim())"
-            $Log['Type'] = $DebugOutputStream
+            $StartingLogType = $Cache.Value['LogType'].Value
+            $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+            Write-LogMsg @Log -Text " # Unsuccessful directory search`: $($_.Exception.Message.Trim())"
+            $Cache.Value['LogType'].Value = $StartingLogType
             return
 
         }
@@ -101,20 +94,20 @@ function ConvertTo-DirectoryEntry {
         $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
     ) {
 
-        #Write-LogMsg @Log -Text " # Detected an unresolved SID from the current domain $LogSuffix"
+        #Write-LogMsg @Log -Text " # Detected an unresolved SID from the current domain"
 
         # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
         $DomainDN = $CurrentDomain.distinguishedName.Value
-        $DomainFQDN = ConvertTo-Fqdn -DistinguishedName $DomainDN -ThisFqdn $ThisFqdn @LogThis
+        $DomainFQDN = ConvertTo-Fqdn -DistinguishedName $DomainDN -Cache $Cache
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
         $SearchSplat['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
         $SearchSplat['PropertiesToLoad'] = 'netbiosname'
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectorySplat, $SearchSplat, $LogThis -Suffix $LogSuffixComment
-        $DomainCrossReference = Search-Directory @DirectorySplat @SearchSplat @LogThis
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
+        $DomainCrossReference = Search-Directory @DirectoryParams @SearchSplat
 
         if ($DomainCrossReference.Properties ) {
 
-            #Write-LogMsg @Log -Text " # The domain '$DomainFQDN' is online $LogSuffix"
+            #Write-LogMsg @Log -Text " # The domain '$DomainFQDN' is online" -Cache $Cache
             [string]$DomainNetBIOS = $DomainCrossReference.Properties['netbiosname']
 
             # TODO: The domain is online; see if any domain trusts have issues?
@@ -132,15 +125,16 @@ function ConvertTo-DirectoryEntry {
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/$DomainDn"
         $SearchSplat['Filter'] = "(objectsid=$ObjectSid)"
         $SearchSplat['PropertiesToLoad'] = $PropertiesToLoad
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectorySplat, $SearchSplat, $LogThis -Suffix $LogSuffixComment
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
 
         try {
-            $DirectoryEntry = Search-Directory @DirectorySplat @SearchSplat @LogThis
+            $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
         } catch {
 
-            $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-            Write-LogMsg @Log -Text " # Unsuccessful directory search $LogSuffix`: $($_.Exception.Message.Trim())"
-            $Log['Type'] = $DebugOutputStream
+            $StartingLogType = $Cache.Value['LogType'].Value
+            $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+            Write-LogMsg @Log -Text " # Unsuccessful directory search`: $($_.Exception.Message.Trim())" -Cache $Cache
+            $Cache.Value['LogType'].Value = $StartingLogType
             return
 
         }
@@ -149,7 +143,7 @@ function ConvertTo-DirectoryEntry {
 
     }
 
-    #Write-LogMsg @Log -Text " # Detected a local security principal or unresolved SID $LogSuffix"
+    #Write-LogMsg @Log -Text " # Detected a local security principal or unresolved SID" -Cache $Cache
 
     if ($null -eq $SamAccountNameOrSid) { $SamAccountNameOrSid = $IdentityReference }
 
@@ -157,7 +151,7 @@ function ConvertTo-DirectoryEntry {
 
         if ($DomainNetBIOS -in 'APPLICATION PACKAGE AUTHORITY', 'BUILTIN', 'NT SERVICE') {
 
-            #Write-LogMsg @Log -Text " # Detected a Capability SID or Service SID which could not be resolved to a friendly name $LogSuffix"
+            #Write-LogMsg @Log -Text " # Detected a Capability SID or Service SID which could not be resolved to a friendly name" -Cache $Cache
 
             $Known = Get-KnownSid -SID $SamAccountNameOrSid
 
@@ -171,16 +165,16 @@ function ConvertTo-DirectoryEntry {
 
         }
 
-        #Write-LogMsg @Log -Text " # Detected an unresolved SID $LogSuffix"
+        #Write-LogMsg @Log -Text " # Detected an unresolved SID" -Cache $Cache
 
         # The SID of the domain is the SID of the user minus the last block of numbers
         $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf('-'))
 
         # Determine if SID belongs to current domain
         #if ($DomainSid -eq $CurrentDomain.SIDString) {
-        #Write-LogMsg @Log -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?"
+        #Write-LogMsg @Log -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?" -Cache $Cache
         #} else {
-        #Write-LogMsg @Log -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain."
+        #Write-LogMsg @Log -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain." -Cache $Cache
         #}
 
         # Lookup other information about the domain using its SID as the key
@@ -195,25 +189,26 @@ function ConvertTo-DirectoryEntry {
         } else {
 
             $DirectoryPath = "WinNT://$DomainNetBIOS/Users"
-            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
+            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -Cache $Cache
 
         }
 
-        Write-LogMsg @Log -Text "`$UsersGroup = Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -ExpandKeyMap @{ Cache = '$Cache' } -Suffix $LogSuffixComment
+        Write-LogMsg @Log -Text "`$UsersGroup = Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
 
         try {
-            $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
+            $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
         } catch {
 
-            $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-            Write-LogMsg @Log -Text " # Couldn't get '$($DirectoryPath)' using PSRemoting $LogSuffix. Error: $_"
-            $Log['Type'] = $DebugOutputStream
+            $StartingLogType = $Cache.Value['LogType'].Value
+            $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+            Write-LogMsg @Log -Text " # Couldn't get '$($DirectoryPath)' using PSRemoting. Error: $_" -Cache $Cache
+            $Cache.Value['LogType'].Value = $StartingLogType
             return
 
         }
 
-        Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$UsersGroup -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ Cache = '$Cache' } -Suffix $LogSuffixComment
-        $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -ThisFqdn $ThisFqdn @LogThis
+        Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$UsersGroup -Cache `$Cache"
+        $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -Cache $Cache
 
         $DirectoryEntry = $MembersOfUsersGroup |
         Where-Object -FilterScript {
@@ -224,7 +219,7 @@ function ConvertTo-DirectoryEntry {
 
     }
 
-    #Write-LogMsg @Log -Text " # Detected a local security principal $LogSuffix"
+    #Write-LogMsg @Log -Text " # Detected a local security principal" -Cache $Cache
     $DomainNetbiosCacheResult = $Cache.Value['DomainByNetbios'].Value[$DomainNetBIOS]
 
     if ($DomainNetbiosCacheResult) {
@@ -233,15 +228,16 @@ function ConvertTo-DirectoryEntry {
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
     }
 
-    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectorySplat, $LogThis -Suffix $LogSuffixComment
+    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
 
     try {
-        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectorySplat @LogThis
+        $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
     } catch {
 
-        $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-        Write-LogMsg @Log -Text " # '$DirectoryPath' Couldn't be resolved $LogSuffix. Error: $($_.Exception.Message.Trim())"
-        $Log['Type'] = $DebugOutputStream
+        $StartingLogType = $Cache.Value['LogType'].Value
+        $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+        Write-LogMsg @Log -Text " # '$DirectoryPath' Couldn't be resolved. Error: $($_.Exception.Message.Trim())" -Cache $Cache
+        $Cache.Value['LogType'].Value = $StartingLogType
         return
 
     }

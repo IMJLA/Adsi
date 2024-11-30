@@ -1,22 +1,23 @@
 function Get-AdsiServer {
+
     <#
-        .SYNOPSIS
-        Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
-        .DESCRIPTION
-        Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
-        Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
-        .INPUTS
-        [System.String]$Fqdn
-        .OUTPUTS
-        [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
-        .EXAMPLE
-        Get-AdsiServer -Fqdn localhost
+    .SYNOPSIS
+    Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
+    .DESCRIPTION
+    Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
+    Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
+    .INPUTS
+    [System.String]$Fqdn
+    .OUTPUTS
+    [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
+    .EXAMPLE
+    Get-AdsiServer -Fqdn localhost
 
-        Find the ADSI provider of the local computer
-        .EXAMPLE
-        Get-AdsiServer -Fqdn 'ad.contoso.com'
+    Find the ADSI provider of the local computer
+    .EXAMPLE
+    Get-AdsiServer -Fqdn 'ad.contoso.com'
 
-        Find the ADSI provider of the AD domain 'ad.contoso.com'
+    Find the ADSI provider of the AD domain 'ad.contoso.com'
     #>
 
     [OutputType([System.String])]
@@ -30,27 +31,6 @@ function Get-AdsiServer {
         # NetBIOS name of the ADSI server whose information to determine
         [string[]]$Netbios,
 
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # Remove the CIM session used to get ADSI server information
         [switch]$RemoveCimSession,
 
@@ -62,9 +42,7 @@ function Get-AdsiServer {
 
     begin {
 
-        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
-        $CimParams = @{ ThisFqdn = $ThisFqdn }
+        $Log = @{ Cache = $Cache }
         $DomainsByFqdn = $Cache.Value['DomainByFqdn']
         $DomainsByNetbios = $Cache.Value['DomainByNetbios']
         $DomainsBySid = $Cache.Value['DomainBySid']
@@ -103,24 +81,25 @@ function Get-AdsiServer {
 
             }
 
-            Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' -ThisFqdn '$ThisFqdn' # Domain FQDN cache miss" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainFqdn' -Cache `$Cache # Domain FQDN cache miss"
+            $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainFqdn -Cache $Cache
 
             if ($null -eq $AdsiProvider) {
-                $Log['Type'] = 'Warning'
+                $StartingLogType = $Cache.Value['LogType'].Value
+                $Cache.Value['LogType'].Value = 'Warning'
                 Write-LogMsg @Log -Text ' # Could not find the ADSI provider'
-                $Log['Type'] = $DebugOutputStream
+                $Log['Type'] = $Cache.Value['LogType'].Value
                 continue
             }
 
-            Write-LogMsg @Log -Text "ConvertTo-DistinguishedName -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "ConvertTo-DistinguishedName -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' -Cache `$Cache"
+            $DomainDn = ConvertTo-DistinguishedName -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -Cache $Cache
 
-            Write-LogMsg @Log -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainFqdn -AdsiProvider $AdsiProvider -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainFqdn' -Cache `$Cache"
+            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainFqdn -AdsiProvider $AdsiProvider -Cache $Cache
 
-            Write-LogMsg @Log -Text "ConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "ConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' -Cache `$Cache"
+            $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -Cache $Cache
 
             <#
             PS C:\Users\Owner> wmic SYSACCOUNT get name,sid
@@ -156,11 +135,11 @@ function Get-AdsiServer {
 
             #>
 
-            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @()" -Expand $CimParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @() @CimParams @LogThis
+            Write-LogMsg @Log -Text "Get-CacheCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @() -Cache `$Cache"
+            $Win32Accounts = Get-CacheCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @() -Cache $Cache
 
-            Write-LogMsg @Log -Text "`$Win32Services = Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @()" -Expand $CimParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $Win32Services = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() @CimParams @LogThis
+            Write-LogMsg @Log -Text "`$Win32Services = Get-CacheCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache `$Cache"
+            $Win32Services = Get-CacheCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache $Cache
 
             Write-LogMsg @Log -Text "Resolve-ServiceNameToSID -InputObject `$Win32Services"
             $ResolvedWin32Services = Resolve-ServiceNameToSID -InputObject $Win32Services
@@ -213,43 +192,44 @@ function Get-AdsiServer {
 
             }
 
-            Write-LogMsg @Log -Text "`$CimSession = Get-CachedCimSession -ComputerName '$DomainNetbios' -ThisFqdn '$ThisFqdn' # Domain NetBIOS cache miss" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "`$CimSession = Get-CacheCimSession -ComputerName '$DomainNetbios' -Cache `$Cache # Domain NetBIOS cache miss"
+            $CimSession = Get-CacheCimSession -ComputerName $DomainNetbios -Cache $Cache
 
-            Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainNetbios' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainNetbios -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "Find-AdsiProvider -AdsiServer '$DomainNetbios' -Cache `$Cache"
+            $AdsiProvider = Find-AdsiProvider -AdsiServer $DomainNetbios -Cache $Cache
 
             if ($null -eq $AdsiProvider) {
-                $Log['Type'] = 'Warning'
+                $StartingLogType = $Cache.Value['LogType'].Value
+                $Cache.Value['LogType'].Value = 'Warning'
                 Write-LogMsg @Log -Text " # Could not find the ADSI provider for '$DomainDnsName'"
-                $Log['Type'] = $DebugOutputStream
+                $Cache.Value['LogType'].Value = $StartingLogType
                 continue
             }
 
-            Write-LogMsg @Log -Text "ConvertTo-DistinguishedName -Domain '$DomainNetBIOS' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "ConvertTo-DistinguishedName -Domain '$DomainNetBIOS' -Cache `$Cache"
+            $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -Cache $Cache
 
             if ($DomainDn) {
 
-                Write-LogMsg @Log -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -ThisFqdn $ThisFqdn @LogThis
+                Write-LogMsg @Log -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' -Cache `$Cache"
+                $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -Cache $Cache
 
             } else {
 
-                Write-LogMsg @Log -Text "Get-ParentDomainDnsName -DomainNetbios '$DomainNetBIOS' -CimSession `$CimSession -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                $ParentDomainDnsName = Get-ParentDomainDnsName -DomainNetbios $DomainNetBIOS -CimSession $CimSession -ThisFqdn $ThisFqdn @LogThis
+                Write-LogMsg @Log -Text "Get-ParentDomainDnsName -DomainNetbios '$DomainNetBIOS' -CimSession `$CimSession -Cache `$Cache"
+                $ParentDomainDnsName = Get-ParentDomainDnsName -DomainNetbios $DomainNetBIOS -CimSession $CimSession -Cache $Cache
                 $DomainDnsName = "$DomainNetBIOS.$ParentDomainDnsName"
 
             }
 
-            Write-LogMsg @Log -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainDnsName' -AdsiProvider '$AdsiProvider' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -AdsiProvider $AdsiProvider -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainDnsName' -AdsiProvider '$AdsiProvider' -Cache `$Cache"
+            $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -AdsiProvider $AdsiProvider -Cache $Cache
 
-            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @('Caption', 'SID')" -Expand $CimParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @('Caption', 'SID') @CimParams @LogThis
+            Write-LogMsg @Log -Text "Get-CacheCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @('Caption', 'SID') -Cache `$Cache"
+            $Win32Accounts = Get-CacheCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @('Caption', 'SID') -Cache $Cache
 
-            Write-LogMsg @Log -Text "`$Win32Services = Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @()" -Expand $CimParams, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $Win32Services = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() @CimParams @LogThis
+            Write-LogMsg @Log -Text "`$Win32Services = Get-CacheCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache `$Cache"
+            $Win32Services = Get-CacheCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache $Cache
 
             Write-LogMsg @Log -Text "Resolve-ServiceNameToSID -InputObject `$Win32Services"
             $ResolvedWin32Services = Resolve-ServiceNameToSID -InputObject $Win32Services

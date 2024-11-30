@@ -15,51 +15,21 @@ function Resolve-IdRefSID {
         # NetBIOS name of the ADSI server
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
-        <#
-        Dictionary to cache known servers to avoid redundant lookups
-
-        Defaults to an empty thread-safe hashtable
-        #>
-        [hashtable]$AdsiServersByDns = [hashtable]::Synchronized(@{}),
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
 
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $IdentityReference -DomainNetBIOS $ServerNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
 
     if ($CachedWellKnownSID) {
 
-        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Well-known SID match"
+        #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Well-known SID match" -Cache $Cache
         $NTAccount = $CachedWellKnownSID.IdentityReferenceNetBios
         $DomainNetBIOS = $ServerNetBIOS
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
-        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn @LogThis
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -Cache $Cache
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -Cache $Cache
         $done = $true
 
     } else {
@@ -68,21 +38,21 @@ function Resolve-IdRefSID {
 
     if ($KnownSid) {
 
-        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Known SID pattern match"
+        #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Known SID pattern match" -Cache $Cache
         $NTAccount = $KnownSid.NTAccount
         $DomainNetBIOS = $ServerNetBIOS
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
-        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn @LogThis
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -Cache $Cache
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -Cache $Cache
         $done = $true
 
     }
 
     if (-not $done) {
 
-        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # No match with known SID patterns"
+        #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # No match with known SID patterns" -Cache $Cache
         # The SID of the domain is everything up to (but not including) the last hyphen
         $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-'))
-        Write-LogMsg @Log -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])"
+        Write-LogMsg -Text "[System.Security.Principal.SecurityIdentifier]::new('$IdentityReference').Translate([System.Security.Principal.NTAccount])" -Cache $Cache
         $SecurityIdentifier = [System.Security.Principal.SecurityIdentifier]::new($IdentityReference)
 
         try {
@@ -97,15 +67,16 @@ function Resolve-IdRefSID {
 
         } catch {
 
-            $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-            Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))"
-            # $Log['Type'] = $DebugOutputStream
+            $StartingLogType = $Cache.Value['LogType'].Value
+            $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+            Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Unexpectedly could not translate SID to NTAccount using the [SecurityIdentifier]::Translate method: $($_.Exception.Message.Replace('Exception calling "Translate" with "1" argument(s): ',''))" -Cache $Cache
+            $Cache.Value['LogType'].Value = $StartingLogType
 
         }
 
     }
 
-    #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'"
+    #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Translated NTAccount caption is '$NTAccount'" -Cache $Cache
     $DomainsBySid = $Cache.Value['DomainBySid']
 
     # Search the cache of domains, first by SID, then by NetBIOS name
@@ -118,7 +89,7 @@ function Resolve-IdRefSID {
 
     if (-not $TryGetValueResult) {
 
-        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain SID cache miss for '$DomainSid'"
+        #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain SID cache miss for '$DomainSid'" -Cache $Cache
         $split = $NTAccount -split '\\'
         $DomainFromSplit = $split[0]
 
@@ -157,9 +128,9 @@ function Resolve-IdRefSID {
 
     } else {
 
-        #Write-LogMsg @Log -Text " # IdentityReference '$IdentityReference' # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS'"
-        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -ThisFqdn $ThisFqdn @LogThis
-        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -ThisFqdn $ThisFqdn @LogThis
+        #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain SID '$DomainSid' is unknown. Domain NetBIOS is '$DomainNetBIOS'" -Cache $Cache
+        $DomainDns = ConvertTo-Fqdn -NetBIOS $DomainNetBIOS -Cache $Cache
+        $DomainCacheResult = Get-AdsiServer -Fqdn $DomainDns -Cache $Cache
 
     }
 
@@ -183,10 +154,6 @@ function Resolve-IdRefSID {
             Cache             = $Cache
             IdentityReference = $NTAccount
             AdsiServer        = $DomainCacheResult
-            AdsiServersByDns  = $AdsiServersByDns
-            ThisHostName      = $ThisHostName
-            ThisFqdn          = $ThisFqdn
-            WhoAmI            = $WhoAmI
         }
 
         $Resolved = Resolve-IdentityReference @ResolveIdentityReferenceParams

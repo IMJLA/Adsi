@@ -611,7 +611,7 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'group'
             'SID'             = 'S-1-5-114'
         }
-    
+
         <#
         https://devblogs.microsoft.com/oldnewthing/20220502-00/?p=106550
         SIDs of the form S-1-15-2-xxx are app container SIDs.

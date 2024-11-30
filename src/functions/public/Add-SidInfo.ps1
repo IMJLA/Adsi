@@ -1,21 +1,21 @@
 function Add-SidInfo {
 
     <#
-        .SYNOPSIS
-        Add some useful properties to a DirectoryEntry object for easier access
-        .DESCRIPTION
-        Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
-        .INPUTS
-        [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter.  Must contain the objectSid property.
-        .OUTPUTS
-        [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. Whatever was input, but with three extra properties added now.
-        .EXAMPLE
-        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
-        distinguishedName :
-        Path              : WinNT://localhost/Administrator
+    .SYNOPSIS
+    Add some useful properties to a DirectoryEntry object for easier access
+    .DESCRIPTION
+    Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
+    .INPUTS
+    [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter.  Must contain the objectSid property.
+    .OUTPUTS
+    [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. Whatever was input, but with three extra properties added now.
+    .EXAMPLE
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
+    distinguishedName :
+    Path              : WinNT://localhost/Administrator
 
-        The output object's default format is not modified so with default formatting it appears identical to the original.
-        Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
+    The output object's default format is not modified so with default formatting it appears identical to the original.
+    Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]

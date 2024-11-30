@@ -1,45 +1,27 @@
 function Expand-WinNTGroupMember {
-    <#
-        .SYNOPSIS
-        Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
-        .DESCRIPTION
-        Recursively retrieves group members and detailed information about them
-        .INPUTS
-        [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
-        .OUTPUTS
-        [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
-        .EXAMPLE
-        [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
 
-        Need to fix example and add notes
+    <#
+    .SYNOPSIS
+    Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
+    .DESCRIPTION
+    Recursively retrieves group members and detailed information about them
+    .INPUTS
+    [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
+    .OUTPUTS
+    [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
+    .EXAMPLE
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
+
+    Need to fix example and add notes
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
     param (
 
         # Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry,
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
@@ -52,8 +34,7 @@ function Expand-WinNTGroupMember {
 
     begin {
 
-        $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-        $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+        $Log = @{ 'Cache' = $Cache }
         $DomainBySid = [ref]$Cache.Value['DomainBySid']
 
         # Add the bare minimum required properties
@@ -72,7 +53,7 @@ function Expand-WinNTGroupMember {
         Sort-Object -Unique
 
         $AdsiGroupSplat = @{
-            'ThisFqdn'         = $ThisFqdn
+            'Cache'            = $Cache
             'PropertiesToLoad' = $PropertiesToLoad
         }
 
@@ -89,15 +70,16 @@ function Expand-WinNTGroupMember {
 
             if ( -not $ThisEntry.Properties ) {
 
-                $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+                $StartingLogType = $Cache.Value['LogType'].Value
+                $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
                 Write-LogMsg @Log -Text " # '$ThisEntry' has no properties"
-                $Log['Type'] = $DebugOutputStream
+                $Cache.Value['LogType'].Value = $StartingLogType
 
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 $Log['Suffix'] = " # Is an ADSI group $Suffix"
-                Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat, $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-                $AdsiGroup = Get-AdsiGroup @AdsiGroupSplat @LogThis
+                Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat -MapKeyName 'LogCacheMap'
+                $AdsiGroup = Get-AdsiGroup @AdsiGroupSplat
                 $Log['Suffix'] = " # for $(@($AdsiGroup.FullMembers).Count) members $Suffix"
                 Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid

@@ -15,36 +15,13 @@ function ConvertTo-DomainSidString {
         #>
         [string]$AdsiProvider,
 
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
 
-    $LogSuffix = "# for domain FQDN '$DomainDnsName'"
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI ; Suffix = " $LogSuffix" }
-    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
+    $Log = @{ Cache = $Cache ; Suffix = " # for domain FQDN '$DomainDnsName'" }
     $CacheResult = $null
     $null = $Cache.Value['DomainByFqdn'].Value.TryGetValue($DomainDnsName, [ref]$CacheResult)
 
@@ -61,23 +38,23 @@ function ConvertTo-DomainSidString {
         $AdsiProvider -eq 'LDAP'
     ) {
 
-        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath 'LDAP://$DomainDnsName' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -ThisFqdn $ThisFqdn @LogThis
+        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath 'LDAP://$DomainDnsName' -Cache `$Cache"
+        $DomainDirectoryEntry = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainDnsName" -Cache $Cache
 
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
         } catch {
 
-            Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn' # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim())" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-            $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
+            Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim()) -Cache `$Cache"
+            $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
             return $DomainSid
 
         }
 
     } else {
 
-        Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -ThisFqdn '$ThisFqdn'" -Expand $LogThis -ExpandKeyMap @{ 'Cache' = '$Cache' }
-        $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -ThisFqdn $ThisFqdn @LogThis
+        Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache"
+        $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
         return $DomainSid
 
     }
@@ -105,8 +82,10 @@ function ConvertTo-DomainSidString {
         return $DomainSid
     } else {
 
-        $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
+        $StartingLogType = $Cache.Value['LogType'].Value
+        $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
         Write-LogMsg @Log -Text ' # Could not find valid SID for LDAP Domain'
+        $Cache.Value['LogType'].Value = $StartingLogType
 
     }
 

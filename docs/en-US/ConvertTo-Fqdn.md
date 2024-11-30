@@ -14,14 +14,14 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 
 ### DistinguishedName
 ```
-ConvertTo-Fqdn [-DistinguishedName <String[]>] [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>]
- [-DebugOutputStream <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ConvertTo-Fqdn [-DistinguishedName <String[]>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### NetBIOS
 ```
-ConvertTo-Fqdn [-NetBIOS <String[]>] [-ThisHostName <String>] [-ThisFqdn <String>] [-WhoAmI <String>]
- [-DebugOutputStream <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ConvertTo-Fqdn [-NetBIOS <String[]>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -51,21 +51,6 @@ Aliases:
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DebugOutputStream
-Output stream to send the log messages to
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -111,55 +96,6 @@ Aliases: proga
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisFqdn
-FQDN of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostName
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

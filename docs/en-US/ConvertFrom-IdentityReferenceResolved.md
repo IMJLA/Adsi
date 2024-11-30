@@ -13,10 +13,9 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 ## SYNTAX
 
 ```
-ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers]
- [[-DebugOutputStream] <String>] [[-ThisHostName] <String>] [[-ThisFqdn] <String>] [[-WhoAmI] <String>]
- [-Cache] <PSReference> [[-CurrentDomain] <PSObject>] [[-AccountProperty] <String[]>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers] [-Cache] <PSReference>
+ [[-CurrentDomain] <PSObject>] [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,7 +45,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
+Position: 4
 Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -61,7 +60,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 6
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -77,23 +76,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 3
 Default value: (Get-CurrentDomain -Cache $Cache)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DebugOutputStream
-Output stream to send the log messages to
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: Debug
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -140,55 +124,6 @@ Aliases: proga
 Required: False
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisFqdn
-FQDN of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE and \[System.Net.Dns\]::GetHostByName()
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ThisHostName
-Hostname of the computer running this function.
-
-Can be provided as a string to avoid calls to HOSTNAME.EXE
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: (HOSTNAME.EXE)
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhoAmI
-Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 5
-Default value: (whoami.EXE)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

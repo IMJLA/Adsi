@@ -1,29 +1,10 @@
 function ConvertTo-DomainNetBIOS {
+
     param (
+
         [string]$DomainFQDN,
 
         [string]$AdsiProvider,
-
-        <#
-        FQDN of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE and [System.Net.Dns]::GetHostByName()
-        #>
-        [string]$ThisFqdn = ([System.Net.Dns]::GetHostByName((HOSTNAME.EXE)).HostName),
-
-        <#
-        Hostname of the computer running this function.
-
-        Can be provided as a string to avoid calls to HOSTNAME.EXE
-        #>
-        [string]$ThisHostName = (HOSTNAME.EXE),
-
-        # Username to record in log messages (can be passed to Write-LogMsg as a parameter to avoid calling an external process)
-        [string]$WhoAmI = (whoami.EXE),
-
-        # Output stream to send the log messages to
-        [ValidateSet('Silent', 'Quiet', 'Success', 'Debug', 'Verbose', 'Output', 'Host', 'Warning', 'Error', 'Information', $null)]
-        [string]$DebugOutputStream = 'Debug',
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
@@ -31,28 +12,28 @@ function ConvertTo-DomainNetBIOS {
 
     )
 
-    $Log = @{ ThisHostname = $ThisHostname ; Type = $DebugOutputStream ; Buffer = $Cache.Value['LogBuffer'] ; WhoAmI = $WhoAmI }
-    $LogThis = @{ ThisHostname = $ThisHostname ; Cache = $Cache ; WhoAmI = $WhoAmI ; DebugOutputStream = $DebugOutputStream }
     $DomainCacheResult = $null
     $TryGetValueResult = $Cache.Value['DomainByFqdn'].Value.TryGetValue($DomainFQDN, [ref]$DomainCacheResult)
 
     if ($TryGetValueResult) {
 
-        #Write-LogMsg @Log -Text " # Domain FQDN cache hit for '$DomainFQDN'"
+        #Write-LogMsg -Text " # Domain FQDN cache hit for '$DomainFQDN'" -Cache $Cache
         return $DomainCacheResult.Netbios
 
     }
 
-    #Write-LogMsg @Log -Text " # Domain FQDN cache miss for '$DomainFQDN'"
-
     if ($AdsiProvider -eq 'LDAP') {
 
-        $RootDSE = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/rootDSE" -ThisFqdn $ThisFqdn @LogThis
-        Write-LogMsg @Log -Text "`$RootDSE.InvokeGet('defaultNamingContext')"
+        $DirectoryPath = "LDAP://$DomainFQDN/rootDSE"
+        Write-LogMsg -Text "`$RootDSE = Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache # Domain FQDN cache miss for '$DomainFQDN'" -Cache $Cache
+        $RootDSE = Get-DirectoryEntry -DirectoryPath $DirectoryPath -Cache $Cache
+        Write-LogMsg -Text "`$RootDSE.InvokeGet('defaultNamingContext')" -Cache $Cache
         $DomainDistinguishedName = $RootDSE.InvokeGet('defaultNamingContext')
-        Write-LogMsg @Log -Text "`$RootDSE.InvokeGet('configurationNamingContext')"
+        Write-LogMsg -Text "`$RootDSE.InvokeGet('configurationNamingContext')" -Cache $Cache
         $ConfigurationDN = $rootDSE.InvokeGet('configurationNamingContext')
-        $partitions = Get-DirectoryEntry -DirectoryPath "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN" -ThisFqdn $ThisFqdn @LogThis
+        $DirectoryPath = "LDAP://$DomainFQDN/cn=partitions,$ConfigurationDN"
+        Write-LogMsg -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache" -Cache $Cache
+        $partitions = Get-DirectoryEntry -DirectoryPath $DirectoryPath -Cache $Cache
 
         ForEach ($Child In $Partitions.Children) {
 
