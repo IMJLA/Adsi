@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.482
+Help Version: 4.0.483
 Locale: en-US
 ---
 
@@ -73,7 +73,7 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ### [Find-LocalAdsiServerSid](docs/en-US/Find-LocalAdsiServerSid.md)
 
-Find-LocalAdsiServerSid [[-ThisHostName] <string>] [[-ComputerName] <string>] [[-ThisFqdn] <string>] [[-WhoAmI] <string>] [[-DebugOutputStream] <string>] [-Cache] <ref> [<CommonParameters>]
+Find-LocalAdsiServerSid [[-ComputerName] <string>] [-Cache] <ref> [<CommonParameters>]
 
 
 ### [Get-AdsiGroup](docs/en-US/Get-AdsiGroup.md)
