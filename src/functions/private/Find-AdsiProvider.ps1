@@ -50,7 +50,7 @@ function Find-AdsiProvider {
 
     if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {
         ###Write-LogMsg -Text " # CIM connection failure # for '$AdsiServer'" -Cache $Cache
-        $TestResult = Test-AdsiProvider -AdsiServer $AdsiServer -ThisHostName $ThisHostName -WhoAmI $WhoAmI -DebugOutputStream $DebugOutputStream -Cache $Cache
+        $TestResult = Test-AdsiProvider -AdsiServer $AdsiServer -Cache $Cache
         return $TestResult
     }
 
