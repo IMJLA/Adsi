@@ -63,7 +63,7 @@ function Search-Directory {
 
     }
 
-    Write-LogMsg -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache" -Expand $DirectoryEntryParameters -ExpansionMap $Cache.Value['LogCacheMap'].Value
+    Write-LogMsg -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache" -Expand $DirectoryEntryParameters -ExpansionMap $Cache.Value['LogCacheMap'].Value -Cache $Cache
     $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryEntryParameters
     Write-LogMsg -Text "`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))" -Cache $Cache
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
