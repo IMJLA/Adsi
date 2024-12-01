@@ -43,11 +43,12 @@ function ConvertTo-DirectoryEntry {
     $DirectoryParams = @{ Cache = $Cache ; PropertiesToLoad = $PropertiesToLoad }
     $SearchSplat = @{ PropertiesToLoad = $PropertiesToLoad }
     $CurrentDomain = $Cache.Value['ThisParentDomain']
-    Pause
+    $SampleAce = $Cache.Value['AceByGUID'].Value[@($AceGuid)[0]]
+
     if (
 
         $null -ne $SamAccountNameOrSid -and
-        @($AceGuid.AdsiProvider)[0] -eq 'LDAP'
+        $SampleAce.AdsiProvider -eq 'LDAP'
 
     ) {
 

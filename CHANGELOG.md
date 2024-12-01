@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.510] - 2024-12-01 - bugfix ace vs aceguid
+
 ## [4.0.509] - 2024-12-01 - rename param
 
 ## [4.0.508] - 2024-12-01 - minor improvement to debug output
