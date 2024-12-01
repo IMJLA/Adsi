@@ -27,7 +27,7 @@ function Find-WinNTGroupMember {
         # Convert the ComObjects into DirectoryEntry objects.
         $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
 
-        $Log = @{ 'Cache' = $Cache ; 'Suffix' = " # for '$DirectoryPath' $LogSuffix" }
+        $Log = @{ 'Cache' = $Cache ; 'Suffix' = " # for member of WinNT group; member path '$DirectoryPath' $LogSuffix" }
 
         # Split the DirectoryPath into its constituent components.
         $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
