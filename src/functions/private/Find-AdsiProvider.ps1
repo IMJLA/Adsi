@@ -45,7 +45,7 @@ function Find-AdsiProvider {
         Query        = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
     }
 
-    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CommandParameters -MapKeyName 'LogCacheMap' -Cache $Cache
+    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CommandParameters -ExpansionMap $Cache.Value['LogCacheMap'].Value -Cache $Cache
     $CimInstance = Get-CachedCimInstance @CommandParameters
 
     if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {

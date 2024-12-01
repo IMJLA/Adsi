@@ -124,7 +124,7 @@ function Get-AdsiGroupMember {
                 $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
             }
 
-            Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberSearch = Search-Directory @SearchParams
             #Write-LogMsg @Log -Text " # '$($GroupMemberSearch.Count)' results for Search-Directory -DirectoryPath '$($SearchParams['DirectoryPath'])' -Filter '$($SearchParams['Filter'])'"
 
@@ -156,14 +156,14 @@ function Get-AdsiGroupMember {
                     $null = $FilterBuilder.Append(')')
                     $PrimaryGroupFilter = $FilterBuilder.ToString()
                     $SearchParams['Filter'] = $PrimaryGroupFilter
-                    Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -MapKeyName 'LogCacheMap'
+                    Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                     $PrimaryGroupMembers = Search-Directory @SearchParams
 
                     ForEach ($ThisMember in $PrimaryGroupMembers) {
 
                         $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -Cache $Cache
                         $DirectoryEntry = $null
-                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -MapKeyName 'LogCacheMap'
+                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams
 
                         if ($DirectoryEntry) {
@@ -178,7 +178,7 @@ function Get-AdsiGroupMember {
 
                     $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -Cache $Cache
                     $DirectoryEntry = $null
-                    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -MapKeyName 'LogCacheMap'
+                    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                     $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams
 
                     if ($DirectoryEntry) {

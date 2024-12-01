@@ -425,7 +425,7 @@ function ConvertTo-DirectoryEntry {
 
         # Search the domain for the principal
         $SearchSplat['Filter'] = "(samaccountname=$SamAccountNameOrSid)"
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
@@ -453,7 +453,7 @@ function ConvertTo-DirectoryEntry {
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
         $SearchSplat['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
         $SearchSplat['PropertiesToLoad'] = 'netbiosname'
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
         $DomainCrossReference = Search-Directory @DirectoryParams @SearchSplat
 
         if ($DomainCrossReference.Properties ) {
@@ -476,7 +476,7 @@ function ConvertTo-DirectoryEntry {
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/$DomainDn"
         $SearchSplat['Filter'] = "(objectsid=$ObjectSid)"
         $SearchSplat['PropertiesToLoad'] = $PropertiesToLoad
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
@@ -544,7 +544,7 @@ function ConvertTo-DirectoryEntry {
 
         }
 
-        Write-LogMsg @Log -Text "`$UsersGroup = Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text "`$UsersGroup = Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
         try {
             $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
@@ -579,7 +579,7 @@ function ConvertTo-DirectoryEntry {
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
     }
 
-    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
     try {
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
@@ -906,7 +906,7 @@ function Find-AdsiProvider {
         Query        = 'Select * From MSFT_NetTCPConnection Where LocalPort = 389'
     }
 
-    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CommandParameters -MapKeyName 'LogCacheMap' -Cache $Cache
+    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CommandParameters -ExpansionMap $Cache.Value['LogCacheMap'].Value -Cache $Cache
     $CimInstance = Get-CachedCimInstance @CommandParameters
 
     if ($Cache.Value['CimCache'].Value[$AdsiServer].Value.TryGetValue( 'CimFailure' , [ref]$null )) {
@@ -2296,7 +2296,7 @@ function ConvertFrom-IdentityReferenceResolved {
             'CurrentDomain'      = $CurrentDomain
         }
 
-        Write-LogMsg @Log -Text '$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogWellKnownMap'
+        Write-LogMsg @Log -Text '$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -ExpansionMap $Cache.Value['LogWellKnownMap'].Value
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
 
         $PermissionPrincipalConversion = @{
@@ -2304,7 +2304,7 @@ function ConvertFrom-IdentityReferenceResolved {
             'NoGroupMembers' = $NoGroupMembers
         }
 
-        Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -MapKeyName 'LogDirEntryMap'
+        Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -ExpansionMap $Cache.Value['LogDirEntryMap'].Value
         ConvertTo-PermissionPrincipal @PermissionPrincipalConversion @CommonSplat
 
     }
@@ -3174,7 +3174,7 @@ function Expand-WinNTGroupMember {
             } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 $Log['Suffix'] = " # Is an ADSI group $Suffix"
-                Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat -MapKeyName 'LogCacheMap'
+                Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
                 $AdsiGroup = Get-AdsiGroup @AdsiGroupSplat
                 $Log['Suffix'] = " # for $(@($AdsiGroup.FullMembers).Count) members $Suffix"
                 Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
@@ -3231,7 +3231,7 @@ function Find-LocalAdsiServerSid {
         KeyProperty  = 'SID'
     }
 
-    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CimParams -MapKeyName 'LogCacheMap' -Cache $Cache
+    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CimParams -ExpansionMap $Cache.Value['LogCacheMap'].Value -Cache $Cache
     $LocalAdminAccount = Get-CachedCimInstance @CimParams
 
     if (-not $LocalAdminAccount) {
@@ -3317,18 +3317,18 @@ function Get-AdsiGroup {
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
-            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
-            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
             break
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
-            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
-            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
             break
         }
@@ -3340,9 +3340,9 @@ function Get-AdsiGroup {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 
-            Write-LogMsg @Log -Text 'Search-Directory' -Expand $GroupParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Search-Directory' -Expand $GroupParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberParams['Group'] = Search-Directory @GroupParams
-            Write-LogMsg @Log -Text 'Get-AdsiGroupMember' -Expand $GroupMemberParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-AdsiGroupMember' -Expand $GroupMemberParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $FullMembers = Get-AdsiGroupMember @GroupMemberParams
         }
 
@@ -3477,7 +3477,7 @@ function Get-AdsiGroupMember {
                 $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
             }
 
-            Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberSearch = Search-Directory @SearchParams
             #Write-LogMsg @Log -Text " # '$($GroupMemberSearch.Count)' results for Search-Directory -DirectoryPath '$($SearchParams['DirectoryPath'])' -Filter '$($SearchParams['Filter'])'"
 
@@ -3509,14 +3509,14 @@ function Get-AdsiGroupMember {
                     $null = $FilterBuilder.Append(')')
                     $PrimaryGroupFilter = $FilterBuilder.ToString()
                     $SearchParams['Filter'] = $PrimaryGroupFilter
-                    Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -MapKeyName 'LogCacheMap'
+                    Write-LogMsg @Log -Text 'Search-Directory' -Expand $SearchParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                     $PrimaryGroupMembers = Search-Directory @SearchParams
 
                     ForEach ($ThisMember in $PrimaryGroupMembers) {
 
                         $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -Cache $Cache
                         $DirectoryEntry = $null
-                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -MapKeyName 'LogCacheMap'
+                        Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams
 
                         if ($DirectoryEntry) {
@@ -3531,7 +3531,7 @@ function Get-AdsiGroupMember {
 
                     $FQDNPath = Add-DomainFqdnToLdapPath -DirectoryPath $ThisMember.Path -Cache $Cache
                     $DirectoryEntry = $null
-                    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -MapKeyName 'LogCacheMap'
+                    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$FQDNPath'" -Expand $DirectoryEntryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                     $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $FQDNPath @DirectoryEntryParams
 
                     if ($DirectoryEntry) {
@@ -5829,7 +5829,7 @@ function Get-WinNTGroupMember {
                 # Get and Expand the directory entries for the WinNT group members
                 ForEach ($ThisMember in $MembersToGet['WinNTMembers']) {
 
-                    Write-LogMsg @Log -Text "`$MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath '$ThisMember'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+                    Write-LogMsg @Log -Text "`$MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath '$ThisMember'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                     $MemberDirectoryEntry = Get-DirectoryEntry -DirectoryPath $ThisMember @DirectoryParams
                     Write-LogMsg @Log -Text "Expand-WinNTGroupMember = Get-DirectoryEntry -DirectoryEntry `$MemberDirectoryEntry -Cache `$Cache"
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntry -AccountProperty $PropertiesToLoad -Cache $Cache
@@ -5843,7 +5843,7 @@ function Get-WinNTGroupMember {
                 ForEach ($MemberPath in $MembersToGet.Keys) {
 
                     $ThisMemberToGet = $MembersToGet[$MemberPath]
-                    Write-LogMsg @Log -Text "`$MemberDirectoryEntries = Search-Directory -DirectoryPath '$MemberPath' -Filter '(|$ThisMemberToGet)'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+                    Write-LogMsg @Log -Text "`$MemberDirectoryEntries = Search-Directory -DirectoryPath '$MemberPath' -Filter '(|$ThisMemberToGet)'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
                     $MemberDirectoryEntries = Search-Directory -DirectoryPath $MemberPath -Filter "(|$ThisMemberToGet)" @DirectoryParams
                     Write-LogMsg @Log -Text "Expand-WinNTGroupMember -DirectoryEntry `$MemberDirectoryEntries -Cache `$Cache"
                     Expand-WinNTGroupMember -DirectoryEntry $MemberDirectoryEntries -AccountProperty $PropertiesToLoad -Cache $Cache
@@ -6321,7 +6321,7 @@ function Search-Directory {
 
     }
 
-    Write-LogMsg -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache" -Expand $DirectoryEntryParameters -MapKeyName 'LogCacheMap'
+    Write-LogMsg -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath' -Cache `$Cache" -Expand $DirectoryEntryParameters -ExpansionMap $Cache.Value['LogCacheMap'].Value
     $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryEntryParameters
     Write-LogMsg -Text "`$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new(([System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')))" -Cache $Cache
     $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new($DirectoryEntry)
@@ -6357,6 +6357,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

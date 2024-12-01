@@ -74,7 +74,7 @@ function ConvertTo-DirectoryEntry {
 
         # Search the domain for the principal
         $SearchSplat['Filter'] = "(samaccountname=$SamAccountNameOrSid)"
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
@@ -102,7 +102,7 @@ function ConvertTo-DirectoryEntry {
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
         $SearchSplat['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
         $SearchSplat['PropertiesToLoad'] = 'netbiosname'
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
         $DomainCrossReference = Search-Directory @DirectoryParams @SearchSplat
 
         if ($DomainCrossReference.Properties ) {
@@ -125,7 +125,7 @@ function ConvertTo-DirectoryEntry {
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/$DomainDn"
         $SearchSplat['Filter'] = "(objectsid=$ObjectSid)"
         $SearchSplat['PropertiesToLoad'] = $PropertiesToLoad
-        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text 'Search-Directory' -Expand $DirectoryParams, $SearchSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
@@ -193,7 +193,7 @@ function ConvertTo-DirectoryEntry {
 
         }
 
-        Write-LogMsg @Log -Text "`$UsersGroup = Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text "`$UsersGroup = Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
         try {
             $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
@@ -228,7 +228,7 @@ function ConvertTo-DirectoryEntry {
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
     }
 
-    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -MapKeyName 'LogCacheMap'
+    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
     try {
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams

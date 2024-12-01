@@ -20,7 +20,7 @@ function Find-LocalAdsiServerSid {
         KeyProperty  = 'SID'
     }
 
-    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CimParams -MapKeyName 'LogCacheMap' -Cache $Cache
+    Write-LogMsg -Text 'Get-CachedCimInstance' -Expand $CimParams -ExpansionMap $Cache.Value['LogCacheMap'].Value -Cache $Cache
     $LocalAdminAccount = Get-CachedCimInstance @CimParams
 
     if (-not $LocalAdminAccount) {

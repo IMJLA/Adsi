@@ -74,18 +74,18 @@ function Get-AdsiGroup {
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
             $GroupParams['DirectoryPath'] = "$DirectoryPath/$GroupName"
-            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
-            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
             break
         }
         '^$' {
             # This is expected for a workgroup computer
             $GroupParams['DirectoryPath'] = "WinNT://localhost/$GroupName"
-            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-DirectoryEntry' -Expand $GroupParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberParams['DirectoryEntry'] = Get-DirectoryEntry @GroupParams
-            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-WinNTGroupMember' -Expand $GroupMemberParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $FullMembers = Get-WinNTGroupMember @GroupMemberParams
             break
         }
@@ -97,9 +97,9 @@ function Get-AdsiGroup {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 
-            Write-LogMsg @Log -Text 'Search-Directory' -Expand $GroupParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Search-Directory' -Expand $GroupParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $GroupMemberParams['Group'] = Search-Directory @GroupParams
-            Write-LogMsg @Log -Text 'Get-AdsiGroupMember' -Expand $GroupMemberParams -MapKeyName 'LogCacheMap'
+            Write-LogMsg @Log -Text 'Get-AdsiGroupMember' -Expand $GroupMemberParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
             $FullMembers = Get-AdsiGroupMember @GroupMemberParams
         }
 

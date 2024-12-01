@@ -80,7 +80,7 @@ function ConvertFrom-IdentityReferenceResolved {
             'CurrentDomain'      = $CurrentDomain
         }
 
-        Write-LogMsg @Log -Text '$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogWellKnownMap'
+        Write-LogMsg @Log -Text '$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -ExpansionMap $Cache.Value['LogWellKnownMap'].Value
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
 
         $PermissionPrincipalConversion = @{
@@ -88,7 +88,7 @@ function ConvertFrom-IdentityReferenceResolved {
             'NoGroupMembers' = $NoGroupMembers
         }
 
-        Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -MapKeyName 'LogDirEntryMap'
+        Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -ExpansionMap $Cache.Value['LogDirEntryMap'].Value
         ConvertTo-PermissionPrincipal @PermissionPrincipalConversion @CommonSplat
 
     }
