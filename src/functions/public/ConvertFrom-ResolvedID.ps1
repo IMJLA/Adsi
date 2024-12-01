@@ -59,7 +59,7 @@ function ConvertFrom-ResolvedID {
         Write-LogMsg @Log -Text "`$CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference '$SamAccountNameOrSid' -DomainNetBIOS '$DomainNetBIOS' -DomainByNetbios `$Cache.Value['DomainByNetbios']"
         $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
         $DomainDn = $null
-        Pause
+
         $CommonSplat = @{
             'AceGuid'             = $AceGuids
             'AccountProperty'     = $AccountProperty
