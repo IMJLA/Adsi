@@ -51,7 +51,7 @@ function ConvertFrom-IdentityReferenceResolved {
 
     if ( -not $Cache.Value['PrincipalById'].Value[ $IdentityReference ] ) {
 
-        $LogSuffix = "for IdentityReference '$IdentityReference'"
+        $LogSuffix = "for resolved Identity Reference '$IdentityReference'"
         $LogSuffixComment = " # $LogSuffix"
         $Log = @{ 'Cache' = $Cache ; 'Suffix' = $LogSuffixComment }
         #Write-LogMsg @Log -Text " # ADSI Principal cache miss $LogSuffix"

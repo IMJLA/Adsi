@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.491] - 2024-11-30 - clarify debug log
+
 ## [4.0.490] - 2024-11-30 - remove group domain detection because it is irrelevant to member domain detection
 
 ## [4.0.489] - 2024-11-30 - rebuild due to src ctrl failure
