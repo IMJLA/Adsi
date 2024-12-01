@@ -27,7 +27,7 @@ function Get-CurrentDomain {
     )
 
     $ComputerName = $Cache.Value['ThisHostname'].Value
-    Write-Log -Text "Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache `$Cache" -Cache $Cache
+    Write-LogMsg -Text "Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache `$Cache" -Cache $Cache
     $Comp = Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache $Cache
 
     if ($Comp.Domain -eq 'WORKGROUP') {
