@@ -228,7 +228,7 @@ function ConvertTo-DirectoryEntry {
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
     }
 
-    Write-LogMsg @Log -Text "Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
+    Write-LogMsg @Log -Text "`$DirectoryEntry = Get-DirectoryEntry -DirectoryPath '$DirectoryPath'" -Expand $DirectoryParams -ExpansionMap $Cache.Value['LogCacheMap'].Value
 
     try {
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
