@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.498] - 2024-11-30 - improve debug output
+
 ## [4.0.497] - 2024-11-30 - bugfix typo in cmd name...2 more times lol
 
 ## [4.0.496] - 2024-11-30 - bugfix typo in cmd name
