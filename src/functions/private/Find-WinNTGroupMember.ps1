@@ -27,7 +27,7 @@ function Find-WinNTGroupMember {
         # Convert the ComObjects into DirectoryEntry objects.
         $DirectoryPath = Invoke-ComObject -ComObject $DirectoryMember -Property 'ADsPath'
 
-        $Log['Suffix'] = " # for '$DirectoryPath' $LogSuffix"
+        $Log = @{ 'Cache' = $Cache ; 'Suffix' = " # for '$DirectoryPath' $LogSuffix" }
 
         # Split the DirectoryPath into its constituent components.
         $DirectorySplit = Split-DirectoryPath -DirectoryPath $DirectoryPath
@@ -37,26 +37,26 @@ function Find-WinNTGroupMember {
         Resolve-SidAuthority -DirectorySplit $DirectorySplit -DirectoryEntry $DirectoryEntry
         $ResolvedDirectoryPath = $DirectorySplit['ResolvedDirectoryPath']
         $MemberDomainNetbios = $DirectorySplit['ResolvedDomain']
-        Write-LogMsg -Text "Get-AdsiServer -Netbios '$MemberDomainNetbios' -Cache `$Cache" -Cache $Cache
+        Write-LogMsg @Log -Text "Get-AdsiServer -Netbios '$MemberDomainNetbios' -Cache `$Cache"
         $AdsiServer = Get-AdsiServer -Netbios $MemberDomainNetbios -Cache $Cache
 
         if ($AdsiServer) {
 
             if ($AdsiServer.AdsiProvider -eq 'LDAP') {
 
-                #Write-LogMsg -Text " # ADSI provider is LDAP for domain NetBIOS '$MemberDomainNetbios'"
+                #Write-LogMsg @Log -Text " # ADSI provider is LDAP for domain NetBIOS '$MemberDomainNetbios'"
                 $Out["LDAP://$($AdsiServer.Dns)"] += "(samaccountname=$MemberName)"
 
             } elseif ($AdsiServer.AdsiProvider -eq 'WinNT') {
 
-                #Write-LogMsg -Text " # ADSI provider is WinNT for domain NetBIOS '$MemberDomainNetbios'"
+                #Write-LogMsg @Log -Text " # ADSI provider is WinNT for domain NetBIOS '$MemberDomainNetbios'"
                 $Out['WinNTMembers'] += $ResolvedDirectoryPath
 
             } else {
 
                 $StartingLogType = $Cache.Value['LogType'].Value
                 $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-                Write-LogMsg -Text " # Could not find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
+                Write-LogMsg @Log -Text " # Could not find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
                 $Cache.Value['LogType'].Value = $StartingLogType
 
             }
@@ -65,7 +65,7 @@ function Find-WinNTGroupMember {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
-            Write-LogMsg -Text " # Could not find ADSI server to find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
+            Write-LogMsg @Log -Text " # Could not find ADSI server to find ADSI provider. WinNT will be assumed # for domain NetBIOS '$MemberDomainNetbios'"
             $Cache.Value['LogType'].Value = $StartingLogType
 
         }

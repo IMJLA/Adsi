@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.499
+Help Version: 4.0.500
 Locale: en-US
 ---
 
@@ -19,9 +19,6 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ### [ConvertFrom-DirectoryEntry](docs/en-US/ConvertFrom-DirectoryEntry.md)
 Convert a DirectoryEntry to a PSCustomObject
-
-### [ConvertFrom-IdentityReferenceResolved](docs/en-US/ConvertFrom-IdentityReferenceResolved.md)
-{{ Fill in the Description }}
 
 ### [ConvertFrom-PropertyValueCollectionToString](docs/en-US/ConvertFrom-PropertyValueCollectionToString.md)
 Convert a PropertyValueCollection to a string
