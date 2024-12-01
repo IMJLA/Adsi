@@ -60,6 +60,7 @@ function ConvertFrom-IdentityReferenceResolved {
         $split = $IdentityReference.Split('\')
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
+        Write-LogMsg @Log -Text "`$CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference '$SamAccountNameOrSid' -DomainNetBIOS '$DomainNetBIOS' -DomainByNetbios `$Cache.Value['DomainByNetbios']"
         $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
         $DomainDn = $null
 
@@ -79,7 +80,7 @@ function ConvertFrom-IdentityReferenceResolved {
             'CurrentDomain'      = $CurrentDomain
         }
 
-        Write-LogMsg @Log -Text 'ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text '`$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogWellKnownMap'
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
 
         $PermissionPrincipalConversion = @{
@@ -87,7 +88,7 @@ function ConvertFrom-IdentityReferenceResolved {
             'NoGroupMembers' = $NoGroupMembers
         }
 
-        Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -MapKeyName 'LogCacheMap'
+        Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -MapKeyName 'LogDirEntryMap'
         ConvertTo-PermissionPrincipal @PermissionPrincipalConversion @CommonSplat
 
     }
