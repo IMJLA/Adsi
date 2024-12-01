@@ -1,4 +1,4 @@
-function ConvertFrom-IdentityReferenceResolved {
+function ConvertFrom-ResolvedID {
 
     <#
     .SYNOPSIS
@@ -20,7 +20,7 @@ function ConvertFrom-IdentityReferenceResolved {
     (Get-Acl).Access |
     Resolve-IdentityReference |
     Group-Object -Property IdentityReferenceResolved |
-    ConvertFrom-IdentityReferenceResolved
+    ConvertFrom-ResolvedID
 
     Incomplete example but it shows the chain of functions to generate the expected input for this
     #>

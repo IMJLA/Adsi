@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
-Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
+Module Guid: 282a2aed-9567-49a1-901c-122b7831a805 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.498
+Help Version: 4.0.499
 Locale: en-US
 ---
 
@@ -21,10 +21,13 @@ Add some useful properties to a DirectoryEntry object for easier access
 Convert a DirectoryEntry to a PSCustomObject
 
 ### [ConvertFrom-IdentityReferenceResolved](ConvertFrom-IdentityReferenceResolved.md)
-Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
+{{ Fill in the Description }}
 
 ### [ConvertFrom-PropertyValueCollectionToString](ConvertFrom-PropertyValueCollectionToString.md)
 Convert a PropertyValueCollection to a string
+
+### [ConvertFrom-ResolvedID](ConvertFrom-ResolvedID.md)
+Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
 
 ### [ConvertFrom-ResultPropertyValueCollectionToString](ConvertFrom-ResultPropertyValueCollectionToString.md)
 Convert a ResultPropertyValueCollection to a string

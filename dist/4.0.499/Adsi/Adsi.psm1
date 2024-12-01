@@ -2214,7 +2214,43 @@ function ConvertFrom-DirectoryEntry {
     }
 
 }
-function ConvertFrom-IdentityReferenceResolved {
+function ConvertFrom-PropertyValueCollectionToString {
+
+    <#
+    .SYNOPSIS
+    Convert a PropertyValueCollection to a string
+    .DESCRIPTION
+    Useful when working with System.DirectoryServices and some other namespaces
+    .INPUTS
+    None. Pipeline input is not accepted.
+    .OUTPUTS
+    [System.String]
+    .EXAMPLE
+    $DirectoryEntry = [adsi]("WinNT://$(hostname)")
+    $DirectoryEntry.Properties.Keys |
+    ForEach-Object {
+        ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
+    }
+
+    For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
+    #>
+
+    param (
+
+        # This PropertyValueCollection will be converted to a string
+        [System.DirectoryServices.PropertyValueCollection]$PropertyValueCollection
+
+    )
+
+    $SubType = & { $PropertyValueCollection.Value.GetType().FullName } 2>$null
+
+    switch ($SubType) {
+        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $PropertyValueCollection.Value ; break }
+        default { "$($PropertyValueCollection.Value)" }
+    }
+
+}
+function ConvertFrom-ResolvedID {
 
     <#
     .SYNOPSIS
@@ -2302,42 +2338,6 @@ function ConvertFrom-IdentityReferenceResolved {
         Write-LogMsg @Log -Text 'ConvertTo-PermissionPrincipal' -Expand $PermissionPrincipalConversion, $CommonSplat -ExpansionMap $Cache.Value['LogDirEntryMap'].Value
         ConvertTo-PermissionPrincipal @PermissionPrincipalConversion @CommonSplat
 
-    }
-
-}
-function ConvertFrom-PropertyValueCollectionToString {
-
-    <#
-    .SYNOPSIS
-    Convert a PropertyValueCollection to a string
-    .DESCRIPTION
-    Useful when working with System.DirectoryServices and some other namespaces
-    .INPUTS
-    None. Pipeline input is not accepted.
-    .OUTPUTS
-    [System.String]
-    .EXAMPLE
-    $DirectoryEntry = [adsi]("WinNT://$(hostname)")
-    $DirectoryEntry.Properties.Keys |
-    ForEach-Object {
-        ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
-    }
-
-    For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
-    #>
-
-    param (
-
-        # This PropertyValueCollection will be converted to a string
-        [System.DirectoryServices.PropertyValueCollection]$PropertyValueCollection
-
-    )
-
-    $SubType = & { $PropertyValueCollection.Value.GetType().FullName } 2>$null
-
-    switch ($SubType) {
-        'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $PropertyValueCollection.Value ; break }
-        default { "$($PropertyValueCollection.Value)" }
     }
 
 }
@@ -6355,7 +6355,8 @@ ForEach ($ThisFile in $CSharpFiles) {
     Add-Type -Path $ThisFile.FullName -ErrorAction Stop
 }
 #>
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
