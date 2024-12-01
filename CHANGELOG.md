@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.507] - 2024-12-01 - minor bugfix debug output
+
 ## [4.0.506] - 2024-12-01 - bugfix for cache update
 
 ## [4.0.505] - 2024-12-01 - bugfix missing Netbios property
