@@ -8,7 +8,6 @@ function ConvertTo-DirectoryEntry {
         $AccessControlEntries,
         $LogSuffixComment,
         $IdentityReference,
-        $CurrentDomain,
         $DomainDn,
         [ref]$Cache
     )
@@ -43,6 +42,7 @@ function ConvertTo-DirectoryEntry {
 
     $DirectoryParams = @{ Cache = $Cache ; PropertiesToLoad = $PropertiesToLoad }
     $SearchSplat = @{ PropertiesToLoad = $PropertiesToLoad }
+    $CurrentDomain = $Cache.Value['ThisParentDomain']
 
     if (
 
@@ -91,13 +91,13 @@ function ConvertTo-DirectoryEntry {
         if ($DirectoryEntry) { return $DirectoryEntry }
 
     } elseif (
-        $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
+        $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.Value.SIDString
     ) {
 
         #Write-LogMsg @Log -Text " # Detected an unresolved SID from the current domain"
 
         # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
-        $DomainDN = $CurrentDomain.distinguishedName.Value
+        $DomainDN = $CurrentDomain.Value.distinguishedName.Value
         $DomainFQDN = ConvertTo-Fqdn -DistinguishedName $DomainDN -Cache $Cache
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
         $SearchSplat['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
@@ -171,7 +171,7 @@ function ConvertTo-DirectoryEntry {
         $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf('-'))
 
         # Determine if SID belongs to current domain
-        #if ($DomainSid -eq $CurrentDomain.SIDString) {
+        #if ($DomainSid -eq $CurrentDomain.Value.SIDString) {
         #Write-LogMsg @Log -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?" -Cache $Cache
         #} else {
         #Write-LogMsg @Log -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain." -Cache $Cache

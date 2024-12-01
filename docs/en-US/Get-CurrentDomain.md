@@ -13,8 +13,7 @@ Use ADSI to get the current domain
 ## SYNTAX
 
 ```
-Get-CurrentDomain [[-ComputerName] <String>] [-Cache] <PSReference> [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+Get-CurrentDomain [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,23 +39,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ComputerName
-Name of the computer to query via CIM
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
 Position: 1
-Default value: (HOSTNAME.EXE)
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

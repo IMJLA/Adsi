@@ -14,8 +14,7 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ```
 ConvertFrom-IdentityReferenceResolved [[-IdentityReference] <String>] [-NoGroupMembers] [-Cache] <PSReference>
- [[-CurrentDomain] <PSObject>] [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,7 +44,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -62,22 +61,6 @@ Aliases:
 Required: True
 Position: 2
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -CurrentDomain
-The current domain
-Can be passed as a parameter to reduce calls to Get-CurrentDomain
-
-```yaml
-Type: System.Management.Automation.PSObject
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: (Get-CurrentDomain -Cache $Cache)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -382,18 +382,6 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>CurrentDomain</maml:name>
-          <maml:description>
-            <maml:para>The current domain Can be passed as a parameter to reduce calls to Get-CurrentDomain</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Management.Automation.PSObject</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(Get-CurrentDomain -Cache $Cache)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>AccountProperty</maml:name>
           <maml:description>
             <maml:para>Properties of each Account to display on the report</maml:para>
@@ -431,7 +419,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>AccountProperty</maml:name>
         <maml:description>
           <maml:para>Properties of each Account to display on the report</maml:para>
@@ -454,18 +442,6 @@ Path              : WinNT://localhost/Administrator</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>CurrentDomain</maml:name>
-        <maml:description>
-          <maml:para>The current domain Can be passed as a parameter to reduce calls to Get-CurrentDomain</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSObject</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Management.Automation.PSObject</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>(Get-CurrentDomain -Cache $Cache)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>IdentityReference</maml:name>
@@ -3137,19 +3113,7 @@ ad.contoso.com</dev:code>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-CurrentDomain</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>ComputerName</maml:name>
-          <maml:description>
-            <maml:para>Name of the computer to query via CIM</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>Cache</maml:name>
           <maml:description>
             <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
@@ -3176,7 +3140,7 @@ ad.contoso.com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
           <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
@@ -3187,18 +3151,6 @@ ad.contoso.com</dev:code>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>ComputerName</maml:name>
-        <maml:description>
-          <maml:para>Name of the computer to query via CIM</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>(HOSTNAME.EXE)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="proga">
         <maml:name>ProgressAction</maml:name>

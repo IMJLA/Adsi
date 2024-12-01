@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.495] - 2024-11-30 - implement cache for Get-CurrentDomain
+
 ## [4.0.494] - 2024-11-30 - implement expansionmap param
 
 ## [4.0.493] - 2024-11-30 - debug log improvements

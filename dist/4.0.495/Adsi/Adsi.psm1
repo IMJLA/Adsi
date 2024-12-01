@@ -359,7 +359,6 @@ function ConvertTo-DirectoryEntry {
         $AccessControlEntries,
         $LogSuffixComment,
         $IdentityReference,
-        $CurrentDomain,
         $DomainDn,
         [ref]$Cache
     )
@@ -394,6 +393,7 @@ function ConvertTo-DirectoryEntry {
 
     $DirectoryParams = @{ Cache = $Cache ; PropertiesToLoad = $PropertiesToLoad }
     $SearchSplat = @{ PropertiesToLoad = $PropertiesToLoad }
+    $CurrentDomain = $Cache.Value['ThisParentDomain']
 
     if (
 
@@ -442,13 +442,13 @@ function ConvertTo-DirectoryEntry {
         if ($DirectoryEntry) { return $DirectoryEntry }
 
     } elseif (
-        $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.SIDString
+        $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.Value.SIDString
     ) {
 
         #Write-LogMsg @Log -Text " # Detected an unresolved SID from the current domain"
 
         # Get the distinguishedName and netBIOSName of the current domain.  This also determines whether the domain is online.
-        $DomainDN = $CurrentDomain.distinguishedName.Value
+        $DomainDN = $CurrentDomain.Value.distinguishedName.Value
         $DomainFQDN = ConvertTo-Fqdn -DistinguishedName $DomainDN -Cache $Cache
         $SearchSplat['DirectoryPath'] = "LDAP://$DomainFQDN/cn=partitions,cn=configuration,$DomainDn"
         $SearchSplat['Filter'] = "(&(objectcategory=crossref)(dnsroot=$DomainFQDN)(netbiosname=*))"
@@ -522,7 +522,7 @@ function ConvertTo-DirectoryEntry {
         $DomainSid = $SamAccountNameOrSid.Substring(0, $SamAccountNameOrSid.LastIndexOf('-'))
 
         # Determine if SID belongs to current domain
-        #if ($DomainSid -eq $CurrentDomain.SIDString) {
+        #if ($DomainSid -eq $CurrentDomain.Value.SIDString) {
         #Write-LogMsg @Log -Text " # '$($IdentityReference)' belongs to the current domain.  Could be a deleted user.  ?possibly a foreign security principal corresponding to an offline trusted domain or deleted user in the trusted domain?" -Cache $Cache
         #} else {
         #Write-LogMsg @Log -Text " # '$($IdentityReference)' does not belong to the current domain. Could be a local security principal or belong to an unresolvable domain." -Cache $Cache
@@ -2256,10 +2256,6 @@ function ConvertFrom-IdentityReferenceResolved {
         [Parameter(Mandatory)]
         [ref]$Cache,
 
-        # The current domain
-        # Can be passed as a parameter to reduce calls to Get-CurrentDomain
-        [PSCustomObject]$CurrentDomain = (Get-CurrentDomain -Cache $Cache),
-
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
@@ -2293,7 +2289,6 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $DirectoryEntryConversion = @{
             'CachedWellKnownSID' = $CachedWellKnownSID
-            'CurrentDomain'      = $CurrentDomain
         }
 
         Write-LogMsg @Log -Text '$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -ExpansionMap $Cache.Value['LogWellKnownMap'].Value
@@ -3841,24 +3836,27 @@ function Get-CurrentDomain {
 
     param (
 
-        # Name of the computer to query via CIM
-        [string]$ComputerName = (HOSTNAME.EXE),
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
 
+    $ComputerName = $Cache.Value['ThisHostname'].Value
+    Write-Log -Text "Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache `$Cache" -Cache $Cache
     $Comp = Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache $Cache
 
     if ($Comp.Domain -eq 'WORKGROUP') {
 
+        Write-Log -Text "Get-AdsiServer -Fqdn '$ComputerName' -Cache `$Cache" -Cache $Cache
         Get-AdsiServer -Fqdn $ComputerName -Cache $Cache
+        $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$ComputerName]
 
     } else {
 
+        Write-Log -Text "Get-AdsiServer -Fqdn '$($Comp.Domain))' -Cache `$Cache" -Cache $Cache
         Get-AdsiServer -Fqdn $Comp.Domain -Cache $Cache
+        $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$Comp.Domain]
 
     }
 
@@ -6357,6 +6355,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-IdentityReferenceResolved','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

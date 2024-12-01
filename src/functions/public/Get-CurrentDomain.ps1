@@ -20,24 +20,27 @@ function Get-CurrentDomain {
 
     param (
 
-        # Name of the computer to query via CIM
-        [string]$ComputerName = (HOSTNAME.EXE),
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
 
+    $ComputerName = $Cache.Value['ThisHostname'].Value
+    Write-Log -Text "Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache `$Cache" -Cache $Cache
     $Comp = Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache $Cache
 
     if ($Comp.Domain -eq 'WORKGROUP') {
 
+        Write-Log -Text "Get-AdsiServer -Fqdn '$ComputerName' -Cache `$Cache" -Cache $Cache
         Get-AdsiServer -Fqdn $ComputerName -Cache $Cache
+        $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$ComputerName]
 
     } else {
 
+        Write-Log -Text "Get-AdsiServer -Fqdn '$($Comp.Domain))' -Cache `$Cache" -Cache $Cache
         Get-AdsiServer -Fqdn $Comp.Domain -Cache $Cache
+        $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$Comp.Domain]
 
     }
 

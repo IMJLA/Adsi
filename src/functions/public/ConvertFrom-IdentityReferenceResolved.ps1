@@ -40,10 +40,6 @@ function ConvertFrom-IdentityReferenceResolved {
         [Parameter(Mandatory)]
         [ref]$Cache,
 
-        # The current domain
-        # Can be passed as a parameter to reduce calls to Get-CurrentDomain
-        [PSCustomObject]$CurrentDomain = (Get-CurrentDomain -Cache $Cache),
-
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
@@ -77,7 +73,6 @@ function ConvertFrom-IdentityReferenceResolved {
 
         $DirectoryEntryConversion = @{
             'CachedWellKnownSID' = $CachedWellKnownSID
-            'CurrentDomain'      = $CurrentDomain
         }
 
         Write-LogMsg @Log -Text '$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -ExpansionMap $Cache.Value['LogWellKnownMap'].Value
