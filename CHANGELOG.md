@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.505] - 2024-12-01 - bugfix missing Netbios property
+
 ## [4.0.504] - 2024-12-01 - implement cache for test-adsiprovider
 
 ## [4.0.503] - 2024-12-01 - bugfix forgotten cache param

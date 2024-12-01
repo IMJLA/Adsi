@@ -73,7 +73,7 @@ function Resolve-IdRefAppPkgAuth {
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
     $DomainCacheResult.WellKnownSidByName[$Name] = $Win32Acct
     $Cache.Value['DomainByFqdn'].Value[$DomainCacheResult.Dns] = $DomainCacheResult
-    $DomainsByNetbios.Value[$DomainCacheResult].Value.Netbios = $DomainCacheResult
+    $DomainsByNetbios.Value[$DomainCacheResult.Netbios].Value.Netbios = $DomainCacheResult
     $Cache.Value['DomainBySid'].Value[$DomainCacheResult.Sid] = $DomainCacheResult
 
     return [PSCustomObject]@{
