@@ -28,7 +28,7 @@ Use caching to reduce duplicate directory queries
 (Get-Acl).Access |
 Resolve-IdentityReference |
 Group-Object -Property IdentityReferenceResolved |
-ConvertFrom-IdentityReferenceResolved
+ConvertFrom-ResolvedID
 ```
 
 Incomplete example but it shows the chain of functions to generate the expected input for this
