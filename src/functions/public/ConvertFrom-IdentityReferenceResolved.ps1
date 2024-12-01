@@ -80,7 +80,7 @@ function ConvertFrom-IdentityReferenceResolved {
             'CurrentDomain'      = $CurrentDomain
         }
 
-        Write-LogMsg @Log -Text '`$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogWellKnownMap'
+        Write-LogMsg @Log -Text '$DirectoryEntry = ConvertTo-DirectoryEntry' -Expand $DirectoryEntryConversion, $CommonSplat -MapKeyName 'LogWellKnownMap'
         $DirectoryEntry = ConvertTo-DirectoryEntry @DirectoryEntryConversion @CommonSplat
 
         $PermissionPrincipalConversion = @{
