@@ -50,25 +50,25 @@ function ConvertFrom-ResolvedID {
         $LogSuffix = "for resolved Identity Reference '$IdentityReference'"
         $LogSuffixComment = " # $LogSuffix"
         $Log = @{ 'Cache' = $Cache ; 'Suffix' = $LogSuffixComment }
-        #Write-LogMsg @Log -Text " # ADSI Principal cache miss $LogSuffix"
+        Write-LogMsg @Log -Text "`$AceGuids = `$Cache.Value['AceGuidByID'].Value['$IdentityReference'] # ADSI Principal cache miss"
         $AceGuidByID = $Cache.Value['AceGuidByID']
-        $AccessControlEntries = $AceGuidByID.Value[ $IdentityReference ]
+        $AceGuids = $AceGuidByID.Value[ $IdentityReference ]
         $split = $IdentityReference.Split('\')
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
         Write-LogMsg @Log -Text "`$CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference '$SamAccountNameOrSid' -DomainNetBIOS '$DomainNetBIOS' -DomainByNetbios `$Cache.Value['DomainByNetbios']"
         $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
         $DomainDn = $null
-
+        Pause
         $CommonSplat = @{
-            'AccessControlEntries' = $AccessControlEntries
-            'AccountProperty'      = $AccountProperty
-            'Cache'                = $Cache
-            'DomainDn'             = $DomainDn
-            'DomainNetBIOS'        = $DomainNetBIOS
-            'IdentityReference'    = $IdentityReference
-            'LogSuffixComment'     = $LogSuffixComment
-            'SamAccountNameOrSid'  = $SamAccountNameOrSid
+            'AceGuid'             = $AceGuids
+            'AccountProperty'     = $AccountProperty
+            'Cache'               = $Cache
+            'DomainDn'            = $DomainDn
+            'DomainNetBIOS'       = $DomainNetBIOS
+            'IdentityReference'   = $IdentityReference
+            'LogSuffixComment'    = $LogSuffixComment
+            'SamAccountNameOrSid' = $SamAccountNameOrSid
         }
 
         $DirectoryEntryConversion = @{

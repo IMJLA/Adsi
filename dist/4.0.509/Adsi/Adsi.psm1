@@ -356,7 +356,7 @@ function ConvertTo-DirectoryEntry {
         $DomainNetBIOS,
         $AccountProperty,
         $SamAccountNameOrSid,
-        $AccessControlEntries,
+        $AceGuid,
         $LogSuffixComment,
         $IdentityReference,
         $DomainDn,
@@ -394,11 +394,11 @@ function ConvertTo-DirectoryEntry {
     $DirectoryParams = @{ Cache = $Cache ; PropertiesToLoad = $PropertiesToLoad }
     $SearchSplat = @{ PropertiesToLoad = $PropertiesToLoad }
     $CurrentDomain = $Cache.Value['ThisParentDomain']
-
+    Pause
     if (
 
         $null -ne $SamAccountNameOrSid -and
-        @($AccessControlEntries.AdsiProvider)[0] -eq 'LDAP'
+        @($AceGuid.AdsiProvider)[0] -eq 'LDAP'
 
     ) {
 
@@ -607,7 +607,7 @@ function ConvertTo-PermissionPrincipal {
         $NoGroupMembers,
         $LogSuffixComment,
         $SamAccountNameOrSid,
-        $AccessControlEntries,
+        $AceGuid,
 
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description'),
@@ -746,7 +746,7 @@ function ConvertTo-PermissionPrincipal {
 
                     $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                     $PrincipalById.Value[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
-                    $AceGuidByID.Value[$ResolvedAccountName] = $AccessControlEntries
+                    $AceGuidByID.Value[$ResolvedAccountName] = $AceGuid
                     $ResolvedAccountName
 
                 }
@@ -2288,25 +2288,25 @@ function ConvertFrom-ResolvedID {
         $LogSuffix = "for resolved Identity Reference '$IdentityReference'"
         $LogSuffixComment = " # $LogSuffix"
         $Log = @{ 'Cache' = $Cache ; 'Suffix' = $LogSuffixComment }
-        #Write-LogMsg @Log -Text " # ADSI Principal cache miss $LogSuffix"
+        Write-LogMsg @Log -Text "`$AceGuids = `$Cache.Value['AceGuidByID'].Value['$IdentityReference'] # ADSI Principal cache miss"
         $AceGuidByID = $Cache.Value['AceGuidByID']
-        $AccessControlEntries = $AceGuidByID.Value[ $IdentityReference ]
+        $AceGuids = $AceGuidByID.Value[ $IdentityReference ]
         $split = $IdentityReference.Split('\')
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
         Write-LogMsg @Log -Text "`$CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference '$SamAccountNameOrSid' -DomainNetBIOS '$DomainNetBIOS' -DomainByNetbios `$Cache.Value['DomainByNetbios']"
         $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
         $DomainDn = $null
-
+        Pause
         $CommonSplat = @{
-            'AccessControlEntries' = $AccessControlEntries
-            'AccountProperty'      = $AccountProperty
-            'Cache'                = $Cache
-            'DomainDn'             = $DomainDn
-            'DomainNetBIOS'        = $DomainNetBIOS
-            'IdentityReference'    = $IdentityReference
-            'LogSuffixComment'     = $LogSuffixComment
-            'SamAccountNameOrSid'  = $SamAccountNameOrSid
+            'AceGuid'             = $AceGuids
+            'AccountProperty'     = $AccountProperty
+            'Cache'               = $Cache
+            'DomainDn'            = $DomainDn
+            'DomainNetBIOS'       = $DomainNetBIOS
+            'IdentityReference'   = $IdentityReference
+            'LogSuffixComment'    = $LogSuffixComment
+            'SamAccountNameOrSid' = $SamAccountNameOrSid
         }
 
         $DirectoryEntryConversion = @{
@@ -6342,6 +6342,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

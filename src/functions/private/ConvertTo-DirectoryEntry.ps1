@@ -5,7 +5,7 @@ function ConvertTo-DirectoryEntry {
         $DomainNetBIOS,
         $AccountProperty,
         $SamAccountNameOrSid,
-        $AccessControlEntries,
+        $AceGuid,
         $LogSuffixComment,
         $IdentityReference,
         $DomainDn,
@@ -43,11 +43,11 @@ function ConvertTo-DirectoryEntry {
     $DirectoryParams = @{ Cache = $Cache ; PropertiesToLoad = $PropertiesToLoad }
     $SearchSplat = @{ PropertiesToLoad = $PropertiesToLoad }
     $CurrentDomain = $Cache.Value['ThisParentDomain']
-
+    Pause
     if (
 
         $null -ne $SamAccountNameOrSid -and
-        @($AccessControlEntries.AdsiProvider)[0] -eq 'LDAP'
+        @($AceGuid.AdsiProvider)[0] -eq 'LDAP'
 
     ) {
 

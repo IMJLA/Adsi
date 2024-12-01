@@ -9,7 +9,7 @@ function ConvertTo-PermissionPrincipal {
         $NoGroupMembers,
         $LogSuffixComment,
         $SamAccountNameOrSid,
-        $AccessControlEntries,
+        $AceGuid,
 
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description'),
@@ -148,7 +148,7 @@ function ConvertTo-PermissionPrincipal {
 
                     $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                     $PrincipalById.Value[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
-                    $AceGuidByID.Value[$ResolvedAccountName] = $AccessControlEntries
+                    $AceGuidByID.Value[$ResolvedAccountName] = $AceGuid
                     $ResolvedAccountName
 
                 }
