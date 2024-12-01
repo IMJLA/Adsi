@@ -4088,9 +4088,10 @@ function Get-KnownSid {
                 'SID'             = $SID
             }
         }
+
     }
 
-    if ($SID.Length -lt 9) { Pause } # This should not happen; any such SIDs should have ben found first by Find-CachedWellKnownSid. Pausing for now for debug. ToDo: make this more robust based on dynamic string length detection after it stops highlighting my issues with Find-CachedWellKnownSid.
+    #if ($SID.Length -lt 9) { Pause } # This should not happen; any such SIDs should have ben found first by Find-CachedWellKnownSid. Pausing for now for debug. ToDo: make this more robust based on dynamic string length detection after it stops highlighting my issues with Find-CachedWellKnownSid.
     $TheNine = $SID.Substring(0, 9)
     $Match = $StartingPatterns[$TheNine]
 
@@ -4100,6 +4101,7 @@ function Get-KnownSid {
     }
 
     switch -Wildcard ($SID) {
+
         'S-1-5-*-500' {
             return [PSCustomObject]@{
                 'Description'     = "A built-in user account for the system administrator to administer the computer/domain. Every computer has a local Administrator account and every domain has a domain Administrator account. The Administrator account is the first account created during operating system installation. The account can't be deleted, disabled, or locked out, but it can be renamed. By default, the Administrator account is a member of the Administrators group, and it can't be removed from that group."
@@ -4339,7 +4341,9 @@ function Get-KnownSid {
                 'SID'             = $SID
             }
         }
+
         default { break }
+
     }
 
     if ($SID -match 'S-1-5-5-(?<Session>[^-]-[^-])') {
@@ -6343,6 +6347,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

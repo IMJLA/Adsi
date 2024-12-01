@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.513] - 2024-12-01 - remove debug pause
+
 ## [4.0.512] - 2024-12-01 - remove debug pause
 
 ## [4.0.511] - 2024-12-01 - simplify use of sampleace
