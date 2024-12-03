@@ -23,7 +23,9 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
     )
 
-    $SubType = & { $ResultPropertyValueCollection.Value.GetType().FullName } 2>$null
+    if ($null -ne $ResultPropertyValueCollection.Value) {
+        $SubType = $ResultPropertyValueCollection.Value.GetType().FullName
+    }
 
     switch ($SubType) {
         'System.Byte[]' { ConvertTo-DecStringRepresentation -ByteArray $ResultPropertyValueCollection.Value ; break }
