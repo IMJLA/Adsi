@@ -22,8 +22,13 @@ function Resolve-IdRefSID {
     )
 
     $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $IdentityReference -DomainNetBIOS $ServerNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
+    $AccountProperties = @{}
 
     if ($CachedWellKnownSID) {
+
+        ForEach ($Prop in $CachedWellKnownSID.PSObject.Properties.GetEnumerator().Name) {
+            $AccountProperties[$Prop] = $CachedWellKnownSID.$Prop
+        }
 
         #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Well-known SID match" -Cache $Cache
         $NTAccount = $CachedWellKnownSID.IdentityReferenceNetBios
@@ -37,6 +42,10 @@ function Resolve-IdRefSID {
     }
 
     if ($KnownSid) {
+
+        ForEach ($Prop in $KnownSid.PSObject.Properties.GetEnumerator().Name) {
+            $AccountProperties[$Prop] = $KnownSid.$Prop
+        }
 
         #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Known SID pattern match" -Cache $Cache
         $NTAccount = $KnownSid.NTAccount
@@ -103,14 +112,13 @@ function Resolve-IdRefSID {
             $NameFromSplit = $split[1]
             $DomainNetBIOS = $ServerNetBIOS
             $Caption = "$ServerNetBIOS\$NameFromSplit"
+            $AccountProperties['SID'] = $IdentityReference
+            $AccountProperties['Caption'] = $Caption
+            $AccountProperties['Domain'] = $ServerNetBIOS
+            $AccountProperties['Name'] = $NameFromSplit
 
             # This will be used to update the caches
-            $Win32Acct = [PSCustomObject]@{
-                SID     = $IdentityReference
-                Caption = $Caption
-                Domain  = $ServerNetBIOS
-                Name    = $NameFromSplit
-            }
+            $Win32Acct = [PSCustomObject]$AccountProperties
 
         } else {
             $DomainNetBIOS = $DomainFromSplit
@@ -142,6 +150,7 @@ function Resolve-IdRefSID {
     if ($Win32Acct) {
         $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
         $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+        # TODO are these next 3 lines necessary or are the values already updated thanks to references?
         $Cache.Value['DomainByFqdn'].Value[$DomainCacheResult.Dns] = $DomainCacheResult
         $DomainsByNetbios.Value[$DomainCacheResult.Netbios] = $DomainCacheResult
         $DomainsBySid.Value[$DomainCacheResult.Sid] = $DomainCacheResult
@@ -160,11 +169,23 @@ function Resolve-IdRefSID {
 
     } else {
 
-        $Resolved = [PSCustomObject]@{
-            IdentityReference        = $IdentityReference
-            SIDString                = $IdentityReference
-            IdentityReferenceNetBios = "$DomainNetBIOS\$IdentityReference"
-            IdentityReferenceDns     = "$DomainDns\$IdentityReference"
+        if ($Win32Acct) {
+            
+            $AccountProperties['IdentityReference'] = $IdentityReference
+            $AccountProperties['SIDString'] = $IdentityReference
+            $AccountProperties['IdentityReferenceNetBios'] = "$DomainNetBIOS\$IdentityReference"
+            $AccountProperties['IdentityReferenceDns'] = "$DomainDns\$IdentityReference"
+            $Resolved = [PSCustomObject]$AccountProperties
+
+        } else {
+
+            $Resolved = [PSCustomObject]@{
+                IdentityReference        = $IdentityReference
+                SIDString                = $IdentityReference
+                IdentityReferenceNetBios = "$DomainNetBIOS\$IdentityReference"
+                IdentityReferenceDns     = "$DomainDns\$IdentityReference"
+            }
+
         }
 
     }

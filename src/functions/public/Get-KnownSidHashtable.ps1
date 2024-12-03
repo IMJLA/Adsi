@@ -1161,7 +1161,7 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'computer'
             'SID'             = 'S-1-2'
         }
-        
+
         'S-1-15-3-1024-1365790099-2797813016-1714917928-519942599-2377126242-1094757716-3949770552-3596009590' = [PSCustomObject]@{
             'Description'     = 'runFullTrust containerized app capability SID (WellKnownSidType WinCapabilityRemovableStorageSid)'
             'DisplayName'     = 'runFullTrust'
@@ -1171,7 +1171,7 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'group'
             'SID'             = 'S-1-15-3-1024-1365790099-2797813016-1714917928-519942599-2377126242-1094757716-3949770552-3596009590'
         }
-        
+
         'S-1-15-3-1024-1195710214-366596411-2746218756-3015581611-3786706469-3006247016-1014575659-1338484819' = [PSCustomObject]@{
             'Description'     = 'userNotificationListener containerized app capability SID'
             'DisplayName'     = 'userNotificationListener'
@@ -1181,7 +1181,7 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'group'
             'SID'             = 'S-1-15-3-1024-1195710214-366596411-2746218756-3015581611-3786706469-3006247016-1014575659-1338484819'
         }
-    
+
     }
-    
+
 }

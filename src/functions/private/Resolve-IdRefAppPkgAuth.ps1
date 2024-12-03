@@ -24,6 +24,11 @@ function Resolve-IdRefAppPkgAuth {
 
     )
 
+    $Caption = "$ServerNetBIOS\$Name"
+    $DomainCacheResult = $null
+    $DomainsByNetbios = $Cache.Value['DomainByNetbios']
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
+
     <#
     These SIDs cannot be resolved from the NTAccount name:
         PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount]).Translate([System.Security.Principal.SecurityIdentifier])
@@ -39,16 +44,23 @@ function Resolve-IdRefAppPkgAuth {
     #>
     $Known = $Cache.Value['WellKnownSidByCaption'].Value[$IdentityReference]
 
-    if ($Known) {
-        $SIDString = $Known.SID
+    if ($null -eq $Known) {
+        $Known = $DomainCacheResult.WellKnownSidByName[$Name]
+    }
+
+    $AccountProperties = @{}
+
+    if ($null -ne $Known) {
+
+        $SIDString = $Known.SID        
+
+        ForEach ($Prop in $Known.PSObject.Properties.GetEnumerator().Name) {
+            $AccountProperties[$Prop] = $Known.$Prop
+        }
+
     } else {
         $SIDString = $Name
     }
-
-    $Caption = "$ServerNetBIOS\$Name"
-    $DomainCacheResult = $null
-    $DomainsByNetbios = $Cache.Value['DomainByNetbios']
-    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
 
     if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
@@ -61,13 +73,15 @@ function Resolve-IdRefAppPkgAuth {
 
     }
 
-    # Update the caches
-    $Win32Acct = [PSCustomObject]@{
-        SID     = $SIDString
-        Caption = $Caption
-        Domain  = $ServerNetBIOS
-        Name    = $Name
-    }
+    $AccountProperties['SID'] = $SIDString
+    $AccountProperties['Caption'] = $Caption
+    $AccountProperties['Domain'] = $ServerNetBIOS
+    $AccountProperties['Name'] = $Name
+    $AccountProperties['IdentityReference'] = $IdentityReference
+    $AccountProperties['SIDString'] = $SIDString
+    $AccountProperties['IdentityReferenceNetBios'] = $Caption
+    $AccountProperties['IdentityReferenceDns'] = "$DomainDns\$Name"
+    $Win32Acct = [PSCustomObject]$AccountProperties
 
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
@@ -76,11 +90,6 @@ function Resolve-IdRefAppPkgAuth {
     $Cache.Value['DomainByNetbios'].Value[$DomainCacheResult.Netbios] = $DomainCacheResult
     $Cache.Value['DomainBySid'].Value[$DomainCacheResult.Sid] = $DomainCacheResult
 
-    return [PSCustomObject]@{
-        IdentityReference        = $IdentityReference
-        SIDString                = $SIDString
-        IdentityReferenceNetBios = $Caption
-        IdentityReferenceDns     = "$DomainDns\$Name"
-    }
+    return $Win32Acct
 
 }

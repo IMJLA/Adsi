@@ -1336,6 +1336,11 @@ function Resolve-IdRefAppPkgAuth {
 
     )
 
+    $Caption = "$ServerNetBIOS\$Name"
+    $DomainCacheResult = $null
+    $DomainsByNetbios = $Cache.Value['DomainByNetbios']
+    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
+
     <#
     These SIDs cannot be resolved from the NTAccount name:
         PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount]).Translate([System.Security.Principal.SecurityIdentifier])
@@ -1351,16 +1356,23 @@ function Resolve-IdRefAppPkgAuth {
     #>
     $Known = $Cache.Value['WellKnownSidByCaption'].Value[$IdentityReference]
 
-    if ($Known) {
-        $SIDString = $Known.SID
+    if ($null -eq $Known) {
+        $Known = $DomainCacheResult.WellKnownSidByName[$Name]
+    }
+
+    $AccountProperties = @{}
+
+    if ($null -ne $Known) {
+
+        $SIDString = $Known.SID        
+
+        ForEach ($Prop in $Known.PSObject.Properties.GetEnumerator().Name) {
+            $AccountProperties[$Prop] = $Known.$Prop
+        }
+
     } else {
         $SIDString = $Name
     }
-
-    $Caption = "$ServerNetBIOS\$Name"
-    $DomainCacheResult = $null
-    $DomainsByNetbios = $Cache.Value['DomainByNetbios']
-    $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
 
     if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
@@ -1373,13 +1385,15 @@ function Resolve-IdRefAppPkgAuth {
 
     }
 
-    # Update the caches
-    $Win32Acct = [PSCustomObject]@{
-        SID     = $SIDString
-        Caption = $Caption
-        Domain  = $ServerNetBIOS
-        Name    = $Name
-    }
+    $AccountProperties['SID'] = $SIDString
+    $AccountProperties['Caption'] = $Caption
+    $AccountProperties['Domain'] = $ServerNetBIOS
+    $AccountProperties['Name'] = $Name
+    $AccountProperties['IdentityReference'] = $IdentityReference
+    $AccountProperties['SIDString'] = $SIDString
+    $AccountProperties['IdentityReferenceNetBios'] = $Caption
+    $AccountProperties['IdentityReferenceDns'] = "$DomainDns\$Name"
+    $Win32Acct = [PSCustomObject]$AccountProperties
 
     # Update the caches
     $DomainCacheResult.WellKnownSidBySid[$SIDString] = $Win32Acct
@@ -1388,12 +1402,7 @@ function Resolve-IdRefAppPkgAuth {
     $Cache.Value['DomainByNetbios'].Value[$DomainCacheResult.Netbios] = $DomainCacheResult
     $Cache.Value['DomainBySid'].Value[$DomainCacheResult.Sid] = $DomainCacheResult
 
-    return [PSCustomObject]@{
-        IdentityReference        = $IdentityReference
-        SIDString                = $SIDString
-        IdentityReferenceNetBios = $Caption
-        IdentityReferenceDns     = "$DomainDns\$Name"
-    }
+    return $Win32Acct
 
 }
 function Resolve-IdRefBuiltIn {
@@ -1609,8 +1618,13 @@ function Resolve-IdRefSID {
     )
 
     $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $IdentityReference -DomainNetBIOS $ServerNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
+    $AccountProperties = @{}
 
     if ($CachedWellKnownSID) {
+
+        ForEach ($Prop in $CachedWellKnownSID.PSObject.Properties.GetEnumerator().Name) {
+            $AccountProperties[$Prop] = $CachedWellKnownSID.$Prop
+        }
 
         #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Well-known SID match" -Cache $Cache
         $NTAccount = $CachedWellKnownSID.IdentityReferenceNetBios
@@ -1624,6 +1638,10 @@ function Resolve-IdRefSID {
     }
 
     if ($KnownSid) {
+
+        ForEach ($Prop in $KnownSid.PSObject.Properties.GetEnumerator().Name) {
+            $AccountProperties[$Prop] = $KnownSid.$Prop
+        }
 
         #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Known SID pattern match" -Cache $Cache
         $NTAccount = $KnownSid.NTAccount
@@ -1690,14 +1708,13 @@ function Resolve-IdRefSID {
             $NameFromSplit = $split[1]
             $DomainNetBIOS = $ServerNetBIOS
             $Caption = "$ServerNetBIOS\$NameFromSplit"
+            $AccountProperties['SID'] = $IdentityReference
+            $AccountProperties['Caption'] = $Caption
+            $AccountProperties['Domain'] = $ServerNetBIOS
+            $AccountProperties['Name'] = $NameFromSplit
 
             # This will be used to update the caches
-            $Win32Acct = [PSCustomObject]@{
-                SID     = $IdentityReference
-                Caption = $Caption
-                Domain  = $ServerNetBIOS
-                Name    = $NameFromSplit
-            }
+            $Win32Acct = [PSCustomObject]$AccountProperties
 
         } else {
             $DomainNetBIOS = $DomainFromSplit
@@ -1729,6 +1746,7 @@ function Resolve-IdRefSID {
     if ($Win32Acct) {
         $DomainCacheResult.WellKnownSidBySid[$IdentityReference] = $Win32Acct
         $DomainCacheResult.WellKnownSidByName[$NameFromSplit] = $Win32Acct
+        # TODO are these next 3 lines necessary or are the values already updated thanks to references?
         $Cache.Value['DomainByFqdn'].Value[$DomainCacheResult.Dns] = $DomainCacheResult
         $DomainsByNetbios.Value[$DomainCacheResult.Netbios] = $DomainCacheResult
         $DomainsBySid.Value[$DomainCacheResult.Sid] = $DomainCacheResult
@@ -1747,11 +1765,23 @@ function Resolve-IdRefSID {
 
     } else {
 
-        $Resolved = [PSCustomObject]@{
-            IdentityReference        = $IdentityReference
-            SIDString                = $IdentityReference
-            IdentityReferenceNetBios = "$DomainNetBIOS\$IdentityReference"
-            IdentityReferenceDns     = "$DomainDns\$IdentityReference"
+        if ($Win32Acct) {
+            
+            $AccountProperties['IdentityReference'] = $IdentityReference
+            $AccountProperties['SIDString'] = $IdentityReference
+            $AccountProperties['IdentityReferenceNetBios'] = "$DomainNetBIOS\$IdentityReference"
+            $AccountProperties['IdentityReferenceDns'] = "$DomainDns\$IdentityReference"
+            $Resolved = [PSCustomObject]$AccountProperties
+
+        } else {
+
+            $Resolved = [PSCustomObject]@{
+                IdentityReference        = $IdentityReference
+                SIDString                = $IdentityReference
+                IdentityReferenceNetBios = "$DomainNetBIOS\$IdentityReference"
+                IdentityReferenceDns     = "$DomainDns\$IdentityReference"
+            }
+
         }
 
     }
@@ -5608,7 +5638,7 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'computer'
             'SID'             = 'S-1-2'
         }
-        
+
         'S-1-15-3-1024-1365790099-2797813016-1714917928-519942599-2377126242-1094757716-3949770552-3596009590' = [PSCustomObject]@{
             'Description'     = 'runFullTrust containerized app capability SID (WellKnownSidType WinCapabilityRemovableStorageSid)'
             'DisplayName'     = 'runFullTrust'
@@ -5618,7 +5648,7 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'group'
             'SID'             = 'S-1-15-3-1024-1365790099-2797813016-1714917928-519942599-2377126242-1094757716-3949770552-3596009590'
         }
-        
+
         'S-1-15-3-1024-1195710214-366596411-2746218756-3015581611-3786706469-3006247016-1014575659-1338484819' = [PSCustomObject]@{
             'Description'     = 'userNotificationListener containerized app capability SID'
             'DisplayName'     = 'userNotificationListener'
@@ -5628,9 +5658,9 @@ function Get-KnownSidHashTable {
             'SchemaClassName' = 'group'
             'SID'             = 'S-1-15-3-1024-1195710214-366596411-2746218756-3015581611-3786706469-3006247016-1014575659-1338484819'
         }
-    
+
     }
-    
+
 }
 function Get-ParentDomainDnsName {
 
@@ -6347,6 +6377,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
