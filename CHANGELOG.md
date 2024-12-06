@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.519] - 2024-12-05 - simplify query
+
 ## [4.0.518] - 2024-12-05 - simplify query
 
 ## [4.0.517] - 2024-12-05 - bugfix avoid domain accounts with CIM...for now!

@@ -101,8 +101,8 @@ function Get-AdsiServer {
             Write-LogMsg @Log -Text "ConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' -Cache `$Cache"
             $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -Cache $Cache
 
-            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -Query `"Select * from Win32_Account Where Domain = '$DomainNetBIOS'`" -KeyProperty 'Caption' -CacheByProperty @() -Cache `$Cache"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -Query "Select * from Win32_Account Where Domain = '$DomainNetBIOS'" -KeyProperty 'Caption' -CacheByProperty @() -Cache $Cache
+            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -Query 'Select * from Win32_Account Where LocalAccount = TRUE' -KeyProperty 'Caption' -CacheByProperty @() -Cache `$Cache"
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -Query 'Select * from Win32_Account Where LocalAccount = TRUE' -KeyProperty 'Caption' -CacheByProperty @() -Cache $Cache
 
             Write-LogMsg @Log -Text "`$Win32Services = Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache `$Cache"
             $Win32Services = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache $Cache
