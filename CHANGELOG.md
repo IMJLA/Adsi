@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.517] - 2024-12-05 - bugfix avoid domain accounts with CIM...for now!
+
 ## [4.0.516] - 2024-12-02 - null check to avoid errors
 
 ## [4.0.515] - 2024-12-02 - null check to avoid errors

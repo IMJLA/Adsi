@@ -391,3 +391,39 @@ COMPUTER-SPECIFIC SIDs
             'SID'         = 'S-1-5-21-1340649458-2707494813-4121304102-504'
         }
 #>
+
+
+<#
+            # Additional ways to find accounts
+            PS C:\Users\Owner> wmic SYSACCOUNT get name,sid
+                Name                           SID
+                Everyone                       S-1-1-0
+                LOCAL                          S-1-2-0
+                CREATOR OWNER                  S-1-3-0
+                CREATOR GROUP                  S-1-3-1
+                CREATOR OWNER SERVER           S-1-3-2
+                CREATOR GROUP SERVER           S-1-3-3
+                OWNER RIGHTS                   S-1-3-4
+                DIALUP                         S-1-5-1
+                NETWORK                        S-1-5-2
+                BATCH                          S-1-5-3
+                INTERACTIVE                    S-1-5-4
+                SERVICE                        S-1-5-6
+                ANONYMOUS LOGON                S-1-5-7
+                PROXY                          S-1-5-8
+                SYSTEM                         S-1-5-18
+                ENTERPRISE DOMAIN CONTROLLERS  S-1-5-9
+                SELF                           S-1-5-10
+                Authenticated Users            S-1-5-11
+                RESTRICTED                     S-1-5-12
+                TERMINAL SERVER USER           S-1-5-13
+                REMOTE INTERACTIVE LOGON       S-1-5-14
+                IUSR                           S-1-5-17
+                LOCAL SERVICE                  S-1-5-19
+                NETWORK SERVICE                S-1-5-20
+                BUILTIN                        S-1-5-32
+
+            PS C:\Users\Owner> $logonDomainSid = 'S-1-5-21-1340649458-2707494813-4121304102'
+            PS C:\Users\Owner> ForEach ($SidType in [System.Security.Principal.WellKnownSidType].GetEnumNames()) {$var = [System.Security.Principal.WellKnownSidType]::$SidType; [System.Security.Principal.SecurityIdentifier]::new($var,$LogonDomainSid) |Add-Member -PassThru -NotePropertyMembers @{'WellKnownSidType' = $SidType}}
+
+            #>
