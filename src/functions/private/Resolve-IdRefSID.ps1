@@ -17,7 +17,10 @@ function Resolve-IdRefSID {
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
 
@@ -160,6 +163,7 @@ function Resolve-IdRefSID {
 
         # Recursively call this function to resolve the new IdentityReference we have
         $ResolveIdentityReferenceParams = @{
+            AccountProperty   = $AccountProperty
             Cache             = $Cache
             IdentityReference = $NTAccount
             AdsiServer        = $DomainCacheResult
@@ -170,7 +174,7 @@ function Resolve-IdRefSID {
     } else {
 
         if ($Win32Acct) {
-            
+
             $AccountProperties['IdentityReference'] = $IdentityReference
             $AccountProperties['SIDString'] = $IdentityReference
             $AccountProperties['IdentityReferenceNetBios'] = "$DomainNetBIOS\$IdentityReference"

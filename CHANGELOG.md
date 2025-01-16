@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.521] - 2025-01-16 - bugfix: resolve-idrefsid should be called with accountproperty then pass it to resolve-identityreference
+
 ## [4.0.520] - 2024-12-05 - bugfix repeat param
 
 ## [4.0.519] - 2024-12-05 - simplify query

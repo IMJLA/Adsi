@@ -1613,7 +1613,10 @@ function Resolve-IdRefSID {
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-        [ref]$Cache
+        [ref]$Cache,
+
+        # Properties of each Account to display on the report
+        [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
 
@@ -1756,6 +1759,7 @@ function Resolve-IdRefSID {
 
         # Recursively call this function to resolve the new IdentityReference we have
         $ResolveIdentityReferenceParams = @{
+            AccountProperty   = $AccountProperty
             Cache             = $Cache
             IdentityReference = $NTAccount
             AdsiServer        = $DomainCacheResult
@@ -1766,7 +1770,7 @@ function Resolve-IdRefSID {
     } else {
 
         if ($Win32Acct) {
-            
+
             $AccountProperties['IdentityReference'] = $IdentityReference
             $AccountProperties['SIDString'] = $IdentityReference
             $AccountProperties['IdentityReferenceNetBios'] = "$DomainNetBIOS\$IdentityReference"
@@ -6185,7 +6189,7 @@ function Resolve-IdentityReference {
     if ($Name.Substring(0, 4) -eq 'S-1-') {
 
         # If the IdentityReference is a Revision 1 SID, translate the SID to an NTAccount.
-        $Resolved = Resolve-IdRefSID -Cache $Cache @splat1 @splat2
+        $Resolved = Resolve-IdRefSID -AccountProperty $AccountProperty -Cache $Cache @splat1 @splat2
         return $Resolved
 
     }
@@ -6383,6 +6387,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
