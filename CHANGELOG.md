@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.523] - 2025-01-18 - bugfix need to add to permissioncache rather than replacing it
+
 ## [4.0.522] - 2025-01-16 - update psakefile uninstall/reinstall steps
 
 ## [4.0.521] - 2025-01-16 - bugfix: resolve-idrefsid should be called with accountproperty then pass it to resolve-identityreference
