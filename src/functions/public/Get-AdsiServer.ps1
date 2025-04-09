@@ -101,42 +101,8 @@ function Get-AdsiServer {
             Write-LogMsg @Log -Text "ConvertTo-DomainNetBIOS -DomainFQDN '$DomainFqdn' -AdsiProvider '$AdsiProvider' -Cache `$Cache"
             $DomainNetBIOS = ConvertTo-DomainNetBIOS -DomainFQDN $DomainFqdn -AdsiProvider $AdsiProvider -Cache $Cache
 
-            <#
-            PS C:\Users\Owner> wmic SYSACCOUNT get name,sid
-                Name                           SID
-                Everyone                       S-1-1-0
-                LOCAL                          S-1-2-0
-                CREATOR OWNER                  S-1-3-0
-                CREATOR GROUP                  S-1-3-1
-                CREATOR OWNER SERVER           S-1-3-2
-                CREATOR GROUP SERVER           S-1-3-3
-                OWNER RIGHTS                   S-1-3-4
-                DIALUP                         S-1-5-1
-                NETWORK                        S-1-5-2
-                BATCH                          S-1-5-3
-                INTERACTIVE                    S-1-5-4
-                SERVICE                        S-1-5-6
-                ANONYMOUS LOGON                S-1-5-7
-                PROXY                          S-1-5-8
-                SYSTEM                         S-1-5-18
-                ENTERPRISE DOMAIN CONTROLLERS  S-1-5-9
-                SELF                           S-1-5-10
-                Authenticated Users            S-1-5-11
-                RESTRICTED                     S-1-5-12
-                TERMINAL SERVER USER           S-1-5-13
-                REMOTE INTERACTIVE LOGON       S-1-5-14
-                IUSR                           S-1-5-17
-                LOCAL SERVICE                  S-1-5-19
-                NETWORK SERVICE                S-1-5-20
-                BUILTIN                        S-1-5-32
-
-            PS C:\Users\Owner> $logonDomainSid = 'S-1-5-21-1340649458-2707494813-4121304102'
-            PS C:\Users\Owner> ForEach ($SidType in [System.Security.Principal.WellKnownSidType].GetEnumNames()) {$var = [System.Security.Principal.WellKnownSidType]::$SidType; [System.Security.Principal.SecurityIdentifier]::new($var,$LogonDomainSid) |Add-Member -PassThru -NotePropertyMembers @{'WellKnownSidType' = $SidType}}
-
-            #>
-
-            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @() -Cache `$Cache"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @() -Cache $Cache
+            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainFqdn' -Query 'Select * from Win32_Account Where LocalAccount = TRUE' -KeyProperty 'Caption' -CacheByProperty @() -Cache `$Cache"
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainFqdn -Query 'Select * from Win32_Account Where LocalAccount = TRUE' -KeyProperty 'Caption' -CacheByProperty @() -Cache $Cache
 
             Write-LogMsg @Log -Text "`$Win32Services = Get-CachedCimInstance -ComputerName '$DomainFqdn' -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache `$Cache"
             $Win32Services = Get-CachedCimInstance -ComputerName $DomainFqdn -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache $Cache
@@ -225,8 +191,8 @@ function Get-AdsiServer {
             Write-LogMsg @Log -Text "ConvertTo-DomainSidString -DomainDnsName '$DomainDnsName' -AdsiProvider '$AdsiProvider' -Cache `$Cache"
             $DomainSid = ConvertTo-DomainSidString -DomainDnsName $DomainDnsName -AdsiProvider $AdsiProvider -Cache $Cache
 
-            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @('Caption', 'SID') -Cache `$Cache"
-            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Account' -KeyProperty 'Caption' -CacheByProperty @('Caption', 'SID') -Cache $Cache
+            Write-LogMsg @Log -Text "Get-CachedCimInstance -ComputerName '$DomainDnsName' -Query 'Select * from Win32_Account Where LocalAccount = TRUE' -KeyProperty 'Caption' -CacheByProperty @() -Cache `$Cache"
+            $Win32Accounts = Get-CachedCimInstance -ComputerName $DomainDnsName -Query 'Select * from Win32_Account Where LocalAccount = TRUE' -KeyProperty 'Caption' -CacheByProperty @() -Cache $Cache
 
             Write-LogMsg @Log -Text "`$Win32Services = Get-CachedCimInstance -ComputerName '$DomainDnsName' -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache `$Cache"
             $Win32Services = Get-CachedCimInstance -ComputerName $DomainDnsName -ClassName 'Win32_Service' -KeyProperty 'Name' -CacheByProperty @() -Cache $Cache

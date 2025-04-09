@@ -101,7 +101,7 @@ function Resolve-IdentityReference {
     if ($Name.Substring(0, 4) -eq 'S-1-') {
 
         # If the IdentityReference is a Revision 1 SID, translate the SID to an NTAccount.
-        $Resolved = Resolve-IdRefSID -Cache $Cache @splat1 @splat2
+        $Resolved = Resolve-IdRefSID -AccountProperty $AccountProperty -Cache $Cache @splat1 @splat2
         return $Resolved
 
     }

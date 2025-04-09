@@ -148,7 +148,11 @@ function ConvertTo-PermissionPrincipal {
 
                     $OutputProperties['ResolvedAccountName'] = $ResolvedAccountName
                     $PrincipalById.Value[$ResolvedAccountName] = [PSCustomObject]$OutputProperties
-                    $AceGuidByID.Value[$ResolvedAccountName] = $AceGuid
+
+                    ForEach ($ACE in $AceGuid) {
+                        Add-PermissionCacheItem -Cache $AceGuidByID -Key $ResolvedAccountName -Value $ACE -Type ([System.Guid])
+                    }
+
                     $ResolvedAccountName
 
                 }

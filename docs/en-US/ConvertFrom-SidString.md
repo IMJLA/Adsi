@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertFrom-SidString
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Converts a SID string to a DirectoryEntry object.
 
 ## SYNTAX
 
@@ -18,21 +18,22 @@ ConvertFrom-SidString [[-SID] <String>] [-Cache] <PSReference> [-ProgressAction 
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Attempts to resolve a security identifier (SID) string to its corresponding DirectoryEntry object
+by querying the directory service using the LDAP provider.
+This function is not currently in use
+by the Export-Permission module.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
 ```
-
-{{ Add example description here }}
+ConvertFrom-SidString -SID 'S-1-5-21-3165297888-301567370-576410423-1103' -Cache $Cache
+```
 
 ## PARAMETERS
 
 ### -Cache
-{{ Fill Cache Description }}
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -40,7 +41,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -70,7 +71,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -81,11 +82,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### System.String
 ## OUTPUTS
 
-### System.Object
+### System.DirectoryServices.DirectoryEntry
 ## NOTES
+This function is not currently in use by Export-Permission
 
 ## RELATED LINKS

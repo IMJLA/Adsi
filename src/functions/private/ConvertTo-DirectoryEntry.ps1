@@ -61,7 +61,8 @@ function ConvertTo-DirectoryEntry {
             $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
             $SearchSplat['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
 
-        } else {
+        }
+        else {
 
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'" -Cache $Cache
 
@@ -79,7 +80,8 @@ function ConvertTo-DirectoryEntry {
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
-        } catch {
+        }
+        catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -91,7 +93,8 @@ function ConvertTo-DirectoryEntry {
 
         if ($DirectoryEntry) { return $DirectoryEntry }
 
-    } elseif (
+    }
+    elseif (
         $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.Value.SIDString
     ) {
 
@@ -130,7 +133,8 @@ function ConvertTo-DirectoryEntry {
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
-        } catch {
+        }
+        catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -187,7 +191,8 @@ function ConvertTo-DirectoryEntry {
             $DomainNetBIOS = $DomainObject.Netbios
             $DomainDN = $DomainObject.DistinguishedName
 
-        } else {
+        }
+        else {
 
             $DirectoryPath = "WinNT://$DomainNetBIOS/Users"
             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -Cache $Cache
@@ -198,7 +203,8 @@ function ConvertTo-DirectoryEntry {
 
         try {
             $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
-        } catch {
+        }
+        catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -225,7 +231,8 @@ function ConvertTo-DirectoryEntry {
 
     if ($DomainNetbiosCacheResult) {
         $DirectoryPath = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"
-    } else {
+    }
+    else {
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
     }
 
@@ -233,7 +240,8 @@ function ConvertTo-DirectoryEntry {
 
     try {
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
-    } catch {
+    }
+    catch {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually

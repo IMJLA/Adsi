@@ -834,16 +834,16 @@ ForEach-Object {
       <command:verb>ConvertFrom</command:verb>
       <command:noun>SidString</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Converts a SID string to a DirectoryEntry object.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Attempts to resolve a security identifier (SID) string to its corresponding DirectoryEntry object by querying the directory service using the LDAP provider. This function is not currently in use by the Export-Permission module.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertFrom-SidString</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SID</maml:name>
           <maml:description>
             <maml:para>{{ Fill SID Description }}</maml:para>
@@ -855,10 +855,10 @@ ForEach-Object {
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Cache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Cache Description }}</maml:para>
+            <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
           <dev:type>
@@ -882,10 +882,10 @@ ForEach-Object {
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Cache Description }}</maml:para>
+          <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
         <dev:type>
@@ -906,7 +906,7 @@ ForEach-Object {
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SID</maml:name>
         <maml:description>
           <maml:para>{{ Fill SID Description }}</maml:para>
@@ -922,7 +922,7 @@ ForEach-Object {
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>System.String</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -932,7 +932,7 @@ ForEach-Object {
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -941,15 +941,15 @@ ForEach-Object {
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
-        <maml:para></maml:para>
+        <maml:para>This function is not currently in use by Export-Permission</maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertFrom-SidString -SID 'S-1-5-21-3165297888-301567370-576410423-1103' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para></maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3504,16 +3504,17 @@ Path              : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>KnownSid</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Retrieves information about well-known security identifiers (SIDs).</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Gets information about well-known security identifiers (SIDs) based on patterns and common formats. Uses Microsoft documentation references for SID information: - https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab</maml:para>
+      <maml:para>- https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-KnownSid</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SID</maml:name>
           <maml:description>
             <maml:para>{{ Fill SID Description }}</maml:para>
@@ -3528,7 +3529,7 @@ Path              : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SID</maml:name>
         <maml:description>
           <maml:para>{{ Fill SID Description }}</maml:para>
@@ -3544,7 +3545,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>System.String</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3554,7 +3555,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3568,10 +3569,17 @@ Path              : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-KnownSid -SID 'S-1-5-32-544'</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Returns information about the built-in Administrators group.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-KnownSid -SID 'S-1-5-18'</dev:code>
+        <dev:remarks>
+          <maml:para>Returns information about the Local System account.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

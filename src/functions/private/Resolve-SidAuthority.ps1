@@ -1,5 +1,23 @@
 function Resolve-SidAuthority {
 
+    <#
+    .SYNOPSIS
+    Resolves SID authority names to their proper representation.
+
+    .DESCRIPTION
+    Replaces well-known SID authorities in directory paths with the appropriate parent name.
+    Used to ensure consistent representation of security identifiers across different directory services.
+
+    .EXAMPLE
+    Resolve-SidAuthority -DirectorySplit $pathComponents -DirectoryEntry $entry -Cache $Cache
+
+    .INPUTS
+    System.Collections.Hashtable
+
+    .OUTPUTS
+    None. Modifies the DirectorySplit hashtable directly by adding 'ResolvedDomain' and 'ResolvedDirectoryPath' keys.
+    #>
+
     param (
 
         # A DirectoryPath which has been split on the / character then parsed into a dictionary of constituent components
@@ -35,7 +53,8 @@ function Resolve-SidAuthority {
         $DirectorySplit['ResolvedDomain'] = $ParentName
         $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath'].Replace($Domain, $ParentName)
 
-    } else {
+    }
+    else {
 
         $DirectorySplit['ResolvedDomain'] = $Domain
         $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath']

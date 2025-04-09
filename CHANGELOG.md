@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.525] - 2025-04-08 - update psakefile to remove test-psbuildpester
+
+## [4.0.524] - 2025-04-08 - add comment-based help
+
+## [4.0.523] - 2025-01-18 - bugfix need to add to permissioncache rather than replacing it
+
+## [4.0.522] - 2025-01-16 - update psakefile uninstall/reinstall steps
+
+## [4.0.521] - 2025-01-16 - bugfix: resolve-idrefsid should be called with accountproperty then pass it to resolve-identityreference
+
+## [4.0.520] - 2024-12-05 - bugfix repeat param
+
+## [4.0.519] - 2024-12-05 - simplify query
+
+## [4.0.518] - 2024-12-05 - simplify query
+
+## [4.0.517] - 2024-12-05 - bugfix avoid domain accounts with CIM...for now!
+
 ## [4.0.516] - 2024-12-02 - null check to avoid errors
 
 ## [4.0.515] - 2024-12-02 - null check to avoid errors

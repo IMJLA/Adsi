@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.516
+Help Version: 4.0.525
 Locale: en-US
 ---
 
@@ -33,9 +33,7 @@ Convert a ResultPropertyValueCollection to a string
 Convert a SearchResult to a PSCustomObject
 
 ### [ConvertFrom-SidString](ConvertFrom-SidString.md)
-
-ConvertFrom-SidString [[-SID] <string>] [-Cache] <ref> [<CommonParameters>]
-
+Converts a SID string to a DirectoryEntry object.
 
 ### [ConvertTo-DecStringRepresentation](ConvertTo-DecStringRepresentation.md)
 Convert a byte array to a string representation of its decimal format
@@ -97,9 +95,7 @@ Get-KnownCaptionHashTable [[-WellKnownSidBySid] <hashtable>]
 
 
 ### [Get-KnownSid](Get-KnownSid.md)
-
-Get-KnownSid [[-SID] <string>]
-
+Retrieves information about well-known security identifiers (SIDs).
 
 ### [Get-KnownSidByName](Get-KnownSidByName.md)
 
