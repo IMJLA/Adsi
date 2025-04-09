@@ -12,11 +12,7 @@
     RootModule        = 'Adsi'
 
     # Version number of this module.
-<<<<<<<< HEAD:dist/4.0.529/Adsi/Adsi.psd1
-    ModuleVersion     = '4.0.529'
-========
-    ModuleVersion     = '4.0.523'
->>>>>>>> 6f3acaa1706d0118af4a3e63e2d8e9c08ed58139:dist/4.0.523/Adsi/Adsi.psd1
+    ModuleVersion     = '4.0.531'
     # ID used to uniquely identify this module
     GUID              = '282a2aed-9567-49a1-901c-122b7831a805'
 
