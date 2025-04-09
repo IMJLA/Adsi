@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.529] - 2025-04-08 - remove test-psbuildpester dependency
+
 ## [4.0.525] - 2025-04-08 - update psakefile to remove test-psbuildpester
 
 ## [4.0.524] - 2025-04-08 - add comment-based help
