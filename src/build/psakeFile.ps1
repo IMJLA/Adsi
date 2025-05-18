@@ -1,16 +1,52 @@
 #TODO : Use Fixer 'Get-TextFilesList $pwd | ConvertTo-SpaceIndentation'.
 
-# Initialize the BuildHelpers environment variables here so they are usable in all child scopes including the psake properties block
-#BuildHelpers\Set-BuildEnvironment -Force
-
 Properties {
+
+    # Whether or not this build is a new Major version
+    [boolean]$IncrementMajorVersion = $false
+
+    # Whether or not this build is a new Minor version
+    [boolean]$IncrementMinorVersion = $false
+
+    # Folder containing the script .ps1 file
+    [string]$SourceCodeDir = [IO.Path]::Combine('.', 'src')
+
+    # This character sequence will be used to separate lines in the console output.
+    [string]$NewLine = [System.Environment]::NewLine
+
+
+
+    # PlatyPS (Markdown and Updateable help)
+
+    # Directory PlatyPS markdown documentation will be saved to
+    [string]$DocsRootDir = [IO.Path]::Combine('.', 'docs')
+
+    # Culture of the current UI thread
+    [cultureinfo]$UICulture = Get-UICulture
+
+    # Default Locale used for help generation
+    # Get-UICulture doesn't return a name on Linux so default to en-US
+    [string]$HelpDefaultLocale = if (-not $UICulture.Name) { 'en-US' } else { $UICulture.Name }
+
+    # Convert project readme into the module 'about file'
+    [boolean]$HelpConvertReadMeToAboutHelp = $true
+
+    # Markdown-formatted Help will be created in this folder
+    [string]$MarkdownHelpDir = [IO.Path]::Combine($DocsRootDir, 'markdown')
+
+    # .CAB-formatted Updatable Help will be created in this folder
+    [string]$UpdatableHelpDir = [IO.Path]::Combine($DocsRootDir, 'updateable')
+
+    # Directory where the markdown help files will be copied to
+    [string]$LocaleOutputDir = [IO.Path]::Combine($MarkdownHelpDir, $HelpDefaultLocale)
+
+
+
 
     $StartingLocation = Get-Location
     Set-Location $PSScriptRoot
     $ProjectRoot = [IO.Path]::Combine('..', '..')
     Set-Location $ProjectRoot
-
-    $SourceCodeDir = [IO.Path]::Combine('.', 'src')
 
     $ModuleManifestDir = [IO.Path]::Combine($SourceCodeDir, '*.psd1')
 
@@ -19,10 +55,6 @@ Properties {
     $ModuleName = [IO.Path]::GetFileNameWithoutExtension($ModuleManifest)
 
     $ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
-
-    $IncrementMajorVersion = $false
-
-    $IncrementMinorVersion = $false
 
     # Discover public function files so their help files can be fixed (multi-line default parameter values)
     $publicFunctionPath = [IO.Path]::Combine($SourceCodeDir, 'functions', 'public', '*.ps1')
@@ -43,21 +75,8 @@ Properties {
     # Output directory when building a module
     $DistDir = [IO.Path]::Combine('.', 'dist')
 
-    # Default Locale used for help generation, defaults to en-US
-    # Get-UICulture doesn't return a name on Linux so default to en-US
-    $HelpDefaultLocale = if (-not (Get-UICulture).Name) { 'en-US' } else { (Get-UICulture).Name }
-
-    # Convert project readme into the module about file
-    $HelpConvertReadMeToAboutHelp = $true
-
-    # Directory PlatyPS markdown documentation will be saved to
-    $DocsRootDir = [IO.Path]::Combine('.', 'docs')
-
     $TestRootDir = [IO.Path]::Combine('.', 'tests')
     $TestOutputFile = [IO.Path]::Combine('out', 'testResults.xml')
-
-    # Path to updatable help CAB
-    $HelpUpdatableHelpOutDir = [IO.Path]::Combine($DocsRootDir, 'UpdatableHelp')
 
     # Enable/disable use of PSScriptAnalyzer to perform script analysis
     $TestLintEnabled = $true
@@ -103,8 +122,6 @@ Properties {
 
     # Credential to authenticate to PowerShell repository with
     $PublishPSRepositoryCredential = $null
-
-    $NewLine = [System.Environment]::NewLine
 
 }
 
@@ -256,6 +273,11 @@ Task BuildModule -depends ExportPublicFunctions {
 
 } -description 'Build a PowerShell script module based on the source directory'
 
+Task BackupOldDocs -depends BuildModule -action {
+    Write-Host "`tRename-Item -Path '$DocsRootDir' -NewName '$DocsRootDir.old' -Force"
+    Rename-Item -Path $DocsRootDir -NewName "$DocsRootDir.old" -Force
+} -description 'Backup old documentation files'
+
 $genMarkdownPreReqs = {
     $result = $true
     if (-not (Get-Module PlatyPS -ListAvailable)) {
@@ -265,36 +287,31 @@ $genMarkdownPreReqs = {
     $result
 }
 
-Task DeleteMarkdownHelp -depends BuildModule -precondition $genMarkdownPreReqs -action {
-    $MarkdownDir = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
-    Write-Host "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item"
-    Get-ChildItem -Path $MarkdownDir -Recurse | Remove-Item
-} -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
+Task BuildMarkdownHelp -depends BackupOldDocs -precondition $genMarkdownPreReqs -action {
 
-Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
     $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
+
     if ($moduleInfo.ExportedCommands.Count -eq 0) {
         Write-Warning 'No commands have been exported. Skipping markdown generation.'
         return
     }
-    if (-not (Test-Path -LiteralPath $DocsRootDir)) {
-        New-Item -Path $DocsRootDir -ItemType Directory > $null
+    if (-not (Test-Path -LiteralPath $MarkdownHelpDir)) {
+        New-Item -Path $MarkdownHelpDir -ItemType Directory > $null
     }
     try {
-        if (Get-ChildItem -LiteralPath $DocsRootDir -Filter *.md -Recurse) {
-            Get-ChildItem -LiteralPath $DocsRootDir -Directory | ForEach-Object {
+
+        if (Get-ChildItem -LiteralPath $MarkdownHelpDir -Filter *.md -Recurse) {
+            Get-ChildItem -LiteralPath $MarkdownHelpDir -Directory | ForEach-Object {
                 Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
             }
         }
 
-        $LocaleOutputDir = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
         $newMDParams = @{
             AlphabeticParamsOrder = $true
             Locale                = $HelpDefaultLocale
-            # ErrorAction set to SilentlyContinue so this command will not overwrite an existing MD file.
-            ErrorAction           = 'SilentlyContinue'
+            ErrorAction           = 'SilentlyContinue' # SilentlyContinue will not overwrite an existing MD file.
             HelpVersion           = $moduleInfo.Version
             Module                = $ModuleName
             # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
@@ -303,8 +320,8 @@ Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
             UseFullTypeName       = $true
             WithModulePage        = $true
         }
-        Write-Host "`tNew-MarkdownHelp -Path '$DocsRootDir' -Locale '$HelpDefaultLocale' -Module '$ModuleName' -OutputFolder '$LocaleOutputDir'"
-        $MarkDownFiles = New-MarkdownHelp @newMDParams
+        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($moduleInfo.Version)' -Locale '$HelpDefaultLocale' -Module '$ModuleName' -OutputFolder '$LocaleOutputDir' -UseFullTypeName `$true -WithModulePage `$true"
+        $null = New-MarkdownHelp @newMDParams
     }
     finally {
         Remove-Module $ModuleName -Force
@@ -317,7 +334,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
 
     #Fix the Module Page () things PlatyPS does not do):
-    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$ModuleName.md")
+    $ModuleHelpFile = [IO.Path]::Combine($LocaleOutputDir, "$ModuleName.md")
 
     Write-Host "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
@@ -358,7 +375,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
         $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
-        $ThisFunctionHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$fileNameWithoutExtension.md")
+        $ThisFunctionHelpFile = [IO.Path]::Combine($LocaleOutputDir, "$fileNameWithoutExtension.md")
         Write-Host "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
         [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
         Write-Host "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
@@ -399,8 +416,8 @@ $genHelpFilesPreReqs = {
 }
 
 Task BuildMAMLHelp -depends FixMarkdownHelp -precondition $genHelpFilesPreReqs -action {
-    Write-Host "`tBuild-PSBuildMAMLHelp -Path '$DocsRootDir' -DestinationPath '$script:BuildOutputDir'"
-    Build-PSBuildMAMLHelp -Path $DocsRootDir -DestinationPath $script:BuildOutputDir
+    Write-Host "`tBuild-PSBuildMAMLHelp -Path '$MarkdownHelpDir' -DestinationPath '$script:BuildOutputDir'"
+    Build-PSBuildMAMLHelp -Path $MarkdownHelpDir -DestinationPath $script:BuildOutputDir
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 
 $genUpdatableHelpPreReqs = {
@@ -420,19 +437,15 @@ Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $genUpdatableHelpPr
         return
     }
 
-    $helpLocales = (Get-ChildItem -Path $DocsRootDir -Directory -Exclude 'UpdatableHelp').Name
-
-    if ($null -eq $HelpUpdatableHelpOutDir) {
-        $HelpUpdatableHelpOutDir = [IO.Path]::Combine($DocsRootDir, 'UpdatableHelp')
-    }
+    $helpLocales = (Get-ChildItem -Path $MarkdownHelpDir -Directory).Name
 
     # Create updatable help output directory
-    if (-not (Test-Path -LiteralPath $HelpUpdatableHelpOutDir)) {
-        New-Item $HelpUpdatableHelpOutDir -ItemType Directory -Verbose:$VerbosePreference > $null
+    if (-not (Test-Path -LiteralPath $UpdatableHelpDir)) {
+        New-Item $UpdatableHelpDir -ItemType Directory -Verbose:$VerbosePreference > $null
     }
     else {
-        Write-Verbose "Removing existing directory: [$HelpUpdatableHelpOutDir]."
-        Get-ChildItem $HelpUpdatableHelpOutDir | Remove-Item -Recurse -Force -Verbose:$VerbosePreference
+        Write-Verbose "Removing existing directory: [$UpdatableHelpDir]."
+        Get-ChildItem $UpdatableHelpDir | Remove-Item -Recurse -Force -Verbose:$VerbosePreference
     }
 
     # Generate updatable help files.  Note: this will currently update the version number in the module's MD
@@ -440,14 +453,19 @@ Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $genUpdatableHelpPr
     foreach ($locale in $helpLocales) {
         $cabParams = @{
             CabFilesFolder  = [IO.Path]::Combine($script:BuildOutputDir, $locale)
-            LandingPagePath = [IO.Path]::Combine($DocsRootDir, $locale, "$ModuleName.md")
-            OutputFolder    = $HelpUpdatableHelpOutDir
+            LandingPagePath = [IO.Path]::Combine($LocaleOutputDir, "$ModuleName.md")
+            OutputFolder    = $UpdatableHelpDir
         }
         Write-Host "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)'"
         New-ExternalHelpCab @cabParams > $null
     }
 
 } -description 'Create updatable help .cab file based on PlatyPS markdown help'
+
+Task DeleteOldDocs -depends BuildMAMLHelp -action {
+    Write-Host "`tRemove-Item -Path '$DocsRootDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
+    Remove-Item -Path "$DocsRootDir.old" -Recurse -Force -ErrorAction SilentlyContinue
+} -description 'Delete old documentation file backups'
 
 $analyzePreReqs = {
     $result = $true
@@ -462,7 +480,7 @@ $analyzePreReqs = {
     $result
 }
 
-Task Lint -depends BuildUpdatableHelp -precondition $analyzePreReqs -action {
+Task Lint -depends DeleteOldDocs -precondition $analyzePreReqs -action {
     $analyzeParams = @{
         Path              = $script:BuildOutputDir
         SeverityThreshold = $TestLintFailBuildOnSeverityLevel
