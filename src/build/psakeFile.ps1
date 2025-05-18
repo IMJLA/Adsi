@@ -231,6 +231,7 @@ Task BuildModule -depends CleanOutputDir {
         CompileDirectories = $BuildCompileDirectories
         CopyDirectories    = $BuildCopyDirectories
         Culture            = $HelpDefaultLocale
+        Verbose            = $VerbosePreference
     }
 
     if ($HelpConvertReadMeToAboutHelp) {
@@ -248,6 +249,7 @@ Task BuildModule -depends CleanOutputDir {
         }
     }
 
+    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])' -Verbose '$VerbosePreference'"
     Build-PSBuildModule @buildParams
 } -description 'Build a PowerShell script module based on the source directory'
 
@@ -262,9 +264,8 @@ $genMarkdownPreReqs = {
 
 Task DeleteMarkdownHelp -depends BuildModule -precondition $genMarkdownPreReqs -action {
     $MarkdownDir = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
-    "`tDeleting folder: '$MarkdownDir'"
+    "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item"
     Get-ChildItem -Path $MarkdownDir -Recurse | Remove-Item
-    $NewLine
 } -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
 
 Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
@@ -590,7 +591,7 @@ Task RemoveScriptScopedVariables -depends Reinstall -action {
 }
 
 Task ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
-    Set-Locationion $StartingLocation
+    Set-Location $StartingLocation
 }
 
 Task ? -description 'Lists the available tasks' -action {
