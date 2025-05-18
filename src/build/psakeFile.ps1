@@ -201,32 +201,21 @@ Task DetermineNewModuleVersion -action {
     $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
 
-}
+} -description 'Increment the module version'
 
 Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
 
     "`tUpdate-Metadata -Path '$ModuleManifest' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
     Update-Metadata -Path $ModuleManifest -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
 
-} -description 'Increment the module version and update the module manifest accordingly'
+} -description 'Update the module manifest with the new version number'
 
-Task RotateBuilds -depends UpdateModuleVersion -action {
+Task BackupOldBuilds -depends UpdateModuleVersion -action {
+    Write-Host "`tRename-Item -Path '$BuildOutDir' -NewName '$BuildOutDir.old' -Force"
+    Rename-Item -Path $BuildOutDir -NewName "$BuildOutDir.old" -Force
+} -description 'Backup old builds'
 
-    $BuildVersionsToRetain = 1
-
-    Write-Host "`tGet-ChildItem -Directory -Path '$BuildOutDir'"
-
-    Get-ChildItem -Directory -Path $BuildOutDir |
-    Sort-Object -Property Name |
-    Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
-    ForEach-Object {
-        Write-Host "`tRemove-Item -Recurse -Force -Path '$([IO.Path]::Combine($BuildOutDir,$_.Name))'"
-        $_ | Remove-Item -Recurse -Force
-    }
-
-}
-
-Task UpdateChangeLog -depends RotateBuilds -action {
+Task UpdateChangeLog -depends BackupOldBuilds -action {
     <#
     TODO
         This task runs before the Test task so that tests of the change log will pass
@@ -314,7 +303,12 @@ Task BuildModule -depends ExportPublicFunctions {
 
 } -description 'Build a PowerShell script module based on the source directory'
 
-Task BackupOldDocs -depends BuildModule -action {
+Task DeleteOldBuilds -depends BuildModule -action {
+    Write-Host "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
+    Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+Task BackupOldDocs -depends DeleteOldBuilds -action {
     Write-Host "`tRename-Item -Path '$DocsRootDir' -NewName '$DocsRootDir.old' -Force"
     Rename-Item -Path $DocsRootDir -NewName "$DocsRootDir.old" -Force
 } -description 'Backup old documentation files'
