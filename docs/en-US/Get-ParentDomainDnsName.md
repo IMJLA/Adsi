@@ -27,12 +27,17 @@ The function uses caching to improve performance during repeated calls.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+$Cache = @{}
+Get-ParentDomainDnsName -DomainNetbios "CORPDC01" -Cache ([ref]$Cache)
 ```
 
-{{ Add example description here }}
+Remark: This example retrieves the parent domain DNS name for a domain controller named "CORPDC01".
+The function will first attempt to get the domain information via CIM queries to the specified computer.
+Results are stored in the $Cache variable to improve performance if the function is called again
+with the same parameters.
+For domain controllers, this will typically return the forest root domain name.
 
 ## PARAMETERS
 

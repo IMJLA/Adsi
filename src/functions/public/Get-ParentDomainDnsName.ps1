@@ -7,6 +7,14 @@ function Get-ParentDomainDnsName {
         or computer using CIM queries. For workgroup computers or when no parent domain
         is found, it falls back to using the primary DNS suffix from the client's global
         DNS settings. The function uses caching to improve performance during repeated calls.
+    .EXAMPLE
+        $Cache = @{}
+        Get-ParentDomainDnsName -DomainNetbios "CORPDC01" -Cache ([ref]$Cache)
+
+        Remark: This example retrieves the parent domain DNS name for a domain controller named "CORPDC01".
+        The function will first attempt to get the domain information via CIM queries to the specified computer.
+        Results are stored in the $Cache variable to improve performance if the function is called again
+        with the same parameters. For domain controllers, this will typically return the forest root domain name.
     #>
 
     param (

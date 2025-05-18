@@ -4017,10 +4017,11 @@ $administratorsInfo = $sidByName['Administrators']</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$Cache = @{}
+Get-ParentDomainDnsName -DomainNetbios "CORPDC01" -Cache ([ref]$Cache)</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Remark: This example retrieves the parent domain DNS name for a domain controller named "CORPDC01". The function will first attempt to get the domain information via CIM queries to the specified computer. Results are stored in the $Cache variable to improve performance if the function is called again with the same parameters. For domain controllers, this will typically return the forest root domain name.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -5015,10 +5016,10 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-Service -Name "BITS" | Resolve-ServiceNameToSID</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Remark: This example retrieves the Background Intelligent Transfer Service and resolves its service name to a SID. The output includes all original properties of the service plus the SID property.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

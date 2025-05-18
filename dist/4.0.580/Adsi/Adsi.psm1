@@ -6133,6 +6133,14 @@ function Get-ParentDomainDnsName {
         or computer using CIM queries. For workgroup computers or when no parent domain
         is found, it falls back to using the primary DNS suffix from the client's global
         DNS settings. The function uses caching to improve performance during repeated calls.
+    .EXAMPLE
+        $Cache = @{}
+        Get-ParentDomainDnsName -DomainNetbios "CORPDC01" -Cache ([ref]$Cache)
+
+        Remark: This example retrieves the parent domain DNS name for a domain controller named "CORPDC01".
+        The function will first attempt to get the domain information via CIM queries to the specified computer.
+        Results are stored in the $Cache variable to improve performance if the function is called again
+        with the same parameters. For domain controllers, this will typically return the forest root domain name.
     #>
 
     param (
@@ -6767,6 +6775,11 @@ function Resolve-ServiceNameToSID {
         calculates their corresponding SIDs using the same algorithm as sc.exe showsid.
         It enriches the input service objects with SID and Status and returns the
         enhanced objects with all original properties preserved.
+    .EXAMPLE
+        Get-Service -Name "BITS" | Resolve-ServiceNameToSID
+
+        Remark: This example retrieves the Background Intelligent Transfer Service and resolves its service name to a SID.
+        The output includes all original properties of the service plus the SID property.
     #>
 
     param (
@@ -6903,6 +6916,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

@@ -24,12 +24,13 @@ enhanced objects with all original properties preserved.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Get-Service -Name "BITS" | Resolve-ServiceNameToSID
 ```
 
-{{ Add example description here }}
+Remark: This example retrieves the Background Intelligent Transfer Service and resolves its service name to a SID.
+The output includes all original properties of the service plus the SID property.
 
 ## PARAMETERS
 
