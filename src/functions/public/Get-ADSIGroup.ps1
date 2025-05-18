@@ -11,14 +11,19 @@ function Get-AdsiGroup {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] for each group memeber
     .EXAMPLE
-    Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
+    Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators -Cache $Cache
 
-    Get members of the local Administrators group
+    Retrieves the local Administrators group from the specified computer using the WinNT provider,
+    and returns all member accounts as DirectoryEntry objects. This allows for complete analysis
+    of local group memberships including nested groups and domain accounts that have been added to
+    local groups.
+
     .EXAMPLE
-    Get-AdsiGroup -GroupName Administrators
+    Get-AdsiGroup -GroupName Administrators -Cache $Cache
 
-    On a domain-joined computer, this will get members of the domain's Administrators group
-    On a workgroup computer, this will get members of the local Administrators group
+    On a domain-joined computer, retrieves the domain's Administrators group and all of its members.
+    On a workgroup computer, retrieves the local Administrators group and its members. This automatic
+    detection simplifies scripts that need to work in both domain and workgroup environments.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -93,7 +98,8 @@ function Get-AdsiGroup {
 
             if ($GroupName) {
                 $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
-            } else {
+            }
+            else {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 

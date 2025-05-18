@@ -33,11 +33,13 @@ https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslat
 
 ### EXAMPLE 1
 ```
-ConvertTo-DistinguishedName -Domain 'CONTOSO'
-DC=ad,DC=contoso,DC=com
+ConvertTo-DistinguishedName -Domain 'CONTOSO' -Cache $Cache
 ```
 
-Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
+Resolves the NetBIOS domain name 'CONTOSO' to its distinguished name format 'DC=ad,DC=contoso,DC=com'.
+This conversion is necessary when constructing LDAP queries that require the domain in distinguished
+name format, particularly when working with Active Directory objects across different domains or forests.
+The function utilizes Windows API calls to perform accurate name translation.
 
 ## PARAMETERS
 

@@ -18,6 +18,8 @@ function Invoke-ComObject {
 
     Get the first member of the local Administrators group on the current computer
     Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property
+    This technique is essential when working with ADSI objects that expose properties or methods only through COM interfaces,
+    providing a consistent way to access these properties in PowerShell.
     #>
 
     param (
@@ -51,9 +53,11 @@ function Invoke-ComObject {
     #>
     If ($Method) {
         $Invoke = 'InvokeMethod'
-    } ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
+    }
+    ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
         $Invoke = 'SetProperty'
-    } Else {
+    }
+    Else {
         $Invoke = 'GetProperty'
     }
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)

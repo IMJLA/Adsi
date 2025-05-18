@@ -11,9 +11,12 @@ function Get-WinNTGroupMember {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] for each group member
     .EXAMPLE
-    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember -Cache $Cache
 
-    Get members of the local Administrators group
+    Retrieves all members of the local Administrators group and returns them as DirectoryEntry objects.
+    This allows for further processing of group membership information, including nested groups, and provides
+    a consistent object format that works well with other ADSI functions. The Cache parameter ensures efficient
+    operation by avoiding redundant directory queries.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -103,7 +106,8 @@ function Get-WinNTGroupMember {
 
                 }
 
-            } else {
+            }
+            else {
                 Write-LogMsg @Log -Text ' # Is not a group'
             }
 

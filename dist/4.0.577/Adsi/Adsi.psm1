@@ -2156,10 +2156,12 @@ function Add-DomainFqdnToLdapPath {
     .OUTPUTS
     [System.String] Complete LDAP directory path including server address
     .EXAMPLE
-    Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com'
-    LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com
+    Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' -Cache $Cache
 
-    Add the domain FQDN to a single LDAP directory path
+    Completes the partial LDAP path 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' to
+    'LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' with the domain FQDN added as the
+    server address. This is crucial for making remote LDAP queries to specific domain controllers, especially
+    when working in multi-domain environments or when connecting to trusted domains.
     #>
 
     [OutputType([System.String])]
@@ -2203,17 +2205,20 @@ function Add-DomainFqdnToLdapPath {
                         #Write-LogMsg -Text " # Domain FQDN already found in the directory path: '$ThisPath'" -Cache $Cache
                         $ThisPath
 
-                    } else {
+                    }
+                    else {
                         $ThisPath.Replace( 'LDAP://', $DomainLdapPath )
                     }
-                } else {
+                }
+                else {
 
                     #Write-LogMsg -Text " # Domain DN not found in the directory path: '$ThisPath'" -Cache $Cache
                     $ThisPath
 
                 }
 
-            } else {
+            }
+            else {
 
                 #Write-LogMsg -Text " # Not an expected directory path: '$ThisPath'" -Cache $Cache
                 $ThisPath
@@ -2348,6 +2353,17 @@ function ConvertFrom-DirectoryEntry {
     .DESCRIPTION
     Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
     This obfuscates the troublesome PropertyCollection and PropertyValueCollection and Hashtable aspects of working with ADSI
+    .EXAMPLE
+    $DirEntry = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator')
+    ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry
+
+    Converts the DirectoryEntry for the local Administrator account into a PowerShell custom object with simplified
+    property values. This makes it easier to work with the object in PowerShell and avoids the complexity of
+    DirectoryEntry property collections, which can be difficult to access and manipulate directly.
+    .INPUTS
+    [System.DirectoryServices.DirectoryEntry]
+    .OUTPUTS
+    [PSCustomObject]
     #>
 
     param (
@@ -2477,7 +2493,7 @@ function ConvertFrom-ResolvedID {
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
         Write-LogMsg @Log -Text "`$CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference '$SamAccountNameOrSid' -DomainNetBIOS '$DomainNetBIOS' -DomainByNetbios `$Cache.Value['DomainByNetbios']"
-        $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetBIOS']
+        $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
         $DomainDn = $null
 
         $CommonSplat = @{
@@ -2605,6 +2621,10 @@ function ConvertFrom-SidString {
     .EXAMPLE
     ConvertFrom-SidString -SID 'S-1-5-21-3165297888-301567370-576410423-1103' -Cache $Cache
 
+    Attempts to convert a SID string representing a user or group to its corresponding DirectoryEntry object
+    by searching Active Directory using the LDAP provider. This allows you to obtain detailed information
+    about a security principal when you only have its SID string representation.
+
     .INPUTS
     System.String
 
@@ -2677,10 +2697,12 @@ function ConvertTo-DistinguishedName {
     .OUTPUTS
     [System.String] distinguishedName of the domain
     .EXAMPLE
-    ConvertTo-DistinguishedName -Domain 'CONTOSO'
-    DC=ad,DC=contoso,DC=com
+    ConvertTo-DistinguishedName -Domain 'CONTOSO' -Cache $Cache
 
-    Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
+    Resolves the NetBIOS domain name 'CONTOSO' to its distinguished name format 'DC=ad,DC=contoso,DC=com'.
+    This conversion is necessary when constructing LDAP queries that require the domain in distinguished
+    name format, particularly when working with Active Directory objects across different domains or forests.
+    The function utilizes Windows API calls to perform accurate name translation.
     #>
 
     [OutputType([System.String])]
@@ -2772,7 +2794,8 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain NetBIOS cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            } else {
+            }
+            else {
 
                 #Write-LogMsg -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($Cache.Value['DomainByNetbios'].Value.Keys -join ',')"
                 Write-LogMsg -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'" -Cache $Cache
@@ -2785,7 +2808,8 @@ function ConvertTo-DistinguishedName {
                 #    Exception calling "InvokeMember" with "5" argument(s): "The specified domain either does not exist or could not be contacted. (0x8007054B)"
                 try {
                     $null = $IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
-                } catch {
+                }
+                catch {
 
                     Write-LogMsg -Text " #Error: $($_.Exception.Message) # For $ThisDomain" -Cache $Cache
                     continue
@@ -2815,7 +2839,8 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain FQDN cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            } else {
+            }
+            else {
 
                 #Write-LogMsg -Text " # Domain FQDN cache miss for '$ThisDomain'" -Cache $Cache
 
@@ -3066,10 +3091,11 @@ function ConvertTo-Fqdn {
     .OUTPUTS
     [System.String] FQDN version of the distinguishedName
     .EXAMPLE
-    ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com'
-    ad.contoso.com
+    ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com' -Cache $Cache
 
-    Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
+    Converts the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'.
+    This is essential when working with LDAP directory paths that need to be converted to readable domain
+    names or when constructing proper LDAP paths that require the FQDN of the domain for remote connections.
     #>
 
     [OutputType([System.String])]
@@ -3197,9 +3223,10 @@ function ConvertTo-SidByteArray {
     .OUTPUTS
     [System.Byte] SID a a byte array
     .EXAMPLE
-    ConvertTo-SidByteArray -SidString $SID
+    ConvertTo-SidByteArray -SidString 'S-1-5-32-544'
 
-    Convert the SID string to a byte array
+    Converts the SID string for the built-in Administrators group ('S-1-5-32-544') to a byte array
+    representation, which is required when working with directory services that expect SIDs in binary format.
     #>
     [OutputType([System.Byte[]])]
     param (
@@ -3538,14 +3565,19 @@ function Get-AdsiGroup {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] for each group memeber
     .EXAMPLE
-    Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
+    Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators -Cache $Cache
 
-    Get members of the local Administrators group
+    Retrieves the local Administrators group from the specified computer using the WinNT provider,
+    and returns all member accounts as DirectoryEntry objects. This allows for complete analysis
+    of local group memberships including nested groups and domain accounts that have been added to
+    local groups.
+
     .EXAMPLE
-    Get-AdsiGroup -GroupName Administrators
+    Get-AdsiGroup -GroupName Administrators -Cache $Cache
 
-    On a domain-joined computer, this will get members of the domain's Administrators group
-    On a workgroup computer, this will get members of the local Administrators group
+    On a domain-joined computer, retrieves the domain's Administrators group and all of its members.
+    On a workgroup computer, retrieves the local Administrators group and its members. This automatic
+    detection simplifies scripts that need to work in both domain and workgroup environments.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -3620,7 +3652,8 @@ function Get-AdsiGroup {
 
             if ($GroupName) {
                 $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
-            } else {
+            }
+            else {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 
@@ -3648,9 +3681,13 @@ function Get-AdsiGroupMember {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] plus a FullMembers property
     .EXAMPLE
-    [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember
+    [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+    Get-AdsiGroupMember -Cache $Cache
 
-    Get members of the domain Administrators group
+    Retrieves all members of the domain's Administrators group, including both direct members and those
+    who inherit membership through their primary group. The function returns the original group DirectoryEntry
+    object with an added FullMembers property containing all member DirectoryEntry objects. This
+    approach ensures proper resolution of all group memberships regardless of how they are assigned.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -3727,14 +3764,16 @@ function Get-AdsiGroupMember {
 
             if ($PrimaryGroupOnly) {
                 $SearchParams['Filter'] = $primaryGroupIdFilter
-            } else {
+            }
+            else {
 
                 if ($NoRecurse) {
 
                     # Non-recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf=$($ThisGroup.Properties['distinguishedname']))"
 
-                } else {
+                }
+                else {
 
                     # Recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf:1.2.840.113556.1.4.1941:=$($ThisGroup.Properties['distinguishedname']))"
@@ -3753,11 +3792,13 @@ function Get-AdsiGroupMember {
                     $Domain = ([regex]::Matches($ThisGroup.Path, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$Domain" -Cache $Cache
 
-                } else {
+                }
+                else {
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
                 }
 
-            } else {
+            }
+            else {
                 $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
             }
 
@@ -3824,7 +3865,8 @@ function Get-AdsiGroupMember {
 
                 }
 
-            } else {
+            }
+            else {
                 $CurrentADGroupMembers = $null
             }
 
@@ -3850,13 +3892,18 @@ function Get-AdsiServer {
     .OUTPUTS
     [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
     .EXAMPLE
-    Get-AdsiServer -Fqdn localhost
+    Get-AdsiServer -Fqdn localhost -Cache $Cache
 
-    Find the ADSI provider of the local computer
+    Retrieves information about the local computer's directory service, determining whether it uses
+    the LDAP or WinNT provider, and collects information about well-known security identifiers (SIDs).
+    This is essential for consistent identity resolution on the local system when analyzing permissions.
+
     .EXAMPLE
-    Get-AdsiServer -Fqdn 'ad.contoso.com'
+    Get-AdsiServer -Fqdn 'ad.contoso.com' -Cache $Cache
 
-    Find the ADSI provider of the AD domain 'ad.contoso.com'
+    Connects to the domain controller for 'ad.contoso.com', determines it uses the LDAP provider,
+    and retrieves domain-specific information including SIDs, NetBIOS name, and distinguished name.
+    This enables proper identity resolution for domain accounts when working with permissions across systems.
     #>
 
     [OutputType([System.String])]
@@ -4019,7 +4066,8 @@ function Get-AdsiServer {
                 Write-LogMsg @Log -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' -Cache `$Cache"
                 $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -Cache $Cache
 
-            } else {
+            }
+            else {
 
                 Write-LogMsg @Log -Text "Get-ParentDomainDnsName -DomainNetbios '$DomainNetBIOS' -CimSession `$CimSession -Cache `$Cache"
                 $ParentDomainDnsName = Get-ParentDomainDnsName -DomainNetbios $DomainNetBIOS -CimSession $CimSession -Cache $Cache
@@ -4082,9 +4130,12 @@ function Get-CurrentDomain {
     [System.DirectoryServices.DirectoryEntry] The current domain
 
     .EXAMPLE
-    Get-CurrentDomain
+    Get-CurrentDomain -Cache $Cache
 
-    Get the domain of the current computer
+    Retrieves the current domain of the computer running the script as a DirectoryEntry object.
+    On domain-joined systems, this returns the Active Directory domain. On workgroup computers,
+    it returns the local computer as the domain. The function caches the result to improve
+    performance in subsequent operations involving the current domain.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -4108,7 +4159,8 @@ function Get-CurrentDomain {
         Get-AdsiServer -Fqdn $ComputerName -Cache $Cache
         $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$ComputerName]
 
-    } else {
+    }
+    else {
 
         Write-LogMsg -Text "Get-AdsiServer -Fqdn '$($Comp.Domain))' -Cache `$Cache" -Cache $Cache -Suffix " # is either domain-joined or joined to a custom-named workgroup$Suffix"
         Get-AdsiServer -Fqdn $Comp.Domain -Cache $Cache
@@ -6068,9 +6120,12 @@ function Get-TrustedDomain {
     [PSCustomObject] One object per trusted domain, each with a DomainFqdn property and a DomainNetbios property
 
     .EXAMPLE
-    Get-TrustedDomain
+    Get-TrustedDomain -Cache $Cache
 
-    Get the trusted domains of the current computer
+    Retrieves information about all domains trusted by the current domain-joined computer, including each domain's
+    NetBIOS name, DNS name, and distinguished name. This information is essential for cross-domain identity resolution
+    and permission analysis. The function stores the results in the provided cache to improve performance in
+    subsequent operations involving these trusted domains.
     .NOTES
     #>
     [OutputType([PSCustomObject])]
@@ -6128,9 +6183,12 @@ function Get-WinNTGroupMember {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] for each group member
     .EXAMPLE
-    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember -Cache $Cache
 
-    Get members of the local Administrators group
+    Retrieves all members of the local Administrators group and returns them as DirectoryEntry objects.
+    This allows for further processing of group membership information, including nested groups, and provides
+    a consistent object format that works well with other ADSI functions. The Cache parameter ensures efficient
+    operation by avoiding redundant directory queries.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -6220,7 +6278,8 @@ function Get-WinNTGroupMember {
 
                 }
 
-            } else {
+            }
+            else {
                 Write-LogMsg @Log -Text ' # Is not a group'
             }
 
@@ -6249,6 +6308,8 @@ function Invoke-ComObject {
 
     Get the first member of the local Administrators group on the current computer
     Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property
+    This technique is essential when working with ADSI objects that expose properties or methods only through COM interfaces,
+    providing a consistent way to access these properties in PowerShell.
     #>
 
     param (
@@ -6282,9 +6343,11 @@ function Invoke-ComObject {
     #>
     If ($Method) {
         $Invoke = 'InvokeMethod'
-    } ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
+    }
+    ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
         $Invoke = 'SetProperty'
-    } Else {
+    }
+    Else {
         $Invoke = 'GetProperty'
     }
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
@@ -6471,7 +6534,9 @@ function Resolve-IdentityReference {
     .EXAMPLE
     Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')
 
-    Get information about the local Administrator account
+    Resolves the local Administrator account on the BUILTIN domain to its proper SID, NetBIOS name,
+    and DNS name format. This is useful when analyzing permissions to ensure consistency in how identities
+    are represented, especially when comparing permissions across different systems or domains.
     #>
 
     [OutputType([PSCustomObject])]
@@ -6522,7 +6587,8 @@ function Resolve-IdentityReference {
         $Name = $IdentityReference
         $Domain = ''
 
-    } else {
+    }
+    else {
 
         $StartIndex = $LastSlashIndex + 1
         $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
@@ -6572,7 +6638,8 @@ function Resolve-IdentityReference {
 
         if ($TryGetValueResult) {
             #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache hit for '$ServerNetBIOS'" -Cache $Cache
-        } else {
+        }
+        else {
 
             #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache miss for '$ServerNetBIOS'" -Cache $Cache
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -Cache $Cache
@@ -6606,7 +6673,8 @@ function Resolve-IdentityReference {
             $Name = $IdentityReference
             Write-LogMsg -Text " # IdentityReference '$IdentityReference' # No name could be parsed." -Cache $Cache
 
-        } else {
+        }
+        else {
             Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Name parsed is '$Name'." -Cache $Cache
         }
 
@@ -6669,14 +6737,16 @@ function Search-Directory {
     .DESCRIPTION
     Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
     Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
+    Supports filtering, paging, and customizing which properties to return.
+    .EXAMPLE
+    Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache
+
+    Searches the contoso.com domain for all user objects, retrieving results in pages of 1000 objects at a time.
+    This is useful for efficiently retrieving large sets of directory objects without overwhelming memory resources.
     .INPUTS
     None. Pipeline input is not accepted.
     .OUTPUTS
-    [System.DirectoryServices.DirectoryEntry]
-    .EXAMPLE
-    Search-Directory -Filter ''
-
-    As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
+    System.DirectoryServices.SearchResult collection representing the matching directory objects.
     #>
 
     param (
@@ -6690,17 +6760,17 @@ function Search-Directory {
         # Filter for the LDAP search
         [string]$Filter,
 
-        # Number of records per page of results
+        # Number of results to return in each page
         [int]$PageSize = 1000,
+
+        # Search scope (Base, OneLevel, or Subtree)
+        [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
 
         # Additional properties to return
         [string[]]$PropertiesToLoad,
 
         # Credentials to use
         [pscredential]$Credential,
-
-        # Scope of the search
-        [string]$SearchScope = 'subtree',
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
@@ -6763,6 +6833,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

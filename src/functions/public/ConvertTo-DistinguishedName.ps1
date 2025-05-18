@@ -10,10 +10,12 @@ function ConvertTo-DistinguishedName {
     .OUTPUTS
     [System.String] distinguishedName of the domain
     .EXAMPLE
-    ConvertTo-DistinguishedName -Domain 'CONTOSO'
-    DC=ad,DC=contoso,DC=com
+    ConvertTo-DistinguishedName -Domain 'CONTOSO' -Cache $Cache
 
-    Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'
+    Resolves the NetBIOS domain name 'CONTOSO' to its distinguished name format 'DC=ad,DC=contoso,DC=com'.
+    This conversion is necessary when constructing LDAP queries that require the domain in distinguished
+    name format, particularly when working with Active Directory objects across different domains or forests.
+    The function utilizes Windows API calls to perform accurate name translation.
     #>
 
     [OutputType([System.String])]
@@ -105,7 +107,8 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain NetBIOS cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            } else {
+            }
+            else {
 
                 #Write-LogMsg -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($Cache.Value['DomainByNetbios'].Value.Keys -join ',')"
                 Write-LogMsg -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'" -Cache $Cache
@@ -118,7 +121,8 @@ function ConvertTo-DistinguishedName {
                 #    Exception calling "InvokeMember" with "5" argument(s): "The specified domain either does not exist or could not be contacted. (0x8007054B)"
                 try {
                     $null = $IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
-                } catch {
+                }
+                catch {
 
                     Write-LogMsg -Text " #Error: $($_.Exception.Message) # For $ThisDomain" -Cache $Cache
                     continue
@@ -148,7 +152,8 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain FQDN cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            } else {
+            }
+            else {
 
                 #Write-LogMsg -Text " # Domain FQDN cache miss for '$ThisDomain'" -Cache $Cache
 

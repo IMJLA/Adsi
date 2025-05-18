@@ -23,12 +23,16 @@ This obfuscates the troublesome PropertyCollection and PropertyValueCollection a
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+$DirEntry = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator')
+ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry
 ```
 
-{{ Add example description here }}
+Converts the DirectoryEntry for the local Administrator account into a PowerShell custom object with simplified
+property values.
+This makes it easier to work with the object in PowerShell and avoids the complexity of
+DirectoryEntry property collections, which can be difficult to access and manipulate directly.
 
 ## PARAMETERS
 
@@ -67,8 +71,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### [System.DirectoryServices.DirectoryEntry]
 ## OUTPUTS
 
+### [PSCustomObject]
 ## NOTES
 
 ## RELATED LINKS

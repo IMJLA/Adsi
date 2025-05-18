@@ -6,14 +6,16 @@ function Search-Directory {
     .DESCRIPTION
     Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
     Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class
+    Supports filtering, paging, and customizing which properties to return.
+    .EXAMPLE
+    Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache
+
+    Searches the contoso.com domain for all user objects, retrieving results in pages of 1000 objects at a time.
+    This is useful for efficiently retrieving large sets of directory objects without overwhelming memory resources.
     .INPUTS
     None. Pipeline input is not accepted.
     .OUTPUTS
-    [System.DirectoryServices.DirectoryEntry]
-    .EXAMPLE
-    Search-Directory -Filter ''
-
-    As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
+    System.DirectoryServices.SearchResult collection representing the matching directory objects.
     #>
 
     param (
@@ -27,17 +29,17 @@ function Search-Directory {
         # Filter for the LDAP search
         [string]$Filter,
 
-        # Number of records per page of results
+        # Number of results to return in each page
         [int]$PageSize = 1000,
+
+        # Search scope (Base, OneLevel, or Subtree)
+        [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
 
         # Additional properties to return
         [string[]]$PropertiesToLoad,
 
         # Credentials to use
         [pscredential]$Credential,
-
-        # Scope of the search
-        [string]$SearchScope = 'subtree',
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]

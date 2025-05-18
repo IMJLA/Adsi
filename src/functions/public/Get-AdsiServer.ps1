@@ -11,13 +11,18 @@ function Get-AdsiServer {
     .OUTPUTS
     [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
     .EXAMPLE
-    Get-AdsiServer -Fqdn localhost
+    Get-AdsiServer -Fqdn localhost -Cache $Cache
 
-    Find the ADSI provider of the local computer
+    Retrieves information about the local computer's directory service, determining whether it uses
+    the LDAP or WinNT provider, and collects information about well-known security identifiers (SIDs).
+    This is essential for consistent identity resolution on the local system when analyzing permissions.
+
     .EXAMPLE
-    Get-AdsiServer -Fqdn 'ad.contoso.com'
+    Get-AdsiServer -Fqdn 'ad.contoso.com' -Cache $Cache
 
-    Find the ADSI provider of the AD domain 'ad.contoso.com'
+    Connects to the domain controller for 'ad.contoso.com', determines it uses the LDAP provider,
+    and retrieves domain-specific information including SIDs, NetBIOS name, and distinguished name.
+    This enables proper identity resolution for domain accounts when working with permissions across systems.
     #>
 
     [OutputType([System.String])]
@@ -180,7 +185,8 @@ function Get-AdsiServer {
                 Write-LogMsg @Log -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' -Cache `$Cache"
                 $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -Cache $Cache
 
-            } else {
+            }
+            else {
 
                 Write-LogMsg @Log -Text "Get-ParentDomainDnsName -DomainNetbios '$DomainNetBIOS' -CimSession `$CimSession -Cache `$Cache"
                 $ParentDomainDnsName = Get-ParentDomainDnsName -DomainNetbios $DomainNetBIOS -CimSession $CimSession -Cache $Cache

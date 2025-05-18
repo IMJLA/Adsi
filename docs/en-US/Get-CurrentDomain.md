@@ -23,10 +23,15 @@ Works only on domain-joined systems, otherwise returns nothing
 
 ### EXAMPLE 1
 ```
-Get-CurrentDomain
+Get-CurrentDomain -Cache $Cache
 ```
 
-Get the domain of the current computer
+Retrieves the current domain of the computer running the script as a DirectoryEntry object.
+On domain-joined systems, this returns the Active Directory domain.
+On workgroup computers,
+it returns the local computer as the domain.
+The function caches the result to improve
+performance in subsequent operations involving the current domain.
 
 ## PARAMETERS
 

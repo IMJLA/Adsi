@@ -11,9 +11,13 @@ function Get-AdsiGroupMember {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] plus a FullMembers property
     .EXAMPLE
-    [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember
+    [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+    Get-AdsiGroupMember -Cache $Cache
 
-    Get members of the domain Administrators group
+    Retrieves all members of the domain's Administrators group, including both direct members and those
+    who inherit membership through their primary group. The function returns the original group DirectoryEntry
+    object with an added FullMembers property containing all member DirectoryEntry objects. This
+    approach ensures proper resolution of all group memberships regardless of how they are assigned.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -90,14 +94,16 @@ function Get-AdsiGroupMember {
 
             if ($PrimaryGroupOnly) {
                 $SearchParams['Filter'] = $primaryGroupIdFilter
-            } else {
+            }
+            else {
 
                 if ($NoRecurse) {
 
                     # Non-recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf=$($ThisGroup.Properties['distinguishedname']))"
 
-                } else {
+                }
+                else {
 
                     # Recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf:1.2.840.113556.1.4.1941:=$($ThisGroup.Properties['distinguishedname']))"
@@ -116,11 +122,13 @@ function Get-AdsiGroupMember {
                     $Domain = ([regex]::Matches($ThisGroup.Path, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$Domain" -Cache $Cache
 
-                } else {
+                }
+                else {
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
                 }
 
-            } else {
+            }
+            else {
                 $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
             }
 
@@ -187,7 +195,8 @@ function Get-AdsiGroupMember {
 
                 }
 
-            } else {
+            }
+            else {
                 $CurrentADGroupMembers = $null
             }
 

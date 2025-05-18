@@ -27,10 +27,15 @@ For each trusted domain the value contains the details retrieved with ADSI
 
 ### EXAMPLE 1
 ```
-Get-TrustedDomain
+Get-TrustedDomain -Cache $Cache
 ```
 
-Get the trusted domains of the current computer
+Retrieves information about all domains trusted by the current domain-joined computer, including each domain's
+NetBIOS name, DNS name, and distinguished name.
+This information is essential for cross-domain identity resolution
+and permission analysis.
+The function stores the results in the provided cache to improve performance in
+subsequent operations involving these trusted domains.
 
 ## PARAMETERS
 

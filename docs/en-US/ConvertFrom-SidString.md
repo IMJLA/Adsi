@@ -30,6 +30,11 @@ by the Export-Permission module.
 ConvertFrom-SidString -SID 'S-1-5-21-3165297888-301567370-576410423-1103' -Cache $Cache
 ```
 
+Attempts to convert a SID string representing a user or group to its corresponding DirectoryEntry object
+by searching Active Directory using the LDAP provider.
+This allows you to obtain detailed information
+about a security principal when you only have its SID string representation.
+
 ## PARAMETERS
 
 ### -Cache

@@ -11,9 +11,12 @@ function Get-CurrentDomain {
     [System.DirectoryServices.DirectoryEntry] The current domain
 
     .EXAMPLE
-    Get-CurrentDomain
+    Get-CurrentDomain -Cache $Cache
 
-    Get the domain of the current computer
+    Retrieves the current domain of the computer running the script as a DirectoryEntry object.
+    On domain-joined systems, this returns the Active Directory domain. On workgroup computers,
+    it returns the local computer as the domain. The function caches the result to improve
+    performance in subsequent operations involving the current domain.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -37,7 +40,8 @@ function Get-CurrentDomain {
         Get-AdsiServer -Fqdn $ComputerName -Cache $Cache
         $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$ComputerName]
 
-    } else {
+    }
+    else {
 
         Write-LogMsg -Text "Get-AdsiServer -Fqdn '$($Comp.Domain))' -Cache `$Cache" -Cache $Cache -Suffix " # is either domain-joined or joined to a custom-named workgroup$Suffix"
         Get-AdsiServer -Fqdn $Comp.Domain -Cache $Cache

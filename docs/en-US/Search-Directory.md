@@ -14,22 +14,24 @@ Use Active Directory Service Interfaces to search an LDAP directory
 
 ```
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
- [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>] [[-SearchScope] <String>]
+ [[-SearchScope] <SearchScope>] [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>]
  [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
 Provides a wrapper around the \[System.DirectoryServices.DirectorySearcher\] class
+Supports filtering, paging, and customizing which properties to return.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Search-Directory -Filter ''
+Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache
 ```
 
-As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
+Searches the contoso.com domain for all user objects, retrieving results in pages of 1000 objects at a time.
+This is useful for efficiently retrieving large sets of directory objects without overwhelming memory resources.
 
 ## PARAMETERS
 
@@ -57,7 +59,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -95,7 +97,7 @@ Accept wildcard characters: False
 ```
 
 ### -PageSize
-Number of records per page of results
+Number of results to return in each page
 
 ```yaml
 Type: System.Int32
@@ -133,22 +135,23 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -SearchScope
-Scope of the search
+Search scope (Base, OneLevel, or Subtree)
 
 ```yaml
-Type: System.String
+Type: System.DirectoryServices.SearchScope
 Parameter Sets: (All)
 Aliases:
+Accepted values: Base, OneLevel, Subtree
 
 Required: False
-Position: 6
+Position: 4
 Default value: Subtree
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -162,7 +165,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### [System.DirectoryServices.DirectoryEntry]
+### System.DirectoryServices.SearchResult collection representing the matching directory objects.
 ## NOTES
 
 ## RELATED LINKS

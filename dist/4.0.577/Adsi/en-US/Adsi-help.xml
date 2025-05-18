@@ -119,10 +119,9 @@
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com'
-LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
+        <dev:code>Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Add the domain FQDN to a single LDAP directory path</maml:para>
+          <maml:para>Completes the partial LDAP path 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' to 'LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' with the domain FQDN added as the server address. This is crucial for making remote LDAP queries to specific domain controllers, especially when working in multi-domain environments or when connecting to trusted domains.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -324,8 +323,26 @@ Path : WinNT://localhost/Administrator</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
-    <command:returnValues />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>[System.DirectoryServices.DirectoryEntry]</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>[PSCustomObject]</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -333,10 +350,11 @@ Path : WinNT://localhost/Administrator</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$DirEntry = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator')
+ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Converts the DirectoryEntry for the local Administrator account into a PowerShell custom object with simplified property values. This makes it easier to work with the object in PowerShell and avoids the complexity of DirectoryEntry property collections, which can be difficult to access and manipulate directly.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -949,7 +967,7 @@ ForEach-Object {
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>ConvertFrom-SidString -SID 'S-1-5-21-3165297888-301567370-576410423-1103' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Attempts to convert a SID string representing a user or group to its corresponding DirectoryEntry object by searching Active Directory using the LDAP provider. This allows you to obtain detailed information about a security principal when you only have its SID string representation.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1354,10 +1372,9 @@ ForEach-Object {
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>ConvertTo-DistinguishedName -Domain 'CONTOSO'
-DC=ad,DC=contoso,DC=com</dev:code>
+        <dev:code>ConvertTo-DistinguishedName -Domain 'CONTOSO' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Resolve the NetBIOS domain 'CONTOSO' to its distinguishedName 'DC=ad,DC=contoso,DC=com'</maml:para>
+          <maml:para>Resolves the NetBIOS domain name 'CONTOSO' to its distinguished name format 'DC=ad,DC=contoso,DC=com'. This conversion is necessary when constructing LDAP queries that require the domain in distinguished name format, particularly when working with Active Directory objects across different domains or forests. The function utilizes Windows API calls to perform accurate name translation.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1853,10 +1870,9 @@ DC=ad,DC=contoso,DC=com</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com'
-ad.contoso.com</dev:code>
+        <dev:code>ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'</maml:para>
+          <maml:para>Converts the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'. This is essential when working with LDAP directory paths that need to be converted to readable domain names or when constructing proper LDAP paths that require the FQDN of the domain for remote connections.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2115,9 +2131,9 @@ ad.contoso.com</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>ConvertTo-SidByteArray -SidString $SID</dev:code>
+        <dev:code>ConvertTo-SidByteArray -SidString 'S-1-5-32-544'</dev:code>
         <dev:remarks>
-          <maml:para>Convert the SID string to a byte array</maml:para>
+          <maml:para>Converts the SID string for the built-in Administrators group ('S-1-5-32-544') to a byte array representation, which is required when working with directory services that expect SIDs in binary format.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2721,16 +2737,16 @@ Expand-AdsiGroupMember -Cache $Cache</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators</dev:code>
+        <dev:code>Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Get members of the local Administrators group</maml:para>
+          <maml:para>Retrieves the local Administrators group from the specified computer using the WinNT provider, and returns all member accounts as DirectoryEntry objects. This allows for complete analysis of local group memberships including nested groups and domain accounts that have been added to local groups.</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>Get-AdsiGroup -GroupName Administrators</dev:code>
+        <dev:code>Get-AdsiGroup -GroupName Administrators -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>On a domain-joined computer, this will get members of the domain's Administrators group On a workgroup computer, this will get members of the local Administrators group</maml:para>
+          <maml:para>On a domain-joined computer, retrieves the domain's Administrators group and all of its members. On a workgroup computer, retrieves the local Administrators group and its members. This automatic detection simplifies scripts that need to work in both domain and workgroup environments.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2929,9 +2945,10 @@ Expand-AdsiGroupMember -Cache $Cache</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember</dev:code>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+Get-AdsiGroupMember -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Get members of the domain Administrators group</maml:para>
+          <maml:para>Retrieves all members of the domain's Administrators group, including both direct members and those who inherit membership through their primary group. The function returns the original group DirectoryEntry object with an added FullMembers property containing all member DirectoryEntry objects. This approach ensures proper resolution of all group memberships regardless of how they are assigned.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3103,16 +3120,16 @@ Expand-AdsiGroupMember -Cache $Cache</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-AdsiServer -Fqdn localhost</dev:code>
+        <dev:code>Get-AdsiServer -Fqdn localhost -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Find the ADSI provider of the local computer</maml:para>
+          <maml:para>Retrieves information about the local computer's directory service, determining whether it uses the LDAP or WinNT provider, and collects information about well-known security identifiers (SIDs). This is essential for consistent identity resolution on the local system when analyzing permissions.</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
-        <dev:code>Get-AdsiServer -Fqdn 'ad.contoso.com'</dev:code>
+        <dev:code>Get-AdsiServer -Fqdn 'ad.contoso.com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Find the ADSI provider of the AD domain 'ad.contoso.com'</maml:para>
+          <maml:para>Connects to the domain controller for 'ad.contoso.com', determines it uses the LDAP provider, and retrieves domain-specific information including SIDs, NetBIOS name, and distinguished name. This enables proper identity resolution for domain accounts when working with permissions across systems.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3213,9 +3230,9 @@ Expand-AdsiGroupMember -Cache $Cache</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-CurrentDomain</dev:code>
+        <dev:code>Get-CurrentDomain -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Get the domain of the current computer</maml:para>
+          <maml:para>Retrieves the current domain of the computer running the script as a DirectoryEntry object. On domain-joined systems, this returns the Active Directory domain. On workgroup computers, it returns the local computer as the domain. The function caches the result to improve performance in subsequent operations involving the current domain.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3967,9 +3984,9 @@ Path : WinNT://ComputerName</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Get-TrustedDomain</dev:code>
+        <dev:code>Get-TrustedDomain -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Get the trusted domains of the current computer</maml:para>
+          <maml:para>Retrieves information about all domains trusted by the current domain-joined computer, including each domain's NetBIOS name, DNS name, and distinguished name. This information is essential for cross-domain identity resolution and permission analysis. The function stores the results in the provided cache to improve performance in subsequent operations involving these trusted domains.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -4123,9 +4140,9 @@ Path : WinNT://ComputerName</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember</dev:code>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Get members of the local Administrators group</maml:para>
+          <maml:para>Retrieves all members of the local Administrators group and returns them as DirectoryEntry objects. This allows for further processing of group membership information, including nested groups, and provides a consistent object format that works well with other ADSI functions. The Cache parameter ensures efficient operation by avoiding redundant directory queries.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -4305,7 +4322,7 @@ Path : WinNT://ComputerName</dev:code>
         <dev:code>$ComObject = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators').Invoke('Members') | Select -First 1
 Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <dev:remarks>
-          <maml:para>Get the first member of the local Administrators group on the current computer Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property</maml:para>
+          <maml:para>Get the first member of the local Administrators group on the current computer Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property This technique is essential when working with ADSI objects that expose properties or methods only through COM interfaces, providing a consistent way to access these properties in PowerShell.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -4769,7 +4786,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')</dev:code>
         <dev:remarks>
-          <maml:para>Get information about the local Administrator account</maml:para>
+          <maml:para>Resolves the local Administrator account on the BUILTIN domain to its proper SID, NetBIOS name, and DNS name format. This is useful when analyzing permissions to ensure consistency in how identities are represented, especially when comparing permissions across different systems or domains.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -4880,7 +4897,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching) Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class</maml:para>
+      <maml:para>Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching) Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class Supports filtering, paging, and customizing which properties to return.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4912,7 +4929,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>PageSize</maml:name>
           <maml:description>
-            <maml:para>Number of records per page of results</maml:para>
+            <maml:para>Number of results to return in each page</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Int32</command:parameterValue>
           <dev:type>
@@ -4922,6 +4939,23 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           <dev:defaultValue>1000</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>SearchScope</maml:name>
+          <maml:description>
+            <maml:para>Search scope (Base, OneLevel, or Subtree)</maml:para>
+          </maml:description>
+          <command:parameterValueGroup>
+            <command:parameterValue required="false" command:variableLength="false">Base</command:parameterValue>
+            <command:parameterValue required="false" command:variableLength="false">OneLevel</command:parameterValue>
+            <command:parameterValue required="false" command:variableLength="false">Subtree</command:parameterValue>
+          </command:parameterValueGroup>
+          <command:parameterValue required="true" variableLength="false">System.DirectoryServices.SearchScope</command:parameterValue>
+          <dev:type>
+            <maml:name>System.DirectoryServices.SearchScope</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>Subtree</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
             <maml:para>Additional properties to return</maml:para>
@@ -4933,7 +4967,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>Credential</maml:name>
           <maml:description>
             <maml:para>Credentials to use</maml:para>
@@ -4944,18 +4978,6 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-          <maml:name>SearchScope</maml:name>
-          <maml:description>
-            <maml:para>Scope of the search</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>Subtree</dev:defaultValue>
         </command:parameter>
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>Cache</maml:name>
@@ -4996,7 +5018,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>Credential</maml:name>
         <maml:description>
           <maml:para>Credentials to use</maml:para>
@@ -5035,7 +5057,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PageSize</maml:name>
         <maml:description>
-          <maml:para>Number of records per page of results</maml:para>
+          <maml:para>Number of results to return in each page</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Int32</command:parameterValue>
         <dev:type>
@@ -5056,7 +5078,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
           <maml:para>Additional properties to return</maml:para>
@@ -5068,14 +5090,14 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>SearchScope</maml:name>
         <maml:description>
-          <maml:para>Scope of the search</maml:para>
+          <maml:para>Search scope (Base, OneLevel, or Subtree)</maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">System.DirectoryServices.SearchScope</command:parameterValue>
         <dev:type>
-          <maml:name>System.String</maml:name>
+          <maml:name>System.DirectoryServices.SearchScope</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>Subtree</dev:defaultValue>
@@ -5094,7 +5116,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>[System.DirectoryServices.DirectoryEntry]</maml:name>
+          <maml:name>System.DirectoryServices.SearchResult collection representing the matching directory objects.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -5109,9 +5131,9 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>Search-Directory -Filter ''</dev:code>
+        <dev:code>Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter</maml:para>
+          <maml:para>Searches the contoso.com domain for all user objects, retrieving results in pages of 1000 objects at a time. This is useful for efficiently retrieving large sets of directory objects without overwhelming memory resources.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
