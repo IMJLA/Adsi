@@ -364,11 +364,17 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
         $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
         $ThisFunctionHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$fileNameWithoutExtension.md")
-        $ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
+        Write-Host "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
+        [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
+        Write-Host "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '"
+        Write-Host "`t`$ThisFunctionHelp -replace '{ ;', '{ '"
+        Write-Host "`t`$ThisFunctionHelp -replace '[ ]{2,}', ' '"
+        Write-Host "`t`$ThisFunctionHelp -replace '\r?\n\s\}', ' }'"
         $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
+        Write-Host "`tSet-Content -LiteralPath '$ThisFunctionHelpFile' -Value `$ThisFunctionHelp"
         Set-Content -LiteralPath $ThisFunctionHelpFile -Value $ThisFunctionHelp
     }
 
