@@ -24,23 +24,6 @@ Properties {
 
     $IncrementMinorVersion = $false
 
-    $ManifestTest = Test-ModuleManifest -Path $ModuleManifest
-
-    $CurrentVersion = $ManifestTest.Version
-    "`tOld Version: $CurrentVersion"
-    if ($IncrementMajorVersion) {
-        "`tThis is a new major version"
-        $NewModuleVersion = "$($CurrentVersion.Major + 1).0.0"
-    }
-    elseif ($IncrementMinorVersion) {
-        "`tThis is a new minor version"
-        $NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor + 1).0"
-    }
-    else {
-        "`tThis is a new build"
-        $NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
-    }
-
     # Discover public function files so their help files can be fixed (multi-line default parameter values)
     $publicFunctionPath = [IO.Path]::Combine($SourceCodeDir, 'functions', 'public', '*.ps1')
     $PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
@@ -59,9 +42,6 @@ Properties {
 
     # Output directory when building a module
     $DistDir = [IO.Path]::Combine('.', 'dist')
-
-    $BuildOutputDir = [IO.Path]::Combine($DistDir, $NewModuleVersion, $ModuleName)
-    $env:BHBuildOutput = $BuildOutputDir # still used by Module.tests.ps1
 
     # Default Locale used for help generation, defaults to en-US
     # Get-UICulture doesn't return a name on Linux so default to en-US
@@ -141,12 +121,35 @@ FormatTaskName {
 
 Task Default -depends ReturnToStartingLocation
 
-#Task Init -FromModule PowerShellBuild -minimumVersion 0.6.1
+Task DetermineNewModuleVersion -action {
 
-Task UpdateModuleVersion -action {
+    Write-Host "`tTest-ModuleManifest -Path '$ModuleManifest'"
+    $ManifestTest = Test-ModuleManifest -Path $ModuleManifest
 
-    "`tUpdate-Metadata -Path '$ModuleManifest' -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop"
-    Update-Metadata -Path $ModuleManifest -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop
+    $CurrentVersion = $ManifestTest.Version
+    Write-Host "`t# Old Version: $CurrentVersion"
+    if ($IncrementMajorVersion) {
+        Write-Host "`t# This is a new major version"
+        $script:NewModuleVersion = "$($CurrentVersion.Major + 1).0.0"
+    }
+    elseif ($IncrementMinorVersion) {
+        Write-Host "`t# This is a new minor version"
+        $script:NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor + 1).0"
+    }
+    else {
+        Write-Host "`t# This is a new build"
+        $script:NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
+    }
+
+    $script:BuildOutputDir = [IO.Path]::Combine($DistDir, $script:NewModuleVersion, $ModuleName)
+    $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
+
+}
+
+Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
+
+    "`tUpdate-Metadata -Path '$ModuleManifest' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
+    Update-Metadata -Path $ModuleManifest -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
 
 } -description 'Increment the module version and update the module manifest accordingly'
 
@@ -175,8 +178,8 @@ Task UpdateChangeLog -depends RotateBuilds -action {
             New/removed files
     #>
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
-    $NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifest).ModuleVersion
-    $NewChanges = "## [$NewModuleVersion] - $(Get-Date -Format 'yyyy-MM-dd') - $CommitMessage$NewLine"
+    $script:NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifest).ModuleVersion
+    $NewChanges = "## [$script:NewModuleVersion] - $(Get-Date -Format 'yyyy-MM-dd') - $CommitMessage$NewLine"
     Write-Host "`tChange Log:  $ChangeLog"
     Write-Host "`tNew Changes: $($NewChanges.Trim())"
     [string[]]$ChangeLogContents = Get-Content -Path $ChangeLog
@@ -217,8 +220,8 @@ Task ExportPublicFunctions -depends UpdateChangeLog -action {
 
 Task CleanOutputDir -depends ExportPublicFunctions -action {
 
-    Write-Host "`tClear-PSBuildOutputFolder -Path '$BuildOutputDir'"
-    Clear-PSBuildOutputFolder -Path $BuildOutputDir
+    Write-Host "`tClear-PSBuildOutputFolder -Path '$script:BuildOutputDir'"
+    Clear-PSBuildOutputFolder -Path $script:BuildOutputDir
 
 } -description 'Clears module output directory'
 
@@ -226,7 +229,7 @@ Task BuildModule -depends CleanOutputDir {
     $buildParams = @{
         Path               = $SourceCodeDir
         ModuleName         = $ModuleName
-        DestinationPath    = $BuildOutputDir
+        DestinationPath    = $script:BuildOutputDir
         Exclude            = $BuildExclude
         Compile            = $BuildCompileModule
         CompileDirectories = $BuildCompileDirectories
@@ -249,11 +252,11 @@ Task BuildModule -depends CleanOutputDir {
         }
     }
 
-    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
+    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
     Build-PSBuildModule @buildParams
 
     # Remove the psdependRequirements.psd1 file if it exists
-    $RequirementsFile = [IO.Path]::Combine($BuildOutputDir, 'psdependRequirements.psd1')
+    $RequirementsFile = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
     Write-Host "`tRemove-Item -Path '$RequirementsFile'"
     Remove-Item -Path $RequirementsFile -ErrorAction SilentlyContinue
 
@@ -275,7 +278,7 @@ Task DeleteMarkdownHelp -depends BuildModule -precondition $genMarkdownPreReqs -
 } -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
 
 Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
-    $ManifestPath = [IO.Path]::Combine($BuildOutputDir, "$ModuleName.psd1")
+    $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
     if ($moduleInfo.ExportedCommands.Count -eq 0) {
@@ -315,7 +318,7 @@ Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
 } -description 'Generate markdown files from the module help'
 
 Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
-    $ManifestPath = [IO.Path]::Combine($BuildOutputDir, "$ModuleName.psd1")
+    $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
 
@@ -402,8 +405,8 @@ $genHelpFilesPreReqs = {
 }
 
 Task BuildMAMLHelp -depends FixMarkdownHelp -precondition $genHelpFilesPreReqs -action {
-    Write-Host "`tBuild-PSBuildMAMLHelp -Path '$DocsRootDir' -DestinationPath '$BuildOutputDir'"
-    Build-PSBuildMAMLHelp -Path $DocsRootDir -DestinationPath $BuildOutputDir
+    Write-Host "`tBuild-PSBuildMAMLHelp -Path '$DocsRootDir' -DestinationPath '$script:BuildOutputDir'"
+    Build-PSBuildMAMLHelp -Path $DocsRootDir -DestinationPath $script:BuildOutputDir
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 
 $genUpdatableHelpPreReqs = {
@@ -442,7 +445,7 @@ Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $genUpdatableHelpPr
     # file in the metadata.
     foreach ($locale in $helpLocales) {
         $cabParams = @{
-            CabFilesFolder  = [IO.Path]::Combine($BuildOutputDir, $locale)
+            CabFilesFolder  = [IO.Path]::Combine($script:BuildOutputDir, $locale)
             LandingPagePath = [IO.Path]::Combine($DocsRootDir, $locale, "$ModuleName.md")
             OutputFolder    = $HelpUpdatableHelpOutDir
         }
@@ -467,7 +470,7 @@ $analyzePreReqs = {
 
 Task Lint -depends BuildUpdatableHelp -precondition $analyzePreReqs -action {
     $analyzeParams = @{
-        Path              = $BuildOutputDir
+        Path              = $script:BuildOutputDir
         SeverityThreshold = $TestLintFailBuildOnSeverityLevel
         SettingsPath      = $TestLintSettingsPath
     }
@@ -559,7 +562,7 @@ Task Publish -depends SourceControl -action {
     Assert -conditionToCheck ($PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
 
     $publishParams = @{
-        Path       = $BuildOutputDir
+        Path       = $script:BuildOutputDir
         Repository = $PublishPSRepository
         Verbose    = $VerbosePreference
     }
@@ -574,7 +577,7 @@ Task Publish -depends SourceControl -action {
     # Only publish a release if we are working on the main branch
     $CurrentBranch = git branch --show-current
     if ($NoPublish -ne $true -and $CurrentBranch -eq 'main') {
-        Write-Host "`tPublish-Module -Path '$BuildOutputDir' -Repository 'PSGallery'"
+        Write-Host "`tPublish-Module -Path '$script:BuildOutputDir' -Repository 'PSGallery'"
         # Publish to PSGallery
         Publish-Module @publishParams
     }
@@ -591,12 +594,12 @@ Task AwaitRepoUpdate -depends Publish -action {
         $timer++
         $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
-        $VersionInGallery.Version -lt $NewModuleVersion -and
+        $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
     )
 
     if ($timer -eq $timeout) {
-        Write-Warning "Cannot retrieve version '$NewModuleVersion' of module '$ModuleName' from repo '$PublishPSRepository'"
+        Write-Warning "Cannot retrieve version '$script:NewModuleVersion' of module '$ModuleName' from repo '$PublishPSRepository'"
     }
 } -description 'Await the new version in the defined PowerShell repository'
 
