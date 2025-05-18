@@ -5,10 +5,38 @@ BuildHelpers\Set-BuildEnvironment -Force
 
 Properties {
 
+    $ModuleManifestDir = [IO.Path]::Combine('..', '*.psd1')
+
+    $ModuleManifest = Get-ChildItem -Path $ModuleManifestDir
+
+    $ModuleFilePath = [IO.Path]::Combine('.', 'src', "$ModuleName.psm1")
+
+    $ModuleName = [IO.Path]::GetFileNameWithoutExtension($ModuleManifest)
+
     # Version of the module manifest in the src directory before the build is run and the version is updated
-    $SourceModuleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
+    $SourceModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifest).ModuleVersion
 
     $IncrementMajorVersion = $false
+
+    $IncrementMinorVersion = $false
+
+    $ManifestTest = Test-ModuleManifest -Path $ModuleManifest
+
+    $CurrentVersion = $ManifestTest.Version
+    "`tOld Version: $CurrentVersion"
+    if ($IncrementMajorVersion) {
+        "`tThis is a new major version"
+        $NewModuleVersion = "$($CurrentVersion.Major + 1).0.0"
+    }
+    elseif ($IncrementMinorVersion) {
+        "`tThis is a new minor version"
+        $NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor + 1).0"
+    }
+    else {
+        "`tThis is a new build"
+        $NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
+    }
+
 
     # Controls whether to "compile" module into single PSM1 or not
     $BuildCompileModule = $true
@@ -20,10 +48,12 @@ Properties {
     $BuildCopyDirectories = @('../bin', '../config', '../data', '../lib')
 
     # List of files (regular expressions) to exclude from output directory
-    $BuildExclude = @('gitkeep', "$env:BHProjectName.psm1")
+    $BuildExclude = @('gitkeep', "$ModuleName.psm1")
 
     # Output directory when building a module
-    $BuildOutDir = [IO.Path]::Combine($env:BHProjectPath, 'dist')
+    $DistDir = [IO.Path]::Combine('.', 'dist')
+
+    $BuildOutputDir = [IO.Path]::Combine($DistDir, $NewModuleVersion, $ModuleName)
 
     # Default Locale used for help generation, defaults to en-US
     # Get-UICulture doesn't return a name on Linux so default to en-US
@@ -33,9 +63,9 @@ Properties {
     $HelpConvertReadMeToAboutHelp = $true
 
     # Directory PlatyPS markdown documentation will be saved to
-    $DocsRootDir = [IO.Path]::Combine($env:BHProjectPath, 'docs')
+    $DocsRootDir = [IO.Path]::Combine('.', 'docs')
 
-    $TestRootDir = [IO.Path]::Combine($env:BHProjectPath, 'tests')
+    $TestRootDir = [IO.Path]::Combine('.', 'tests')
     $TestOutputFile = [IO.Path]::Combine('out', 'testResults.xml')
 
     # Path to updatable help CAB
@@ -113,48 +143,18 @@ Task InitializeEnvironmentVariables {
 } -description 'Initialize the environment variables from the BuildHelpers module'
 
 Task UpdateModuleVersion -depends InitializeEnvironmentVariables -action {
-    $CurrentVersion = (Test-ModuleManifest $env:BHPSModuleManifest).Version
-    "`tOld Version: $CurrentVersion"
-    if ($IncrementMajorVersion) {
-        "`tThis is a new major version"
-        $NewModuleVersion = "$($CurrentVersion.Major + 1).0.0"
-    }
-    elseif ($IncrementMinorVersion) {
-        "`tThis is a new minor version"
-        $NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor + 1).0"
-    }
-    else {
-        "`tThis is a new build"
-        $NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
-    }
 
-    "`tUpdate-Metadata -Path '$env:BHPSModuleManifest' -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop"
-    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop
+    "`tUpdate-Metadata -Path '$ModuleManifest' -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop"
+    Update-Metadata -Path $ModuleManifest -PropertyName ModuleVersion -Value $NewModuleVersion -ErrorAction Stop
 
 } -description 'Increment the module version and update the module manifest accordingly'
 
 Task InitializePowershellBuild -depends UpdateModuleVersion {
 
-    $NewModuleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
-
-    if ([IO.Path]::IsPathFullyQualified($BuildOutDir)) {
-        $env:BHBuildOutput = [IO.Path]::Combine(
-            $BuildOutDir,
-            $NewModuleVersion,
-            $env:BHProjectName
-        )
-    }
-    else {
-        $env:BHBuildOutput = [IO.Path]::Combine(
-            $env:BHProjectPath,
-            $BuildOutDir,
-            $NewModuleVersion,
-            $env:BHProjectName
-        )
-    }
+    $NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifest).ModuleVersion
 
     Write-Host "`tBuildHelpers environment variables:" -ForegroundColor Yellow
-    (Get-Item ENV:BH*).Foreach({
+        (Get-Item ENV:BH*).Foreach({
             "`t{0,-20}{1}" -f $_.name, $_.value
         })
     $NewLine
@@ -170,7 +170,7 @@ Task InitializePowershellBuild -depends UpdateModuleVersion {
 
 Task RotateBuilds -depends InitializePowershellBuild {
     $BuildVersionsToRetain = 1
-    Get-ChildItem -Directory -Path $BuildOutDir |
+    Get-ChildItem -Directory -Path $DistDir |
     Sort-Object -Property Name |
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
     ForEach-Object {
@@ -182,15 +182,15 @@ Task RotateBuilds -depends InitializePowershellBuild {
 
 Task UpdateChangeLog -depends RotateBuilds -action {
     <#
-TODO
-    This task runs before the Test task so that tests of the change log will pass
-    But I also need one that runs *after* the build to compare it against the previous build
-    The post-build UpdateChangeLog will automatically add to the change log any:
-        New/removed exported commands
-        New/removed files
-#>
-    $ChangeLog = [IO.Path]::Combine($env:BHProjectPath, 'CHANGELOG.md')
-    $NewModuleVersion = (Import-PowerShellDataFile -Path $env:BHPSModuleManifest).ModuleVersion
+    TODO
+        This task runs before the Test task so that tests of the change log will pass
+        But I also need one that runs *after* the build to compare it against the previous build
+        The post-build UpdateChangeLog will automatically add to the change log any:
+            New/removed exported commands
+            New/removed files
+    #>
+    $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
+    $NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifest).ModuleVersion
     $NewChanges = "## [$NewModuleVersion] - $(Get-Date -Format 'yyyy-MM-dd') - $CommitMessage$NewLine"
     "`tChange Log:  $ChangeLog"
     "`tNew Changes: $NewChanges"
@@ -212,14 +212,13 @@ Task ExportPublicFunctions -depends UpdateChangeLog -action {
     $publicFunctionPath = [IO.Path]::Combine($env:BHPSModulePath, '*.ps1')
     $ScriptFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
     $PublicScriptFiles = $ScriptFiles | Where-Object -FilterScript {
-        ($_.PSParentPath | Split-Path -Leaf) -eq 'public'
+            ($_.PSParentPath | Split-Path -Leaf) -eq 'public'
     }
 
     # Export public functions in the module
     $publicFunctions = $PublicScriptFiles.BaseName
     "`t$($publicFunctions -join "$NewLine`t")$NewLine"
     $PublicFunctionsJoined = $publicFunctions -join "','"
-    $ModuleFilePath = [IO.Path]::Combine($env:BHProjectPath, 'src', "$env:BHProjectName.psm1")
     $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
     $NewFunctionExportStatement = "Export-ModuleMember -Function @('$PublicFunctionsJoined')"
     if ($ModuleContent -match 'Export-ModuleMember -Function') {
@@ -231,21 +230,21 @@ Task ExportPublicFunctions -depends UpdateChangeLog -action {
     }
 
     # Export public functions in the manifest
-    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName FunctionsToExport -Value $publicFunctions
+    Update-Metadata -Path $ModuleManifest -PropertyName FunctionsToExport -Value $publicFunctions
 
 } -description 'Export all public functions in the module'
 
 Task CleanOutputDir -depends ExportPublicFunctions {
-    "`tOutput: $env:BHBuildOutput"
-    Clear-PSBuildOutputFolder -Path $env:BHBuildOutput
+    "`tOutput: $BuildOutputDir"
+    Clear-PSBuildOutputFolder -Path $BuildOutputDir
     $NewLine
 } -description 'Clears module output directory'
 
 Task BuildModule -depends CleanOutputDir {
     $buildParams = @{
         Path               = $env:BHPSModulePath
-        ModuleName         = $env:BHProjectName
-        DestinationPath    = $env:BHBuildOutput
+        ModuleName         = $ModuleName
+        DestinationPath    = $BuildOutputDir
         Exclude            = $BuildExclude
         Compile            = $BuildCompileModule
         CompileDirectories = $BuildCompileDirectories
@@ -254,7 +253,7 @@ Task BuildModule -depends CleanOutputDir {
     }
 
     if ($HelpConvertReadMeToAboutHelp) {
-        $readMePath = Get-ChildItem -Path $env:BHProjectPath -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
+        $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
         Select-Object -First 1
         if ($readMePath) {
             $buildParams.ReadMePath = $readMePath
@@ -288,7 +287,7 @@ Task DeleteMarkdownHelp -depends BuildModule -precondition $genMarkdownPreReqs {
 } -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
 
 Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
-    $ManifestPath = [IO.Path]::Combine($env:BHBuildOutput, "$env:BHProjectName.psd1")
+    $ManifestPath = [IO.Path]::Combine($BuildOutputDir, "$ModuleName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
     if ($moduleInfo.ExportedCommands.Count -eq 0) {
@@ -311,7 +310,7 @@ Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
             # ErrorAction set to SilentlyContinue so this command will not overwrite an existing MD file.
             ErrorAction           = 'SilentlyContinue'
             HelpVersion           = $moduleInfo.Version
-            Module                = $env:BHProjectName
+            Module                = $ModuleName
             # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
             # OnlineVersionUrl = $GitHubPagesLinkForThisModule
             OutputFolder          = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
@@ -322,17 +321,17 @@ Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
         New-MarkdownHelp @newMDParams
     }
     finally {
-        Remove-Module $env:BHProjectName -Force
+        Remove-Module $ModuleName -Force
     }
 } -description 'Generate markdown files from the module help'
 
 Task FixMarkdownHelp -depends BuildMarkdownHelp {
-    $ManifestPath = [IO.Path]::Combine($env:BHBuildOutput, "$env:BHProjectName.psd1")
+    $ManifestPath = [IO.Path]::Combine($BuildOutputDir, "$ModuleName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
 
     #Fix the Module Page () things PlatyPS does not do):
-    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$env:BHProjectName.md")
+    $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$ModuleName.md")
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
     #Update the module description
@@ -344,7 +343,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -352,10 +351,10 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
 
     # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
     <#
-    Error: 4/8/2025 11:35:12 PM:
-    At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): "C:\Export-Permission\Entire Project\Adsi\docs\en-US\New-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
-    Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
-    Invalid yaml: expected simple key-value pairs
+        Error: 4/8/2025 11:35:12 PM:
+        At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): "C:\Export-Permission\Entire Project\Adsi\docs\en-US\New-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+        Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+        Invalid yaml: expected simple key-value pairs
     #>
     $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
     $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
@@ -363,7 +362,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
     $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' }'
 
     $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
-    Remove-Module $env:BHProjectName -Force
+    Remove-Module $ModuleName -Force
 
     # Discover public function files so their help files can be fixed (multi-line default parameter values)
     $publicFunctionPath = [IO.Path]::Combine($env:BHPSModulePath, 'functions', 'public', '*.ps1')
@@ -388,10 +387,11 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
         $Replacement = "$DocsRootForURL/$_"
         $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
     }
-    $readMePath = Get-ChildItem -Path $env:BHProjectPath -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
+    $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
     Select-Object -First 1
 
     Set-Content -Path $ReadMePath.FullName -Value $ReadMeContents
+
 }
 
 $genHelpFilesPreReqs = {
@@ -404,7 +404,7 @@ $genHelpFilesPreReqs = {
 }
 
 Task BuildMAMLHelp -depends FixMarkdownHelp -precondition $genHelpFilesPreReqs {
-    Build-PSBuildMAMLHelp -Path $DocsRootDir -DestinationPath $env:BHBuildOutput
+    Build-PSBuildMAMLHelp -Path $DocsRootDir -DestinationPath $BuildOutputDir
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 
 $genUpdatableHelpPreReqs = {
@@ -443,8 +443,8 @@ Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $genUpdatableHelpPr
     # file in the metadata.
     foreach ($locale in $helpLocales) {
         $cabParams = @{
-            CabFilesFolder  = [IO.Path]::Combine($env:BHBuildOutput, $locale)
-            LandingPagePath = [IO.Path]::Combine($DocsRootDir, $locale, "$env:BHProjectName.md")
+            CabFilesFolder  = [IO.Path]::Combine($BuildOutputDir, $locale)
+            LandingPagePath = [IO.Path]::Combine($DocsRootDir, $locale, "$ModuleName.md")
             OutputFolder    = $HelpUpdatableHelpOutDir
             Verbose         = $VerbosePreference
         }
@@ -468,7 +468,7 @@ $analyzePreReqs = {
 
 Task Lint -depends BuildUpdatableHelp -precondition $analyzePreReqs {
     $analyzeParams = @{
-        Path              = $env:BHBuildOutput
+        Path              = $BuildOutputDir
         SeverityThreshold = $TestLintFailBuildOnSeverityLevel
         SettingsPath      = $TestLintSettingsPath
     }
@@ -536,7 +536,7 @@ Task Publish -depends SourceControl {
     Assert -conditionToCheck ($PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
 
     $publishParams = @{
-        Path       = $env:BHBuildOutput
+        Path       = $BuildOutputDir
         Repository = $PublishPSRepository
         Verbose    = $VerbosePreference
     }
@@ -551,12 +551,12 @@ Task Publish -depends SourceControl {
     # Only publish a release if we are working on the main branch
     $CurrentBranch = git branch --show-current
     if ($NoPublish -ne $true -and $CurrentBranch -eq 'main') {
-        Write-Host "`tPublish-Module -Path '$env:BHBuildOutput' -Repository 'PSGallery''
+        Write-Host "`tPublish-Module -Path '$BuildOutputDir' -Repository 'PSGallery'"
         # Publish to PSGallery
         Publish-Module @publishParams
     }
     else {
-        Write-Verbose 'Skipping publishing. NoPublish is $NoPublish and current git branch is $CurrentBranch"
+        Write-Verbose 'Skipping publishing. NoPublish is $NoPublish and current git branch is $CurrentBranch'
     }
 } -description 'Publish module to the defined PowerShell repository'
 
@@ -566,24 +566,24 @@ Task AwaitRepoUpdate -depends Publish {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $env:BHProjectName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $NewModuleVersion -and
         $timer -lt $timeout
     )
 
     if ($timer -eq $timeout) {
-        Write-Warning "Cannot retrieve version '$NewModuleVersion' of module '$env:BHProjectName' from repo '$PublishPSRepository'"
+        Write-Warning "Cannot retrieve version '$NewModuleVersion' of module '$ModuleName' from repo '$PublishPSRepository'"
     }
 } -description 'Await the new version in the defined PowerShell repository'
 
 Task Uninstall -depends AwaitRepoUpdate {
 
-    Write-Host "`tGet-Module -Name '$env:BHProjectName' -ListAvailable"
+    Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $env:BHProjectName -ListAvailable) {
-        Write-Host "`tUninstall-Module -Name '$env:BHProjectName' -AllVersions"
-        Uninstall-Module -Name $env:BHProjectName -AllVersions
+    if (Get-Module -Name $ModuleName -ListAvailable) {
+        Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -597,17 +597,17 @@ Task Reinstall -depends Uninstall {
 
     do {
         $attempts++
-        Write-Host "`tInstall-Module -Name '$env:BHProjectName' -Force"
-        Install-Module -name $env:BHProjectName -Force -ErrorAction Continue
+        Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $env:BHProjectName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
