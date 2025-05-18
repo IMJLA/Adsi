@@ -153,6 +153,7 @@ Task RotateBuilds -depends UpdateModuleVersion -action {
     $BuildVersionsToRetain = 1
 
     Write-Host "`tGet-ChildItem -Directory -Path '$DistDir'"
+
     Get-ChildItem -Directory -Path $DistDir |
     Sort-Object -Property Name |
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
@@ -193,7 +194,6 @@ Task UpdateChangeLog -depends RotateBuilds -action {
 Task ExportPublicFunctions -depends UpdateChangeLog -action {
     # Export public functions in the module
     $publicFunctions = $PublicFunctionFiles.BaseName
-    "`t$($publicFunctions -join "$NewLine`t")$NewLine"
     $PublicFunctionsJoined = $publicFunctions -join "','"
     $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
     $NewFunctionExportStatement = "Export-ModuleMember -Function @('$PublicFunctionsJoined')"
@@ -205,15 +205,20 @@ Task ExportPublicFunctions -depends UpdateChangeLog -action {
         $NewFunctionExportStatement | Out-File $ModuleFilePath -Append
     }
 
+    # Create a string representation of the public functions array
+    $publicFunctionsAsString = "@('" + ($publicFunctions -join "','") + "')"
+
     # Export public functions in the manifest
+    Write-Host "`tUpdate-Metadata -Path '$ModuleManifest' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"
     Update-Metadata -Path $ModuleManifest -PropertyName FunctionsToExport -Value $publicFunctions
 
 } -description 'Export all public functions in the module'
 
 Task CleanOutputDir -depends ExportPublicFunctions -action {
-    "`tOutput: $BuildOutputDir"
+
+    Write-Host "`tClear-PSBuildOutputFolder -Path '$BuildOutputDir'"
     Clear-PSBuildOutputFolder -Path $BuildOutputDir
-    $NewLine
+
 } -description 'Clears module output directory'
 
 Task BuildModule -depends CleanOutputDir {
