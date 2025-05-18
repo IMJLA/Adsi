@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.574] - 2025-05-18 - test updated build script
+
 ## [4.0.573] - 2025-05-18 - test updated build script
 
 ## [4.0.572] - 2025-05-18 - test updated build script
