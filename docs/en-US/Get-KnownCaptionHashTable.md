@@ -25,12 +25,17 @@ you have the account name representation rather than the SID itself.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+$sidBySid = Get-KnownSidHashTable
+$sidByCaption = Get-KnownCaptionHashTable -WellKnownSidBySid $sidBySid
+$systemInfo = $sidByCaption['NT AUTHORITY\SYSTEM']
 ```
 
-{{ Add example description here }}
+Creates a hashtable of well-known SIDs indexed by their NT Account names and retrieves
+information about the SYSTEM account.
+This is useful when you need to look up SID
+information by NT Account name rather than by SID string.
 
 ## PARAMETERS
 
@@ -51,8 +56,12 @@ Accept wildcard characters: False
 
 ## INPUTS
 
+### System.Collections.Hashtable
+### A hashtable containing SID strings as keys and information objects as values.
 ## OUTPUTS
 
+### System.Collections.Hashtable
+### Returns a hashtable with NT Account names as keys and SID information objects as values.
 ## NOTES
 
 ## RELATED LINKS

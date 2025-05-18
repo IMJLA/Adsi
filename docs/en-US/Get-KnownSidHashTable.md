@@ -30,6 +30,10 @@ Hardcoding them also improves performance by avoiding unnecessary directory quer
 $knownSids = Get-KnownSidHashTable
 ```
 
+This hashtable can be used to look up information about well-known SIDs:
+$knownSids\['S-1-5-18'\].DisplayName # Returns 'LocalSystem'
+$knownSids\['S-1-5-32-544'\].Description # Returns description of the Administrators group
+
 ## PARAMETERS
 
 ## INPUTS

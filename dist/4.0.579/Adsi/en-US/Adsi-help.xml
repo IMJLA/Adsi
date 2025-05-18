@@ -818,8 +818,42 @@ ForEach-Object {
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
-    <command:returnValues />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>System.DirectoryServices.SearchResult[]</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Accepts SearchResult objects from a directory search via the pipeline.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>PSCustomObject</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Returns PSCustomObject instances with simplified properties.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -827,10 +861,13 @@ ForEach-Object {
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new("LDAP://DC=contoso,DC=com")
+$DirectorySearcher.Filter = "(objectClass=user)"
+$SearchResults = $DirectorySearcher.FindAll()
+$SearchResults | ConvertFrom-SearchResult</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Performs a search in Active Directory for all user objects, then converts each SearchResult into a PSCustomObject with simplified properties. This makes it easier to work with the search results in PowerShell by flattening complex nested property collections into regular object properties.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3524,8 +3561,42 @@ Path : WinNT://ComputerName</dev:code>
         <dev:defaultValue>(Get-KnownSidHashTable)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
-    <command:returnValues />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+      <command:inputType>
+        <dev:type>
+          <maml:name>A hashtable containing SID strings as keys and information objects as values.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Returns a hashtable with NT Account names as keys and SID information objects as values.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -3533,10 +3604,12 @@ Path : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$sidBySid = Get-KnownSidHashTable
+$sidByCaption = Get-KnownCaptionHashTable -WellKnownSidBySid $sidBySid
+$systemInfo = $sidByCaption['NT AUTHORITY\SYSTEM']</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Creates a hashtable of well-known SIDs indexed by their NT Account names and retrieves information about the SYSTEM account. This is useful when you need to look up SID information by NT Account name rather than by SID string.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3782,7 +3855,7 @@ $administratorsInfo = $sidByName['Administrators']</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>$knownSids = Get-KnownSidHashTable</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>This hashtable can be used to look up information about well-known SIDs: $knownSids['S-1-5-18'].DisplayName # Returns 'LocalSystem' $knownSids['S-1-5-32-544'].Description # Returns description of the Administrators group</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

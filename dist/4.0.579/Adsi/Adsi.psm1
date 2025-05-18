@@ -2571,6 +2571,24 @@ function ConvertFrom-SearchResult {
     .DESCRIPTION
     Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
     This obfuscates the troublesome ResultPropertyCollection and ResultPropertyValueCollection and Hashtable aspects of working with ADSI searches
+    .INPUTS
+    System.DirectoryServices.SearchResult[]
+
+    Accepts SearchResult objects from a directory search via the pipeline.
+    .OUTPUTS
+    PSCustomObject
+
+    Returns PSCustomObject instances with simplified properties.
+    .EXAMPLE
+    $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new("LDAP://DC=contoso,DC=com")
+    $DirectorySearcher.Filter = "(objectClass=user)"
+    $SearchResults = $DirectorySearcher.FindAll()
+    $SearchResults | ConvertFrom-SearchResult
+
+    Performs a search in Active Directory for all user objects, then converts each SearchResult
+    into a PSCustomObject with simplified properties. This makes it easier to work with the
+    search results in PowerShell by flattening complex nested property collections into
+    regular object properties.
     .NOTES
     # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of SearchResult to see how to get those properties
     #>
@@ -4364,6 +4382,22 @@ function Get-KnownCaptionHashTable {
         transforms it into a new hashtable where the keys are the NT Account names
         (captions) of the SIDs. This makes it easier to look up SID information when
         you have the account name representation rather than the SID itself.
+    .INPUTS
+        System.Collections.Hashtable
+
+        A hashtable containing SID strings as keys and information objects as values.
+    .OUTPUTS
+        System.Collections.Hashtable
+
+        Returns a hashtable with NT Account names as keys and SID information objects as values.
+    .EXAMPLE
+        $sidBySid = Get-KnownSidHashTable
+        $sidByCaption = Get-KnownCaptionHashTable -WellKnownSidBySid $sidBySid
+        $systemInfo = $sidByCaption['NT AUTHORITY\SYSTEM']
+
+        Creates a hashtable of well-known SIDs indexed by their NT Account names and retrieves
+        information about the SYSTEM account. This is useful when you need to look up SID
+        information by NT Account name rather than by SID string.
     #>
 
     param (
@@ -4896,6 +4930,10 @@ function Get-KnownSidHashTable {
 
     .EXAMPLE
     $knownSids = Get-KnownSidHashTable
+
+    This hashtable can be used to look up information about well-known SIDs:
+    $knownSids['S-1-5-18'].DisplayName  # Returns 'LocalSystem'
+    $knownSids['S-1-5-32-544'].Description  # Returns description of the Administrators group
 
     .INPUTS
     None. This function does not accept pipeline input.
@@ -6865,6 +6903,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 
