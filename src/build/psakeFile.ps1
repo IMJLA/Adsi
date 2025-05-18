@@ -176,8 +176,8 @@ Task UpdateChangeLog -depends RotateBuilds -action {
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
     $NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifest).ModuleVersion
     $NewChanges = "## [$NewModuleVersion] - $(Get-Date -Format 'yyyy-MM-dd') - $CommitMessage$NewLine"
-    "`tChange Log:  $ChangeLog"
-    "`tNew Changes: $NewChanges"
+    Write-Host "`tChange Log:  $ChangeLog"
+    Write-Host "`tNew Changes: $($NewChanges.Trim())"
     [string[]]$ChangeLogContents = Get-Content -Path $ChangeLog
     $LineNumberOfLastChange = Select-String -Path $ChangeLog -Pattern '^\#\# \[\d*\.\d*\.\d*\]' |
     Select-Object -First 1 -ExpandProperty LineNumber
@@ -252,8 +252,9 @@ Task BuildModule -depends CleanOutputDir {
     Build-PSBuildModule @buildParams
 
     # Remove the psdependRequirements.psd1 file if it exists
-    Write-Host "`tRemove-Item -Path '$BuildOutputDir\psdependRequirements.psd1'"
-    Remove-Item -Path "$BuildOutputDir\psdependRequirements.psd1"
+    $RequirementsFile = [IO.Path]::Combine($BuildOutputDir, 'psdependRequirements.psd1')
+    Write-Host "`tRemove-Item -Path '$RequirementsFile'"
+    Remove-Item -Path $RequirementsFile -ErrorAction SilentlyContinue
 
 } -description 'Build a PowerShell script module based on the source directory'
 
@@ -319,14 +320,16 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Fix the Module Page () things PlatyPS does not do):
     $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$ModuleName.md")
+
+    Write-Host "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
     #Update the module description
     $RegEx = '(?ms)\#\#\ Description\s*[^\r\n]*\s*'
     $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine"
-    $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
-    Write-Host "`t'`$ModuleHelp' -replace '$RegEx', '$NewString'"
+    Write-Host "`t`$ModuleHelp -replace '$RegEx', '$NewString'"
+    $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
@@ -334,6 +337,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
+        Write-Host "`t`$ModuleHelp -replace '$RegEx', '$NewString'"
     }
 
     # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
@@ -343,12 +347,18 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
         Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
         Invalid yaml: expected simple key-value pairs
     #>
+    Write-Host "`t`$ModuleHelp -replace '\r?\n[ ]{12}', ' ; '"
+    Write-Host "`t`$ModuleHelp -replace '{ ;', '{ '"
+    Write-Host "`t`$ModuleHelp -replace '[ ]{2,}', ' '"
+    Write-Host "`t`$ModuleHelp -replace '\r?\n\s\}', ' }'"
     $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
     $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
     $ModuleHelp = $ModuleHelp -replace '[ ]{2,}', ' '
     $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' }'
 
+    Write-Host "`t`$ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8"
     $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
+
     Remove-Module $ModuleName -Force
 
     ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
