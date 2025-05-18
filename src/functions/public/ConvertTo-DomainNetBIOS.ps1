@@ -24,8 +24,10 @@ function ConvertTo-DomainNetBIOS {
 
     param (
 
+        # Fully Qualified Domain Name (FQDN) to convert to NetBIOS name
         [string]$DomainFQDN,
 
+        # ADSI provider to use (LDAP or WinNT)
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk

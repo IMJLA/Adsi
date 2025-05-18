@@ -63,7 +63,7 @@ Accept wildcard characters: False
 ```
 
 ### -SID
-{{ Fill SID Description }}
+Security Identifier (SID) string to convert to a DirectoryEntry
 
 ```yaml
 Type: System.String

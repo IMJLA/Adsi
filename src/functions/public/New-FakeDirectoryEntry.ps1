@@ -21,10 +21,19 @@ function New-FakeDirectoryEntry {
     #>
 
     param (
+        # Full directory path for the fake entry in the format "Provider://Domain/Name"
         [string]$DirectoryPath,
+
+        # Security Identifier (SID) string for the fake entry
         [string]$SID,
+
+        # Description of the security principal
         [string]$Description,
+
+        # Schema class name (e.g., 'user', 'group', 'computer')
         [string]$SchemaClassName,
+
+        # Optional input object containing additional properties to include in the fake directory entry
         $InputObject,
 
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)

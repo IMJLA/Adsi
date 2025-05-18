@@ -1,6 +1,7 @@
 function Get-KnownCaptionHashTable {
 
     param (
+        # Hashtable of well-known Security Identifiers (SIDs) with their properties
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable)
     )
 

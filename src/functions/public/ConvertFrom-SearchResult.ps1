@@ -12,6 +12,7 @@ function ConvertFrom-SearchResult {
 
     param (
 
+        # SearchResult objects to convert to PSCustomObjects
         [Parameter(
             Position = 0,
             ValueFromPipeline

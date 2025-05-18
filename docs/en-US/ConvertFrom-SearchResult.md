@@ -48,7 +48,7 @@ Accept wildcard characters: False
 ```
 
 ### -SearchResult
-{{ Fill SearchResult Description }}
+SearchResult objects to convert to PSCustomObjects
 
 ```yaml
 Type: System.DirectoryServices.SearchResult[]

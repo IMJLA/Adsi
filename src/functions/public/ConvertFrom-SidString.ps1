@@ -25,6 +25,7 @@ function ConvertFrom-SidString {
     #[OutputType([System.Security.Principal.NTAccount])]
 
     param (
+        # Security Identifier (SID) string to convert to a DirectoryEntry
         [string]$SID,
 
         # In-process cache to reduce calls to other processes or to disk

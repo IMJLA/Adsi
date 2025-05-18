@@ -33,7 +33,7 @@ New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
 ## PARAMETERS
 
 ### -Description
-{{ Fill Description Description }}
+Description of the security principal
 
 ```yaml
 Type: System.String
@@ -48,7 +48,7 @@ Accept wildcard characters: False
 ```
 
 ### -DirectoryPath
-{{ Fill DirectoryPath Description }}
+Full directory path for the fake entry in the format "Provider://Domain/Name"
 
 ```yaml
 Type: System.String
@@ -63,7 +63,7 @@ Accept wildcard characters: False
 ```
 
 ### -InputObject
-{{ Fill InputObject Description }}
+Optional input object containing additional properties to include in the fake directory entry
 
 ```yaml
 Type: System.Object
@@ -138,7 +138,7 @@ Accept wildcard characters: False
 ```
 
 ### -SchemaClassName
-{{ Fill SchemaClassName Description }}
+Schema class name (e.g., 'user', 'group', 'computer')
 
 ```yaml
 Type: System.String
@@ -153,7 +153,7 @@ Accept wildcard characters: False
 ```
 
 ### -SID
-{{ Fill SID Description }}
+Security Identifier (SID) string for the fake entry
 
 ```yaml
 Type: System.String

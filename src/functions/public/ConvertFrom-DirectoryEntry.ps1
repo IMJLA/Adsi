@@ -10,6 +10,7 @@ function ConvertFrom-DirectoryEntry {
 
     param (
 
+        # DirectoryEntry objects to convert to PSCustomObjects
         [Parameter(
             Position = 0
         )]

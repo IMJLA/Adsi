@@ -29,6 +29,7 @@ function Get-KnownSid {
 
     param (
 
+        # Security Identifier (SID) string to retrieve information for
         [string]$SID
 
     )

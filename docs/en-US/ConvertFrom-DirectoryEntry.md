@@ -33,7 +33,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -DirectoryEntry
-{{ Fill DirectoryEntry Description }}
+DirectoryEntry objects to convert to PSCustomObjects
 
 ```yaml
 Type: System.DirectoryServices.DirectoryEntry[]

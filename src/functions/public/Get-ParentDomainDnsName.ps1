@@ -8,6 +8,7 @@ function Get-ParentDomainDnsName {
         # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
         [CimSession]$CimSession,
 
+        # Switch to remove the CIM session when done
         [switch]$RemoveCimSession,
 
         # In-process cache to reduce calls to other processes or to disk

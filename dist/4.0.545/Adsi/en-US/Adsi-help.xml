@@ -275,7 +275,7 @@ Path : WinNT://localhost/Administrator</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryEntry</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+            <maml:para>DirectoryEntry objects to convert to PSCustomObjects</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.DirectoryServices.DirectoryEntry[]</command:parameterValue>
           <dev:type>
@@ -302,7 +302,7 @@ Path : WinNT://localhost/Administrator</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryEntry</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryEntry Description }}</maml:para>
+          <maml:para>DirectoryEntry objects to convert to PSCustomObjects</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.DirectoryServices.DirectoryEntry[]</command:parameterValue>
         <dev:type>
@@ -660,7 +660,7 @@ ConvertFrom-ResolvedID</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>ResultPropertyValueCollection</maml:name>
           <maml:description>
-            <maml:para>{{ Fill ResultPropertyValueCollection Description }}</maml:para>
+            <maml:para>ResultPropertyValueCollection object to convert to a string</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.DirectoryServices.ResultPropertyValueCollection</command:parameterValue>
           <dev:type>
@@ -675,7 +675,7 @@ ConvertFrom-ResolvedID</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>ResultPropertyValueCollection</maml:name>
         <maml:description>
-          <maml:para>{{ Fill ResultPropertyValueCollection Description }}</maml:para>
+          <maml:para>ResultPropertyValueCollection object to convert to a string</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.DirectoryServices.ResultPropertyValueCollection</command:parameterValue>
         <dev:type>
@@ -743,7 +743,7 @@ ForEach-Object {
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>SearchResult</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SearchResult Description }}</maml:para>
+            <maml:para>SearchResult objects to convert to PSCustomObjects</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.DirectoryServices.SearchResult[]</command:parameterValue>
           <dev:type>
@@ -782,7 +782,7 @@ ForEach-Object {
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>SearchResult</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SearchResult Description }}</maml:para>
+          <maml:para>SearchResult objects to convert to PSCustomObjects</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.DirectoryServices.SearchResult[]</command:parameterValue>
         <dev:type>
@@ -846,7 +846,7 @@ ForEach-Object {
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SID</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SID Description }}</maml:para>
+            <maml:para>Security Identifier (SID) string to convert to a DirectoryEntry</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -909,7 +909,7 @@ ForEach-Object {
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SID</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SID Description }}</maml:para>
+          <maml:para>Security Identifier (SID) string to convert to a DirectoryEntry</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1381,7 +1381,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DomainFQDN</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DomainFQDN Description }}</maml:para>
+            <maml:para>Fully Qualified Domain Name (FQDN) to convert to NetBIOS name</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -1393,7 +1393,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>AdsiProvider</maml:name>
           <maml:description>
-            <maml:para>{{ Fill AdsiProvider Description }}</maml:para>
+            <maml:para>ADSI provider to use (LDAP or WinNT)</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -1432,7 +1432,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>AdsiProvider</maml:name>
         <maml:description>
-          <maml:para>{{ Fill AdsiProvider Description }}</maml:para>
+          <maml:para>ADSI provider to use (LDAP or WinNT)</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1456,7 +1456,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DomainFQDN</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DomainFQDN Description }}</maml:para>
+          <maml:para>Fully Qualified Domain Name (FQDN) to convert to NetBIOS name</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -3273,7 +3273,7 @@ ad.contoso.com</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>SidTypeMap</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SidTypeMap Description }}</maml:para>
+            <maml:para>Mapping of SID types to descriptions used for converting security identifiers</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
@@ -3372,7 +3372,7 @@ ad.contoso.com</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>SidTypeMap</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SidTypeMap Description }}</maml:para>
+          <maml:para>Mapping of SID types to descriptions used for converting security identifiers</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
@@ -3535,7 +3535,7 @@ Path : WinNT://ComputerName</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SID</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SID Description }}</maml:para>
+            <maml:para>Security Identifier (SID) string to retrieve information for</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -3550,7 +3550,7 @@ Path : WinNT://ComputerName</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SID</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SID Description }}</maml:para>
+          <maml:para>Security Identifier (SID) string to retrieve information for</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -4386,7 +4386,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryPath</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
+            <maml:para>Full directory path for the fake entry in the format "Provider://Domain/Name"</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -4398,7 +4398,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>SID</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SID Description }}</maml:para>
+            <maml:para>Security Identifier (SID) string for the fake entry</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -4410,7 +4410,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>Description</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Description Description }}</maml:para>
+            <maml:para>Description of the security principal</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -4422,7 +4422,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>SchemaClassName</maml:name>
           <maml:description>
-            <maml:para>{{ Fill SchemaClassName Description }}</maml:para>
+            <maml:para>Schema class name (e.g., 'user', 'group', 'computer')</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -4434,7 +4434,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>InputObject</maml:name>
           <maml:description>
-            <maml:para>{{ Fill InputObject Description }}</maml:para>
+            <maml:para>Optional input object containing additional properties to include in the fake directory entry</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
           <dev:type>
@@ -4497,7 +4497,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>Description</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Description Description }}</maml:para>
+          <maml:para>Description of the security principal</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -4509,7 +4509,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
+          <maml:para>Full directory path for the fake entry in the format "Provider://Domain/Name"</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -4521,7 +4521,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>InputObject</maml:name>
         <maml:description>
-          <maml:para>{{ Fill InputObject Description }}</maml:para>
+          <maml:para>Optional input object containing additional properties to include in the fake directory entry</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
         <dev:type>
@@ -4581,7 +4581,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>SchemaClassName</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SchemaClassName Description }}</maml:para>
+          <maml:para>Schema class name (e.g., 'user', 'group', 'computer')</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -4593,7 +4593,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>SID</maml:name>
         <maml:description>
-          <maml:para>{{ Fill SID Description }}</maml:para>
+          <maml:para>Security Identifier (SID) string for the fake entry</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>

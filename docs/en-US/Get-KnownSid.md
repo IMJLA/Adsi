@@ -41,7 +41,7 @@ Returns information about the Local System account.
 ## PARAMETERS
 
 ### -SID
-{{ Fill SID Description }}
+Security Identifier (SID) string to retrieve information for
 
 ```yaml
 Type: System.String

@@ -38,7 +38,7 @@ ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $C
 ## PARAMETERS
 
 ### -AdsiProvider
-{{ Fill AdsiProvider Description }}
+ADSI provider to use (LDAP or WinNT)
 
 ```yaml
 Type: System.String
@@ -68,7 +68,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainFQDN
-{{ Fill DomainFQDN Description }}
+Fully Qualified Domain Name (FQDN) to convert to NetBIOS name
 
 ```yaml
 Type: System.String

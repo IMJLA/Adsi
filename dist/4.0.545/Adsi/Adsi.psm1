@@ -2352,6 +2352,7 @@ function ConvertFrom-DirectoryEntry {
 
     param (
 
+        # DirectoryEntry objects to convert to PSCustomObjects
         [Parameter(
             Position = 0
         )]
@@ -2525,6 +2526,7 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
     #>
 
     param (
+        # ResultPropertyValueCollection object to convert to a string
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
     )
 
@@ -2552,6 +2554,7 @@ function ConvertFrom-SearchResult {
 
     param (
 
+        # SearchResult objects to convert to PSCustomObjects
         [Parameter(
             Position = 0,
             ValueFromPipeline
@@ -2610,6 +2613,7 @@ function ConvertFrom-SidString {
     #[OutputType([System.Security.Principal.NTAccount])]
 
     param (
+        # Security Identifier (SID) string to convert to a DirectoryEntry
         [string]$SID,
 
         # In-process cache to reduce calls to other processes or to disk
@@ -2851,8 +2855,10 @@ function ConvertTo-DomainNetBIOS {
 
     param (
 
+        # Fully Qualified Domain Name (FQDN) to convert to NetBIOS name
         [string]$DomainFQDN,
 
+        # ADSI provider to use (LDAP or WinNT)
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
@@ -4107,6 +4113,7 @@ function Get-DirectoryEntry {
         # Properties of the target object to retrieve
         [string[]]$PropertiesToLoad,
 
+        # Mapping of SID types to descriptions used for converting security identifiers
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
@@ -4168,7 +4175,8 @@ function Get-DirectoryEntry {
                     $($Credential.GetNetworkCredential().password)
                 )
 
-            } else {
+            }
+            else {
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
             }
 
@@ -4181,7 +4189,8 @@ function Get-DirectoryEntry {
             $DirectoryEntry |
             Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
-        } else {
+        }
+        else {
 
             # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
             Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
@@ -4192,7 +4201,8 @@ function Get-DirectoryEntry {
                     $($Credential.UserName),
                     $($Credential.GetNetworkCredential().password)
                 )
-            } else {
+            }
+            else {
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
             }
 
@@ -4207,7 +4217,8 @@ function Get-DirectoryEntry {
             # If the $DirectoryPath was invalid, this line will return an error
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
 
-        } catch {
+        }
+        catch {
 
             $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
 
@@ -4231,6 +4242,7 @@ function Get-DirectoryEntry {
 function Get-KnownCaptionHashTable {
 
     param (
+        # Hashtable of well-known Security Identifiers (SIDs) with their properties
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable)
     )
 
@@ -4277,6 +4289,7 @@ function Get-KnownSid {
 
     param (
 
+        # Security Identifier (SID) string to retrieve information for
         [string]$SID
 
     )
@@ -4700,6 +4713,7 @@ COMPUTER-SPECIFIC SIDs
 function Get-KnownSidByName {
 
     param (
+        # Hashtable containing well-known SIDs as keys with their properties as values
         [hashtable]$WellKnownSIDBySID
     )
 
@@ -5930,6 +5944,7 @@ function Get-ParentDomainDnsName {
         # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
         [CimSession]$CimSession,
 
+        # Switch to remove the CIM session when done
         [switch]$RemoveCimSession,
 
         # In-process cache to reduce calls to other processes or to disk
@@ -6220,10 +6235,19 @@ function New-FakeDirectoryEntry {
     #>
 
     param (
+        # Full directory path for the fake entry in the format "Provider://Domain/Name"
         [string]$DirectoryPath,
+
+        # Security Identifier (SID) string for the fake entry
         [string]$SID,
+
+        # Description of the security principal
         [string]$Description,
+
+        # Schema class name (e.g., 'user', 'group', 'computer')
         [string]$SchemaClassName,
+
+        # Optional input object containing additional properties to include in the fake directory entry
         $InputObject,
 
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
@@ -6652,6 +6676,8 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
+
 
 
 
