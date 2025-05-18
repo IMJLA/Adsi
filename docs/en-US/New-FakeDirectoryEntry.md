@@ -102,7 +102,7 @@ Aliases:
 
 Required: False
 Position: 6
-Default value: @{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null 
+Default value: @{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null }
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -117,7 +117,7 @@ Aliases:
 
 Required: False
 Position: 7
-Default value: @{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null 
+Default value: @{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null }
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

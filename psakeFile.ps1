@@ -359,7 +359,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
     $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
     $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
     $ModuleHelp = $ModuleHelp -replace '[ ]{2,}', ' '
-    $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' '
+    $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' }'
 
     $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
     Remove-Module $env:BHProjectName -Force
@@ -373,7 +373,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
         $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
-        $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' '
+        $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
         Set-Content -LiteralPath $ThisFunctionHelpFile -Value $ThisFunctionHelp
     }
 
