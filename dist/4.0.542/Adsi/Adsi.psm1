@@ -375,6 +375,26 @@ function ConvertTo-AccountCache {
 }
 function ConvertTo-DirectoryEntry {
 
+    <#
+.SYNOPSIS
+Converts identity information to a DirectoryEntry object.
+
+.DESCRIPTION
+Attempts to retrieve or create a DirectoryEntry object for an identity based on various
+identification methods. It will use cached well-known SID information when available,
+query directory services for LDAP or WinNT identities, handle unresolved SIDs, and create
+fake directory entries for special cases like capability SIDs or service SIDs.
+
+.EXAMPLE
+ConvertTo-DirectoryEntry -IdentityReference "DOMAIN\User" -DomainNetBIOS "DOMAIN" -Cache $cacheRef
+
+.INPUTS
+None. Pipeline input is not accepted.
+
+.OUTPUTS
+System.DirectoryServices.DirectoryEntry or a custom object that mimics DirectoryEntry.
+#>
+
     param (
         $CachedWellKnownSID,
         $DomainNetBIOS,
@@ -631,6 +651,26 @@ function ConvertTo-DirectoryEntry {
 }
 function ConvertTo-PermissionPrincipal {
 
+    <#
+.SYNOPSIS
+Converts directory entry information into a permission principal object.
+
+.DESCRIPTION
+Takes directory entry information along with domain and identity details to create a standardized
+permission principal object that can be used throughout the permission analysis process.
+This function populates a cache of permission principals that can be referenced by identity.
+It handles both LDAP and WinNT directory providers and processes group membership information.
+
+.EXAMPLE
+ConvertTo-PermissionPrincipal -IdentityReference "DOMAIN\User" -DirectoryEntry $dirEntry -Cache $cacheRef
+
+.INPUTS
+System.DirectoryServices.DirectoryEntry
+
+.OUTPUTS
+None. This function populates the PrincipalById cache with permission principal objects.
+#>
+
     param (
 
         $DomainDn,
@@ -687,13 +727,15 @@ function ConvertTo-PermissionPrincipal {
 
         if ($DirectoryEntry.Name) {
             $AccountName = $DirectoryEntry.Name
-        } else {
+        }
+        else {
 
             if ($DirectoryEntry.Properties) {
 
                 if ($DirectoryEntry.Properties['name'].Value) {
                     $AccountName = $DirectoryEntry.Properties['name'].Value
-                } else {
+                }
+                else {
                     $AccountName = $DirectoryEntry.Properties['name']
                 }
 
@@ -725,7 +767,8 @@ function ConvertTo-PermissionPrincipal {
                 Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -Cache `$Cache # is an LDAP security principal $LogSuffix"
                 $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -PropertiesToLoad $PropertiesToLoad -Cache $Cache).FullMembers
 
-            } else {
+            }
+            else {
 
                 #Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal $LogSuffix"
 
@@ -748,7 +791,8 @@ function ConvertTo-PermissionPrincipal {
                         # Include specific desired properties
                         $OutputProperties = @{}
 
-                    } else {
+                    }
+                    else {
 
                         # Include specific desired properties
                         $OutputProperties = @{
@@ -773,7 +817,8 @@ function ConvertTo-PermissionPrincipal {
 
                     if ($ThisMember.sAmAccountName) {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.sAmAccountName)"
-                    } else {
+                    }
+                    else {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                     }
 
@@ -796,7 +841,8 @@ function ConvertTo-PermissionPrincipal {
 
         $PropertiesToAdd['Members'] = $GroupMembers
 
-    } else {
+    }
+    else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -2781,6 +2827,28 @@ function ConvertTo-DistinguishedName {
 }
 function ConvertTo-DomainNetBIOS {
 
+    <#
+    .SYNOPSIS
+    Converts a domain FQDN to its NetBIOS name.
+
+    .DESCRIPTION
+    Retrieves the NetBIOS name for a specified domain FQDN by checking the cache or querying
+    the directory service. For LDAP providers, it retrieves domain information from the directory.
+    For non-LDAP providers, it extracts the first part of the FQDN before the first period.
+
+    .EXAMPLE
+    ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache
+
+    .EXAMPLE
+    ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    .INPUTS
+    None. Pipeline input is not accepted.
+
+    .OUTPUTS
+    System.String. The NetBIOS name of the domain.
+    #>
+
     param (
 
         [string]$DomainFQDN,
@@ -2824,13 +2892,15 @@ function ConvertTo-DomainNetBIOS {
 
         }
 
-    } else {
+    }
+    else {
 
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
 
         if ($LengthOfNetBIOSName -eq -1) {
             $DomainFQDN
-        } else {
+        }
+        else {
             $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
         }
 
@@ -2838,6 +2908,28 @@ function ConvertTo-DomainNetBIOS {
 
 }
 function ConvertTo-DomainSidString {
+
+    <#
+    .SYNOPSIS
+    Converts a domain DNS name to its corresponding SID string.
+
+    .DESCRIPTION
+    Retrieves the security identifier (SID) string for a specified domain DNS name using either
+    cached values or by querying the directory service. It supports both LDAP and WinNT providers
+    and can fall back to local server resolution methods when needed.
+
+    .EXAMPLE
+    ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
+
+    .EXAMPLE
+    ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    .INPUTS
+    None. Pipeline input is not accepted.
+
+    .OUTPUTS
+    System.String. The SID string of the specified domain.
+    #>
 
     param (
 
@@ -2882,7 +2974,8 @@ function ConvertTo-DomainSidString {
 
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
-        } catch {
+        }
+        catch {
 
             Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim()) -Cache `$Cache"
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -2890,7 +2983,8 @@ function ConvertTo-DomainSidString {
 
         }
 
-    } else {
+    }
+    else {
 
         Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache"
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -2906,11 +3000,13 @@ function ConvertTo-DomainSidString {
 
         if ($objectSIDProperty.Value) {
             $SidByteArray = [byte[]]$objectSIDProperty.Value
-        } else {
+        }
+        else {
             $SidByteArray = [byte[]]$objectSIDProperty
         }
 
-    } else {
+    }
+    else {
         $SidByteArray = [byte[]]$DomainDirectoryEntry.objectSid
     }
 
@@ -2919,7 +3015,8 @@ function ConvertTo-DomainSidString {
 
     if ($DomainSid) {
         return $DomainSid
-    } else {
+    }
+    else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -4152,34 +4249,31 @@ function Get-KnownCaptionHashTable {
 function Get-KnownSid {
 
     <#
-.SYNOPSIS
-Retrieves information about well-known security identifiers (SIDs).
+    .SYNOPSIS
+    Retrieves information about well-known security identifiers (SIDs).
 
-.DESCRIPTION
-Gets information about well-known security identifiers (SIDs) based on patterns and common formats.
-Uses Microsoft documentation references for SID information:
-- https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
-- https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
+    .DESCRIPTION
+    Gets information about well-known security identifiers (SIDs) based on patterns and common formats.
+    Uses Microsoft documentation references for SID information:
+    - https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
+    - https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
 
-.EXAMPLE
-Get-KnownSid -SID 'S-1-5-32-544'
+    .EXAMPLE
+    Get-KnownSid -SID 'S-1-5-32-544'
 
-Returns information about the built-in Administrators group.
+    Returns information about the built-in Administrators group.
 
-.EXAMPLE
-Get-KnownSid -SID 'S-1-5-18'
+    .EXAMPLE
+    Get-KnownSid -SID 'S-1-5-18'
 
-Returns information about the Local System account.
+    Returns information about the Local System account.
 
-.INPUTS
-System.String
+    .INPUTS
+    System.String
 
-.OUTPUTS
-PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
-#>
-
-    #https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
-    #https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
+    .OUTPUTS
+    PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
+    #>
 
     param (
 
@@ -4623,12 +4717,30 @@ function Get-KnownSidByName {
 }
 function Get-KnownSidHashTable {
 
-    <# Returns a hashtable of known SIDs which can be used to avoid errors and delays due to unnecessary directory queries.
+    <#
+    .SYNOPSIS
+    Returns a hashtable of known security identifiers (SIDs) with detailed information.
+
+    .DESCRIPTION
+    Returns a hashtable of known SIDs which can be used to avoid errors and delays due to unnecessary directory queries.
     Some SIDs cannot be translated using the [SecurityIdentifier]::Translate or [NTAccount]::Translate methods.
     Some SIDs cannot be retrieved using CIM or ADSI.
     Hardcoding them here allows avoiding queries that we know will fail.
     Hardcoding them also improves performance by avoiding unnecessary directory queries with predictable results.
+
+    .EXAMPLE
+    $knownSids = Get-KnownSidHashTable
+
+    .INPUTS
+    None. This function does not accept pipeline input.
+
+    .OUTPUTS
+    System.Collections.Hashtable. Contains SIDs as keys and PSCustomObjects with SID information as values.
+
+    .LINK
     https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
+
+    .LINK
     https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
     #>
 
@@ -5270,23 +5382,23 @@ function Get-KnownSidHashTable {
         These SIDs are present in the token of apps running in an app container, and they encode the app capabilities possessed by the app.
         The rules for Mandatory Integrity Control say that objects default to allowing write access only to medium integrity level (IL) or higher.
         Granting access to these app capability SIDs permit access from apps running at low IL, provided they possess the matching capability.
-    
+
         Autogenerated
         S-1-15-3-x1-x2-x3-x4    device capability
         S-1-15-3-1024-x1-x2-x3-x4-x5-x6-x7-x8    app capability
-    
+
         You can sort of see how these assignments evolved.
         At first, the capability RIDs were assigned by an assigned numbers authority, so anybody who wanted a capability had to apply for a number.
         After about a dozen of these, the assigned numbers team (probably just one person) realized that this had the potential to become a real bottleneck, so they switched to an autogeneration mechanism, so that people who needed a capability SID could just generate their own.
         For device capabilities, the four 32-bit decimal digits represent the 16 bytes of the device interface GUID.
         Let’s decode this one: S-1-15-3-787448254-1207972858-3558633622-1059886964.
-    
+
         787448254    1207972858    3558633622    1059886964
         0x2eef81be    0x480033fa    0xd41c7096    0x3f2c9774
         be    81    ef    2e    fa    33    00    48    96    70    1c    d4    74    97    2c    3f
         2eef81be    33fa    4800    96    70    1c    d4    74    97    2c    3f
         {2eef81be-    33fa-    4800-    96    70-    1c    d4    74    97    2c    3f}
-    
+
         And we recognize {2eef81be-33fa-4800-9670-1cd474972c3f} as DEVINTERFACE_AUDIO_CAPTURE, so this is the microphone device capability.
         For app capabilities, the eight 32-bit decimal numbers represent the 32 bytes of the SHA256 hash of the capability name.
         You can programmatically generate these app capability SIDs by calling Derive­Capability­Sids­From­Name.
@@ -6088,8 +6200,23 @@ function Invoke-ComObject {
 function New-FakeDirectoryEntry {
 
     <#
-    Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
-    The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+    .SYNOPSIS
+    Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
+
+    .DESCRIPTION
+    Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory.
+    The WinNT provider only throws an error if you try to retrieve certain accounts/identities.
+    This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.
+
+    .EXAMPLE
+    New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
+
+    .INPUTS
+    None. Pipeline input is not accepted.
+
+    .OUTPUTS
+    PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,
+    SchemaClassName, and objectSid.
     #>
 
     param (
@@ -6204,7 +6331,8 @@ function New-FakeDirectoryEntry {
     $SID = $Properties['SID']
     if ($SID) {
         $Properties['objectSid'] = ConvertTo-SidByteArray -SidString $SID
-    } else {
+    }
+    else {
         $Properties['objectSid'] = $null
     }
 
@@ -6524,5 +6652,16 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-DomainNetBIOS
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Converts a domain FQDN to its NetBIOS name.
 
 ## SYNTAX
 
@@ -18,16 +18,22 @@ ConvertTo-DomainNetBIOS [[-DomainFQDN] <String>] [[-AdsiProvider] <String>] [-Ca
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Retrieves the NetBIOS name for a specified domain FQDN by checking the cache or querying
+the directory service.
+For LDAP providers, it retrieves domain information from the directory.
+For non-LDAP providers, it extracts the first part of the FQDN before the first period.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache
 ```
 
-{{ Add example description here }}
+### EXAMPLE 2
+```
+ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+```
 
 ## PARAMETERS
 
@@ -40,14 +46,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Cache
-{{ Fill Cache Description }}
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -55,7 +61,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -70,7 +76,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -96,11 +102,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Object
+### System.String. The NetBIOS name of the domain.
 ## NOTES
 
 ## RELATED LINKS
+

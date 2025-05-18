@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.531
+Help Version: 4.0.542
 Locale: en-US
 ---
 
@@ -42,14 +42,10 @@ Convert a byte array to a string representation of its decimal format
 Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](docs/en-US/ConvertTo-DomainNetBIOS.md)
-
-ConvertTo-DomainNetBIOS [[-DomainFQDN] <string>] [[-AdsiProvider] <string>] [-Cache] <ref> [<CommonParameters>]
-
+Converts a domain FQDN to its NetBIOS name.
 
 ### [ConvertTo-DomainSidString](docs/en-US/ConvertTo-DomainSidString.md)
-
-ConvertTo-DomainSidString [-DomainDnsName] <string> [[-AdsiProvider] <string>] [-Cache] <ref> [<CommonParameters>]
-
+Converts a domain DNS name to its corresponding SID string.
 
 ### [ConvertTo-Fqdn](docs/en-US/ConvertTo-Fqdn.md)
 Convert a domain distinguishedName name or NetBIOS name to its FQDN
@@ -103,9 +99,7 @@ Get-KnownSidByName [[-WellKnownSIDBySID] <hashtable>]
 
 
 ### [Get-KnownSidHashtable](docs/en-US/Get-KnownSidHashtable.md)
-
-Get-KnownSidHashTable 
-
+Returns a hashtable of known security identifiers (SIDs) with detailed information.
 
 ### [Get-ParentDomainDnsName](docs/en-US/Get-ParentDomainDnsName.md)
 
@@ -122,9 +116,7 @@ Get members of a group from the WinNT provider
 Invoke a member method of a ComObject [__ComObject]
 
 ### [New-FakeDirectoryEntry](docs/en-US/New-FakeDirectoryEntry.md)
-
-New-FakeDirectoryEntry [[-DirectoryPath] <string>] [[-SID] <string>] [[-Description] <string>] [[-SchemaClassName] <string>] [[-InputObject] <Object>] [[-NameAllowList] <hashtable>] [[-NameBlockList] <hashtable>] [[-Name] <string>] [[-NTAccount] <string>]
-
+Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
 
 ### [Resolve-IdentityReference](docs/en-US/Resolve-IdentityReference.md)
 Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists

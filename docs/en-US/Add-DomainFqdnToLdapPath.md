@@ -19,9 +19,9 @@ Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [-Cache] <PSReference>
 
 ## DESCRIPTION
 Uses RegEx to:
-    - Match the Domain Components from the Distinguished Name in the LDAP directory path
-    - Convert the Domain Components to an FQDN
-    - Insert them into the directory path as the server address
+ - Match the Domain Components from the Distinguished Name in the LDAP directory path
+ - Convert the Domain Components to an FQDN
+ - Insert them into the directory path as the server address
 
 ## EXAMPLES
 
@@ -92,3 +92,4 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+

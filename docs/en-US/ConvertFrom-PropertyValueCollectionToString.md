@@ -26,7 +26,7 @@ Useful when working with System.DirectoryServices and some other namespaces
 $DirectoryEntry = [adsi]("WinNT://$(hostname)")
 $DirectoryEntry.Properties.Keys |
 ForEach-Object {
-    ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
+ ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
 }
 ```
 
@@ -58,3 +58,4 @@ Accept wildcard characters: False
 ## NOTES
 
 ## RELATED LINKS
+

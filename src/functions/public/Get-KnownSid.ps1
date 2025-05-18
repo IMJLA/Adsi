@@ -1,34 +1,31 @@
 function Get-KnownSid {
 
     <#
-.SYNOPSIS
-Retrieves information about well-known security identifiers (SIDs).
+    .SYNOPSIS
+    Retrieves information about well-known security identifiers (SIDs).
 
-.DESCRIPTION
-Gets information about well-known security identifiers (SIDs) based on patterns and common formats.
-Uses Microsoft documentation references for SID information:
-- https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
-- https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
+    .DESCRIPTION
+    Gets information about well-known security identifiers (SIDs) based on patterns and common formats.
+    Uses Microsoft documentation references for SID information:
+    - https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
+    - https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
 
-.EXAMPLE
-Get-KnownSid -SID 'S-1-5-32-544'
+    .EXAMPLE
+    Get-KnownSid -SID 'S-1-5-32-544'
 
-Returns information about the built-in Administrators group.
+    Returns information about the built-in Administrators group.
 
-.EXAMPLE
-Get-KnownSid -SID 'S-1-5-18'
+    .EXAMPLE
+    Get-KnownSid -SID 'S-1-5-18'
 
-Returns information about the Local System account.
+    Returns information about the Local System account.
 
-.INPUTS
-System.String
+    .INPUTS
+    System.String
 
-.OUTPUTS
-PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
-#>
-
-    #https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
-    #https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
+    .OUTPUTS
+    PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
+    #>
 
     param (
 

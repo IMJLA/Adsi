@@ -1,5 +1,27 @@
 function ConvertTo-DomainSidString {
 
+    <#
+    .SYNOPSIS
+    Converts a domain DNS name to its corresponding SID string.
+
+    .DESCRIPTION
+    Retrieves the security identifier (SID) string for a specified domain DNS name using either
+    cached values or by querying the directory service. It supports both LDAP and WinNT providers
+    and can fall back to local server resolution methods when needed.
+
+    .EXAMPLE
+    ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
+
+    .EXAMPLE
+    ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    .INPUTS
+    None. Pipeline input is not accepted.
+
+    .OUTPUTS
+    System.String. The SID string of the specified domain.
+    #>
+
     param (
 
         # Domain DNS name to convert to the domain's SID
@@ -43,7 +65,8 @@ function ConvertTo-DomainSidString {
 
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
-        } catch {
+        }
+        catch {
 
             Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim()) -Cache `$Cache"
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -51,7 +74,8 @@ function ConvertTo-DomainSidString {
 
         }
 
-    } else {
+    }
+    else {
 
         Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache"
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -67,11 +91,13 @@ function ConvertTo-DomainSidString {
 
         if ($objectSIDProperty.Value) {
             $SidByteArray = [byte[]]$objectSIDProperty.Value
-        } else {
+        }
+        else {
             $SidByteArray = [byte[]]$objectSIDProperty
         }
 
-    } else {
+    }
+    else {
         $SidByteArray = [byte[]]$DomainDirectoryEntry.objectSid
     }
 
@@ -80,7 +106,8 @@ function ConvertTo-DomainSidString {
 
     if ($DomainSid) {
         return $DomainSid
-    } else {
+    }
+    else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually

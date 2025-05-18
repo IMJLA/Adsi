@@ -26,7 +26,7 @@ Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
 ```
 Get-DirectoryEntry
 distinguishedName : {DC=ad,DC=contoso,DC=com}
-Path              : LDAP://DC=ad,DC=contoso,DC=com
+Path : LDAP://DC=ad,DC=contoso,DC=com
 ```
 
 As the current user on a domain-joined computer, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
@@ -35,7 +35,7 @@ As the current user on a domain-joined computer, bind to the current domain and 
 ```
 Get-DirectoryEntry
 distinguishedName :
-Path              : WinNT://ComputerName
+Path : WinNT://ComputerName
 ```
 
 As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
@@ -147,3 +147,4 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+

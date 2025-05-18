@@ -97,7 +97,7 @@ FormatTaskName {
     )
 
     Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-Host $taskName -ForegroundColor Blue
+    #Write-Host $taskName -ForegroundColor Blue
 
 }
 
@@ -334,14 +334,14 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
     $ModuleHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$env:BHProjectName.md")
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
-    #-Update the module description
+    #Update the module description
     $RegEx = '(?ms)\#\#\ Description\s*[^\r\n]*\s*'
     $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine"
     $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
     Write-Host "`t'`$ModuleHelp' -replace '$RegEx', '$NewString'"
 
-    #-Update the description of each function (use its synopsis for brevity)
+    #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
         $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
@@ -349,9 +349,35 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp {
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
     }
 
+    # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
+    <#
+    Error: 4/8/2025 11:35:12 PM:
+    At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): "F:\Owner\OneDrive\Data\Programs\Scripts\PowerShell\Export-Permission\Entire Project\Adsi\docs\en-US\New-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+    Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+    Invalid yaml: expected simple key-value pairs
+    #>
+    $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
+    $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
+    $ModuleHelp = $ModuleHelp -replace '[ ]{2,}', ' '
+    $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' '
+
     $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
     Remove-Module $env:BHProjectName -Force
 
+    # Discover public function files so their help files can be fixed (multi-line default parameter values)
+    $FunctionFiles = Get-ChildItem -Path "$env:BHPSModulePath\functions\public\*.ps1" -Recurse
+    ForEach ($ThisFunction in $FunctionFiles.Name) {
+        $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
+        $ThisFunctionHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$fileNameWithoutExtension.md")
+        $ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
+        $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
+        $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
+        $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
+        $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' '
+        Set-Content -LiteralPath $ThisFunctionHelpFile -Value $ThisFunctionHelp
+    }
+
+    # Fix the readme file to point to the correct location of the markdown files
     $ReadMeContents = $ModuleHelp
     $DocsRootForURL = "docs/$HelpDefaultLocale"
     [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |

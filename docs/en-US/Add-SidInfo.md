@@ -26,7 +26,7 @@ Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
 ```
 [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
 distinguishedName :
-Path              : WinNT://localhost/Administrator
+Path : WinNT://localhost/Administrator
 ```
 
 The output object's default format is not modified so with default formatting it appears identical to the original.
@@ -85,10 +85,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter.  Must contain the objectSid property.
+### [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter. Must contain the objectSid property.
 ## OUTPUTS
 
 ### [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. Whatever was input, but with three extra properties added now.
 ## NOTES
 
 ## RELATED LINKS
+

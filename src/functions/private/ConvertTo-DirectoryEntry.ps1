@@ -1,5 +1,25 @@
 function ConvertTo-DirectoryEntry {
 
+    <#
+.SYNOPSIS
+Converts identity information to a DirectoryEntry object.
+
+.DESCRIPTION
+Attempts to retrieve or create a DirectoryEntry object for an identity based on various
+identification methods. It will use cached well-known SID information when available,
+query directory services for LDAP or WinNT identities, handle unresolved SIDs, and create
+fake directory entries for special cases like capability SIDs or service SIDs.
+
+.EXAMPLE
+ConvertTo-DirectoryEntry -IdentityReference "DOMAIN\User" -DomainNetBIOS "DOMAIN" -Cache $cacheRef
+
+.INPUTS
+None. Pipeline input is not accepted.
+
+.OUTPUTS
+System.DirectoryServices.DirectoryEntry or a custom object that mimics DirectoryEntry.
+#>
+
     param (
         $CachedWellKnownSID,
         $DomainNetBIOS,

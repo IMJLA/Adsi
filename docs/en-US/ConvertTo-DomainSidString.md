@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-DomainSidString
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Converts a domain DNS name to its corresponding SID string.
 
 ## SYNTAX
 
@@ -18,21 +18,31 @@ ConvertTo-DomainSidString [-DomainDnsName] <String> [[-AdsiProvider] <String>] [
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Retrieves the security identifier (SID) string for a specified domain DNS name using either
+cached values or by querying the directory service.
+It supports both LDAP and WinNT providers
+and can fall back to local server resolution methods when needed.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
 ```
 
-{{ Add example description here }}
+### EXAMPLE 2
+```
+ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+```
 
 ## PARAMETERS
 
 ### -AdsiProvider
-{{ Fill AdsiProvider Description }}
+AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+This parameter can be used to reduce calls to Find-AdsiProvider
+
+Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
 
 ```yaml
 Type: System.String
@@ -40,14 +50,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Cache
-{{ Fill Cache Description }}
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -55,14 +65,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DomainDnsName
-{{ Fill DomainDnsName Description }}
+Domain DNS name to convert to the domain's SID
 
 ```yaml
 Type: System.String
@@ -70,7 +80,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -96,11 +106,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Object
+### System.String. The SID string of the specified domain.
 ## NOTES
 
 ## RELATED LINKS
+

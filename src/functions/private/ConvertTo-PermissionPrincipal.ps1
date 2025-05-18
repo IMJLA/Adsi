@@ -1,5 +1,25 @@
 function ConvertTo-PermissionPrincipal {
 
+    <#
+.SYNOPSIS
+Converts directory entry information into a permission principal object.
+
+.DESCRIPTION
+Takes directory entry information along with domain and identity details to create a standardized
+permission principal object that can be used throughout the permission analysis process.
+This function populates a cache of permission principals that can be referenced by identity.
+It handles both LDAP and WinNT directory providers and processes group membership information.
+
+.EXAMPLE
+ConvertTo-PermissionPrincipal -IdentityReference "DOMAIN\User" -DirectoryEntry $dirEntry -Cache $cacheRef
+
+.INPUTS
+System.DirectoryServices.DirectoryEntry
+
+.OUTPUTS
+None. This function populates the PrincipalById cache with permission principal objects.
+#>
+
     param (
 
         $DomainDn,
@@ -56,13 +76,15 @@ function ConvertTo-PermissionPrincipal {
 
         if ($DirectoryEntry.Name) {
             $AccountName = $DirectoryEntry.Name
-        } else {
+        }
+        else {
 
             if ($DirectoryEntry.Properties) {
 
                 if ($DirectoryEntry.Properties['name'].Value) {
                     $AccountName = $DirectoryEntry.Properties['name'].Value
-                } else {
+                }
+                else {
                     $AccountName = $DirectoryEntry.Properties['name']
                 }
 
@@ -94,7 +116,8 @@ function ConvertTo-PermissionPrincipal {
                 Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -Cache `$Cache # is an LDAP security principal $LogSuffix"
                 $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -PropertiesToLoad $PropertiesToLoad -Cache $Cache).FullMembers
 
-            } else {
+            }
+            else {
 
                 #Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal $LogSuffix"
 
@@ -117,7 +140,8 @@ function ConvertTo-PermissionPrincipal {
                         # Include specific desired properties
                         $OutputProperties = @{}
 
-                    } else {
+                    }
+                    else {
 
                         # Include specific desired properties
                         $OutputProperties = @{
@@ -142,7 +166,8 @@ function ConvertTo-PermissionPrincipal {
 
                     if ($ThisMember.sAmAccountName) {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.sAmAccountName)"
-                    } else {
+                    }
+                    else {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                     }
 
@@ -165,7 +190,8 @@ function ConvertTo-PermissionPrincipal {
 
         $PropertiesToAdd['Members'] = $GroupMembers
 
-    } else {
+    }
+    else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually

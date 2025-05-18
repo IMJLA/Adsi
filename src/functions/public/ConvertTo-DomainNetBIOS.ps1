@@ -1,5 +1,27 @@
 function ConvertTo-DomainNetBIOS {
 
+    <#
+    .SYNOPSIS
+    Converts a domain FQDN to its NetBIOS name.
+
+    .DESCRIPTION
+    Retrieves the NetBIOS name for a specified domain FQDN by checking the cache or querying
+    the directory service. For LDAP providers, it retrieves domain information from the directory.
+    For non-LDAP providers, it extracts the first part of the FQDN before the first period.
+
+    .EXAMPLE
+    ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache
+
+    .EXAMPLE
+    ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    .INPUTS
+    None. Pipeline input is not accepted.
+
+    .OUTPUTS
+    System.String. The NetBIOS name of the domain.
+    #>
+
     param (
 
         [string]$DomainFQDN,
@@ -43,13 +65,15 @@ function ConvertTo-DomainNetBIOS {
 
         }
 
-    } else {
+    }
+    else {
 
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
 
         if ($LengthOfNetBIOSName -eq -1) {
             $DomainFQDN
-        } else {
+        }
+        else {
             $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
         }
 

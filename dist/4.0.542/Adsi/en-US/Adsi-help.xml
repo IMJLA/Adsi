@@ -10,7 +10,7 @@
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Uses RegEx to:     - Match the Domain Components from the Distinguished Name in the LDAP directory path     - Convert the Domain Components to an FQDN     - Insert them into the directory path as the server address</maml:para>
+      <maml:para>Uses RegEx to:  - Match the Domain Components from the Distinguished Name in the LDAP directory path  - Convert the Domain Components to an FQDN  - Insert them into the directory path as the server address</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -222,7 +222,7 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter.  Must contain the objectSid property.</maml:name>
+          <maml:name>[System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter. Must contain the objectSid property.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -249,7 +249,7 @@ LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
 distinguishedName :
-Path              : WinNT://localhost/Administrator</dev:code>
+Path : WinNT://localhost/Administrator</dev:code>
         <dev:remarks>
           <maml:para>The output object's default format is not modified so with default formatting it appears identical to the original. Upon closer inspection it now has SidString, Domain, and SamAccountName properties.</maml:para>
         </dev:remarks>
@@ -416,7 +416,7 @@ Path              : WinNT://localhost/Administrator</dev:code>
         <dev:code>$DirectoryEntry = [adsi]("WinNT://$(hostname)")
 $DirectoryEntry.Properties.Keys |
 ForEach-Object {
-    ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
+ ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
 }</dev:code>
         <dev:remarks>
           <maml:para>For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string</maml:para>
@@ -716,7 +716,7 @@ ConvertFrom-ResolvedID</dev:code>
         <dev:code>$DirectoryEntry = [adsi]("WinNT://$(hostname)")
 $DirectoryEntry.Properties.Keys |
 ForEach-Object {
-    ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
+ ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
 }</dev:code>
         <dev:remarks>
           <maml:para>For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string</maml:para>
@@ -1369,16 +1369,16 @@ DC=ad,DC=contoso,DC=com</dev:code>
       <command:verb>ConvertTo</command:verb>
       <command:noun>DomainNetBIOS</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Converts a domain FQDN to its NetBIOS name.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Retrieves the NetBIOS name for a specified domain FQDN by checking the cache or querying the directory service. For LDAP providers, it retrieves domain information from the directory. For non-LDAP providers, it extracts the first part of the FQDN before the first period.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-DomainNetBIOS</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DomainFQDN</maml:name>
           <maml:description>
             <maml:para>{{ Fill DomainFQDN Description }}</maml:para>
@@ -1390,7 +1390,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>AdsiProvider</maml:name>
           <maml:description>
             <maml:para>{{ Fill AdsiProvider Description }}</maml:para>
@@ -1402,10 +1402,10 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>Cache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Cache Description }}</maml:para>
+            <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
           <dev:type>
@@ -1429,7 +1429,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>AdsiProvider</maml:name>
         <maml:description>
           <maml:para>{{ Fill AdsiProvider Description }}</maml:para>
@@ -1441,10 +1441,10 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Cache Description }}</maml:para>
+          <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
         <dev:type>
@@ -1453,7 +1453,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DomainFQDN</maml:name>
         <maml:description>
           <maml:para>{{ Fill DomainFQDN Description }}</maml:para>
@@ -1481,7 +1481,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1491,7 +1491,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.String. The NetBIOS name of the domain.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1505,10 +1505,17 @@ DC=ad,DC=contoso,DC=com</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1520,19 +1527,19 @@ DC=ad,DC=contoso,DC=com</dev:code>
       <command:verb>ConvertTo</command:verb>
       <command:noun>DomainSidString</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Converts a domain DNS name to its corresponding SID string.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Retrieves the security identifier (SID) string for a specified domain DNS name using either cached values or by querying the directory service. It supports both LDAP and WinNT providers and can fall back to local server resolution methods when needed.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-DomainSidString</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DomainDnsName</maml:name>
           <maml:description>
-            <maml:para>{{ Fill DomainDnsName Description }}</maml:para>
+            <maml:para>Domain DNS name to convert to the domain's SID</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -1541,10 +1548,12 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>AdsiProvider</maml:name>
           <maml:description>
-            <maml:para>{{ Fill AdsiProvider Description }}</maml:para>
+            <maml:para>AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names</maml:para>
+            <maml:para>This parameter can be used to reduce calls to Find-AdsiProvider</maml:para>
+            <maml:para>Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -1553,10 +1562,10 @@ DC=ad,DC=contoso,DC=com</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>Cache</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Cache Description }}</maml:para>
+            <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
           <dev:type>
@@ -1580,10 +1589,12 @@ DC=ad,DC=contoso,DC=com</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>AdsiProvider</maml:name>
         <maml:description>
-          <maml:para>{{ Fill AdsiProvider Description }}</maml:para>
+          <maml:para>AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names</maml:para>
+          <maml:para>This parameter can be used to reduce calls to Find-AdsiProvider</maml:para>
+          <maml:para>Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1592,10 +1603,10 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Cache Description }}</maml:para>
+          <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
         <dev:type>
@@ -1604,10 +1615,10 @@ DC=ad,DC=contoso,DC=com</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DomainDnsName</maml:name>
         <maml:description>
-          <maml:para>{{ Fill DomainDnsName Description }}</maml:para>
+          <maml:para>Domain DNS name to convert to the domain's SID</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1632,7 +1643,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1642,7 +1653,7 @@ DC=ad,DC=contoso,DC=com</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.String. The SID string of the specified domain.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1656,10 +1667,17 @@ DC=ad,DC=contoso,DC=com</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para></maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache</dev:code>
+        <dev:remarks>
+          <maml:para></maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3402,7 +3420,7 @@ ad.contoso.com</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>Get-DirectoryEntry
 distinguishedName : {DC=ad,DC=contoso,DC=com}
-Path              : LDAP://DC=ad,DC=contoso,DC=com</dev:code>
+Path : LDAP://DC=ad,DC=contoso,DC=com</dev:code>
         <dev:remarks>
           <maml:para>As the current user on a domain-joined computer, bind to the current domain and retrieve the DirectoryEntry for the root of the domain</maml:para>
         </dev:remarks>
@@ -3411,7 +3429,7 @@ Path              : LDAP://DC=ad,DC=contoso,DC=com</dev:code>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
         <dev:code>Get-DirectoryEntry
 distinguishedName :
-Path              : WinNT://ComputerName</dev:code>
+Path : WinNT://ComputerName</dev:code>
         <dev:remarks>
           <maml:para>As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory</maml:para>
         </dev:remarks>
@@ -3670,11 +3688,11 @@ Path              : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>KnownSidHashTable</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Returns a hashtable of known security identifiers (SIDs) with detailed information.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Returns a hashtable of known SIDs which can be used to avoid errors and delays due to unnecessary directory queries. Some SIDs cannot be translated using the [SecurityIdentifier]::Translate or [NTAccount]::Translate methods. Some SIDs cannot be retrieved using CIM or ADSI. Hardcoding them here allows avoiding queries that we know will fail. Hardcoding them also improves performance by avoiding unnecessary directory queries with predictable results.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3685,7 +3703,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. This function does not accept pipeline input.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3695,7 +3713,7 @@ Path              : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.Collections.Hashtable. Contains SIDs as keys and PSCustomObjects with SID information as values.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3709,14 +3727,23 @@ Path              : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$knownSids = Get-KnownSidHashTable</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para></maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -3890,7 +3917,12 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -3993,7 +4025,12 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -4144,7 +4181,12 @@ Path              : WinNT://ComputerName</dev:code>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -4319,7 +4361,12 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -4327,16 +4374,16 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       <command:verb>New</command:verb>
       <command:noun>FakeDirectoryEntry</command:noun>
       <maml:description>
-        <maml:para>{{ Fill in the Synopsis }}</maml:para>
+        <maml:para>Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>{{ Fill in the Description }}</maml:para>
+      <maml:para>Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory. The WinNT provider only throws an error if you try to retrieve certain accounts/identities. This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>New-FakeDirectoryEntry</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryPath</maml:name>
           <maml:description>
             <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
@@ -4348,7 +4395,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>SID</maml:name>
           <maml:description>
             <maml:para>{{ Fill SID Description }}</maml:para>
@@ -4360,7 +4407,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>Description</maml:name>
           <maml:description>
             <maml:para>{{ Fill Description Description }}</maml:para>
@@ -4372,7 +4419,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>SchemaClassName</maml:name>
           <maml:description>
             <maml:para>{{ Fill SchemaClassName Description }}</maml:para>
@@ -4384,7 +4431,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>InputObject</maml:name>
           <maml:description>
             <maml:para>{{ Fill InputObject Description }}</maml:para>
@@ -4396,34 +4443,34 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>NameAllowList</maml:name>
           <maml:description>
-            <maml:para>{{ Fill NameAllowList Description }}</maml:para>
+            <maml:para>Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-          <maml:name>NameBlockList</maml:name>
-          <maml:description>
-            <maml:para>{{ Fill NameBlockList Description }}</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>@{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+          <maml:name>NameBlockList</maml:name>
+          <maml:description>
+            <maml:para>These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>@{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
           <maml:name>Name</maml:name>
           <maml:description>
-            <maml:para>{{ Fill Name Description }}</maml:para>
+            <maml:para>Unused but here for convenient splats</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -4432,10 +4479,10 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
           <maml:name>NTAccount</maml:name>
           <maml:description>
-            <maml:para>{{ Fill NTAccount Description }}</maml:para>
+            <maml:para>Unused but here for convenient splats</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -4447,7 +4494,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>Description</maml:name>
         <maml:description>
           <maml:para>{{ Fill Description Description }}</maml:para>
@@ -4459,7 +4506,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
           <maml:para>{{ Fill DirectoryPath Description }}</maml:para>
@@ -4471,7 +4518,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>InputObject</maml:name>
         <maml:description>
           <maml:para>{{ Fill InputObject Description }}</maml:para>
@@ -4483,46 +4530,46 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para>{{ Fill Name Description }}</maml:para>
+          <maml:para>Unused but here for convenient splats</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
           <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>NameAllowList</maml:name>
-        <maml:description>
-          <maml:para>{{ Fill NameAllowList Description }}</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-        <maml:name>NameBlockList</maml:name>
+        <maml:name>NameAllowList</maml:name>
         <maml:description>
-          <maml:para>{{ Fill NameBlockList Description }}</maml:para>
+          <maml:para>Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>@{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <maml:name>NameBlockList</maml:name>
+        <maml:description>
+          <maml:para>These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>@{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
         <maml:name>NTAccount</maml:name>
         <maml:description>
-          <maml:para>{{ Fill NTAccount Description }}</maml:para>
+          <maml:para>Unused but here for convenient splats</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -4531,7 +4578,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>SchemaClassName</maml:name>
         <maml:description>
           <maml:para>{{ Fill SchemaClassName Description }}</maml:para>
@@ -4543,7 +4590,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>SID</maml:name>
         <maml:description>
           <maml:para>{{ Fill SID Description }}</maml:para>
@@ -4559,7 +4606,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -4569,7 +4616,15 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>SchemaClassName, and objectSid.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -4583,14 +4638,19 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para></maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -4765,7 +4825,12 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -4868,7 +4933,12 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
@@ -5115,6 +5185,11 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         </dev:remarks>
       </command:example>
     </command:examples>
-    <command:relatedLinks />
+    <command:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+    </command:relatedLinks>
   </command:command>
 </helpItems>

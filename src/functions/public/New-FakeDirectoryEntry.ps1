@@ -1,8 +1,23 @@
 function New-FakeDirectoryEntry {
 
     <#
-    Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory
-    The WinNT provider only throws an error if you try to retrieve certain accounts/identities
+    .SYNOPSIS
+    Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
+
+    .DESCRIPTION
+    Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory.
+    The WinNT provider only throws an error if you try to retrieve certain accounts/identities.
+    This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.
+
+    .EXAMPLE
+    New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
+
+    .INPUTS
+    None. Pipeline input is not accepted.
+
+    .OUTPUTS
+    PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,
+    SchemaClassName, and objectSid.
     #>
 
     param (
@@ -117,7 +132,8 @@ function New-FakeDirectoryEntry {
     $SID = $Properties['SID']
     if ($SID) {
         $Properties['objectSid'] = ConvertTo-SidByteArray -SidString $SID
-    } else {
+    }
+    else {
         $Properties['objectSid'] = $null
     }
 

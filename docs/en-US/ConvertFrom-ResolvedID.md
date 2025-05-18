@@ -120,11 +120,12 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## OUTPUTS
 
 ### [System.Object] The input object is returned with additional properties added:
-###     DirectoryEntry
-###     DomainDn
-###     DomainNetBIOS
-###     ObjectType
-###     Members (if the DirectoryEntry is a group).
+### DirectoryEntry
+### DomainDn
+### DomainNetBIOS
+### ObjectType
+### Members (if the DirectoryEntry is a group).
 ## NOTES
 
 ## RELATED LINKS
+

@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.542] - 2025-05-17 - update psakefile
+
+## [4.0.541] - 2025-05-17 - update psakefile
+
+## [4.0.540] - 2025-05-17 - update psakefile
+
+## [4.0.539] - 2025-05-17 - update psakefile
+
+## [4.0.538] - 2025-05-17 - update psakefile
+
+## [4.0.537] - 2025-05-17 - update psakefile
+
+## [4.0.536] - 2025-05-17 - update psakefile
+
+## [4.0.535] - 2025-05-17 - improve docs
+
+## [4.0.534] - 2025-04-08 - add missing comment-based help and incorporate markdown repairs to workaround
+
+## [4.0.533] - 2025-04-08 - add missing comment-based help
+
+## [4.0.532] - 2025-04-08 - add missing comment-based help
+
 ## [4.0.531] - 2025-04-08 - undo vscode damage from merge conflict resolution
 
 ## [4.0.530] - 2025-04-08 - new build after merge conflict resolution
