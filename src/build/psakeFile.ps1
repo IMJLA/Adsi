@@ -373,17 +373,20 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     }
 
     # Fix the readme file to point to the correct location of the markdown files
+    Write-Host "`t`$ReadMeContents = `$ModuleHelp"
     $ReadMeContents = $ModuleHelp
     $DocsRootForURL = "docs/$HelpDefaultLocale"
     [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
     ForEach-Object {
         $EscapedTextToReplace = [regex]::Escape($_)
         $Replacement = "$DocsRootForURL/$_"
+        Write-Host "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
         $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
     }
     $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
     Select-Object -First 1
 
+    Write-Host "`tSet-Content -LiteralPath '$($ReadMePath.FullName)' -Value `$ReadMeContents"
     Set-Content -Path $ReadMePath.FullName -Value $ReadMeContents
 
 }
