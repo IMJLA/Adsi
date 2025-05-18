@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-KnownSidByName
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Creates a hashtable of well-known SIDs indexed by their friendly names.
 
 ## SYNTAX
 
@@ -17,7 +17,11 @@ Get-KnownSidByName [[-WellKnownSIDBySID] <Hashtable>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+This function takes a hashtable of well-known SIDs (indexed by SID) and
+transforms it into a new hashtable where the keys are the friendly names
+of the SIDs.
+This makes it easier to look up SID information when you
+know the name but not the SID itself.
 
 ## EXAMPLES
 
@@ -31,7 +35,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -WellKnownSIDBySID
-{{ Fill WellKnownSIDBySID Description }}
+Hashtable containing well-known SIDs as keys with their properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -39,7 +43,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -47,11 +51,8 @@ Accept wildcard characters: False
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

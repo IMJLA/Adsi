@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 4.0.545
+Help Version: 4.0.546
 Locale: en-US
 ---
 
@@ -66,9 +66,7 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
 
 ### [Find-LocalAdsiServerSid](Find-LocalAdsiServerSid.md)
-
-Find-LocalAdsiServerSid [[-ComputerName] <string>] [-Cache] <ref> [<CommonParameters>]
-
+Finds the SID prefix of the local server by querying the built-in administrator account.
 
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI
@@ -86,25 +84,19 @@ Use ADSI to get the current domain
 Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-KnownCaptionHashTable](Get-KnownCaptionHashTable.md)
-
-Get-KnownCaptionHashTable [[-WellKnownSidBySid] <hashtable>]
-
+Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
 
 ### [Get-KnownSid](Get-KnownSid.md)
 Retrieves information about well-known security identifiers (SIDs).
 
 ### [Get-KnownSidByName](Get-KnownSidByName.md)
-
-Get-KnownSidByName [[-WellKnownSIDBySID] <hashtable>]
-
+Creates a hashtable of well-known SIDs indexed by their friendly names.
 
 ### [Get-KnownSidHashtable](Get-KnownSidHashtable.md)
 Returns a hashtable of known security identifiers (SIDs) with detailed information.
 
 ### [Get-ParentDomainDnsName](Get-ParentDomainDnsName.md)
-
-Get-ParentDomainDnsName [[-DomainNetbios] <string>] [[-CimSession] <CimSession>] [-Cache] <ref> [-RemoveCimSession] [<CommonParameters>]
-
+Gets the DNS name of the parent domain for a given computer or domain.
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
@@ -122,9 +114,7 @@ Creates a fake DirectoryEntry object for security principals that don't have obj
 Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
 
 ### [Resolve-ServiceNameToSID](Resolve-ServiceNameToSID.md)
-
-Resolve-ServiceNameToSID [[-InputObject] <Object>] [<CommonParameters>]
-
+Resolves Windows service names to their corresponding security identifiers (SIDs).
 
 ### [Search-Directory](Search-Directory.md)
 Use Active Directory Service Interfaces to search an LDAP directory

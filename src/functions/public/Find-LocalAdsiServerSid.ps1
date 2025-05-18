@@ -1,4 +1,13 @@
 function Find-LocalAdsiServerSid {
+    <#
+    .SYNOPSIS
+        Finds the SID prefix of the local server by querying the built-in administrator account.
+    .DESCRIPTION
+        This function queries the local computer or a remote computer via CIM to find the SID
+        of the built-in administrator account (RID 500), then extracts and returns the server's
+        SID prefix by removing the RID portion. This is useful for identifying the server's
+        unique domain identifier in Active Directory environments.
+    #>
 
     [OutputType([System.String])]
 

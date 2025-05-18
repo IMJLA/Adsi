@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-KnownCaptionHashTable
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
 
 ## SYNTAX
 
@@ -17,7 +17,11 @@ Get-KnownCaptionHashTable [[-WellKnownSidBySid] <Hashtable>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+This function takes a hashtable of well-known SIDs (indexed by SID) and
+transforms it into a new hashtable where the keys are the NT Account names
+(captions) of the SIDs.
+This makes it easier to look up SID information when
+you have the account name representation rather than the SID itself.
 
 ## EXAMPLES
 
@@ -31,7 +35,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -WellKnownSidBySid
-{{ Fill WellKnownSidBySid Description }}
+Hashtable of well-known Security Identifiers (SIDs) with their properties
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -39,19 +43,16 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
-Default value: None
+Position: 1
+Default value: (Get-KnownSidHashTable)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

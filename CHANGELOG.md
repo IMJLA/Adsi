@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.546] - 2025-05-17 - add comment-based help
+
 ## [4.0.545] - 2025-05-17 - add param descriptions
 
 ## [4.0.544] - 2025-05-17 - add param descriptions

@@ -1,6 +1,13 @@
 function Resolve-ServiceNameToSID {
-
-    # Use the same math as sc.exe showsid to enrich a Service object with the SID and Status of the service
+    <#
+    .SYNOPSIS
+        Resolves Windows service names to their corresponding security identifiers (SIDs).
+    .DESCRIPTION
+        This function takes service objects (from Get-Service or Win32_Service) and
+        calculates their corresponding SIDs using the same algorithm as sc.exe showsid.
+        It enriches the input service objects with SID and Status and returns the
+        enhanced objects with all original properties preserved.
+    #>
 
     param (
 

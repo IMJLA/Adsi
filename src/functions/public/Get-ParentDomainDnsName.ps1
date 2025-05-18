@@ -1,4 +1,13 @@
 function Get-ParentDomainDnsName {
+    <#
+    .SYNOPSIS
+        Gets the DNS name of the parent domain for a given computer or domain.
+    .DESCRIPTION
+        This function retrieves the DNS name of the parent domain for a specified domain
+        or computer using CIM queries. For workgroup computers or when no parent domain
+        is found, it falls back to using the primary DNS suffix from the client's global
+        DNS settings. The function uses caching to improve performance during repeated calls.
+    #>
 
     param (
 

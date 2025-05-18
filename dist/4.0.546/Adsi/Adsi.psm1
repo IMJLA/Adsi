@@ -3444,6 +3444,15 @@ function Expand-WinNTGroupMember {
 
 }
 function Find-LocalAdsiServerSid {
+    <#
+    .SYNOPSIS
+        Finds the SID prefix of the local server by querying the built-in administrator account.
+    .DESCRIPTION
+        This function queries the local computer or a remote computer via CIM to find the SID
+        of the built-in administrator account (RID 500), then extracts and returns the server's
+        SID prefix by removing the RID portion. This is useful for identifying the server's
+        unique domain identifier in Active Directory environments.
+    #>
 
     [OutputType([System.String])]
 
@@ -4240,6 +4249,15 @@ function Get-DirectoryEntry {
 
 }
 function Get-KnownCaptionHashTable {
+    <#
+    .SYNOPSIS
+        Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
+    .DESCRIPTION
+        This function takes a hashtable of well-known SIDs (indexed by SID) and
+        transforms it into a new hashtable where the keys are the NT Account names
+        (captions) of the SIDs. This makes it easier to look up SID information when
+        you have the account name representation rather than the SID itself.
+    #>
 
     param (
         # Hashtable of well-known Security Identifiers (SIDs) with their properties
@@ -4711,6 +4729,15 @@ COMPUTER-SPECIFIC SIDs
 
             #>
 function Get-KnownSidByName {
+    <#
+    .SYNOPSIS
+        Creates a hashtable of well-known SIDs indexed by their friendly names.
+    .DESCRIPTION
+        This function takes a hashtable of well-known SIDs (indexed by SID) and
+        transforms it into a new hashtable where the keys are the friendly names
+        of the SIDs. This makes it easier to look up SID information when you
+        know the name but not the SID itself.
+    #>
 
     param (
         # Hashtable containing well-known SIDs as keys with their properties as values
@@ -5935,6 +5962,15 @@ function Get-KnownSidHashTable {
 
 }
 function Get-ParentDomainDnsName {
+    <#
+    .SYNOPSIS
+        Gets the DNS name of the parent domain for a given computer or domain.
+    .DESCRIPTION
+        This function retrieves the DNS name of the parent domain for a specified domain
+        or computer using CIM queries. For workgroup computers or when no parent domain
+        is found, it falls back to using the primary DNS suffix from the client's global
+        DNS settings. The function uses caching to improve performance during repeated calls.
+    #>
 
     param (
 
@@ -6541,8 +6577,15 @@ function Resolve-IdentityReference {
 
 }
 function Resolve-ServiceNameToSID {
-
-    # Use the same math as sc.exe showsid to enrich a Service object with the SID and Status of the service
+    <#
+    .SYNOPSIS
+        Resolves Windows service names to their corresponding security identifiers (SIDs).
+    .DESCRIPTION
+        This function takes service objects (from Get-Service or Win32_Service) and
+        calculates their corresponding SIDs using the same algorithm as sc.exe showsid.
+        It enriches the input service objects with SID and Status and returns the
+        enhanced objects with all original properties preserved.
+    #>
 
     param (
 
@@ -6676,6 +6719,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

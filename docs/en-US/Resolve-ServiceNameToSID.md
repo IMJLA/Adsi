@@ -8,7 +8,7 @@ schema: 2.0.0
 # Resolve-ServiceNameToSID
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Resolves Windows service names to their corresponding security identifiers (SIDs).
 
 ## SYNTAX
 
@@ -17,7 +17,10 @@ Resolve-ServiceNameToSID [[-InputObject] <Object>] [-ProgressAction <ActionPrefe
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+This function takes service objects (from Get-Service or Win32_Service) and
+calculates their corresponding SIDs using the same algorithm as sc.exe showsid.
+It enriches the input service objects with SID and Status and returns the
+enhanced objects with all original properties preserved.
 
 ## EXAMPLES
 
@@ -31,7 +34,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -InputObject
-{{ Fill InputObject Description }}
+Output of Get-Service or an instance of the Win32_Service CIM class
 
 ```yaml
 Type: System.Object
@@ -39,7 +42,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -65,11 +68,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Object
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS
