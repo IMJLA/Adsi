@@ -25,7 +25,7 @@ BeforeDiscovery {
     ## To test, restart session.
 }
 
-Describe "help for <_.Name>" -ForEach $commands {
+Describe 'help for <_.Name>' -ForEach $commands {
 
     BeforeDiscovery {
         function FilterOutCommonParams {
@@ -33,7 +33,7 @@ Describe "help for <_.Name>" -ForEach $commands {
             $commonParams = @(
                 'Debug', 'ErrorAction', 'ErrorVariable', 'InformationAction', 'InformationVariable',
                 'OutBuffer', 'OutVariable', 'PipelineVariable', 'Verbose', 'WarningAction',
-                'WarningVariable', 'Confirm', 'Whatif'
+                'WarningVariable', 'Confirm', 'Whatif', 'ProgressAction'
             )
             $params | Where-Object { $_.Name -notin $commonParams } | Sort-Object -Property Name -Unique
         }
@@ -51,7 +51,7 @@ Describe "help for <_.Name>" -ForEach $commands {
             $commonParams = @(
                 'Debug', 'ErrorAction', 'ErrorVariable', 'InformationAction', 'InformationVariable',
                 'OutBuffer', 'OutVariable', 'PipelineVariable', 'Verbose', 'WarningAction',
-                'WarningVariable', 'Confirm', 'Whatif'
+                'WarningVariable', 'Confirm', 'Whatif', 'ProgressAction'
             )
             $params | Where-Object { $_.Name -notin $commonParams } | Sort-Object -Property Name -Unique
         }
@@ -71,17 +71,17 @@ Describe "help for <_.Name>" -ForEach $commands {
     }
 
     # Should be a description for every function
-    It "has a description" {
+    It 'has a description' {
         $commandHelp.Description | Should -Not -BeNullOrEmpty
     }
 
     # Should be at least one example
-    It "has example code" {
+    It 'has example code' {
         ($commandHelp.Examples.Example | Select-Object -First 1).Code | Should -Not -BeNullOrEmpty
     }
 
     # Should be at least one example description
-    It "has example help" {
+    It 'has example help' {
         ($commandHelp.Examples.Example.Remarks | Select-Object -First 1).Text | Should -Not -BeNullOrEmpty
     }
 
@@ -89,37 +89,37 @@ Describe "help for <_.Name>" -ForEach $commands {
         (Invoke-WebRequest -Uri $_ -UseBasicParsing).StatusCode | Should -Be '200'
     }
 
-    Context "- Help for parameter '<_.Name>'" -Foreach $commandParameters {
+    Context "- Help for parameter '<_.Name>'" -ForEach $commandParameters {
 
         BeforeAll {
             $parameter = $_
             $parameterName = $parameter.Name
-            $parameterHelp = $commandHelp.parameters.parameter | Where-Object Name -eq $parameterName
+            $parameterHelp = $commandHelp.parameters.parameter | Where-Object Name -EQ $parameterName
             $parameterHelpType = if ($parameterHelp.ParameterValue) { $parameterHelp.ParameterValue.Trim() }
         }
 
         # Should be a description for every parameter
-        It "has a description" {
+        It 'has a description' {
             $parameterHelp.Description.Text | Should -Not -BeNullOrEmpty
         }
 
         # Required value in Help should match IsMandatory property of parameter
-        It "has the correct [mandatory] value" {
+        It 'has the correct [mandatory] value' {
             $codeMandatory = $_.IsMandatory.toString()
             $parameterHelp.Required | Should -Be $codeMandatory
         }
 
         # Parameter type in help should match code
-        It "has the correct parameter type" {
+        It 'has the correct parameter type' {
             $parameterHelpType | Should -Be $parameter.ParameterType.Name
         }
 
     }
 
-    Context "- Parameter '<_>' from the help" -Foreach $helpParameterNames {
+    Context "- Parameter '<_>' from the help" -ForEach $helpParameterNames {
 
         # Shouldn't find extra parameters in help.
-        It "exists in the code: <_>" {
+        It 'exists in the code: <_>' {
             $_ -in $parameterNames | Should -Be $true
         }
     }

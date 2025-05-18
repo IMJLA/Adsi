@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.575] - 2025-05-18 - update Help tests to exclude ProgressAction common param
+
 ## [4.0.574] - 2025-05-18 - test updated build script
 
 ## [4.0.573] - 2025-05-18 - test updated build script
