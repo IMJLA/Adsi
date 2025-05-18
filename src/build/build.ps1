@@ -1,29 +1,33 @@
 [cmdletbinding(DefaultParameterSetName = 'Task')]
 param(
+
     # Build task(s) to execute
     [parameter(ParameterSetName = 'task', position = 0)]
-    [string[]]$Task = 'default',
+    [System.Collections.Generic.List[string]]$Task = @('default'),
 
-    [switch]$IncrementMajorVersion,
-
-    # Bootstrap dependencies
-    [switch]$Bootstrap,
+    [switch]$NoPublish,
 
     # List available build tasks
     [parameter(ParameterSetName = 'Help')]
     [switch]$Help,
 
     # Optional properties to pass to psake
-    [hashtable]$Properties = @{
-        IncrementMajorVersion = $IncrementMajorVersion
-    },
+    [hashtable]$Properties = @{},
 
     # Optional parameters to pass to psake
     [hashtable]$Parameters,
 
     # Commit message for source control
     [parameter(Mandatory)]
-    [string]$CommitMessage
+    [string]$CommitMessage,
+
+    [switch]$IncrementMajorVersion,
+
+    [switch]$IncrementMinorVersion,
+
+    # Bootstrap dependencies
+    [switch]$Bootstrap
+
 )
 
 $ErrorActionPreference = 'Stop'
@@ -50,6 +54,18 @@ if ($Bootstrap.IsPresent) {
     }
 }
 
+if (-not $NoPublish) {
+    $Task.Add('Publish')
+}
+
+if ($IncrementMajorVersion) {
+    $Properties['IncrementMajorVersion'] = $true
+}
+else {
+    if ($IncrementMinorVersion) {
+        $Properties['IncrementMinorVersion'] = $true
+    }
+}
 
 # Execute psake task(s)
 $psakeFile = [IO.Path]::Combine('.', 'src', 'build', 'psakeFile.ps1')
@@ -58,7 +74,6 @@ if ($PSCmdlet.ParameterSetName -eq 'Help') {
     Format-Table -Property Name, Description, Alias, DependsOn
 }
 else {
-    Set-BuildEnvironment -Force
     Invoke-psake -buildFile $psakeFile -taskList $Task -properties $Properties -parameters $Parameters
     exit ([int](-not $psake.build_success))
 }
