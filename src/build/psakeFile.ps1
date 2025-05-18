@@ -290,6 +290,7 @@ Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
             }
         }
 
+        $LocaleOutputDir = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
         $newMDParams = @{
             AlphabeticParamsOrder = $true
             Locale                = $HelpDefaultLocale
@@ -299,12 +300,12 @@ Task BuildMarkdownHelp -depends DeleteMarkdownHelp {
             Module                = $ModuleName
             # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
             # OnlineVersionUrl = $GitHubPagesLinkForThisModule
-            OutputFolder          = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
+            OutputFolder          = $LocaleOutputDir
             UseFullTypeName       = $true
-            Verbose               = $VerbosePreference
             WithModulePage        = $true
         }
-        New-MarkdownHelp @newMDParams
+        Write-Host "`tNew-MarkdownHelp -Path '$DocsRootDir' -Locale '$HelpDefaultLocale' -Module '$ModuleName' -OutputFolder '$LocaleOutputDir'"
+        $MarkDownFiles = New-MarkdownHelp @newMDParams
     }
     finally {
         Remove-Module $ModuleName -Force
@@ -329,7 +330,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -549,7 +550,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $NewModuleVersion -and
         $timer -lt $timeout
@@ -564,9 +565,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -name $ModuleName -AllVersions
+        Uninstall-Module -Name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -581,16 +582,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
