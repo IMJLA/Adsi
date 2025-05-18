@@ -179,7 +179,7 @@ Task RotateBuilds -depends UpdateModuleVersion -action {
     Sort-Object -Property Name |
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
     ForEach-Object {
-        Write-Host "`t'$_' | Remove-Item -Recurse -Force"
+        Write-Host "`tRemove-Item -Recurse -Force -Path '$([IO.Path]::Combine('.',$_.Name))'"
         $_ | Remove-Item -Recurse -Force
     }
 
