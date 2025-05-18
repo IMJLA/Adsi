@@ -55,7 +55,7 @@ Properties {
     $BuildCopyDirectories = @('../bin', '../config', '../data', '../lib')
 
     # List of files (regular expressions) to exclude from output directory
-    $BuildExclude = @('build', 'gitkeep', "$ModuleName.psm1")
+    $BuildExclude = @('build/*', 'gitkeep', "$ModuleName.psm1")
 
     # Output directory when building a module
     $DistDir = [IO.Path]::Combine('.', 'dist')
@@ -249,7 +249,10 @@ Task BuildModule -depends CleanOutputDir {
     }
 
     Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
+    Pause
     Build-PSBuildModule @buildParams
+    Remove-Item "$BuildOutputDir\psdependRequirements.psd1"
+    Pause
 } -description 'Build a PowerShell script module based on the source directory'
 
 $genMarkdownPreReqs = {
