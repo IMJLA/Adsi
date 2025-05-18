@@ -12,8 +12,16 @@ function ConvertTo-DomainSidString {
     .EXAMPLE
     ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
 
+    Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
+    automatically determining the best ADSI provider to use and utilizing the cache to avoid
+    redundant directory queries.
+
     .EXAMPLE
     ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
+    explicitly using the LDAP provider, which can be more efficient when you already know
+    the appropriate provider to use.
 
     .INPUTS
     None. Pipeline input is not accepted.

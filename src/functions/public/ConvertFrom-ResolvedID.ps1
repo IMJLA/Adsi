@@ -22,7 +22,12 @@ function ConvertFrom-ResolvedID {
     Group-Object -Property IdentityReferenceResolved |
     ConvertFrom-ResolvedID
 
-    Incomplete example but it shows the chain of functions to generate the expected input for this
+    Incomplete example but it shows the chain of functions to generate the expected input for this function.
+    This example gets the ACL for an important folder, resolves each identity reference in the access entries,
+    groups them by the resolved identity reference, and then converts each unique identity to a detailed
+    principal object. This provides comprehensive information about each security principal including their
+    directory entry, domain information, and group membership details, which is essential for thorough
+    permission analysis and reporting.
     #>
 
     [OutputType([void])]
@@ -57,7 +62,7 @@ function ConvertFrom-ResolvedID {
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
         Write-LogMsg @Log -Text "`$CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference '$SamAccountNameOrSid' -DomainNetBIOS '$DomainNetBIOS' -DomainByNetbios `$Cache.Value['DomainByNetbios']"
-        $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
+        $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetBIOS']
         $DomainDn = $null
 
         $CommonSplat = @{

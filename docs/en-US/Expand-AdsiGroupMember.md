@@ -25,10 +25,27 @@ Specifically gets the SID, and resolves foreign security principals to their Dir
 
 ### EXAMPLE 1
 ```
-[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
+[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') |
+Get-AdsiGroupMember |
+Expand-AdsiGroupMember
 ```
 
-Need to fix example and add notes
+Retrieves the members of the local Administrators group and then expands each member with additional
+information such as SID and domain information.
+Foreign security principals from trusted domains are
+resolved to their actual DirectoryEntry objects from the appropriate domain.
+
+### EXAMPLE 2
+```
+[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+Get-AdsiGroupMember |
+Expand-AdsiGroupMember -Cache $Cache
+```
+
+Retrieves the members of the domain Administrators group and then expands each member with additional
+information such as SID and domain information.
+Foreign security principals from trusted domains are
+resolved to their actual DirectoryEntry objects from the appropriate domain.
 
 ## PARAMETERS
 

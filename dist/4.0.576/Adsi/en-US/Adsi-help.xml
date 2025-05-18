@@ -636,7 +636,7 @@ Resolve-IdentityReference |
 Group-Object -Property IdentityReferenceResolved |
 ConvertFrom-ResolvedID</dev:code>
         <dev:remarks>
-          <maml:para>Incomplete example but it shows the chain of functions to generate the expected input for this</maml:para>
+          <maml:para>Incomplete example but it shows the chain of functions to generate the expected input for this function. This example gets the ACL for an important folder, resolves each identity reference in the access entries, groups them by the resolved identity reference, and then converts each unique identity to a detailed principal object. This provides comprehensive information about each security principal including their directory entry, domain information, and group membership details, which is essential for thorough permission analysis and reporting.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1508,14 +1508,14 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Converts the fully qualified domain name 'contoso.com' to its NetBIOS name by automatically determining the appropriate method based on available information. The function will check the cache first to avoid unnecessary directory queries.</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
         <dev:code>ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Converts the fully qualified domain name 'contoso.com' to its NetBIOS name using the LDAP provider specifically, which provides more accurate results in an Active Directory environment by querying the domain controller directly.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -1670,14 +1670,14 @@ DC=ad,DC=contoso,DC=com</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by automatically determining the best ADSI provider to use and utilizing the cache to avoid redundant directory queries.</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
         <dev:code>ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by explicitly using the LDAP provider, which can be more efficient when you already know the appropriate provider to use.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2266,9 +2266,20 @@ ad.contoso.com</dev:code>
     <command:examples>
       <command:example>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember</dev:code>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') |
+Get-AdsiGroupMember |
+Expand-AdsiGroupMember</dev:code>
         <dev:remarks>
-          <maml:para>Need to fix example and add notes</maml:para>
+          <maml:para>Retrieves the members of the local Administrators group and then expands each member with additional information such as SID and domain information. Foreign security principals from trusted domains are resolved to their actual DirectoryEntry objects from the appropriate domain.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+Get-AdsiGroupMember |
+Expand-AdsiGroupMember -Cache $Cache</dev:code>
+        <dev:remarks>
+          <maml:para>Retrieves the members of the domain Administrators group and then expands each member with additional information such as SID and domain information. Foreign security principals from trusted domains are resolved to their actual DirectoryEntry objects from the appropriate domain.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -2419,7 +2430,7 @@ ad.contoso.com</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember</dev:code>
         <dev:remarks>
-          <maml:para>Need to fix example and add notes</maml:para>
+          <maml:para>Retrieves the members of the local Administrators group and then expands each member by adding additional information such as SID, domain information, and group membership details if the member is itself a group. This provides a complete hierarchical view of permissions.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -4578,7 +4589,7 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
         <dev:code>New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0", which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

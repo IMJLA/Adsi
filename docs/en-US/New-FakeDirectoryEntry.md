@@ -30,6 +30,9 @@ This function creates a PSCustomObject that mimics a DirectoryEntry with the nec
 New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
 ```
 
+Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0",
+which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.
+
 ## PARAMETERS
 
 ### -Description

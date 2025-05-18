@@ -30,10 +30,18 @@ and can fall back to local server resolution methods when needed.
 ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
 ```
 
+Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
+automatically determining the best ADSI provider to use and utilizing the cache to avoid
+redundant directory queries.
+
 ### EXAMPLE 2
 ```
 ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
 ```
+
+Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
+explicitly using the LDAP provider, which can be more efficient when you already know
+the appropriate provider to use.
 
 ## PARAMETERS
 

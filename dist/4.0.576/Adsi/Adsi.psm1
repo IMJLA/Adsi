@@ -2437,7 +2437,12 @@ function ConvertFrom-ResolvedID {
     Group-Object -Property IdentityReferenceResolved |
     ConvertFrom-ResolvedID
 
-    Incomplete example but it shows the chain of functions to generate the expected input for this
+    Incomplete example but it shows the chain of functions to generate the expected input for this function.
+    This example gets the ACL for an important folder, resolves each identity reference in the access entries,
+    groups them by the resolved identity reference, and then converts each unique identity to a detailed
+    principal object. This provides comprehensive information about each security principal including their
+    directory entry, domain information, and group membership details, which is essential for thorough
+    permission analysis and reporting.
     #>
 
     [OutputType([void])]
@@ -2472,7 +2477,7 @@ function ConvertFrom-ResolvedID {
         $DomainNetBIOS = $split[0]
         $SamAccountNameOrSid = $split[1]
         Write-LogMsg @Log -Text "`$CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference '$SamAccountNameOrSid' -DomainNetBIOS '$DomainNetBIOS' -DomainByNetbios `$Cache.Value['DomainByNetbios']"
-        $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
+        $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $SamAccountNameOrSid -DomainNetBIOS $DomainNetBIOS -DomainByNetbios $Cache.Value['DomainByNetBIOS']
         $DomainDn = $null
 
         $CommonSplat = @{
@@ -2843,8 +2848,16 @@ function ConvertTo-DomainNetBIOS {
     .EXAMPLE
     ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache
 
+    Converts the fully qualified domain name 'contoso.com' to its NetBIOS name by automatically
+    determining the appropriate method based on available information. The function will check the
+    cache first to avoid unnecessary directory queries.
+
     .EXAMPLE
     ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    Converts the fully qualified domain name 'contoso.com' to its NetBIOS name using the LDAP provider
+    specifically, which provides more accurate results in an Active Directory environment by querying
+    the domain controller directly.
 
     .INPUTS
     None. Pipeline input is not accepted.
@@ -2927,8 +2940,16 @@ function ConvertTo-DomainSidString {
     .EXAMPLE
     ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
 
+    Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
+    automatically determining the best ADSI provider to use and utilizing the cache to avoid
+    redundant directory queries.
+
     .EXAMPLE
     ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
+    explicitly using the LDAP provider, which can be more efficient when you already know
+    the appropriate provider to use.
 
     .INPUTS
     None. Pipeline input is not accepted.
@@ -3207,9 +3228,21 @@ function Expand-AdsiGroupMember {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
     .EXAMPLE
-    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') |
+    Get-AdsiGroupMember |
+    Expand-AdsiGroupMember
 
-    Need to fix example and add notes
+    Retrieves the members of the local Administrators group and then expands each member with additional
+    information such as SID and domain information. Foreign security principals from trusted domains are
+    resolved to their actual DirectoryEntry objects from the appropriate domain.
+    .EXAMPLE
+    [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+    Get-AdsiGroupMember |
+    Expand-AdsiGroupMember -Cache $Cache
+
+    Retrieves the members of the domain Administrators group and then expands each member with additional
+    information such as SID and domain information. Foreign security principals from trusted domains are
+    resolved to their actual DirectoryEntry objects from the appropriate domain.
     #>
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
@@ -3258,7 +3291,8 @@ function Expand-AdsiGroupMember {
                 $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -Cache $Cache
             }
 
-        } else {
+        }
+        else {
             #Write-LogMsg @Log -Text '# Valid DomainBySid cache found'
         }
 
@@ -3295,7 +3329,8 @@ function Expand-AdsiGroupMember {
                         Write-LogMsg @Log -Text "`$Principal.RefreshCache('$($PropertiesToLoad -join "','")')"
                         $null = $Principal.RefreshCache($PropertiesToLoad)
 
-                    } catch {
+                    }
+                    catch {
 
                         $Principal = $Entry
                         Write-LogMsg @Log -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
@@ -3316,7 +3351,8 @@ function Expand-AdsiGroupMember {
 
                 }
 
-            } else {
+            }
+            else {
                 $Principal = $Entry
             }
 
@@ -3342,7 +3378,9 @@ function Expand-WinNTGroupMember {
     .EXAMPLE
     [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
 
-    Need to fix example and add notes
+    Retrieves the members of the local Administrators group and then expands each member by adding
+    additional information such as SID, domain information, and group membership details if the member
+    is itself a group. This provides a complete hierarchical view of permissions.
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
@@ -3405,7 +3443,8 @@ function Expand-WinNTGroupMember {
                 Write-LogMsg @Log -Text " # '$ThisEntry' has no properties"
                 $Cache.Value['LogType'].Value = $StartingLogType
 
-            } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
+            }
+            elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 $Log['Suffix'] = " # Is an ADSI group $Suffix"
                 Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
@@ -3414,7 +3453,8 @@ function Expand-WinNTGroupMember {
                 Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
-            } else {
+            }
+            else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
 
@@ -3428,7 +3468,8 @@ function Expand-WinNTGroupMember {
 
                     }
 
-                } else {
+                }
+                else {
 
                     $Log['Suffix'] = " # Is a user account $Suffix"
                     Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$ThisEntry -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
@@ -6262,6 +6303,9 @@ function New-FakeDirectoryEntry {
     .EXAMPLE
     New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
 
+    Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0",
+    which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.
+
     .INPUTS
     None. Pipeline input is not accepted.
 
@@ -6719,6 +6763,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

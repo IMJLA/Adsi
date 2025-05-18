@@ -10,9 +10,21 @@ function Expand-AdsiGroupMember {
     .OUTPUTS
     [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
     .EXAMPLE
-    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-AdsiGroupMember | Expand-AdsiGroupMember
+    [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') |
+    Get-AdsiGroupMember |
+    Expand-AdsiGroupMember
 
-    Need to fix example and add notes
+    Retrieves the members of the local Administrators group and then expands each member with additional
+    information such as SID and domain information. Foreign security principals from trusted domains are
+    resolved to their actual DirectoryEntry objects from the appropriate domain.
+    .EXAMPLE
+    [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+    Get-AdsiGroupMember |
+    Expand-AdsiGroupMember -Cache $Cache
+
+    Retrieves the members of the domain Administrators group and then expands each member with additional
+    information such as SID and domain information. Foreign security principals from trusted domains are
+    resolved to their actual DirectoryEntry objects from the appropriate domain.
     #>
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
@@ -61,7 +73,8 @@ function Expand-AdsiGroupMember {
                 $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -Cache $Cache
             }
 
-        } else {
+        }
+        else {
             #Write-LogMsg @Log -Text '# Valid DomainBySid cache found'
         }
 
@@ -98,7 +111,8 @@ function Expand-AdsiGroupMember {
                         Write-LogMsg @Log -Text "`$Principal.RefreshCache('$($PropertiesToLoad -join "','")')"
                         $null = $Principal.RefreshCache($PropertiesToLoad)
 
-                    } catch {
+                    }
+                    catch {
 
                         $Principal = $Entry
                         Write-LogMsg @Log -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
@@ -119,7 +133,8 @@ function Expand-AdsiGroupMember {
 
                 }
 
-            } else {
+            }
+            else {
                 $Principal = $Entry
             }
 

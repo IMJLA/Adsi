@@ -12,8 +12,16 @@ function ConvertTo-DomainNetBIOS {
     .EXAMPLE
     ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache
 
+    Converts the fully qualified domain name 'contoso.com' to its NetBIOS name by automatically
+    determining the appropriate method based on available information. The function will check the
+    cache first to avoid unnecessary directory queries.
+
     .EXAMPLE
     ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+
+    Converts the fully qualified domain name 'contoso.com' to its NetBIOS name using the LDAP provider
+    specifically, which provides more accurate results in an Active Directory environment by querying
+    the domain controller directly.
 
     .INPUTS
     None. Pipeline input is not accepted.
