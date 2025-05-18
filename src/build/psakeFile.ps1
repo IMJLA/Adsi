@@ -249,10 +249,12 @@ Task BuildModule -depends CleanOutputDir {
     }
 
     Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
-    Pause
     Build-PSBuildModule @buildParams
-    Remove-Item "$BuildOutputDir\psdependRequirements.psd1"
-    Pause
+
+    # Remove the psdependRequirements.psd1 file if it exists
+    Write-Host "`tRemove-Item -Path '$BuildOutputDir\psdependRequirements.psd1'"
+    Remove-Item -Path "$BuildOutputDir\psdependRequirements.psd1"
+
 } -description 'Build a PowerShell script module based on the source directory'
 
 $genMarkdownPreReqs = {
@@ -266,7 +268,7 @@ $genMarkdownPreReqs = {
 
 Task DeleteMarkdownHelp -depends BuildModule -precondition $genMarkdownPreReqs -action {
     $MarkdownDir = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale)
-    "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item"
+    Write-Host "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item"
     Get-ChildItem -Path $MarkdownDir -Recurse | Remove-Item
 } -description 'Delete existing .md files to prepare for PlatyPS to build new ones'
 
