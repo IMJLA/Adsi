@@ -55,7 +55,7 @@ Properties {
     $BuildCopyDirectories = @('../bin', '../config', '../data', '../lib')
 
     # List of files (regular expressions) to exclude from output directory
-    $BuildExclude = @('gitkeep', "$ModuleName.psm1")
+    $BuildExclude = @('build', 'gitkeep', "$ModuleName.psm1")
 
     # Output directory when building a module
     $DistDir = [IO.Path]::Combine('.', 'dist')
@@ -158,7 +158,7 @@ Task RotateBuilds -depends UpdateModuleVersion -action {
     Sort-Object -Property Name |
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
     ForEach-Object {
-        Write-Host "'$_' | Remove-Item -Recurse -Force"
+        Write-Host "`t'$_' | Remove-Item -Recurse -Force"
         $_ | Remove-Item -Recurse -Force
     }
 
@@ -231,7 +231,6 @@ Task BuildModule -depends CleanOutputDir {
         CompileDirectories = $BuildCompileDirectories
         CopyDirectories    = $BuildCopyDirectories
         Culture            = $HelpDefaultLocale
-        Verbose            = $VerbosePreference
     }
 
     if ($HelpConvertReadMeToAboutHelp) {
@@ -249,7 +248,7 @@ Task BuildModule -depends CleanOutputDir {
         }
     }
 
-    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])' -Verbose '$VerbosePreference'"
+    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
     Build-PSBuildModule @buildParams
 } -description 'Build a PowerShell script module based on the source directory'
 
@@ -325,7 +324,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -545,7 +544,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $NewModuleVersion -and
         $timer -lt $timeout
@@ -560,9 +559,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -577,16 +576,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
