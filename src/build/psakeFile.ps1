@@ -333,7 +333,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -347,10 +347,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
         Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
         Invalid yaml: expected simple key-value pairs
     #>
-    Write-Host "`t`$ModuleHelp -replace '\r?\n[ ]{12}', ' ; '"
-    Write-Host "`t`$ModuleHelp -replace '{ ;', '{ '"
-    Write-Host "`t`$ModuleHelp -replace '[ ]{2,}', ' '"
-    Write-Host "`t`$ModuleHelp -replace '\r?\n\s\}', ' }'"
+    Write-Host "`t`$ModuleHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
     $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
     $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
     $ModuleHelp = $ModuleHelp -replace '[ ]{2,}', ' '
@@ -366,10 +363,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
         $ThisFunctionHelpFile = [IO.Path]::Combine($DocsRootDir, $HelpDefaultLocale, "$fileNameWithoutExtension.md")
         Write-Host "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
         [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
-        Write-Host "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '"
-        Write-Host "`t`$ThisFunctionHelp -replace '{ ;', '{ '"
-        Write-Host "`t`$ThisFunctionHelp -replace '[ ]{2,}', ' '"
-        Write-Host "`t`$ThisFunctionHelp -replace '\r?\n\s\}', ' }'"
+        Write-Host "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
         $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
@@ -566,7 +560,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $NewModuleVersion -and
         $timer -lt $timeout
@@ -581,9 +575,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -598,16 +592,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
