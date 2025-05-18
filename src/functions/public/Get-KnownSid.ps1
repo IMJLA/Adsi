@@ -10,6 +10,14 @@ function Get-KnownSid {
     - https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
     - https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
 
+    .INPUTS
+    System.String
+
+    A SID string that identifies a well-known security principal.
+
+    .OUTPUTS
+    PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
+
     .EXAMPLE
     Get-KnownSid -SID 'S-1-5-32-544'
 
@@ -19,12 +27,6 @@ function Get-KnownSid {
     Get-KnownSid -SID 'S-1-5-18'
 
     Returns information about the Local System account.
-
-    .INPUTS
-    System.String
-
-    .OUTPUTS
-    PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
     #>
 
     param (

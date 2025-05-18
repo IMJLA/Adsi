@@ -58,6 +58,7 @@ Accept wildcard characters: False
 ## INPUTS
 
 ### System.String
+### A SID string that identifies a well-known security principal.
 ## OUTPUTS
 
 ### PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.

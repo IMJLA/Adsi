@@ -25,12 +25,17 @@ know the name but not the SID itself.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+$sidBySid = Get-KnownSidHashTable
+$sidByName = Get-KnownSidByName -WellKnownSIDBySID $sidBySid
+$administratorsInfo = $sidByName['Administrators']
 ```
 
-{{ Add example description here }}
+Creates a hashtable of well-known SIDs indexed by their friendly names and retrieves
+information about the Administrators group.
+This is useful when you need to look up
+SID information by name rather than by SID string.
 
 ## PARAMETERS
 
@@ -51,8 +56,12 @@ Accept wildcard characters: False
 
 ## INPUTS
 
+### System.Collections.Hashtable
+### A hashtable containing SID strings as keys and information objects as values.
 ## OUTPUTS
 
+### System.Collections.Hashtable
+### Returns a hashtable with friendly names as keys and SID information objects as values.
 ## NOTES
 
 ## RELATED LINKS

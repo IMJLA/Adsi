@@ -2402,6 +2402,8 @@ function ConvertFrom-PropertyValueCollectionToString {
     None. Pipeline input is not accepted.
     .OUTPUTS
     [System.String]
+
+    Returns a string representation of the PropertyValueCollection's value.
     .EXAMPLE
     $DirectoryEntry = [adsi]("WinNT://$(hostname)")
     $DirectoryEntry.Properties.Keys |
@@ -3520,6 +3522,18 @@ function Find-LocalAdsiServerSid {
         of the built-in administrator account (RID 500), then extracts and returns the server's
         SID prefix by removing the RID portion. This is useful for identifying the server's
         unique domain identifier in Active Directory environments.
+    .INPUTS
+        None. Pipeline input is not accepted.
+    .OUTPUTS
+        System.String
+
+        Returns the SID prefix of the specified computer or local computer.
+    .EXAMPLE
+        Find-LocalAdsiServerSid -ComputerName "DC01" -Cache $Cache
+
+        Retrieves the SID prefix for the computer "DC01" by querying the built-in Administrator
+        account and removing the RID portion. This domain SID prefix can be used to identify
+        the domain and construct SIDs for domain users and groups.
     #>
 
     [OutputType([System.String])]
@@ -4381,6 +4395,14 @@ function Get-KnownSid {
     - https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab
     - https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers
 
+    .INPUTS
+    System.String
+
+    A SID string that identifies a well-known security principal.
+
+    .OUTPUTS
+    PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
+
     .EXAMPLE
     Get-KnownSid -SID 'S-1-5-32-544'
 
@@ -4390,12 +4412,6 @@ function Get-KnownSid {
     Get-KnownSid -SID 'S-1-5-18'
 
     Returns information about the Local System account.
-
-    .INPUTS
-    System.String
-
-    .OUTPUTS
-    PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.
     #>
 
     param (
@@ -4830,6 +4846,22 @@ function Get-KnownSidByName {
         transforms it into a new hashtable where the keys are the friendly names
         of the SIDs. This makes it easier to look up SID information when you
         know the name but not the SID itself.
+    .INPUTS
+        System.Collections.Hashtable
+
+        A hashtable containing SID strings as keys and information objects as values.
+    .OUTPUTS
+        System.Collections.Hashtable
+
+        Returns a hashtable with friendly names as keys and SID information objects as values.
+    .EXAMPLE
+        $sidBySid = Get-KnownSidHashTable
+        $sidByName = Get-KnownSidByName -WellKnownSIDBySID $sidBySid
+        $administratorsInfo = $sidByName['Administrators']
+
+        Creates a hashtable of well-known SIDs indexed by their friendly names and retrieves
+        information about the Administrators group. This is useful when you need to look up
+        SID information by name rather than by SID string.
     #>
 
     param (
@@ -6833,6 +6865,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashtable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

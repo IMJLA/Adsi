@@ -26,12 +26,15 @@ unique domain identifier in Active Directory environments.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Find-LocalAdsiServerSid -ComputerName "DC01" -Cache $Cache
 ```
 
-{{ Add example description here }}
+Retrieves the SID prefix for the computer "DC01" by querying the built-in Administrator
+account and removing the RID portion.
+This domain SID prefix can be used to identify
+the domain and construct SIDs for domain users and groups.
 
 ## PARAMETERS
 
@@ -85,9 +88,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
 ### System.String
+### Returns the SID prefix of the specified computer or local computer.
 ## NOTES
 
 ## RELATED LINKS

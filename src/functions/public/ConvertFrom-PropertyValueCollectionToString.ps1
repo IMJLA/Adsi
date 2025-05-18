@@ -9,6 +9,8 @@ function ConvertFrom-PropertyValueCollectionToString {
     None. Pipeline input is not accepted.
     .OUTPUTS
     [System.String]
+
+    Returns a string representation of the PropertyValueCollection's value.
     .EXAMPLE
     $DirectoryEntry = [adsi]("WinNT://$(hostname)")
     $DirectoryEntry.Properties.Keys |

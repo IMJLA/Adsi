@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.578] - 2025-05-18 - improve helpinfo
+
 ## [4.0.577] - 2025-05-18 - improve helpinfo
 
 ## [4.0.576] - 2025-05-18 - Add examples and remarks

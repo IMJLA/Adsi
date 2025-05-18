@@ -422,6 +422,14 @@ ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry</dev:code>
           <maml:para></maml:para>
         </maml:description>
       </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Returns a string representation of the PropertyValueCollection's value.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
@@ -2543,11 +2551,28 @@ Expand-AdsiGroupMember -Cache $Cache</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
           <maml:name>System.String</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Returns the SID prefix of the specified computer or local computer.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -2561,10 +2586,10 @@ Expand-AdsiGroupMember -Cache $Cache</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Find-LocalAdsiServerSid -ComputerName "DC01" -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Retrieves the SID prefix for the computer "DC01" by querying the built-in Administrator account and removing the RID portion. This domain SID prefix can be used to identify the domain and construct SIDs for domain users and groups.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -3570,6 +3595,14 @@ Path : WinNT://ComputerName</dev:code>
           <maml:para></maml:para>
         </maml:description>
       </command:inputType>
+      <command:inputType>
+        <dev:type>
+          <maml:name>A SID string that identifies a well-known security principal.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
     </command:inputTypes>
     <command:returnValues>
       <command:returnValue>
@@ -3647,8 +3680,42 @@ Path : WinNT://ComputerName</dev:code>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes />
-    <command:returnValues />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+      <command:inputType>
+        <dev:type>
+          <maml:name>A hashtable containing SID strings as keys and information objects as values.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Returns a hashtable with friendly names as keys and SID information objects as values.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -3656,10 +3723,12 @@ Path : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; {{ Add example code here }}</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$sidBySid = Get-KnownSidHashTable
+$sidByName = Get-KnownSidByName -WellKnownSIDBySID $sidBySid
+$administratorsInfo = $sidByName['Administrators']</dev:code>
         <dev:remarks>
-          <maml:para>{{ Add example description here }}</maml:para>
+          <maml:para>Creates a hashtable of well-known SIDs indexed by their friendly names and retrieves information about the Administrators group. This is useful when you need to look up SID information by name rather than by SID string.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
