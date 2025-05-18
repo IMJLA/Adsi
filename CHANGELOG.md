@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [4.0.555] - 2025-05-17 - test updated build script
+
+## [4.0.554] - 2025-05-17 - test updated build script
+
+## [4.0.553] - 2025-05-17 - test updated build script
+
+## [4.0.552] - 2025-05-17 - test updated build script
+
+## [4.0.551] - 2025-05-17 - test updated build script
+
+## [4.0.550] - 2025-05-17 - test updated build script
+
+## [4.0.549] - 2025-05-17 - test updated build script
+
+## [4.0.548] - 2025-05-17 - test updated build script
+
+## [4.0.547] - 2025-05-17 - test updated build script
+
 ## [4.0.546] - 2025-05-17 - add comment-based help
 
 ## [4.0.545] - 2025-05-17 - add param descriptions
