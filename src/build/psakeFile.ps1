@@ -11,7 +11,7 @@ Properties {
     # Folder containing the script .ps1 file
     [string]$SourceCodeDir = [IO.Path]::Combine('.', 'src')
 
-    # This character sequence will be used to separate lines in the console output.
+    # This character sequence will be used to separate lines in the console output
     [string]$NewLine = [System.Environment]::NewLine
 
 
@@ -42,10 +42,101 @@ Properties {
 
 
 
+    # Pester (Unit Testing)
+
+    # Whether or not to perform unit tests using Pester.
+    [boolean]$TestEnabled = $true
+
+    # Unit tests found here will be performed using Pester.
+    [string]$TestRootDir = [IO.Path]::Combine('.', 'tests')
+
+    # Unit test results will be saved to this file by Pester.
+    [string]$TestResultsFile = [IO.Path]::Combine($TestsRootDir, 'out', 'testResults.xml')
+
+    <#
+    Test results will be output in this format.
+    This is the Pester ConfigurationProperty TestResult.OutputFormat.
+    As of Pester v5, valid values are:
+        NUnitXml
+        JUnitXml
+    #>
+    enum TestOutputFormat {
+        NUnitXml # NUnit-compatible XML
+        JUnitXml # JUnit-compatible XML
+    }
+    [TestOutputFormat]$TestOutputFormat = 'NUnitXml'
+
+    # Enable/disable Pester code coverage reporting.
+    [boolean]$TestCodeCoverageEnabled = $false
+
+    # Minimum threshold required to pass Pester code coverage testing
+    [single]$TestCodeCoverageThreshold = .75
+
+    # CodeCoverageFiles specifies the files to perform code coverage analysis on. This property
+    # acts as a direct input to the Pester -CodeCoverage parameter, so will support constructions
+    # like the ones found here: https://pester.dev/docs/usage/code-coverage.
+    [System.IO.FileInfo[]]$TestCodeCoverageFiles = @()
+
+    # Path to write code coverage report to
+    [System.IO.FileInfo]$TestCodeCoverageOutputFile = [IO.Path]::Combine($TestRootDir, 'out', 'codeCoverage.xml')
+
+    # Format to use for code coverage report
+    enum TestCodeCoverageOutputFormat {
+        JaCoCo
+        CoverageGutters
+    }
+    [TestCodeCoverageOutputFormat]$TestCodeCoverageOutputFormat = 'JaCoCo'
+
+
+
+    # PSScriptAnalyzer (Linting)
+
+    # Enable/disable use of PSScriptAnalyzer to perform script analysis
+    [boolean]$LintEnabled = $true
+
+    # When PSScriptAnalyzer is enabled, control which severity level will generate a build failure.
+    # Valid values are Error, Warning, Information and None.
+    enum LintSeverity {
+        None # Report errors but do not fail the build.
+        ParseError # This diagnostic is caused by an actual parsing error, and is generated only by the engine.  The build will fail.
+        Error # Fail the build only on Error diagnostic records.
+        Warning # Fail the build on Warning and Error diagnostic records.
+        Information # Fail the build on any diagnostic record, regardless of severity.
+    }
+    [LintSeverity]$LintSeverityThreshold = 'Error'
+
+    # Path to the PSScriptAnalyzer settings file.
+    [string]$LintSettingsFile = [IO.Path]::Combine($TestRootDir, 'ScriptAnalyzerSettings.psd1')
+
+
+
+    # PowerShellBuild (Compilation, Build Processes, and MAML help)
+
+    # The PowerShell module will be created in this folder
+    [string]$BuildOutDir = [IO.Path]::Combine('.', 'dist')
+
+
+
+    # PowerShell Repository (Publication and Distribution)
+
+    # Whether or not to publish the resultant scripts to any PowerShell repositories
+    [boolean]$Publish = $true
+
+    # PowerShell repository name to publish modules to
+    [string]$PublishPSRepository = 'PSGallery'
+
+    # API key to authenticate to PowerShell repository with
+    [string]$PublishPSRepositoryApiKey = $env:PSGALLERY_API_KEY
+
+    # Credential to authenticate to PowerShell repository with
+    [string]$PublishPSRepositoryCredential = $null
+
+
+
 
     $StartingLocation = Get-Location
     Set-Location $PSScriptRoot
-    $ProjectRoot = [IO.Path]::Combine('..', '..')
+    [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
     Set-Location $ProjectRoot
 
     $ModuleManifestDir = [IO.Path]::Combine($SourceCodeDir, '*.psd1')
@@ -71,57 +162,6 @@ Properties {
 
     # List of files (regular expressions) to exclude from output directory
     $BuildExclude = @('build/*', 'gitkeep', "$ModuleName.psm1")
-
-    # Output directory when building a module
-    $DistDir = [IO.Path]::Combine('.', 'dist')
-
-    $TestRootDir = [IO.Path]::Combine('.', 'tests')
-    $TestOutputFile = [IO.Path]::Combine('out', 'testResults.xml')
-
-    # Enable/disable use of PSScriptAnalyzer to perform script analysis
-    $TestLintEnabled = $true
-
-    # When PSScriptAnalyzer is enabled, control which severity level will generate a build failure.
-    # Valid values are Error, Warning, Information and None.  "None" will report errors but will not
-    # cause a build failure.  "Error" will fail the build only on diagnostic records that are of
-    # severity error.  "Warning" will fail the build on Warning and Error diagnostic records.
-    # "Any" will fail the build on any diagnostic record, regardless of severity.
-    $TestLintFailBuildOnSeverityLevel = 'Error'
-
-    # Path to the PSScriptAnalyzer settings file.
-    $TestLintSettingsPath = [IO.Path]::Combine($TestRootDir, 'ScriptAnalyzerSettings.psd1')
-
-    $TestEnabled = $true
-
-    $TestOutputFormat = 'NUnitXml'
-
-    # Enable/disable Pester code coverage reporting.
-    $TestCodeCoverageEnabled = $false
-
-    # Fail Pester code coverage test if below this threshold
-    $TestCodeCoverageThreshold = .75
-
-    # CodeCoverageFiles specifies the files to perform code coverage analysis on. This property
-    # acts as a direct input to the Pester -CodeCoverage parameter, so will support constructions
-    # like the ones found here: https://pester.dev/docs/usage/code-coverage.
-    $TestCodeCoverageFiles = @()
-
-    # Path to write code coverage report to
-    $TestCodeCoverageOutputFile = [IO.Path]::Combine($TestRootDir, 'out', 'codeCoverage.xml')
-
-    # The code coverage output format to use
-    $TestCodeCoverageOutputFileFormat = 'JaCoCo'
-
-    $TestImportModuleFirst = $false
-
-    # PowerShell repository name to publish modules to
-    $PublishPSRepository = 'PSGallery'
-
-    # API key to authenticate to PowerShell repository with
-    $PublishPSRepositoryApiKey = $env:PSGALLERY_API_KEY
-
-    # Credential to authenticate to PowerShell repository with
-    $PublishPSRepositoryCredential = $null
 
 }
 
@@ -158,7 +198,7 @@ Task DetermineNewModuleVersion -action {
         $script:NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
     }
 
-    $script:BuildOutputDir = [IO.Path]::Combine($DistDir, $script:NewModuleVersion, $ModuleName)
+    $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
 
 }
@@ -171,19 +211,20 @@ Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
 } -description 'Increment the module version and update the module manifest accordingly'
 
 Task RotateBuilds -depends UpdateModuleVersion -action {
+
     $BuildVersionsToRetain = 1
 
-    Write-Host "`tGet-ChildItem -Directory -Path '$DistDir'"
+    Write-Host "`tGet-ChildItem -Directory -Path '$BuildOutDir'"
 
-    Get-ChildItem -Directory -Path $DistDir |
+    Get-ChildItem -Directory -Path $BuildOutDir |
     Sort-Object -Property Name |
     Select-Object -SkipLast ($BuildVersionsToRetain - 1) |
     ForEach-Object {
-        Write-Host "`tRemove-Item -Recurse -Force -Path '$([IO.Path]::Combine($DistDir,$_.Name))'"
+        Write-Host "`tRemove-Item -Recurse -Force -Path '$([IO.Path]::Combine($BuildOutDir,$_.Name))'"
         $_ | Remove-Item -Recurse -Force
     }
 
-} -description 'Delete all but the last 4 builds, so we will have our 5 most recent builds after the new one is complete'
+}
 
 Task UpdateChangeLog -depends RotateBuilds -action {
     <#
@@ -348,7 +389,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -469,7 +510,7 @@ Task DeleteOldDocs -depends BuildUpdatableHelp -action {
 
 $analyzePreReqs = {
     $result = $true
-    if (-not $TestLintEnabled) {
+    if (-not $LintEnabled) {
         Write-Warning 'Script analysis is not enabled.'
         $result = $false
     }
@@ -483,8 +524,8 @@ $analyzePreReqs = {
 Task Lint -depends DeleteOldDocs -precondition $analyzePreReqs -action {
     $analyzeParams = @{
         Path              = $script:BuildOutputDir
-        SeverityThreshold = $TestLintFailBuildOnSeverityLevel
-        SettingsPath      = $TestLintSettingsPath
+        SeverityThreshold = $LintSeverityThreshold
+        SettingsPath      = $LintSettingsFile
     }
     Write-Host "`tTest-PSBuildScriptAnalysis -Path '$($analyzeParams.Path)' -SeverityThreshold '$($analyzeParams.SeverityThreshold)' -SettingsPath '$($analyzeParams.SettingsPath)'"
     # Run PSScriptAnalyzer
@@ -527,7 +568,7 @@ Task UnitTests -depends Lint -precondition $pesterPreReqs -action {
         }
         TestResult   = @{
             Enabled      = $true
-            OutputPath   = $TestOutputFile
+            OutputPath   = $TestResultsFile
             OutputFormat = $TestOutputFormat
         }
     }
@@ -550,7 +591,7 @@ Task UnitTests -depends Lint -precondition $pesterPreReqs -action {
 `t        }
 `t        TestResult   = @{
 `t            Enabled      = $true
-`t            OutputPath   = '$TestOutputFile'
+`t            OutputPath   = '$TestResultsFile'
 `t            OutputFormat = '$TestOutputFormat'
 `t        }
 `t    }"
@@ -604,7 +645,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -619,9 +660,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -name $ModuleName -AllVersions
+        Uninstall-Module -Name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -636,16 +677,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
