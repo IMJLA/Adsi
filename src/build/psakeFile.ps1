@@ -511,7 +511,7 @@ Task UnitTests -depends Lint -precondition $pesterPreReqs -action {
         }
         TestResult   = @{
             Enabled      = $true
-            OutputPath   = $TestsResultFile
+            OutputPath   = $TestOutputFile
             OutputFormat = $TestOutputFormat
         }
     }
@@ -534,7 +534,7 @@ Task UnitTests -depends Lint -precondition $pesterPreReqs -action {
 `t        }
 `t        TestResult   = @{
 `t            Enabled      = $true
-`t            OutputPath   = '$TestsResultFile'
+`t            OutputPath   = '$TestOutputFile'
 `t            OutputFormat = '$TestOutputFormat'
 `t        }
 `t    }"
