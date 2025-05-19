@@ -458,8 +458,10 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 }
 
 Task BuildMAMLHelp -depends FixMarkdownHelp -action {
+
     Write-Host "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$script:BuildOutputDir'"
     Build-PSBuildMAMLHelp -Path $DocsMarkdownDir -DestinationPath $script:BuildOutputDir
+
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 
 Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $FindDocsUpdateablePrerequisite -action {
@@ -492,15 +494,17 @@ Task DeleteOldDocs -depends BuildUpdatableHelp -action {
 
 Task Lint -precondition $FindLintPrerequisites -action {
 
-    $analyzeParams = @{
-        Path              = $script:BuildOutputDir
-        SeverityThreshold = $LintSeverityThreshold
-        SettingsPath      = $LintSettingsFile
-    }
-    Write-Host "`tTest-PSBuildScriptAnalysis -Path '$($analyzeParams.Path)' -SeverityThreshold '$($analyzeParams.SeverityThreshold)' -SettingsPath '$($analyzeParams.SettingsPath)'"
-
+    #$analyzeParams = @{
+    #    Path              = $script:BuildOutputDir
+    #    SeverityThreshold = $LintSeverityThreshold
+    #    SettingsPath      = $LintSettingsFile
+    #}
+    #Write-Host "`tTest-PSBuildScriptAnalysis -Path '$($analyzeParams.Path)' -SeverityThreshold '$($analyzeParams.SeverityThreshold)' -SettingsPath '$($analyzeParams.SettingsPath)'"
     # Run PSScriptAnalyzer
-    Test-PSBuildScriptAnalysis @analyzeParams
+    #Test-PSBuildScriptAnalysis @analyzeParams
+
+    Write-Host "`tInvoke-ScriptAnalyzer -Path '$script:BuildOutputDir' -Severity '$LintSeverityThreshold' -Settings '$LintSettingsFile'"
+    Invoke-ScriptAnalyzer -Path $script:BuildOutputDir -Severity $LintSeverityThreshold -Settings $LintSettingsFile
 
 } -description 'Execute PSScriptAnalyzer tests'
 

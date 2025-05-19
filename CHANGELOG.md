@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.23] - 2025-05-18
+### Changed
+- eliminate powershellbuild dependency for linting
+
 ## [5.0.22] - 2025-05-18
 ### Changed
 - use info stream in repair-markdownhelp
