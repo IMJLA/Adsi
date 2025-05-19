@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.0] - 2025-05-18 - move version logic to build-newversionnumber
+
 ## [4.0.603] - 2025-05-18 - test updated paskefile
 
 ## [4.0.602] - 2025-05-18 - test updated paskefile
