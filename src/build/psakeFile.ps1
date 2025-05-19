@@ -252,10 +252,10 @@ $FindDocsUpdateablePrerequisite = {
 }
 
 Task SetLocation -action {
-    Write-Host "`tSet-Location -Path '$PSScriptRoot'"
+    $ProjectName = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Leaf
+    Write-Host "`tSet-Location -Path '$ProjectName'"
     Set-Location -Path $PSScriptRoot
     [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
-    Write-Host "`tSet-Location -Path '$ProjectRoot'"
     Set-Location -Path $ProjectRoot
 } -description 'Set the location to the project root'
 
@@ -472,7 +472,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $NewManifestTest.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -677,7 +677,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $script:ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $script:ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -692,9 +692,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-Host "`tGet-Module -Name '$script:ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $script:ModuleName -ListAvailable) {
+    if (Get-Module -name $script:ModuleName -ListAvailable) {
         Write-Host "`tUninstall-Module -Name '$script:ModuleName' -AllVersions"
-        Uninstall-Module -Name $script:ModuleName -AllVersions
+        Uninstall-Module -name $script:ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -709,16 +709,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-Host "`tInstall-Module -Name '$script:ModuleName' -Force"
-        Install-Module -name $script:ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $script:ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $script:ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $script:ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
