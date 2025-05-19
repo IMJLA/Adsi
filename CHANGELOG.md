@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.31] - 2025-05-18
+### Changed
+- target src instead of dist
+
+## [5.0.30] - 2025-05-18
+### Changed
+- target src instead of dist
+
 ## [5.0.29] - 2025-05-18
 ### Fixed
 - bugfix psakefile
