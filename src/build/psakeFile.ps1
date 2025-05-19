@@ -179,6 +179,11 @@ Properties {
 
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
 
+    $WriteInfoScript = [IO.Path]::Combine('.', 'Write-InfoColor.ps1')
+
+    # Dot-source the Write-InfoColor.ps1 script once to make the function available
+    . $WriteInfoScript
+
 }
 
 FormatTaskName {
@@ -187,8 +192,8 @@ FormatTaskName {
         [string]$taskName
     )
 
-    Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-Host $taskName -ForegroundColor Blue
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor $taskName -ForegroundColor Blue
 
 }
 
@@ -196,89 +201,95 @@ Task Default -depends SetLocation, DeleteOldBuilds, DeleteOldDocs, ReturnToStart
 
 $FindLintPrerequisites = {
 
-    Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-Host "FindLintPrerequisites$NewLine" -ForegroundColor Blue
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
 
     if ($LintEnabled) {
-        Write-Host "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
+        Write-InfoColor "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
         [boolean](Get-Module -Name PSScriptAnalyzer -ListAvailable)
     }
     else {
-        Write-Host "`tLinting is disabled. Skipping PSScriptAnalyzer check."
+        Write-InfoColor "`tLinting is disabled. Skipping PSScriptAnalyzer check."
     }
 
 }
 
 $FindBuildPrerequisite = {
 
-    Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-Host "FindBuildPrerequisite$NewLine" -ForegroundColor Blue
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindBuildPrerequisite$NewLine" -ForegroundColor Blue
 
     if ($BuildCompileModule) {
-        Write-Host "`tGet-Module -Name PowerShellBuild -ListAvailable"
+        Write-InfoColor "`tGet-Module -Name PowerShellBuild -ListAvailable"
         [boolean](Get-Module -Name PowerShellBuild -ListAvailable)
     }
     else {
-        Write-Host "`tBuilding is disabled. Skipping PowerShellBuild check."
+        Write-InfoColor "`tBuilding is disabled. Skipping PowerShellBuild check."
     }
 
 }
 
 $FindUnitTestPrerequisite = {
 
-    Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-Host "FindUnitTestPrerequisite$NewLine" -ForegroundColor Blue
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindUnitTestPrerequisite$NewLine" -ForegroundColor Blue
 
     if ($TestEnabled) {
-        Write-Host "`tGet-Module -Name Pester -ListAvailable"
+        Write-InfoColor "`tGet-Module -Name Pester -ListAvailable"
         [boolean](Get-Module -Name Pester -ListAvailable)
     }
     else {
-        Write-Host "`tUnit testing is disabled. Skipping Pester check."
+        Write-InfoColor "`tUnit testing is disabled. Skipping Pester check."
     }
 
 }
 
 $FindDocsPrerequisite = {
 
-    Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-Host "FindDocsPrerequisite$NewLine" -ForegroundColor Blue
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindDocsPrerequisite$NewLine" -ForegroundColor Blue
 
-    Write-Host "`tGet-Module -Name PlatyPS -ListAvailable"
+    Write-InfoColor "`tGet-Module -Name PlatyPS -ListAvailable"
     [boolean](Get-Module -Name PlatyPS -ListAvailable)
 
 }
 
 $FindDocsUpdateablePrerequisite = {
 
-    Write-Host "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-Host "FindDocsUpdateablePrerequisite$NewLine" -ForegroundColor Blue
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindDocsUpdateablePrerequisite$NewLine" -ForegroundColor Blue
 
     if ($FindDocsPrerequisite) {
 
-        Write-Host "`tGet-CimInstance -ClassName CIM_OperatingSystem"
+        Write-InfoColor "`tGet-CimInstance -ClassName CIM_OperatingSystem"
         $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
 
         if ($OS -match 'Windows') {
 
-            Write-Host "`tGet-Command -Name MakeCab.exe"
+            Write-InfoColor "`tGet-Command -Name MakeCab.exe"
             [boolean](Get-Command -Name MakeCab.exe)
 
         }
         else {
-            Write-Host "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation."
+            Write-InfoColor "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation."
         }
 
     }
     else {
-        Write-Host "`tPrerequisite module PlatyPS not found so Markdown docs will not be generated or converted to MAML for input to MakeCab.exe. Skipping Updateable Help generation."
+        Write-InfoColor "`tPrerequisite module PlatyPS not found so Markdown docs will not be generated or converted to MAML for input to MakeCab.exe. Skipping Updateable Help generation."
     }
 
 }
 
-Task SetLocation -action {
+Task SetInfoPreference -action {
 
-    Write-Host "`tSet-Location -Path '$ModuleName'"
+    $InformationPreference = 'Continue'
+
+} -description 'Set script execution preferences'
+
+Task SetLocation -depends SetInfoPreference -action {
+
+    Write-InfoColor "`tSet-Location -Path '$ModuleName'"
     Set-Location -Path $PSScriptRoot
     [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
     Set-Location -Path $ProjectRoot
@@ -287,7 +298,7 @@ Task SetLocation -action {
 
 Task TestModuleManifest -action {
 
-    Write-Host "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
+    Write-InfoColor "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
     $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath
 
 } -description 'Validate the module manifest'
@@ -295,7 +306,7 @@ Task TestModuleManifest -action {
 Task DetermineNewModuleVersion -depends TestModuleManifest -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
-    Write-Host "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
+    Write-InfoColor "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
     $script:NewModuleVersion = & $ScriptToRun -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version
     $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
@@ -311,7 +322,7 @@ Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
 
 Task BackupOldBuilds -depends UpdateModuleVersion -action {
 
-    Write-Host "`tRename-Item -Path '$BuildOutDir' -NewName '$BuildOutDir.old' -Force"
+    Write-InfoColor "`tRename-Item -Path '$BuildOutDir' -NewName '$BuildOutDir.old' -Force"
     Rename-Item -Path $BuildOutDir -NewName "$BuildOutDir.old" -Force -ErrorAction SilentlyContinue
 
 } -description 'Backup old builds'
@@ -319,7 +330,7 @@ Task BackupOldBuilds -depends UpdateModuleVersion -action {
 Task UpdateChangeLog -depends BackupOldBuilds -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Update-ChangeLog.ps1')
-    Write-Host "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
+    Write-InfoColor "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
     & $ScriptToRun -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
 
     <#
@@ -335,7 +346,7 @@ Task UpdateChangeLog -depends BackupOldBuilds -action {
 
 Task FindPublicFunctionFiles -depends UpdateChangeLog -action {
 
-    Write-Host "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
+    Write-InfoColor "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
 
 } -description 'Find all public function files'
@@ -343,7 +354,7 @@ Task FindPublicFunctionFiles -depends UpdateChangeLog -action {
 Task ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
-    Write-Host "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
+    Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
     & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath
 
 } -description 'Export all public functions in the module'
@@ -367,7 +378,7 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -376,7 +387,7 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
     $ExcludeJoined = $buildParams['Exclude'] -join "','"
     $CompileDirectoriesJoined = $buildParams['CompileDirectories'] -join "','"
     $CopyDirectoriesJoined = $buildParams['CopyDirectories'] -join "','"
-    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
+    Write-InfoColor "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
     Build-PSBuildModule @buildParams
 
 } -description 'Build a PowerShell script module based on the source directory'
@@ -385,14 +396,14 @@ Task DeletePSDependRequirementsFileFromBuildOutput -depends BuildModule -action 
 
     # Remove the psdependRequirements.psd1 file if it exists
     $RequirementsFile = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
-    Write-Host "`tRemove-Item -Path '$RequirementsFile'"
+    Write-InfoColor "`tRemove-Item -Path '$RequirementsFile'"
     Remove-Item -Path $RequirementsFile -ErrorAction SilentlyContinue
 
 }
 
 Task DeleteOldBuilds -depends DeletePSDependRequirementsFileFromBuildOutput -action {
 
-    Write-Host "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-InfoColor "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
     Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue
 
 }
@@ -401,9 +412,9 @@ Task DeleteOldBuilds -depends DeletePSDependRequirementsFileFromBuildOutput -act
 
 Task BackupOldDocs -action {
 
-    Write-Host "`tRemove-Item -Path '$DocsRootDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-InfoColor "`tRemove-Item -Path '$DocsRootDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
     Remove-Item -Path "$DocsRootDir.old" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Host "`tRename-Item -Path '$DocsRootDir' -NewName '$DocsRootDir.old' -Force -ErrorAction SilentlyContinue"
+    Write-InfoColor "`tRename-Item -Path '$DocsRootDir' -NewName '$DocsRootDir.old' -Force -ErrorAction SilentlyContinue"
     Rename-Item -Path $DocsRootDir -NewName "$DocsRootDir.old" -Force -ErrorAction SilentlyContinue
 
 } -description 'Backup old documentation files'
@@ -424,7 +435,7 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisit
 
         if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
             Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
-                Write-Host "`tUpdate-MarkdownHelp -Path '$($_.FullName)'"
+                Write-InfoColor "`tUpdate-MarkdownHelp -Path '$($_.FullName)'"
                 Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
             }
         }
@@ -441,7 +452,7 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisit
             UseFullTypeName       = $true
             WithModulePage        = $true
         }
-        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($NewManifestTest.Version)' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
+        Write-InfoColor "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($NewManifestTest.Version)' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
         $null = New-MarkdownHelp @newMDParams
     }
     finally {
@@ -452,14 +463,14 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisit
 Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Repair-MarkdownHelp.ps1')
-    Write-Host "`t& '$ScriptToRun' -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine `$NewLine -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles"
+    Write-InfoColor "`t& '$ScriptToRun' -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine `$NewLine -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles"
     & $ScriptToRun -BuildOutputDir $script:BuildOutputDir -ModuleName $ModuleName -DocsMarkdownDefaultLocaleDir $DocsMarkdownDefaultLocaleDir -NewLine $NewLine -DocsDefaultLocale $DocsDefaultLocale -PublicFunctionFiles $script:PublicFunctionFiles
 
 }
 
 Task BuildMAMLHelp -depends FixMarkdownHelp -action {
 
-    Write-Host "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$script:BuildOutputDir'"
+    Write-InfoColor "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$script:BuildOutputDir'"
     Build-PSBuildMAMLHelp -Path $DocsMarkdownDir -DestinationPath $script:BuildOutputDir
 
 } -description 'Generates MAML-based help from PlatyPS markdown files'
@@ -479,14 +490,14 @@ Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $FindDocsUpdateable
             LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
             OutputFolder    = $DocsUpdateableDir
         }
-        Write-Host "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)'"
+        Write-InfoColor "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)'"
         New-ExternalHelpCab @cabParams > $null
     }
 
 } -description 'Create updatable help .cab file based on PlatyPS markdown help'
 
 Task DeleteOldDocs -depends BuildUpdatableHelp -action {
-    Write-Host "`tRemove-Item -Path '$DocsRootDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-InfoColor "`tRemove-Item -Path '$DocsRootDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
     Remove-Item -Path "$DocsRootDir.old" -Recurse -Force -ErrorAction SilentlyContinue
 } -description 'Delete old documentation file backups'
 
@@ -494,7 +505,7 @@ Task DeleteOldDocs -depends BuildUpdatableHelp -action {
 
 Task Lint -precondition $FindLintPrerequisites -action {
 
-    Write-Host "`tTest-PSBuildScriptAnalysis -Path '$SourceCodeDir' -SeverityThreshold '$LintSeverityThreshold' -SettingsPath '$LintSettingsFile'"
+    Write-InfoColor "`tTest-PSBuildScriptAnalysis -Path '$SourceCodeDir' -SeverityThreshold '$LintSeverityThreshold' -SettingsPath '$LintSettingsFile'"
     Test-PSBuildScriptAnalysis -Path $SourceCodeDir -SeverityThreshold $LintSeverityThreshold -SettingsPath $LintSettingsFile
 
 } -description 'Execute PSScriptAnalyzer tests'
@@ -524,7 +535,7 @@ Task UnitTests -depends Lint -precondition $FindUnitTestPrerequisite -action {
     }
 
 
-    Write-Host "`t`$PesterConfigParams = @{
+    Write-InfoColor "`t`$PesterConfigParams = @{
 `t        Run          = @{
 `t            Path = '$TestRootDir'
 `t        }
@@ -545,10 +556,10 @@ Task UnitTests -depends Lint -precondition $FindUnitTestPrerequisite -action {
 `t            OutputFormat = '$TestOutputFormat'
 `t        }
 `t    }"
-    Write-Host "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
+    Write-InfoColor "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
 
-    Write-Host "`tInvoke-Pester -Configuration `$PesterConfiguration"
+    Write-InfoColor "`tInvoke-Pester -Configuration `$PesterConfiguration"
     Invoke-Pester -Configuration $PesterConfiguration
 
 } -description 'Perform unit tests using Pester.'
@@ -584,7 +595,7 @@ Task Publish -depends SourceControl -action {
     # Only publish a release if we are working on the main branch
     $CurrentBranch = git branch --show-current
     if ($NoPublish -ne $true -and $CurrentBranch -eq 'main') {
-        Write-Host "`tPublish-Module -Path '$script:BuildOutputDir' -Repository 'PSGallery'"
+        Write-InfoColor "`tPublish-Module -Path '$script:BuildOutputDir' -Repository 'PSGallery'"
         # Publish to PSGallery
         Publish-Module @publishParams
     }
@@ -598,7 +609,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -611,14 +622,14 @@ Task AwaitRepoUpdate -depends Publish -action {
 
 Task Uninstall -depends AwaitRepoUpdate -action {
 
-    Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
+    Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
-        Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+    if (Get-Module -name $ModuleName -ListAvailable) {
+        Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
-        Write-Host ''
+        Write-InfoColor ''
     }
 
 } -description 'Uninstall all versions of the module'
@@ -629,17 +640,17 @@ Task Reinstall -depends Uninstall -action {
 
     do {
         $attempts++
-        Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 

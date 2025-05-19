@@ -14,20 +14,20 @@ param (
 $publicFunctions = $PublicFunctionFiles.BaseName
 $PublicFunctionsJoined = $publicFunctions -join "','"
 
-Write-Information "`t[string]`$ModuleContent = Get-Content -LiteralPath '$ModuleFilePath' -Raw"
+Write-Verbose "`t[string]`$ModuleContent = Get-Content -LiteralPath '$ModuleFilePath' -Raw"
 $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
 $NewFunctionExportStatement = "Export-ModuleMember -Function @('$PublicFunctionsJoined')"
 
 if ($ModuleContent -match 'Export-ModuleMember -Function') {
 
-    Write-Information "`t`$ModuleContent = `$ModuleContent -replace 'Export-ModuleMember -Function.*' , `"$NewFunctionExportStatement`""
+    Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace 'Export-ModuleMember -Function.*' , `"$NewFunctionExportStatement`""
     $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewFunctionExportStatement
-    Write-Information "`t`$ModuleContent | Out-File -Path '$ModuleFilePath' -Force"
+    Write-Verbose "`t`$ModuleContent | Out-File -Path '$ModuleFilePath' -Force"
     $ModuleContent | Out-File -Path $ModuleFilePath -Force
 
 }
 else {
-    Write-Information "`t`"$NewFunctionExportStatement`" | Out-File '$ModuleFilePath' -Append"
+    Write-Verbose "`t`"$NewFunctionExportStatement`" | Out-File '$ModuleFilePath' -Append"
     $NewFunctionExportStatement | Out-File $ModuleFilePath -Append
 }
 
@@ -35,5 +35,5 @@ else {
 $publicFunctionsAsString = "@('" + ($publicFunctions -join "','") + "')"
 
 # Export public functions in the manifest
-Write-Information "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"
+Write-Verbose "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"
 Update-Metadata -Path $ModuleManifestPath -PropertyName FunctionsToExport -Value $publicFunctions

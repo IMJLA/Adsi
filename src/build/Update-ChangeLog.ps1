@@ -19,7 +19,7 @@ switch -Wildcard ($CommitMessage) {
     default { $Type = 'Changed' }
 }
 
-Write-Information "`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
+Write-Verbose "`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
 Add-ChangelogData -Type $Type -Data $CommitMessage -Path $ChangeLog
-Write-Information "`tUpdate-Changelog -Version '$Version' -LinkMode 'None' -Path '$ChangeLog'"
+Write-Verbose "`tUpdate-Changelog -Version '$Version' -LinkMode 'None' -Path '$ChangeLog'"
 Update-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path $ChangeLog
