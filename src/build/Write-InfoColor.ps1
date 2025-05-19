@@ -31,5 +31,5 @@ function Write-InfoColor {
         NoNewline       = $NoNewline.IsPresent
     }
 
-    Write-Information $msg
+    Write-Host $msg
 }

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.33] - 2025-05-18
+### Changed
+- troubleshoot write-info
+
 ## [5.0.32] - 2025-05-18
 ### Changed
 - use info and verbose streams
