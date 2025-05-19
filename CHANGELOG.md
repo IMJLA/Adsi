@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.3] - 2025-05-18 - upgrade build-newversionnumber
+
+## [5.0.2] - 2025-05-18 - upgrade build-newversionnumber
+
+## [..1] - 2025-05-18 - upgrade build-newversionnumber
+
 ## [5.0.1] - 2025-05-18 - bugfix oopsies major version on accident no big deal
 
 ## [5.0.0] - 2025-05-18 - move version logic to build-newversionnumber

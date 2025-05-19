@@ -9,10 +9,11 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule        = 'Adsi'
+    RootModule    = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion     = '5.0.1'
+    ModuleVersion = '5.0.3'
+
     # ID used to uniquely identify this module
     GUID              = '282a2aed-9567-49a1-901c-122b7831a805'
 
