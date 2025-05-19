@@ -260,12 +260,16 @@ $DocsUpdateablePrerequisite = {
 
 }
 
-Task DetermineNewModuleVersion -action {
+Task TestModuleManifest -action {
 
     Write-Host "`tTest-ModuleManifest -Path '$ModuleManifest'"
-    $ManifestTest = Test-ModuleManifest -Path $ModuleManifest
+    $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifest
 
-    $CurrentVersion = $ManifestTest.Version
+} -description 'Validate the module manifest'
+
+Task DetermineNewModuleVersion -depends TestModuleManifest -action {
+
+    $CurrentVersion = $script:ManifestTest.Version
     Write-Host "`t# Old Version: $CurrentVersion"
     if ($IncrementMajorVersion) {
         Write-Host "`t# This is a new major version"
@@ -283,7 +287,7 @@ Task DetermineNewModuleVersion -action {
     $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
 
-} -description 'Increment the module version'
+} -description 'Determine the new module version based on the build parameters'
 
 Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
 
@@ -400,10 +404,9 @@ Task BackupOldDocs -action {
 Task BuildMarkdownHelp -depends BackupOldDocs -precondition $DocsPrerequisite -action {
 
     $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
-    $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
-    $manifestInfo = Test-ModuleManifest -Path $ManifestPath
+    $NewManifestTest = Test-ModuleManifest -Path $ManifestPath
 
-    if ($moduleInfo.ExportedCommands.Count -eq 0) {
+    if ($NewManifestTest.ExportedCommands.Keys.Count -eq 0) {
         Write-Warning 'No commands have been exported. Skipping markdown generation.'
         return
     }
@@ -422,7 +425,7 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $DocsPrerequisite -a
             AlphabeticParamsOrder = $true
             Locale                = $DocsDefaultLocale
             ErrorAction           = 'SilentlyContinue' # SilentlyContinue will not overwrite an existing MD file.
-            HelpVersion           = $moduleInfo.Version
+            HelpVersion           = $NewManifestTest.Version
             Module                = $ModuleName
             # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
             # OnlineVersionUrl = $GitHubPagesLinkForThisModule
@@ -430,7 +433,7 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $DocsPrerequisite -a
             UseFullTypeName       = $true
             WithModulePage        = $true
         }
-        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($moduleInfo.Version)' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
+        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($NewManifestTest.Version)' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
         $null = New-MarkdownHelp @newMDParams
     }
     finally {
@@ -440,8 +443,7 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $DocsPrerequisite -a
 
 Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
-    $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
-    $manifestInfo = Test-ModuleManifest -Path $ManifestPath
+    $NewManifestTest = Test-ModuleManifest -Path $ManifestPath
 
     #Fix the Module Page () things PlatyPS does not do):
     $ModuleHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
@@ -451,14 +453,14 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the module description
     $RegEx = '(?ms)\#\#\ Description\s*[^\r\n]*\s*'
-    $NewString = "## Description$NewLine$($moduleInfo.Description)$NewLine$NewLine"
+    $NewString = "## Description$NewLine$($NewManifestTest.Description)$NewLine$NewLine"
 
     Write-Host "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
     $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
     #Update the description of each function (use its synopsis for brevity)
-    ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
+    ForEach ($ThisFunction in $NewManifestTest.ExportedCommands.Keys) {
+        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -663,7 +665,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -678,9 +680,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -695,16 +697,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
