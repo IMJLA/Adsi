@@ -149,10 +149,19 @@ Properties {
 
 
 
-
+    # Calculated Properties
 
     # Discover public function files so their help files can be fixed (multi-line default parameter values)
     $publicFunctionPath = [IO.Path]::Combine($SourceCodeDir, 'functions', 'public', '*.ps1')
+
+    # Name of the module being built
+    $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Leaf
+
+    # Path to the module script file
+    $ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
+
+    # Path to the module manifest file
+    $ModuleManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
 
 }
 
@@ -252,8 +261,7 @@ $FindDocsUpdateablePrerequisite = {
 }
 
 Task SetLocation -action {
-    $ProjectName = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Leaf
-    Write-Host "`tSet-Location -Path '$ProjectName'"
+    Write-Host "`tSet-Location -Path '$ModuleName'"
     Set-Location -Path $PSScriptRoot
     [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
     Set-Location -Path $ProjectRoot
@@ -264,18 +272,10 @@ Task FindPublicFunctionFiles -action {
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
 } -description 'Find all public function files'
 
-Task FindModuleManifest -depends FindPublicFunctionFiles -action {
-    $WildcardPath = [IO.Path]::Combine($SourceCodeDir, '*.psd1')
-    Write-Host "`tGet-ChildItem -Path '$WildcardPath'"
-    $script:ModuleManifest = Get-ChildItem -Path $WildcardPath
-    $script:ModuleName = [IO.Path]::GetFileNameWithoutExtension($script:ModuleManifest)
-    $script:ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$script:ModuleName.psm1")
-}
+Task TestModuleManifest -action {
 
-Task TestModuleManifest -depends FindModuleManifest -action {
-
-    Write-Host "`tTest-ModuleManifest -Path '$script:ModuleManifest'"
-    $script:ManifestTest = Test-ModuleManifest -Path $script:ModuleManifest
+    Write-Host "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
+    $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath
 
 } -description 'Validate the module manifest'
 
@@ -296,15 +296,15 @@ Task DetermineNewModuleVersion -depends TestModuleManifest -action {
         $script:NewModuleVersion = "$($CurrentVersion.Major).$($CurrentVersion.Minor).$($CurrentVersion.Build + 1)"
     }
 
-    $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $script:ModuleName)
+    $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
 
 } -description 'Determine the new module version based on the build parameters'
 
 Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
 
-    "`tUpdate-Metadata -Path '$script:ModuleManifest' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
-    Update-Metadata -Path $script:ModuleManifest -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
+    "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
+    Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
 
 } -description 'Update the module manifest with the new version number'
 
@@ -323,7 +323,7 @@ Task UpdateChangeLog -depends BackupOldBuilds -action {
             New/removed files
     #>
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
-    $script:NewModuleVersion = (Import-PowerShellDataFile -Path $script:ModuleManifest).ModuleVersion
+    $script:NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifestPath).ModuleVersion
     $NewChanges = "## [$script:NewModuleVersion] - $(Get-Date -Format 'yyyy-MM-dd') - $CommitMessage$NewLine"
     Write-Host "`tChange Log:  $ChangeLog"
     Write-Host "`tNew Changes: $($NewChanges.Trim())"
@@ -344,22 +344,22 @@ Task ExportPublicFunctions -depends UpdateChangeLog -action {
     # Export public functions in the module
     $publicFunctions = $script:PublicFunctionFiles.BaseName
     $PublicFunctionsJoined = $publicFunctions -join "','"
-    $ModuleContent = Get-Content -Path $script:ModuleFilePath -Raw
+    $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
     $NewFunctionExportStatement = "Export-ModuleMember -Function @('$PublicFunctionsJoined')"
     if ($ModuleContent -match 'Export-ModuleMember -Function') {
         $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewFunctionExportStatement
-        $ModuleContent | Out-File -Path $script:ModuleFilePath -Force
+        $ModuleContent | Out-File -Path $ModuleFilePath -Force
     }
     else {
-        $NewFunctionExportStatement | Out-File $script:ModuleFilePath -Append
+        $NewFunctionExportStatement | Out-File $ModuleFilePath -Append
     }
 
     # Create a string representation of the public functions array
     $publicFunctionsAsString = "@('" + ($publicFunctions -join "','") + "')"
 
     # Export public functions in the manifest
-    Write-Host "`tUpdate-Metadata -Path '$script:ModuleManifest' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"
-    Update-Metadata -Path $script:ModuleManifest -PropertyName FunctionsToExport -Value $publicFunctions
+    Write-Host "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"
+    Update-Metadata -Path $ModuleManifestPath -PropertyName FunctionsToExport -Value $publicFunctions
 
 } -description 'Export all public functions in the module'
 
@@ -367,9 +367,9 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
 
     $buildParams = @{
         Path               = $SourceCodeDir
-        ModuleName         = $script:ModuleName
+        ModuleName         = $ModuleName
         DestinationPath    = $script:BuildOutputDir
-        Exclude            = $BuildExclude + "$script:ModuleName.psm1"
+        Exclude            = $BuildExclude + "$ModuleName.psm1"
         Compile            = $BuildCompileModule
         CompileDirectories = $BuildCompileDirectories
         CopyDirectories    = $BuildCopyDirectories
@@ -391,7 +391,7 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
         }
     }
 
-    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$script:ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude '$($buildParams['Exclude'])' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
+    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude '$($buildParams['Exclude'])' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
     Build-PSBuildModule @buildParams
 
     # Remove the psdependRequirements.psd1 file if it exists
@@ -415,7 +415,7 @@ Task BackupOldDocs -action {
 
 Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisite -action {
 
-    $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$script:ModuleName.psd1")
+    $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
     $NewManifestTest = Test-ModuleManifest -Path $ManifestPath
 
     if ($NewManifestTest.ExportedCommands.Keys.Count -eq 0) {
@@ -438,27 +438,27 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisit
             Locale                = $DocsDefaultLocale
             ErrorAction           = 'SilentlyContinue' # SilentlyContinue will not overwrite an existing MD file.
             HelpVersion           = $NewManifestTest.Version
-            Module                = $script:ModuleName
+            Module                = $ModuleName
             # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
             # OnlineVersionUrl = $GitHubPagesLinkForThisModule
             OutputFolder          = $DocsMarkdownDefaultLocaleDir
             UseFullTypeName       = $true
             WithModulePage        = $true
         }
-        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($NewManifestTest.Version)' -Locale '$DocsDefaultLocale' -Module '$script:ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
+        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($NewManifestTest.Version)' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
         $null = New-MarkdownHelp @newMDParams
     }
     finally {
-        Remove-Module $script:ModuleName -Force
+        Remove-Module $ModuleName -Force
     }
 } -description 'Generate markdown files from the module help'
 
 Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
-    $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$script:ModuleName.psd1")
+    $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
     $NewManifestTest = Test-ModuleManifest -Path $ManifestPath
 
     #Fix the Module Page () things PlatyPS does not do):
-    $ModuleHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$script:ModuleName.md")
+    $ModuleHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
 
     Write-Host "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
@@ -472,7 +472,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $NewManifestTest.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -495,7 +495,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     Write-Host "`t`$ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8"
     $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
 
-    Remove-Module $script:ModuleName -Force
+    Remove-Module $ModuleName -Force
 
     ForEach ($ThisFunction in $script:PublicFunctionFiles.Name) {
         $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
@@ -547,7 +547,7 @@ Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $FindDocsUpdateable
     foreach ($locale in $helpLocales) {
         $cabParams = @{
             CabFilesFolder  = [IO.Path]::Combine($script:BuildOutputDir, $locale)
-            LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$script:ModuleName.md")
+            LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
             OutputFolder    = $DocsUpdateableDir
         }
         Write-Host "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)'"
@@ -677,24 +677,24 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $script:ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
     )
 
     if ($timer -eq $timeout) {
-        Write-Warning "Cannot retrieve version '$script:NewModuleVersion' of module '$script:ModuleName' from repo '$PublishPSRepository'"
+        Write-Warning "Cannot retrieve version '$script:NewModuleVersion' of module '$ModuleName' from repo '$PublishPSRepository'"
     }
 } -description 'Await the new version in the defined PowerShell repository'
 
 Task Uninstall -depends AwaitRepoUpdate -action {
 
-    Write-Host "`tGet-Module -Name '$script:ModuleName' -ListAvailable"
+    Write-Host "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $script:ModuleName -ListAvailable) {
-        Write-Host "`tUninstall-Module -Name '$script:ModuleName' -AllVersions"
-        Uninstall-Module -name $script:ModuleName -AllVersions
+    if (Get-Module -Name $ModuleName -ListAvailable) {
+        Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
+        Uninstall-Module -Name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -708,17 +708,17 @@ Task Reinstall -depends Uninstall -action {
 
     do {
         $attempts++
-        Write-Host "`tInstall-Module -Name '$script:ModuleName' -Force"
-        Install-Module -Name $script:ModuleName -Force -ErrorAction Continue
+        Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $script:ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
