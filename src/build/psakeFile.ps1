@@ -163,6 +163,9 @@ Properties {
     # Path to the module manifest file
     $ModuleManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
 
+    # Path to the ReadMe file
+    $ReadMePath = [IO.Path]::Combine('.', 'README.md')
+
 }
 
 FormatTaskName {
@@ -377,21 +380,21 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
     }
 
     if ($DocsConvertReadMeToAboutFile) {
-        $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
-        Select-Object -First 1
-        if ($readMePath) {
-            $buildParams.ReadMePath = $readMePath
-        }
+        $buildParams.ReadMePath = $readMePath
     }
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        if ($PSBPreference.Build.Keys -contains $_) {
-            $buildParams.$_ = $PSBPreference.Build.$_
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        if ($Val) {
+            $buildParams.$_ = $Val
         }
     }
 
-    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude '$($buildParams['Exclude'])' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
+    $ExcludeJoined = $buildParams['Exclude'] -join "','"
+    $CompileDirectoriesJoined = $buildParams['CompileDirectories'] -join "','"
+    $CopyDirectoriesJoined = $buildParams['CopyDirectories'] -join "','"
+    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
     Build-PSBuildModule @buildParams
 
     # Remove the psdependRequirements.psd1 file if it exists
