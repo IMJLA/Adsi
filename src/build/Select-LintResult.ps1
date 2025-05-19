@@ -31,8 +31,6 @@ param(
     $LintResult
 )
 
-Write-Verbose "SeverityThreshold set to: $SeverityThreshold"
-
 $filteredResult = ForEach ($result in $LintResult) {
     if ($ExcludeRulesByFile.ContainsKey($result.FileName)) {
         if ($ExcludeRulesByFile[$result.FileName] -contains $result.RuleName) {
@@ -46,7 +44,7 @@ $warnings = ($filteredResult.where({ $_Severity -eq 'Warning' })).Count
 $infos = ($filteredResult.where({ $_Severity -eq 'Information' })).Count
 
 if ($filteredResult) {
-    Write-Host 'PSScriptAnalyzer results:' -ForegroundColor Yellow
+    Write-InfoColor "`tPSScriptAnalyzer results:" -ForegroundColor Yellow
     $filteredResult | Format-Table -AutoSize
 }
 
