@@ -379,14 +379,18 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
     Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
     Build-PSBuildModule @buildParams
 
+} -description 'Build a PowerShell script module based on the source directory'
+
+Task DeletePSDependRequirementsFileFromBuildOutput -depends BuildModule -action {
+
     # Remove the psdependRequirements.psd1 file if it exists
     $RequirementsFile = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
     Write-Host "`tRemove-Item -Path '$RequirementsFile'"
     Remove-Item -Path $RequirementsFile -ErrorAction SilentlyContinue
 
-} -description 'Build a PowerShell script module based on the source directory'
+}
 
-Task DeleteOldBuilds -depends BuildModule -action {
+Task DeleteOldBuilds -depends DeletePSDependRequirementsFileFromBuildOutput -action {
     Write-Host "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
     Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue
 }
