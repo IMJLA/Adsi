@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.15] - 2025-05-18
+### Fixed
+- bugfix psakefile build debug output
+
 ## [5.0.14] - 2025-05-18
 ### Changed
 - improve psakefile

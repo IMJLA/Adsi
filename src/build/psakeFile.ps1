@@ -302,7 +302,7 @@ Task TestModuleManifest -action {
 Task DetermineNewModuleVersion -depends TestModuleManifest -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Build-NewVersionNumber.ps1')
-    Write-Host "`t& '$ScriptToRun' -IncrementMajorVersion:`$IncrementMajorVersion -IncrementMinorVersion:`$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
+    Write-Host "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
     $script:NewModuleVersion = & $ScriptToRun -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version
     $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
