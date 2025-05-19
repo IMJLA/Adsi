@@ -18,7 +18,7 @@ function Write-InfoColor {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [Object]$MessageData,
+        [string]$MessageData,
         [ConsoleColor]$ForegroundColor = $Host.UI.RawUI.ForegroundColor, # Make sure we use the current colours by default
         [ConsoleColor]$BackgroundColor = $Host.UI.RawUI.BackgroundColor,
         [Switch]$NoNewline
@@ -31,5 +31,6 @@ function Write-InfoColor {
         NoNewline       = $NoNewline.IsPresent
     }
 
-    Write-Host $msg
+    Write-Information $msg
+
 }
