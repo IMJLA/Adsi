@@ -28,14 +28,14 @@ $NewManifestTest = Test-ModuleManifest -Path $ManifestPath
 #Fix the Module Page () things PlatyPS does not do):
 $ModuleHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
 
-Write-Host "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
+Write-Information "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
 [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
 #Update the module description
 $RegEx = '(?ms)\#\#\ Description\s*[^\r\n]*\s*'
 $NewString = "## Description$NewLine$($NewManifestTest.Description)$NewLine$NewLine"
 
-Write-Host "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
+Write-Information "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
 $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
 #Update the description of each function (use its synopsis for brevity)
@@ -44,7 +44,7 @@ ForEach ($ThisFunction in $NewManifestTest.ExportedCommands.Keys) {
     $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
     $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
     $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
-    Write-Host "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
+    Write-Information "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
 }
 
 # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
@@ -54,13 +54,13 @@ ForEach ($ThisFunction in $NewManifestTest.ExportedCommands.Keys) {
     Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
     Invalid yaml: expected simple key-value pairs
 #>
-Write-Host "`t`$ModuleHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
+Write-Information "`t`$ModuleHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
 $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
 $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
 $ModuleHelp = $ModuleHelp -replace '[ ]{2,}', ' '
 $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' }'
 
-Write-Host "`t`$ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8"
+Write-Information "`t`$ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8"
 $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
 
 Remove-Module $ModuleName -Force
@@ -68,30 +68,30 @@ Remove-Module $ModuleName -Force
 ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
     $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
     $ThisFunctionHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$fileNameWithoutExtension.md")
-    Write-Host "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
+    Write-Information "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
     [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
-    Write-Host "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
+    Write-Information "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
     $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
     $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
-    Write-Host "`tSet-Content -LiteralPath '$ThisFunctionHelpFile' -Value `$ThisFunctionHelp"
+    Write-Information "`tSet-Content -LiteralPath '$ThisFunctionHelpFile' -Value `$ThisFunctionHelp"
     Set-Content -LiteralPath $ThisFunctionHelpFile -Value $ThisFunctionHelp
 }
 
 # Fix the readme file to point to the correct location of the markdown files
-Write-Host "`t`$ReadMeContents = `$ModuleHelp"
+Write-Information "`t`$ReadMeContents = `$ModuleHelp"
 $ReadMeContents = $ModuleHelp
 $DocsRootForURL = [IO.Path]::Combine('docs', $DocsDefaultLocale)
 [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
 ForEach-Object {
     $EscapedTextToReplace = [regex]::Escape($_)
     $Replacement = "$DocsRootForURL/$_"
-    Write-Host "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
+    Write-Information "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
     $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
 }
 $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
 Select-Object -First 1
 
-Write-Host "`tSet-Content -LiteralPath '$($ReadMePath.FullName)' -Value `$ReadMeContents"
+Write-Information "`tSet-Content -LiteralPath '$($ReadMePath.FullName)' -Value `$ReadMeContents"
 Set-Content -Path $ReadMePath.FullName -Value $ReadMeContents
