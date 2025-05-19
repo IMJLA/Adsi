@@ -122,10 +122,21 @@ Properties {
     [boolean]$BuildCompileModule = $true
 
     # List of directories that if BuildCompileModule is $true, will be concatenated into the PSM1
-    [string[]]$BuildCompileDirectories = @('classes', 'enums', 'filters', 'functions/private', 'functions/public')
+    [string[]]$BuildCompileDirectories = @(
+        'classes',
+        'enums',
+        'filters',
+        [IO.Path]::Combine('functions', 'private'),
+        [IO.Path]::Combine('functions', 'public')
+    )
 
     # List of directories that will always be copied "as is" to output directory
-    [string[]]$BuildCopyDirectories = @('../bin', '../config', '../data', '../lib')
+    [string[]]$BuildCopyDirectories = @(
+        [IO.Path]::Combine('..', 'bin'),
+        [IO.Path]::Combine('..', 'config'),
+        [IO.Path]::Combine('..', 'data'),
+        [IO.Path]::Combine('..', 'lib')
+    )
 
     # List of files (regular expressions) to exclude from output directory
     [string[]]$BuildExclude = @( [IO.Path]::Combine('build', '*'), 'gitkeep')
@@ -517,7 +528,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     # Fix the readme file to point to the correct location of the markdown files
     Write-Host "`t`$ReadMeContents = `$ModuleHelp"
     $ReadMeContents = $ModuleHelp
-    $DocsRootForURL = "docs/$DocsDefaultLocale"
+    $DocsRootForURL = [IO.Path]::Combine('docs', $DocsDefaultLocale)
     [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
     ForEach-Object {
         $EscapedTextToReplace = [regex]::Escape($_)
@@ -675,7 +686,6 @@ Task Publish -depends SourceControl -action {
 } -description 'Publish module to the defined PowerShell repository'
 
 Task AwaitRepoUpdate -depends Publish -action {
-    $timer = 0
     $timer = 30
     do {
         Start-Sleep -Seconds 1
