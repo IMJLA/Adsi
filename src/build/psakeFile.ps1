@@ -313,11 +313,16 @@ Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
 Task BackupOldBuilds -depends UpdateModuleVersion -action {
 
     Write-Host "`tRename-Item -Path '$BuildOutDir' -NewName '$BuildOutDir.old' -Force"
-    Rename-Item -Path $BuildOutDir -NewName "$BuildOutDir.old" -Force
+    Rename-Item -Path $BuildOutDir -NewName "$BuildOutDir.old" -Force -ErrorAction SilentlyContinue
 
 } -description 'Backup old builds'
 
 Task UpdateChangeLog -depends BackupOldBuilds -action {
+    $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
+
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Update-ChangeLog.ps1')
+    Write-Host "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
+    & $ScriptToRun -NewLine $NewLine -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
 
     <#
     TODO
@@ -326,7 +331,9 @@ Task UpdateChangeLog -depends BackupOldBuilds -action {
         The post-build UpdateChangeLog will automatically add to the change log any:
             New/removed exported commands
             New/removed files
-    #>
+
+
+
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
     $script:NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifestPath).ModuleVersion
     $NewChanges = "## [$script:NewModuleVersion] - $(Get-Date -Format 'yyyy-MM-dd') - $CommitMessage$NewLine"
@@ -343,6 +350,7 @@ Task UpdateChangeLog -depends BackupOldBuilds -action {
     $null = $NewChangeLogContents.AddRange(($ChangeLogContents |
             Select-Object -Skip $HeaderLineCount))
     $NewChangeLogContents | Out-File -FilePath $ChangeLog -Encoding utf8 -Force
+    #>
 }
 
 Task ExportPublicFunctions -depends UpdateChangeLog -action {
