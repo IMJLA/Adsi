@@ -45,7 +45,7 @@ $infos = ($filteredResult.where({ $_Severity -eq 'Information' })).Count
 
 if ($filteredResult) {
     Write-InfoColor "`tPSScriptAnalyzer results:" -ForegroundColor Yellow
-    $filteredResult | Format-Table -AutoSize
+    Write-InfoColor ($filteredResult | Format-Table -AutoSize | Out-String)
 }
 
 switch ($SeverityThreshold) {
