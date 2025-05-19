@@ -12,12 +12,4 @@
     # Specify rules to exclude
     ExcludeRules = @()
 
-    # Configure rule-specific settings
-    Rules        = @{
-        PSUseDeclaredVarsMoreThanAssignments = @{
-            Enable       = $true
-            # Suppress PSUseDeclaredVarsMoreThanAssignments rule for psakeFile.ps1 because PSScriptAnalyzer does not understand psake syntax
-            ExcludeRules = @('psakeFile.ps1')
-        }
-    }
 }

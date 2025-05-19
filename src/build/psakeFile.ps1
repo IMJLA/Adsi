@@ -112,6 +112,8 @@ Properties {
     # Path to the PSScriptAnalyzer settings file.
     [string]$LintSettingsFile = [IO.Path]::Combine($SourceCodeDir, 'build', 'psscriptanalyzerSettings.psd1')
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Scope = 'Module', Target = 'psakeFile.ps1')]
+
 
 
     # PowerShellBuild (Compilation, Build Processes, and MAML help)
@@ -375,7 +377,7 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -606,7 +608,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -621,9 +623,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -638,16 +640,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 

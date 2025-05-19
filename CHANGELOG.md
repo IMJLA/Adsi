@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.39] - 2025-05-19
+### Changed
+- tweak lint rules
+
 ## [5.0.38] - 2025-05-18
 ### Changed
 - use psscriptanalyzersettings file
