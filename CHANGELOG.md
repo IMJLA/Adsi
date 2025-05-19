@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.21] - 2025-05-18
+### Fixed
+- bugfix psakefile
+
+## [5.0.20] - 2025-05-18
+### Changed
+- troubleshoot psakefile
+
+## [5.0.19] - 2025-05-18
+### Added
+- implement repair-markdownhelp
+
+## [5.0.18] - 2025-05-18
+### Added
+- implement repair-markdownhelp
+
+## [5.0.17] - 2025-05-18
+### Added
+- implement repair-markdownhelp
+
+## [5.0.16] - 2025-05-18
+### Added
+- implement repair-markdownhelp
+
 ## [5.0.15] - 2025-05-18
 ### Fixed
 - bugfix psakefile build debug output

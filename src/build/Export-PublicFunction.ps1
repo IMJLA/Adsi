@@ -1,16 +1,13 @@
 param (
 
     # The collection of files containing public functions
-    [System.IO.FileInfo[]]
-    $PublicFunctionFiles,
+    [System.IO.FileInfo[]]$PublicFunctionFiles,
 
     # Path to the module file (.psm1)
-    [string]
-    $ModuleFilePath,
+    [string]$ModuleFilePath,
 
     # Path to the module manifest file (.psd1)
-    [string]
-    $ModuleManifestPath
+    [string]$ModuleManifestPath
 
 )
 # Export public functions in the module

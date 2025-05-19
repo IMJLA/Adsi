@@ -301,7 +301,7 @@ Task TestModuleManifest -action {
 
 Task DetermineNewModuleVersion -depends TestModuleManifest -action {
 
-    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Build-NewVersionNumber.ps1')
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
     Write-Host "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
     $script:NewModuleVersion = & $ScriptToRun -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version
     $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
@@ -368,7 +368,7 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
         $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
-        if ($Val) {
+        if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
     }
@@ -391,15 +391,21 @@ Task DeletePSDependRequirementsFileFromBuildOutput -depends BuildModule -action 
 }
 
 Task DeleteOldBuilds -depends DeletePSDependRequirementsFileFromBuildOutput -action {
+
     Write-Host "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
     Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue
+
 }
 
 
 
 Task BackupOldDocs -action {
-    Write-Host "`tRename-Item -Path '$DocsRootDir' -NewName '$DocsRootDir.old' -Force"
-    Rename-Item -Path $DocsRootDir -NewName "$DocsRootDir.old" -Force
+
+    Write-Host "`tRemove-Item -Path '$DocsRootDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
+    Remove-Item -Path "$DocsRootDir.old" -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Host "`tRename-Item -Path '$DocsRootDir' -NewName '$DocsRootDir.old' -Force -ErrorAction SilentlyContinue"
+    Rename-Item -Path $DocsRootDir -NewName "$DocsRootDir.old" -Force -ErrorAction SilentlyContinue
+
 } -description 'Backup old documentation files'
 
 Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisite -action {
@@ -418,6 +424,7 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisit
 
         if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
             Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
+                Write-Host "`tUpdate-MarkdownHelp -Path '$($_.FullName)'"
                 Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
             }
         }
@@ -443,79 +450,10 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $FindDocsPrerequisit
 } -description 'Generate markdown files from the module help'
 
 Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
-    $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
-    $NewManifestTest = Test-ModuleManifest -Path $ManifestPath
 
-    #Fix the Module Page () things PlatyPS does not do):
-    $ModuleHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
-
-    Write-Host "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
-    [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
-
-    #Update the module description
-    $RegEx = '(?ms)\#\#\ Description\s*[^\r\n]*\s*'
-    $NewString = "## Description$NewLine$($NewManifestTest.Description)$NewLine$NewLine"
-
-    Write-Host "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
-    $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
-
-    #Update the description of each function (use its synopsis for brevity)
-    ForEach ($ThisFunction in $NewManifestTest.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
-        $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
-        $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
-        $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
-        Write-Host "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
-    }
-
-    # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
-    <#
-        Error: 4/8/2025 11:35:12 PM:
-        At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): "C:\Export-Permission\Entire Project\Adsi\docs\en-US\New-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
-        Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
-        Invalid yaml: expected simple key-value pairs
-    #>
-    Write-Host "`t`$ModuleHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
-    $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
-    $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
-    $ModuleHelp = $ModuleHelp -replace '[ ]{2,}', ' '
-    $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' }'
-
-    Write-Host "`t`$ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8"
-    $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
-
-    Remove-Module $ModuleName -Force
-
-    ForEach ($ThisFunction in $script:PublicFunctionFiles.Name) {
-        $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
-        $ThisFunctionHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$fileNameWithoutExtension.md")
-        Write-Host "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
-        [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
-        Write-Host "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
-        $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
-        $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
-        $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
-        $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
-        Write-Host "`tSet-Content -LiteralPath '$ThisFunctionHelpFile' -Value `$ThisFunctionHelp"
-        Set-Content -LiteralPath $ThisFunctionHelpFile -Value $ThisFunctionHelp
-    }
-
-    # Fix the readme file to point to the correct location of the markdown files
-    Write-Host "`t`$ReadMeContents = `$ModuleHelp"
-    $ReadMeContents = $ModuleHelp
-    $DocsRootForURL = [IO.Path]::Combine('docs', $DocsDefaultLocale)
-    [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
-    ForEach-Object {
-        $EscapedTextToReplace = [regex]::Escape($_)
-        $Replacement = "$DocsRootForURL/$_"
-        Write-Host "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
-        $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
-    }
-    $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
-    Select-Object -First 1
-
-    Write-Host "`tSet-Content -LiteralPath '$($ReadMePath.FullName)' -Value `$ReadMeContents"
-    Set-Content -Path $ReadMePath.FullName -Value $ReadMeContents
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Repair-MarkdownHelp.ps1')
+    Write-Host "`t& '$ScriptToRun' -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine `$NewLine -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles"
+    & $ScriptToRun -BuildOutputDir $script:BuildOutputDir -ModuleName $ModuleName -DocsMarkdownDefaultLocaleDir $DocsMarkdownDefaultLocaleDir -NewLine $NewLine -DocsDefaultLocale $DocsDefaultLocale -PublicFunctionFiles $script:PublicFunctionFiles
 
 }
 
