@@ -1,3 +1,4 @@
+using namespace System.Management.Automation
 #TODO : Use Fixer 'Get-TextFilesList $pwd | ConvertTo-SpaceIndentation'.
 
 Properties {
@@ -315,7 +316,7 @@ Task DetermineNewModuleVersion -depends TestModuleManifest -action {
 
 Task UpdateModuleVersion -depends DetermineNewModuleVersion -action {
 
-    "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
+    Write-InfoColor "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
     Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
 
 } -description 'Update the module manifest with the new version number'
