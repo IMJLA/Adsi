@@ -177,6 +177,8 @@ Properties {
     # Path to the ReadMe file
     $ReadMePath = [IO.Path]::Combine('.', 'README.md')
 
+    $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
+
 }
 
 FormatTaskName {
@@ -275,15 +277,19 @@ $FindDocsUpdateablePrerequisite = {
 }
 
 Task SetLocation -action {
+
     Write-Host "`tSet-Location -Path '$ModuleName'"
     Set-Location -Path $PSScriptRoot
     [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
     Set-Location -Path $ProjectRoot
+
 } -description 'Set the location to the project root'
 
 Task FindPublicFunctionFiles -action {
+
     Write-Host "`tGet-ChildItem -Path '$publicFunctionPath' -Recurse"
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
+
 } -description 'Find all public function files'
 
 Task TestModuleManifest -action {
@@ -318,11 +324,10 @@ Task BackupOldBuilds -depends UpdateModuleVersion -action {
 } -description 'Backup old builds'
 
 Task UpdateChangeLog -depends BackupOldBuilds -action {
-    $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Update-ChangeLog.ps1')
     Write-Host "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
-    & $ScriptToRun -NewLine $NewLine -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
+    & $ScriptToRun -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
 
     <#
     TODO
@@ -331,48 +336,15 @@ Task UpdateChangeLog -depends BackupOldBuilds -action {
         The post-build UpdateChangeLog will automatically add to the change log any:
             New/removed exported commands
             New/removed files
-
-
-
-    $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
-    $script:NewModuleVersion = (Import-PowerShellDataFile -Path $ModuleManifestPath).ModuleVersion
-    $NewChanges = "## [$script:NewModuleVersion] - $(Get-Date -Format 'yyyy-MM-dd') - $CommitMessage$NewLine"
-    Write-Host "`tChange Log:  $ChangeLog"
-    Write-Host "`tNew Changes: $($NewChanges.Trim())"
-    [string[]]$ChangeLogContents = Get-Content -Path $ChangeLog
-    $LineNumberOfLastChange = Select-String -Path $ChangeLog -Pattern '^\#\# \[\d*\.\d*\.\d*\]' |
-    Select-Object -First 1 -ExpandProperty LineNumber
-    $HeaderLineCount = $LineNumberOfLastChange - 1
-    $NewChangeLogContents = [System.Collections.Specialized.StringCollection]::new()
-    $null = $NewChangeLogContents.AddRange(($ChangeLogContents |
-            Select-Object -First $HeaderLineCount))
-    $null = $NewChangeLogContents.Add($NewChanges)
-    $null = $NewChangeLogContents.AddRange(($ChangeLogContents |
-            Select-Object -Skip $HeaderLineCount))
-    $NewChangeLogContents | Out-File -FilePath $ChangeLog -Encoding utf8 -Force
     #>
+
 }
 
 Task ExportPublicFunctions -depends UpdateChangeLog -action {
-    # Export public functions in the module
-    $publicFunctions = $script:PublicFunctionFiles.BaseName
-    $PublicFunctionsJoined = $publicFunctions -join "','"
-    $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
-    $NewFunctionExportStatement = "Export-ModuleMember -Function @('$PublicFunctionsJoined')"
-    if ($ModuleContent -match 'Export-ModuleMember -Function') {
-        $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewFunctionExportStatement
-        $ModuleContent | Out-File -Path $ModuleFilePath -Force
-    }
-    else {
-        $NewFunctionExportStatement | Out-File $ModuleFilePath -Append
-    }
 
-    # Create a string representation of the public functions array
-    $publicFunctionsAsString = "@('" + ($publicFunctions -join "','") + "')"
-
-    # Export public functions in the manifest
-    Write-Host "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"
-    Update-Metadata -Path $ModuleManifestPath -PropertyName FunctionsToExport -Value $publicFunctions
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
+    Write-Host "`t& '$ScriptToRun' -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
+    & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath
 
 } -description 'Export all public functions in the module'
 

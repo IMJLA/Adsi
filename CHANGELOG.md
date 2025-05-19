@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.11] - 2025-05-18
+### Added
+- implement export-publicfunction
+
 ## [5.0.10] - 2025-05-18
 ### Added
 - implement update-changelog
