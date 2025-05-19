@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.41] - 2025-05-19
+### Changed
+- work on linting
+
 ## [5.0.40] - 2025-05-19
 ### Changed
 - tweak lint rules
