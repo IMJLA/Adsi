@@ -182,41 +182,10 @@ Properties {
 
     $WriteInfoScript = [IO.Path]::Combine('.', 'Write-InfoColor.ps1')
 
-    # Make the function available
-    function Write-InfoColor {
-        <#
-            .SYNOPSIS
-                Write an information message to the console with custom colors.
-            .DESCRIPTION
-                This function writes an information message to the console with specified foreground and background colors.
-            .PARAMETER MessageData
-                The message data to be written to the console.
-            .PARAMETER ForegroundColor
-                The foreground color for the message. Default is the current foreground color.
-            .PARAMETER BackgroundColor
-                The background color for the message. Default is the current background color.
-            .PARAMETER NoNewline
-                If specified, does not append a newline after the message.
-        #>
-        [CmdletBinding()]
-        param(
-            [Parameter(Mandatory)]
-            [string]$MessageData,
-            [ConsoleColor]$ForegroundColor = $Host.UI.RawUI.ForegroundColor, # Make sure we use the current colours by default
-            [ConsoleColor]$BackgroundColor = $Host.UI.RawUI.BackgroundColor,
-            [Switch]$NoNewline
-        )
+    # Dot-source the Write-InfoColor.ps1 script once to make the function available
+    . $WriteInfoScript
 
-        $msg = [HostInformationMessage]@{
-            Message         = $MessageData
-            ForegroundColor = $ForegroundColor
-            BackgroundColor = $BackgroundColor
-            NoNewline       = $NoNewline.IsPresent
-        }
-
-        Write-Information $msg
-
-    }
+    $InformationPreference = 'Continue'
 
 }
 
@@ -315,13 +284,7 @@ $FindDocsUpdateablePrerequisite = {
 
 }
 
-Task SetInfoPreference -action {
-
-    $InformationPreference = 'Continue'
-
-} -description 'Set script execution preferences'
-
-Task SetLocation -depends SetInfoPreference -action {
+Task SetLocation -action {
 
     Write-InfoColor "`tSet-Location -Path '$ModuleName'"
     Set-Location -Path $PSScriptRoot
