@@ -176,42 +176,74 @@ FormatTaskName {
 
 }
 
-Task Default -depends FindLinter, FindBuildModule, FindDocumentationModule, FindUnitTestModule, DetectOperatingSystem, ReturnToStartingLocation
+Task Default -depends DeleteOldBuilds, DeleteOldDocs, ReturnToStartingLocation
 
-Task FindLinter -precondition { $LintEnabled } -action {
+$LintPrerequisite = {
 
-    Write-Host "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
-    $script:FindLinter = [boolean](Get-Module -name PSScriptAnalyzer -ListAvailable)
+    if ($LintEnabled) {
+        Write-Host "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
+        [boolean](Get-Module -Name PSScriptAnalyzer -ListAvailable)
+    }
+    else {
+        Write-Host "`tLinting is disabled. Skipping PSScriptAnalyzer check."
+    }
 
-} -description 'Find the prerequisite PSScriptAnalyzer PowerShell module.'
+}
 
-Task FindBuildModule -precondition { $script:FindLinter } -action {
+$BuildPrerequisite = {
 
-    Write-Host "`tGet-Module -Name PowerShellBuild -ListAvailable"
-    $script:FindBuildModule = [boolean](Get-Module -name PowerShellBuild -ListAvailable)
+    if ($BuildCompileModule) {
+        Write-Host "`tGet-Module -Name PowerShellBuild -ListAvailable"
+        [boolean](Get-Module -Name PowerShellBuild -ListAvailable)
+    }
+    else {
+        Write-Host "`tBuilding is disabled. Skipping PowerShellBuild check."
+    }
 
-} -description 'Find the prerequisite PowerShellBuild PowerShell module.'
+}
 
-Task FindUnitTestModule -precondition { $script:FindUnitTester } -action {
+$UnitTestPrerequisite = {
 
-    Write-Host "`tGet-Module -Name Pester -ListAvailable"
-    $script:FindBuildModule = [boolean](Get-Module -name Pester -ListAvailable)
+    if ($TestEnabled) {
+        Write-Host "`tGet-Module -Name Pester -ListAvailable"
+        [boolean](Get-Module -Name Pester -ListAvailable)
+    }
+    else {
+        Write-Host "`tUnit testing is disabled. Skipping Pester check."
+    }
 
-} -description 'Find the prerequisite PowerShellBuild PowerShell module.'
+}
 
-Task FindDocumentationModule -action {
+$DocsPrerequisite = {
 
     Write-Host "`tGet-Module -Name PlatyPS -ListAvailable"
-    $script:FindDocumentationModule = [boolean](Get-Module -name PlatyPS -ListAvailable)
+    [boolean](Get-Module -Name PlatyPS -ListAvailable)
 
-} -description 'Find the prerequisite PlatyPS PowerShell module.'
+}
 
-Task DetectOperatingSystem -action {
+$DocsUpdateablePrerequisite = {
 
-    Write-Host "`tGet-CimInstance -ClassName CIM_OperatingSystem"
-    $script:OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
+    if ($DocsPrerequisite) {
 
-} -description 'Detect the operating system to determine whether MakeCab.exe is available to produce updateable help.'
+        Write-Host "`tGet-CimInstance -ClassName CIM_OperatingSystem"
+        $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
+
+        if ($OS -match 'Windows') {
+
+            Write-Host "`tGet-Command -Name MakeCab.exe"
+            [boolean](Get-Command -Name MakeCab.exe)
+
+        }
+        else {
+            Write-Host "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation."
+        }
+
+    }
+    else {
+        Write-Host "`tPrerequisite module PlatyPS not found so Markdown docs will not be generated or converted to MAML for input to MakeCab.exe. Skipping Updateable Help generation."
+    }
+
+}
 
 Task DetermineNewModuleVersion -action {
 
@@ -300,7 +332,7 @@ Task ExportPublicFunctions -depends UpdateChangeLog -action {
 
 } -description 'Export all public functions in the module'
 
-Task BuildModule -depends ExportPublicFunctions -precondition { $script:FindBuildModule } -action {
+Task BuildModule -depends ExportPublicFunctions -precondition $BuildPrerequisite -action {
 
     $buildParams = @{
         Path               = $SourceCodeDir
@@ -343,12 +375,14 @@ Task DeleteOldBuilds -depends BuildModule -action {
     Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue
 }
 
-Task BackupOldDocs -depends DeleteOldBuilds -action {
+
+
+Task BackupOldDocs -action {
     Write-Host "`tRename-Item -Path '$DocsRootDir' -NewName '$DocsRootDir.old' -Force"
     Rename-Item -Path $DocsRootDir -NewName "$DocsRootDir.old" -Force
 } -description 'Backup old documentation files'
 
-Task BuildMarkdownHelp -depends BackupOldDocs -precondition { $script:FindDocumentationModule } -action {
+Task BuildMarkdownHelp -depends BackupOldDocs -precondition $DocsPrerequisite -action {
 
     $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
@@ -467,28 +501,17 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
 }
 
-Task BuildMAMLHelp -depends FixMarkdownHelp -precondition { $script:FindDocumentationModule } -action {
+Task BuildMAMLHelp -depends FixMarkdownHelp -precondition $DocsPrerequisite -action {
     Write-Host "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$script:BuildOutputDir'"
     Build-PSBuildMAMLHelp -Path $DocsMarkdownDir -DestinationPath $script:BuildOutputDir
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 
-Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition { $script:FindDocumentationModule } -action {
-
-    if ($script:OS -notmatch 'Windows') {
-        Write-Warning 'MakeCab.exe is only available on Windows. Cannot create help cab.'
-        return
-    }
+Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $DocsUpdateablePrerequisite -action {
 
     $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
     # Create updatable help output directory
-    if (-not (Test-Path -LiteralPath $DocsUpdateableDir)) {
-        New-Item $DocsUpdateableDir -ItemType Directory -Verbose:$VerbosePreference > $null
-    }
-    else {
-        Write-Verbose "Removing existing directory: [$DocsUpdateableDir]."
-        Get-ChildItem $DocsUpdateableDir | Remove-Item -Recurse -Force -Verbose:$VerbosePreference
-    }
+    $null = New-Item $DocsUpdateableDir -ItemType Directory -Verbose:$VerbosePreference
 
     # Generate updatable help files.  Note: this will currently update the version number in the module's MD
     # file in the metadata.
@@ -509,7 +532,9 @@ Task DeleteOldDocs -depends BuildUpdatableHelp -action {
     Remove-Item -Path "$DocsRootDir.old" -Recurse -Force -ErrorAction SilentlyContinue
 } -description 'Delete old documentation file backups'
 
-Task Lint -depends DeleteOldDocs -precondition { $script:FindLinter } -action {
+
+
+Task Lint -precondition $LintPrerequisite -action {
 
     $analyzeParams = @{
         Path              = $script:BuildOutputDir
@@ -523,7 +548,7 @@ Task Lint -depends DeleteOldDocs -precondition { $script:FindLinter } -action {
 
 } -description 'Execute PSScriptAnalyzer tests'
 
-Task UnitTests -depends Lint -precondition { $script:FindUnitTester } -action {
+Task UnitTests -depends Lint -precondition $UnitTestPrerequisite -action {
 
     $PesterConfigParams = @{
         Run          = @{
