@@ -287,7 +287,7 @@ Task SetLocation -action {
 
 Task FindPublicFunctionFiles -action {
 
-    Write-Host "`tGet-ChildItem -Path '$publicFunctionPath' -Recurse"
+    Write-Host "`t`$script:PublicFunctionFiles Get-ChildItem -Path '$publicFunctionPath' -Recurse"
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
 
 } -description 'Find all public function files'
@@ -343,7 +343,7 @@ Task UpdateChangeLog -depends BackupOldBuilds -action {
 Task ExportPublicFunctions -depends UpdateChangeLog -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
-    Write-Host "`t& '$ScriptToRun' -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
+    Write-Host "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
     & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath
 
 } -description 'Export all public functions in the module'
