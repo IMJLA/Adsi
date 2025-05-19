@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.26] - 2025-05-18
+### Fixed
+- bugfix psakefile
+
+## [5.0.25] - 2025-05-18
+### Changed
+- test export-publicfunction
+
+## [5.0.24] - 2025-05-18
+### Changed
+- update lint task
+
 ## [5.0.23] - 2025-05-18
 ### Changed
 - eliminate powershellbuild dependency for linting

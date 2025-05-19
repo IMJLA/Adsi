@@ -285,13 +285,6 @@ Task SetLocation -action {
 
 } -description 'Set the location to the project root'
 
-Task FindPublicFunctionFiles -action {
-
-    Write-Host "`t`$script:PublicFunctionFiles Get-ChildItem -Path '$publicFunctionPath' -Recurse"
-    $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
-
-} -description 'Find all public function files'
-
 Task TestModuleManifest -action {
 
     Write-Host "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
@@ -340,7 +333,14 @@ Task UpdateChangeLog -depends BackupOldBuilds -action {
 
 }
 
-Task ExportPublicFunctions -depends UpdateChangeLog -action {
+Task FindPublicFunctionFiles -depends UpdateChangeLog -action {
+
+    Write-Host "`t`$script:PublicFunctionFiles Get-ChildItem -Path '$publicFunctionPath' -Recurse"
+    $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
+
+} -description 'Find all public function files'
+
+Task ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
     Write-Host "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
@@ -503,8 +503,13 @@ Task Lint -precondition $FindLintPrerequisites -action {
     # Run PSScriptAnalyzer
     #Test-PSBuildScriptAnalysis @analyzeParams
 
-    Write-Host "`tInvoke-ScriptAnalyzer -Path '$script:BuildOutputDir' -Severity '$LintSeverityThreshold' -Settings '$LintSettingsFile'"
-    Invoke-ScriptAnalyzer -Path $script:BuildOutputDir -Severity $LintSeverityThreshold -Settings $LintSettingsFile
+
+    $sourceFiles = Get-ChildItem -Path $SourceCodeDir -Include *.ps1, *.psm1, *.psd1 -Recurse
+    $sourceFiles | ForEach-Object {
+        Write-Host "`tInvoke-ScriptAnalyzer -Path '$_' -Severity '$LintSeverityThreshold' -Settings '$LintSettingsFile'"
+        Invoke-ScriptAnalyzer -Path $_ -Severity $LintSeverityThreshold -Settings $LintSettingsFile
+    }
+
 
 } -description 'Execute PSScriptAnalyzer tests'
 
