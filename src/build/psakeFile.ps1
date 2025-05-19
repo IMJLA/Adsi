@@ -22,23 +22,23 @@ Properties {
     [string]$DocsRootDir = [IO.Path]::Combine('.', 'docs')
 
     # Culture of the current UI thread
-    [cultureinfo]$UICulture = Get-UICulture
+    [cultureinfo]$DocsUICulture = Get-UICulture
 
     # Default Locale used for help generation
     # Get-UICulture doesn't return a name on Linux so default to en-US
-    [string]$HelpDefaultLocale = if (-not $UICulture.Name) { 'en-US' } else { $UICulture.Name }
+    [string]$DocsDefaultLocale = if (-not $DocsUICulture.Name) { 'en-US' } else { $DocsUICulture.Name }
 
     # Convert project readme into the module 'about file'
-    [boolean]$HelpConvertReadMeToAboutHelp = $true
+    [boolean]$DocsConvertReadMeToAboutFile = $true
 
     # Markdown-formatted Help will be created in this folder
-    [string]$MarkdownHelpDir = [IO.Path]::Combine($DocsRootDir, 'markdown')
+    [string]$DocsMarkdownDir = [IO.Path]::Combine($DocsRootDir, 'markdown')
 
     # .CAB-formatted Updatable Help will be created in this folder
-    [string]$UpdatableHelpDir = [IO.Path]::Combine($DocsRootDir, 'updateable')
+    [string]$DocsUpdateableDir = [IO.Path]::Combine($DocsRootDir, 'updateable')
 
     # Directory where the markdown help files will be copied to
-    [string]$LocaleOutputDir = [IO.Path]::Combine($MarkdownHelpDir, $HelpDefaultLocale)
+    [string]$DocsMarkdownDefaultLocaleDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
 
 
 
@@ -176,7 +176,42 @@ FormatTaskName {
 
 }
 
-Task Default -depends ReturnToStartingLocation
+Task Default -depends FindLinter, FindBuildModule, FindDocumentationModule, FindUnitTestModule, DetectOperatingSystem, ReturnToStartingLocation
+
+Task FindLinter -precondition { $LintEnabled } -action {
+
+    Write-Host "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
+    $script:FindLinter = [boolean](Get-Module -name PSScriptAnalyzer -ListAvailable)
+
+} -description 'Find the prerequisite PSScriptAnalyzer PowerShell module.'
+
+Task FindBuildModule -precondition { $script:FindLinter } -action {
+
+    Write-Host "`tGet-Module -Name PowerShellBuild -ListAvailable"
+    $script:FindBuildModule = [boolean](Get-Module -name PowerShellBuild -ListAvailable)
+
+} -description 'Find the prerequisite PowerShellBuild PowerShell module.'
+
+Task FindUnitTestModule -precondition { $script:FindUnitTester } -action {
+
+    Write-Host "`tGet-Module -Name Pester -ListAvailable"
+    $script:FindBuildModule = [boolean](Get-Module -name Pester -ListAvailable)
+
+} -description 'Find the prerequisite PowerShellBuild PowerShell module.'
+
+Task FindDocumentationModule -action {
+
+    Write-Host "`tGet-Module -Name PlatyPS -ListAvailable"
+    $script:FindDocumentationModule = [boolean](Get-Module -name PlatyPS -ListAvailable)
+
+} -description 'Find the prerequisite PlatyPS PowerShell module.'
+
+Task DetectOperatingSystem -action {
+
+    Write-Host "`tGet-CimInstance -ClassName CIM_OperatingSystem"
+    $script:OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
+
+} -description 'Detect the operating system to determine whether MakeCab.exe is available to produce updateable help.'
 
 Task DetermineNewModuleVersion -action {
 
@@ -265,7 +300,7 @@ Task ExportPublicFunctions -depends UpdateChangeLog -action {
 
 } -description 'Export all public functions in the module'
 
-Task BuildModule -depends ExportPublicFunctions {
+Task BuildModule -depends ExportPublicFunctions -precondition { $script:FindBuildModule } -action {
 
     $buildParams = @{
         Path               = $SourceCodeDir
@@ -275,10 +310,10 @@ Task BuildModule -depends ExportPublicFunctions {
         Compile            = $BuildCompileModule
         CompileDirectories = $BuildCompileDirectories
         CopyDirectories    = $BuildCopyDirectories
-        Culture            = $HelpDefaultLocale
+        Culture            = $DocsDefaultLocale
     }
 
-    if ($HelpConvertReadMeToAboutHelp) {
+    if ($DocsConvertReadMeToAboutFile) {
         $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
         Select-Object -First 1
         if ($readMePath) {
@@ -293,7 +328,7 @@ Task BuildModule -depends ExportPublicFunctions {
         }
     }
 
-    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$HelpDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
+    Write-Host "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude '$BuildExclude' -Compile '$BuildCompileModule' -CompileDirectories '$BuildCompileDirectories' -CopyDirectories '$BuildCopyDirectories' -Culture '$DocsDefaultLocale' -ReadMePath '$readMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
     Build-PSBuildModule @buildParams
 
     # Remove the psdependRequirements.psd1 file if it exists
@@ -313,16 +348,7 @@ Task BackupOldDocs -depends DeleteOldBuilds -action {
     Rename-Item -Path $DocsRootDir -NewName "$DocsRootDir.old" -Force
 } -description 'Backup old documentation files'
 
-$genMarkdownPreReqs = {
-    $result = $true
-    if (-not (Get-Module PlatyPS -ListAvailable)) {
-        Write-Warning "PlatyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
-        $result = $false
-    }
-    $result
-}
-
-Task BuildMarkdownHelp -depends BackupOldDocs -precondition $genMarkdownPreReqs -action {
+Task BuildMarkdownHelp -depends BackupOldDocs -precondition { $script:FindDocumentationModule } -action {
 
     $ManifestPath = [IO.Path]::Combine($script:BuildOutputDir, "$ModuleName.psd1")
     $moduleInfo = Import-Module $ManifestPath  -Global -Force -PassThru
@@ -332,30 +358,30 @@ Task BuildMarkdownHelp -depends BackupOldDocs -precondition $genMarkdownPreReqs 
         Write-Warning 'No commands have been exported. Skipping markdown generation.'
         return
     }
-    if (-not (Test-Path -LiteralPath $MarkdownHelpDir)) {
-        New-Item -Path $MarkdownHelpDir -ItemType Directory > $null
+    if (-not (Test-Path -LiteralPath $DocsMarkdownDir)) {
+        New-Item -Path $DocsMarkdownDir -ItemType Directory > $null
     }
     try {
 
-        if (Get-ChildItem -LiteralPath $MarkdownHelpDir -Filter *.md -Recurse) {
-            Get-ChildItem -LiteralPath $MarkdownHelpDir -Directory | ForEach-Object {
+        if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
+            Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
                 Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
             }
         }
 
         $newMDParams = @{
             AlphabeticParamsOrder = $true
-            Locale                = $HelpDefaultLocale
+            Locale                = $DocsDefaultLocale
             ErrorAction           = 'SilentlyContinue' # SilentlyContinue will not overwrite an existing MD file.
             HelpVersion           = $moduleInfo.Version
             Module                = $ModuleName
             # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
             # OnlineVersionUrl = $GitHubPagesLinkForThisModule
-            OutputFolder          = $LocaleOutputDir
+            OutputFolder          = $DocsMarkdownDefaultLocaleDir
             UseFullTypeName       = $true
             WithModulePage        = $true
         }
-        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($moduleInfo.Version)' -Locale '$HelpDefaultLocale' -Module '$ModuleName' -OutputFolder '$LocaleOutputDir' -UseFullTypeName `$true -WithModulePage `$true"
+        Write-Host "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($moduleInfo.Version)' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
         $null = New-MarkdownHelp @newMDParams
     }
     finally {
@@ -369,7 +395,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     $manifestInfo = Test-ModuleManifest -Path $ManifestPath
 
     #Fix the Module Page () things PlatyPS does not do):
-    $ModuleHelpFile = [IO.Path]::Combine($LocaleOutputDir, "$ModuleName.md")
+    $ModuleHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
 
     Write-Host "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
     [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
@@ -383,7 +409,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     #Update the description of each function (use its synopsis for brevity)
     ForEach ($ThisFunction in $ManifestInfo.ExportedCommands.Keys) {
-        $Synopsis = (Get-Help -name $ThisFunction).Synopsis
+        $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
         $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
         $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
         $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
@@ -410,7 +436,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
         $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
-        $ThisFunctionHelpFile = [IO.Path]::Combine($LocaleOutputDir, "$fileNameWithoutExtension.md")
+        $ThisFunctionHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$fileNameWithoutExtension.md")
         Write-Host "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
         [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
         Write-Host "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
@@ -425,7 +451,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     # Fix the readme file to point to the correct location of the markdown files
     Write-Host "`t`$ReadMeContents = `$ModuleHelp"
     $ReadMeContents = $ModuleHelp
-    $DocsRootForURL = "docs/$HelpDefaultLocale"
+    $DocsRootForURL = "docs/$DocsDefaultLocale"
     [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
     ForEach-Object {
         $EscapedTextToReplace = [regex]::Escape($_)
@@ -441,46 +467,27 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
 }
 
-$genHelpFilesPreReqs = {
-    $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
-        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
-        $result = $false
-    }
-    $result
-}
-
-Task BuildMAMLHelp -depends FixMarkdownHelp -precondition $genHelpFilesPreReqs -action {
-    Write-Host "`tBuild-PSBuildMAMLHelp -Path '$MarkdownHelpDir' -DestinationPath '$script:BuildOutputDir'"
-    Build-PSBuildMAMLHelp -Path $MarkdownHelpDir -DestinationPath $script:BuildOutputDir
+Task BuildMAMLHelp -depends FixMarkdownHelp -precondition { $script:FindDocumentationModule } -action {
+    Write-Host "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$script:BuildOutputDir'"
+    Build-PSBuildMAMLHelp -Path $DocsMarkdownDir -DestinationPath $script:BuildOutputDir
 } -description 'Generates MAML-based help from PlatyPS markdown files'
 
-$genUpdatableHelpPreReqs = {
-    $result = $true
-    if (-not (Get-Module platyPS -ListAvailable)) {
-        Write-Warning "platyPS module is not installed. Skipping [$($psake.context.currentTaskName)] task."
-        $result = $false
-    }
-    $result
-}
+Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition { $script:FindDocumentationModule } -action {
 
-Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $genUpdatableHelpPreReqs -action {
-
-    $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
-    if ($OS -notmatch 'Windows') {
+    if ($script:OS -notmatch 'Windows') {
         Write-Warning 'MakeCab.exe is only available on Windows. Cannot create help cab.'
         return
     }
 
-    $helpLocales = (Get-ChildItem -Path $MarkdownHelpDir -Directory).Name
+    $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
     # Create updatable help output directory
-    if (-not (Test-Path -LiteralPath $UpdatableHelpDir)) {
-        New-Item $UpdatableHelpDir -ItemType Directory -Verbose:$VerbosePreference > $null
+    if (-not (Test-Path -LiteralPath $DocsUpdateableDir)) {
+        New-Item $DocsUpdateableDir -ItemType Directory -Verbose:$VerbosePreference > $null
     }
     else {
-        Write-Verbose "Removing existing directory: [$UpdatableHelpDir]."
-        Get-ChildItem $UpdatableHelpDir | Remove-Item -Recurse -Force -Verbose:$VerbosePreference
+        Write-Verbose "Removing existing directory: [$DocsUpdateableDir]."
+        Get-ChildItem $DocsUpdateableDir | Remove-Item -Recurse -Force -Verbose:$VerbosePreference
     }
 
     # Generate updatable help files.  Note: this will currently update the version number in the module's MD
@@ -488,8 +495,8 @@ Task BuildUpdatableHelp -depends BuildMAMLHelp -precondition $genUpdatableHelpPr
     foreach ($locale in $helpLocales) {
         $cabParams = @{
             CabFilesFolder  = [IO.Path]::Combine($script:BuildOutputDir, $locale)
-            LandingPagePath = [IO.Path]::Combine($LocaleOutputDir, "$ModuleName.md")
-            OutputFolder    = $UpdatableHelpDir
+            LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
+            OutputFolder    = $DocsUpdateableDir
         }
         Write-Host "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)'"
         New-ExternalHelpCab @cabParams > $null
@@ -502,48 +509,21 @@ Task DeleteOldDocs -depends BuildUpdatableHelp -action {
     Remove-Item -Path "$DocsRootDir.old" -Recurse -Force -ErrorAction SilentlyContinue
 } -description 'Delete old documentation file backups'
 
-$analyzePreReqs = {
-    $result = $true
-    if (-not $LintEnabled) {
-        Write-Warning 'Script analysis is not enabled.'
-        $result = $false
-    }
-    if (-not (Get-Module -Name PSScriptAnalyzer -ListAvailable)) {
-        Write-Warning 'PSScriptAnalyzer module is not installed'
-        $result = $false
-    }
-    $result
-}
+Task Lint -depends DeleteOldDocs -precondition { $script:FindLinter } -action {
 
-Task Lint -depends DeleteOldDocs -precondition $analyzePreReqs -action {
     $analyzeParams = @{
         Path              = $script:BuildOutputDir
         SeverityThreshold = $LintSeverityThreshold
         SettingsPath      = $LintSettingsFile
     }
     Write-Host "`tTest-PSBuildScriptAnalysis -Path '$($analyzeParams.Path)' -SeverityThreshold '$($analyzeParams.SeverityThreshold)' -SettingsPath '$($analyzeParams.SettingsPath)'"
+
     # Run PSScriptAnalyzer
     Test-PSBuildScriptAnalysis @analyzeParams
+
 } -description 'Execute PSScriptAnalyzer tests'
 
-$pesterPreReqs = {
-    $result = $true
-    if (-not $TestEnabled) {
-        Write-Warning 'Pester testing is not enabled.'
-        $result = $false
-    }
-    if (-not (Get-Module -Name Pester -ListAvailable)) {
-        Write-Warning 'Pester module is not installed'
-        $result = $false
-    }
-    if (-not (Test-Path -Path $TestRootDir)) {
-        Write-Warning "Test directory [$TestRootDir)] not found"
-        $result = $false
-    }
-    return $result
-}
-
-Task UnitTests -depends Lint -precondition $pesterPreReqs -action {
+Task UnitTests -depends Lint -precondition { $script:FindUnitTester } -action {
 
     $PesterConfigParams = @{
         Run          = @{
@@ -589,7 +569,7 @@ Task UnitTests -depends Lint -precondition $pesterPreReqs -action {
 `t            OutputFormat = '$TestOutputFormat'
 `t        }
 `t    }"
-    Write-Host "`tNew-PesterConfiguration -Hashtable `$PesterConfigParams"
+    Write-Host "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
 
     Write-Host "`tInvoke-Pester -Configuration `$PesterConfiguration"
@@ -598,11 +578,15 @@ Task UnitTests -depends Lint -precondition $pesterPreReqs -action {
 } -description 'Perform unit tests using Pester.'
 
 Task SourceControl -depends UnitTests -action {
+
+    # Find the current git branch
     $CurrentBranch = git branch --show-current
+
     # Commit to Git
     git add .
     git commit -m $CommitMessage
     git push origin $CurrentBranch
+
 } -description 'git add, commit, and push'
 
 Task Publish -depends SourceControl -action {
@@ -639,7 +623,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -656,7 +640,7 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     if (Get-Module -name $ModuleName -ListAvailable) {
         Write-Host "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-Host ''
@@ -671,16 +655,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-Host "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
