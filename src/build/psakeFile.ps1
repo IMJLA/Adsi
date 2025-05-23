@@ -183,7 +183,7 @@ Properties {
     $WriteInfoScript = [IO.Path]::Combine('.', 'Write-InfoColor.ps1')
 
 
-    # Dot-source the Write-InfoColor.ps1 script once to make the function available
+    # Dot-source the Write-InfoColor.ps1 script once to make the function available throughout the script
     . $WriteInfoScript
 
     $InformationPreference = 'Continue'
@@ -357,7 +357,15 @@ Task ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
 } -description 'Export all public functions in the module'
 
-Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequisite -action {
+Task FindBuildCopyDirectories -depends ExportPublicFunctions -action {
+
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Find-BuildCopyDirectory.ps1')
+    Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory '$BuildCopyDirectory'"
+    & $ScriptToRun -BuildCopyDirectory $BuildCopyDirectory
+
+} -description 'Find all directories to copy to the build output directory, excluding empty directories'
+
+Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrerequisite -action {
 
     $buildParams = @{
         Path               = $SourceCodeDir
@@ -366,7 +374,7 @@ Task BuildModule -depends ExportPublicFunctions -precondition $FindBuildPrerequi
         Exclude            = $BuildExclude + "$ModuleName.psm1"
         Compile            = $BuildCompileModule
         CompileDirectories = $BuildCompileDirectories
-        CopyDirectories    = $BuildCopyDirectories
+        CopyDirectories    = $script:CopyDirectories
         Culture            = $DocsDefaultLocale
     }
 
