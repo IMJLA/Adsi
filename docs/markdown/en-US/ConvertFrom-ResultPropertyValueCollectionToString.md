@@ -36,7 +36,7 @@ For each property in a DirectoryEntry, convert its corresponding PropertyValueCo
 ## PARAMETERS
 
 ### -ResultPropertyValueCollection
-ResultPropertyValueCollection object to convert to a string
+{{ Fill ResultPropertyValueCollection Description }}
 
 ```yaml
 Type: System.DirectoryServices.ResultPropertyValueCollection

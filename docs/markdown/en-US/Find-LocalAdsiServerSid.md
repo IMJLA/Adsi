@@ -8,7 +8,7 @@ schema: 2.0.0
 # Find-LocalAdsiServerSid
 
 ## SYNOPSIS
-Finds the SID prefix of the local server by querying the built-in administrator account.
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
@@ -18,28 +18,21 @@ Find-LocalAdsiServerSid [[-ComputerName] <String>] [-Cache] <PSReference> [-Prog
 ```
 
 ## DESCRIPTION
-This function queries the local computer or a remote computer via CIM to find the SID
-of the built-in administrator account (RID 500), then extracts and returns the server's
-SID prefix by removing the RID portion.
-This is useful for identifying the server's
-unique domain identifier in Active Directory environments.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```
-Find-LocalAdsiServerSid -ComputerName "DC01" -Cache $Cache
+PS C:\> {{ Add example code here }}
 ```
 
-Retrieves the SID prefix for the computer "DC01" by querying the built-in Administrator
-account and removing the RID portion.
-This domain SID prefix can be used to identify
-the domain and construct SIDs for domain users and groups.
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+{{ Fill Cache Description }}
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -47,14 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -ComputerName
-Name of the computer to query via CIM
+{{ Fill ComputerName Description }}
 
 ```yaml
 Type: System.String
@@ -62,8 +55,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: (HOSTNAME.EXE)
+Position: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -88,11 +81,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None. Pipeline input is not accepted.
+### None
 ## OUTPUTS
 
 ### System.String
-### Returns the SID prefix of the specified computer or local computer.
 ## NOTES
 
 ## RELATED LINKS

@@ -120,7 +120,7 @@ Accept wildcard characters: False
 ```
 
 ### -SidTypeMap
-Mapping of SID types to descriptions used for converting security identifiers
+{{ Fill SidTypeMap Description }}
 
 ```yaml
 Type: System.Collections.Hashtable

@@ -2,18 +2,26 @@
 
 BeforeDiscovery {
 
-    $manifest = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
-    $outputDir = Join-Path -Path $env:BHProjectPath -ChildPath 'dist'
+    # Folder containing the source code
+    [string]$SourceCodeDir = [IO.Path]::Combine('..', 'src')
+
+    # Name of the module being built
+    $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Leaf
+
+    # Path to the module manifest file
+    $ModuleManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
+    $manifest = Import-PowerShellDataFile -Path $ModuleManifestPath
+    $outputDir = Join-Path -Path $PSScriptRoot -ChildPath 'dist'
     $outputModVerDir = Join-Path -Path $outputDir -ChildPath $manifest.ModuleVersion
-    $outputModDir = Join-Path -Path $outputModVerDir -ChildPath $env:BHProjectName
-    $outputModVerManifest = Join-Path -Path $outputModDir -ChildPath "$($env:BHProjectName).psd1"
+    $outputModDir = Join-Path -Path $outputModVerDir -ChildPath $ModuleName
+    $outputModVerManifest = Join-Path -Path $outputModDir -ChildPath "$($ModuleName).psd1"
 
     # Get module commands
     # Remove all versions of the module from the session. Pester can't handle multiple versions.
-    Get-Module $env:BHProjectName | Remove-Module -Force -ErrorAction Ignore
+    Get-Module $ModuleName | Remove-Module -Force -ErrorAction Ignore
     Import-Module -Name $outputModVerManifest -Verbose:$false -ErrorAction Stop
     $params = @{
-        Module      = (Get-Module $env:BHProjectName)
+        Module      = (Get-Module $ModuleName)
         CommandType = [System.Management.Automation.CommandTypes[]]'Cmdlet, Function' # Not alias
     }
     if ($PSVersionTable.PSVersion.Major -lt 6) {

@@ -55,7 +55,6 @@ Accept wildcard characters: False
 ## OUTPUTS
 
 ### [System.String]
-### Returns a string representation of the PropertyValueCollection's value.
 ## NOTES
 
 ## RELATED LINKS

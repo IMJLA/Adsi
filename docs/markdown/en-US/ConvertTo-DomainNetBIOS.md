@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-DomainNetBIOS
 
 ## SYNOPSIS
-Converts a domain FQDN to its NetBIOS name.
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
@@ -18,66 +18,21 @@ ConvertTo-DomainNetBIOS [[-DomainFQDN] <String>] [[-AdsiProvider] <String>] [-Ca
 ```
 
 ## DESCRIPTION
-Retrieves the NetBIOS name for a specified domain FQDN by checking the cache or querying
-the directory service.
-For LDAP providers, it retrieves domain information from the directory.
-For non-LDAP providers, it extracts the first part of the FQDN before the first period.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```
-ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache
-```
-
-Converts the fully qualified domain name 'contoso.com' to its NetBIOS name by automatically
-determining the appropriate method based on available information.
-The function will check the
-cache first to avoid unnecessary directory queries.
-
-### EXAMPLE 2
-```
-ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
+PS C:\> {{ Add example code here }}
 ```
 
-Converts the fully qualified domain name 'contoso.com' to its NetBIOS name using the LDAP provider
-specifically, which provides more accurate results in an Active Directory environment by querying
-the domain controller directly.
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -AdsiProvider
-ADSI provider to use (LDAP or WinNT)
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Cache
-In-process cache to reduce calls to other processes or to disk
-
-```yaml
-Type: System.Management.Automation.PSReference
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -DomainFQDN
-Fully Qualified Domain Name (FQDN) to convert to NetBIOS name
+{{ Fill AdsiProvider Description }}
 
 ```yaml
 Type: System.String
@@ -86,6 +41,36 @@ Aliases:
 
 Required: False
 Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Cache
+{{ Fill Cache Description }}
+
+```yaml
+Type: System.Management.Automation.PSReference
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DomainFQDN
+{{ Fill DomainFQDN Description }}
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -111,10 +96,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None. Pipeline input is not accepted.
+### None
 ## OUTPUTS
 
-### System.String. The NetBIOS name of the domain.
+### System.Object
 ## NOTES
 
 ## RELATED LINKS

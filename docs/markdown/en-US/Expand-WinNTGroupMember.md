@@ -27,10 +27,7 @@ Recursively retrieves group members and detailed information about them
 [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
 ```
 
-Retrieves the members of the local Administrators group and then expands each member by adding
-additional information such as SID, domain information, and group membership details if the member
-is itself a group.
-This provides a complete hierarchical view of permissions.
+Need to fix example and add notes
 
 ## PARAMETERS
 

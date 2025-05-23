@@ -23,21 +23,17 @@ This obfuscates the troublesome PropertyCollection and PropertyValueCollection a
 
 ## EXAMPLES
 
-### EXAMPLE 1
-```
-$DirEntry = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator')
-ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
 
-Converts the DirectoryEntry for the local Administrator account into a PowerShell custom object with simplified
-property values.
-This makes it easier to work with the object in PowerShell and avoids the complexity of
-DirectoryEntry property collections, which can be difficult to access and manipulate directly.
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -DirectoryEntry
-DirectoryEntry objects to convert to PSCustomObjects
+{{ Fill DirectoryEntry Description }}
 
 ```yaml
 Type: System.DirectoryServices.DirectoryEntry[]
@@ -71,10 +67,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.DirectoryServices.DirectoryEntry]
 ## OUTPUTS
 
-### [PSCustomObject]
 ## NOTES
 
 ## RELATED LINKS

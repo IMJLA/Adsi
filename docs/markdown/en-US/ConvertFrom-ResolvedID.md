@@ -31,13 +31,7 @@ Group-Object -Property IdentityReferenceResolved |
 ConvertFrom-ResolvedID
 ```
 
-Incomplete example but it shows the chain of functions to generate the expected input for this function.
-This example gets the ACL for an important folder, resolves each identity reference in the access entries,
-groups them by the resolved identity reference, and then converts each unique identity to a detailed
-principal object.
-This provides comprehensive information about each security principal including their
-directory entry, domain information, and group membership details, which is essential for thorough
-permission analysis and reporting.
+Incomplete example but it shows the chain of functions to generate the expected input for this
 
 ## PARAMETERS
 

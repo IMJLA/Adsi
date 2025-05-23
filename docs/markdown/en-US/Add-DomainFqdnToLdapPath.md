@@ -27,14 +27,11 @@ Uses RegEx to:
 
 ### EXAMPLE 1
 ```
-Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' -Cache $Cache
+Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com'
+LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com
 ```
 
-Completes the partial LDAP path 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' to
-'LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' with the domain FQDN added as the
-server address.
-This is crucial for making remote LDAP queries to specific domain controllers, especially
-when working in multi-domain environments or when connecting to trusted domains.
+Add the domain FQDN to a single LDAP directory path
 
 ## PARAMETERS
 

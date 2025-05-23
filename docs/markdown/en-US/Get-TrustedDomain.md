@@ -1,7 +1,7 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
+online version:
 schema: 2.0.0
 ---
 
@@ -27,15 +27,10 @@ For each trusted domain the value contains the details retrieved with ADSI
 
 ### EXAMPLE 1
 ```
-Get-TrustedDomain -Cache $Cache
+Get-TrustedDomain
 ```
 
-Retrieves information about all domains trusted by the current domain-joined computer, including each domain's
-NetBIOS name, DNS name, and distinguished name.
-This information is essential for cross-domain identity resolution
-and permission analysis.
-The function stores the results in the provided cache to improve performance in
-subsequent operations involving these trusted domains.
+Get the trusted domains of the current computer
 
 ## PARAMETERS
 

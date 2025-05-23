@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
+online version:
 schema: 2.0.0
 ---
 
 # Get-ParentDomainDnsName
 
 ## SYNOPSIS
-Gets the DNS name of the parent domain for a given computer or domain.
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
@@ -18,31 +18,21 @@ Get-ParentDomainDnsName [[-DomainNetbios] <String>] [[-CimSession] <CimSession>]
 ```
 
 ## DESCRIPTION
-This function retrieves the DNS name of the parent domain for a specified domain
-or computer using CIM queries.
-For workgroup computers or when no parent domain
-is found, it falls back to using the primary DNS suffix from the client's global
-DNS settings.
-The function uses caching to improve performance during repeated calls.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```
-$Cache = @{}
-Get-ParentDomainDnsName -DomainNetbios "CORPDC01" -Cache ([ref]$Cache)
+PS C:\> {{ Add example code here }}
 ```
 
-Remark: This example retrieves the parent domain DNS name for a domain controller named "CORPDC01".
-The function will first attempt to get the domain information via CIM queries to the specified computer.
-Results are stored in the $Cache variable to improve performance if the function is called again
-with the same parameters.
-For domain controllers, this will typically return the forest root domain name.
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+{{ Fill Cache Description }}
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -50,14 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -CimSession
-Existing CIM session to the computer (to avoid creating redundant CIM sessions)
+{{ Fill CimSession Description }}
 
 ```yaml
 Type: Microsoft.Management.Infrastructure.CimSession
@@ -65,14 +55,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DomainNetbios
-NetBIOS name of the domain whose parent domain DNS to return
+{{ Fill DomainNetbios Description }}
 
 ```yaml
 Type: System.String
@@ -80,7 +70,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -102,7 +92,7 @@ Accept wildcard characters: False
 ```
 
 ### -RemoveCimSession
-Switch to remove the CIM session when done
+{{ Fill RemoveCimSession Description }}
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -121,8 +111,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
