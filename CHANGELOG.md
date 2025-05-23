@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.45] - 2025-05-22
+### Changed
+- test build
+
 ## [5.0.44] - 2025-05-19
 ### Added
 - add lintanalysis task
