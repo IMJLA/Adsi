@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.57] - 2025-05-23
+### Fixed
+- bugfix psakefile wrong var name
+
 ## [5.0.56] - 2025-05-23
 ### Changed
 - update build process to avoid copying empty dirs to build output
