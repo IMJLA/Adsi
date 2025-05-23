@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.50] - 2025-05-22
+### Changed
+- update manifest tests
+
 ## [5.0.49] - 2025-05-22
 ### Changed
 - update help tests
