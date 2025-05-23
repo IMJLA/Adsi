@@ -1,0 +1,20 @@
+{
+  "Run": {
+    "Path": ".\\tests"
+  },
+  "CodeCoverage": {
+    "Enabled": false,
+    "OutputFormat": "JaCoCo",
+    "CoveragePercentTarget": 0.75,
+    "Path": "",
+    "OutputPath": ".\\tests\\out\\codeCoverage.xml"
+  },
+  "TestResult": {
+    "Enabled": true,
+    "OutputPath": "out\\testResults.xml",
+    "OutputFormat": "NUnitXml"
+  },
+  "Output": {
+    "Verbosity": "Normal"
+  }
+}

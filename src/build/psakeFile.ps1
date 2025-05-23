@@ -518,53 +518,10 @@ Task LintAnalysis -depends Lint -action {
 
 Task UnitTests -depends LintAnalysis -precondition $FindUnitTestPrerequisite -action {
 
-    $PesterConfigParams = @{
-        Run          = @{
-            Path = "$TestRootDir"
-        }
-        CodeCoverage = @{
-            CoveragePercentTarget = $TestCodeCoverageThreshold
-            Enabled               = $TestCodeCoverageEnabled
-            OutputFormat          = $TestCodeCoverageOutputFormat
-            OutputPath            = $TestCodeCoverageOutputFile
-            Path                  = $TestCodeCoverageFiles
-        }
-        Output       = @{
-            #Verbosity = 'Diagnostic'
-            Verbosity = 'Normal'
-        }
-        TestResult   = @{
-            Enabled      = $true
-            OutputPath   = $TestResultsFile
-            OutputFormat = $TestOutputFormat
-        }
-    }
-
-
-    Write-InfoColor "`t`$PesterConfigParams = @{
-`t        Run          = @{
-`t            Path = '$TestRootDir'
-`t        }
-`t        CodeCoverage = @{
-`t            CoveragePercentTarget = $TestCodeCoverageThreshold
-`t            Enabled               = $TestCodeCoverageEnabled
-`t            OutputFormat          = '$TestCodeCoverageOutputFormat'
-`t            OutputPath            = '$TestCodeCoverageOutputFile'
-`t            Path                  = '$TestCodeCoverageFiles'
-`t        }
-`t        Output       = @{
-`t            #Verbosity = 'Diagnostic'
-`t            Verbosity = 'Normal'
-`t        }
-`t        TestResult   = @{
-`t            Enabled      = $true
-`t            OutputPath   = '$TestResultsFile'
-`t            OutputFormat = '$TestOutputFormat'
-`t        }
-`t    }"
+    Write-InfoColor "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
+    $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
     Write-InfoColor "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
-
     Write-InfoColor "`tInvoke-Pester -Configuration `$PesterConfiguration"
     Invoke-Pester -Configuration $PesterConfiguration
 
@@ -576,8 +533,11 @@ Task SourceControl -depends UnitTests -action {
     $CurrentBranch = git branch --show-current
 
     # Commit to Git
+    Write-InfoColor "`tgit add ."
     git add .
+    Write-InfoColor "`tgit commit -m $CommitMessage"
     git commit -m $CommitMessage
+    Write-InfoColor "`tgit push origin $CurrentBranch"
     git push origin $CurrentBranch
 
 } -description 'git add, commit, and push'
