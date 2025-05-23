@@ -140,7 +140,7 @@ Properties {
     )
 
     # List of files (regular expressions) to exclude from output directory
-    [string[]]$BuildExclude = @( [IO.Path]::Combine('build', '*'), 'gitkeep')
+    [string[]]$BuildExclude = @( [IO.Path]::Combine('build', '*'), 'psdependRequirements', 'psscriptanalyzerSettings', 'gitkeep')
 
 
 
@@ -360,7 +360,7 @@ Task ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 Task FindBuildCopyDirectories -depends ExportPublicFunctions -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Find-BuildCopyDirectory.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory '$BuildCopyDirectories'"
+    Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory @('$($BuildCopyDirectories -join "','")')"
     & $ScriptToRun -BuildCopyDirectory $BuildCopyDirectories
 
 } -description 'Find all directories to copy to the build output directory, excluding empty directories'
@@ -398,19 +398,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
 } -description 'Build a PowerShell script module based on the source directory'
 
-Task FixModule -depends BuildModule -action {
-
-    $File = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
-    Write-InfoColor "`tRemove-Item -Path '$File'"
-    Remove-Item -Path $File -ErrorAction SilentlyContinue
-
-    $File = [IO.Path]::Combine($script:BuildOutputDir, 'psscriptanalyzerSettings.psd1')
-    Write-InfoColor "`tRemove-Item -Path '$File'"
-    Remove-Item -Path $File -ErrorAction SilentlyContinue
-
-}
-
-Task DeleteOldBuilds -depends FixModule -action {
+Task DeleteOldBuilds -depends BuildModule -action {
 
     Write-InfoColor "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
     Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue
