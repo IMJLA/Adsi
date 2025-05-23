@@ -9,8 +9,7 @@ BeforeAll {
     $outputModDir = Join-Path -Path $outputModVerDir -ChildPath $ModuleName
     $outputManifestPath = Join-Path -Path $outputModDir -ChildPath "$($ModuleName).psd1"
     $manifestData = Test-ModuleManifest -Path $outputManifestPath -Verbose:$false -ErrorAction Stop -WarningAction SilentlyContinue
-
-    $changelogPath = Join-Path -Path $env:BHProjectPath -Child 'CHANGELOG.md'
+    $changelogPath = [IO.Path]::Combine('.', 'CHANGELOG.md')
     Get-Content $changelogPath | ForEach-Object {
         if ($_ -match '^##\s\[(?<Version>(\d+\.){1,3}\d+)\]') {
             $changelogVersion = $matches.Version
