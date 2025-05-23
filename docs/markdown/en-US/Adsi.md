@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 5.0.47
+Help Version: 5.0.48
 Locale: en-US
 ---
 
@@ -33,7 +33,7 @@ Convert a ResultPropertyValueCollection to a string
 Convert a SearchResult to a PSCustomObject
 
 ### [ConvertFrom-SidString](ConvertFrom-SidString.md)
-{{ Fill in the Synopsis }}
+Converts a SID string to a DirectoryEntry object.
 
 ### [ConvertTo-DecStringRepresentation](ConvertTo-DecStringRepresentation.md)
 Convert a byte array to a string representation of its decimal format
@@ -42,10 +42,10 @@ Convert a byte array to a string representation of its decimal format
 Convert a domain NetBIOS name to its distinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
-{{ Fill in the Synopsis }}
+Converts a domain FQDN to its NetBIOS name.
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
-{{ Fill in the Synopsis }}
+Converts a domain DNS name to its corresponding SID string.
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
 Convert a domain distinguishedName name or NetBIOS name to its FQDN
@@ -66,7 +66,7 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
 
 ### [Find-LocalAdsiServerSid](Find-LocalAdsiServerSid.md)
-{{ Fill in the Synopsis }}
+Finds the SID prefix of the local server by querying the built-in administrator account.
 
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
 Get the directory entries for a group and its members using ADSI
@@ -84,19 +84,19 @@ Use ADSI to get the current domain
 Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ### [Get-KnownCaptionHashTable](Get-KnownCaptionHashTable.md)
-{{ Fill in the Synopsis }}
+Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
 
 ### [Get-KnownSid](Get-KnownSid.md)
-{{ Fill in the Synopsis }}
+Retrieves information about well-known security identifiers (SIDs).
 
 ### [Get-KnownSidByName](Get-KnownSidByName.md)
-{{ Fill in the Synopsis }}
+Creates a hashtable of well-known SIDs indexed by their friendly names.
 
 ### [Get-KnownSidHashtable](Get-KnownSidHashtable.md)
-{{ Fill in the Synopsis }}
+Returns a hashtable of known security identifiers (SIDs) with detailed information.
 
 ### [Get-ParentDomainDnsName](Get-ParentDomainDnsName.md)
-{{ Fill in the Synopsis }}
+Gets the DNS name of the parent domain for a given computer or domain.
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
 Returns a dictionary of trusted domains by the current computer
@@ -108,13 +108,13 @@ Get members of a group from the WinNT provider
 Invoke a member method of a ComObject [__ComObject]
 
 ### [New-FakeDirectoryEntry](New-FakeDirectoryEntry.md)
-{{ Fill in the Synopsis }}
+Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
 
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)
 Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
 
 ### [Resolve-ServiceNameToSID](Resolve-ServiceNameToSID.md)
-{{ Fill in the Synopsis }}
+Resolves Windows service names to their corresponding security identifiers (SIDs).
 
 ### [Search-Directory](Search-Directory.md)
 Use Active Directory Service Interfaces to search an LDAP directory

@@ -25,10 +25,16 @@ Return the group's DirectoryEntry plus a FullMembers property containing the mem
 
 ### EXAMPLE 1
 ```
-[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember
+[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
+Get-AdsiGroupMember -Cache $Cache
 ```
 
-Get members of the domain Administrators group
+Retrieves all members of the domain's Administrators group, including both direct members and those
+who inherit membership through their primary group.
+The function returns the original group DirectoryEntry
+object with an added FullMembers property containing all member DirectoryEntry objects.
+This
+approach ensures proper resolution of all group memberships regardless of how they are assigned.
 
 ## PARAMETERS
 

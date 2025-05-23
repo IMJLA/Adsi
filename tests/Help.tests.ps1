@@ -3,7 +3,7 @@
 BeforeDiscovery {
 
     # Folder containing the source code
-    [string]$SourceCodeDir = [IO.Path]::Combine('..', 'src')
+    [string]$SourceCodeDir = [IO.Path]::Combine('.', 'src')
 
     # Name of the module being built
     $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Leaf
