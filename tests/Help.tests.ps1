@@ -11,10 +11,10 @@ BeforeDiscovery {
     # Path to the module manifest file
     $ModuleManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
     $manifest = Import-PowerShellDataFile -Path $ModuleManifestPath
-    $outputDir = Join-Path -Path $PSScriptRoot -ChildPath 'dist'
+    [string]$outputDir = [IO.Path]::Combine('.', 'dist')
     $outputModVerDir = Join-Path -Path $outputDir -ChildPath $manifest.ModuleVersion
     $outputModDir = Join-Path -Path $outputModVerDir -ChildPath $ModuleName
-    $outputModVerManifest = Join-Path -Path $outputModDir -ChildPath "$($ModuleName).psd1"
+    $outputModVerManifest = Join-Path -Path $outputModDir -ChildPath "$ModuleName.psd1"
 
     # Get module commands
     # Remove all versions of the module from the session. Pester can't handle multiple versions.
