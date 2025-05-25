@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.62] - 2025-05-25
+### Changed
+- enable CreateGitHubRelease task but this time with a token ready!
+
 ## [5.0.61] - 2025-05-25
 ### Changed
 - enable CreateGitHubRelease psake task
