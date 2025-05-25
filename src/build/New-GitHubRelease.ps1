@@ -116,16 +116,16 @@ try {
     $zipFilePath = Join-Path $env:TEMP $zipFileName
     $ZipFileDisplayPath = [IO.Path]::Combine('$env:TEMP', $zipFileName)
 
-    Write-InfoColor "`t`tCompress-Archive -Path '$versionFolderPath\*' -DestinationPath '$ZipFileDisplayPath' -Force"
+    Write-InfoColor "`t`tCompress-Archive -Path '$versionFolderPath\*' -DestinationPath `"$ZipFileDisplayPath`" -Force"
     Compress-Archive -Path "$($versionFolder.FullName)\*" -DestinationPath $zipFilePath -Force
 
     # Check if zip file was created successfully
     if (Test-Path $zipFilePath) {
-        Write-InfoColor "`t`tAdd-ReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath '$ZipFileDisplayPath' -FileName '$zipFileName'"
+        Write-InfoColor "`t`tAdd-ReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath `"$ZipFileDisplayPath`" -FileName '$zipFileName'"
         $null = Add-ReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName
 
         # Clean up temporary zip file
-        Write-Information "`t`tRemove-Item '$ZipFileDisplayPath' -Force"
+        Write-Information "`t`tRemove-Item `"$ZipFileDisplayPath`" -Force"
         Remove-Item $zipFilePath -Force
     }
     else {

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.71] - 2025-05-25
+### Fixed
+- fix quotes in build console output
+
 ## [5.0.70] - 2025-05-25
 ### Changed
 - use relative paths in build debug output
