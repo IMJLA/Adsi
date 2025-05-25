@@ -12,9 +12,9 @@ Add a domain FQDN to an LDAP directory path as the server address so the new pat
 
 ## SYNTAX
 
-```
+```powershell
 Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [-Cache] <PSReference>
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +26,7 @@ Uses RegEx to:
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' -Cache $Cache
 ```
 
@@ -68,8 +68,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

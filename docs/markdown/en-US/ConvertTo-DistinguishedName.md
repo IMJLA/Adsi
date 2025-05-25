@@ -13,14 +13,14 @@ Convert a domain NetBIOS name to its distinguishedName
 ## SYNTAX
 
 ### NetBIOS
-```
+```powershell
 ConvertTo-DistinguishedName -Domain <String[]> [-InitType <String>] [-InputType <String>]
  [-OutputType <String>] [-AdsiProvider <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
 ### FQDN
-```
+```powershell
 ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputType <String>]
  [-OutputType <String>] [-AdsiProvider <String>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
@@ -32,7 +32,7 @@ https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslat
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertTo-DistinguishedName -Domain 'CONTOSO' -Cache $Cache
 ```
 
@@ -158,8 +158,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

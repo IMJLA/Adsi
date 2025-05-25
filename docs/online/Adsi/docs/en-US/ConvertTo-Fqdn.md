@@ -13,13 +13,13 @@ Convert a domain distinguishedName name or NetBIOS name to its FQDN
 ## SYNTAX
 
 ### DistinguishedName
-```
+```powershell
 ConvertTo-Fqdn [-DistinguishedName <String[]>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
 ### NetBIOS
-```
+```powershell
 ConvertTo-Fqdn [-NetBIOS <String[]>] -Cache <PSReference> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -31,7 +31,7 @@ For the NetBIOS parameter, uses ConvertTo-DistinguishedName to convert from NetB
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com' -Cache $Cache
 ```
 
@@ -86,8 +86,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

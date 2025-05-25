@@ -12,7 +12,7 @@ Convert a byte array to a string representation of its decimal format
 
 ## SYNTAX
 
-```
+```powershell
 ConvertTo-DecStringRepresentation [[-ByteArray] <Byte[]>]
 ```
 
@@ -22,7 +22,7 @@ Uses the custom format operator -f to format each byte as a string decimal repre
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertTo-DecStringRepresentation -ByteArray $Bytes
 ```
 

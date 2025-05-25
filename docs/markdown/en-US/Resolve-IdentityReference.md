@@ -12,9 +12,9 @@ Use CIM and ADSI to lookup info about IdentityReferences from Access Control Ent
 
 ## SYNTAX
 
-```
+```powershell
 Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject>] [-Cache] <PSReference>
- [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-AccountProperty] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +26,7 @@ Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable com
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')
 ```
 
@@ -98,8 +98,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

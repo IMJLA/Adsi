@@ -12,9 +12,9 @@ Invoke a member method of a ComObject \[__ComObject\]
 
 ## SYNTAX
 
-```
+```powershell
 Invoke-ComObject [-ComObject] <Object> [-Property] <String> [[-Value] <Object>] [-Method]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +26,7 @@ If the Method switch is specified, invokes the InvokeMethod method
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $ComObject = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators').Invoke('Members') | Select -First 1
 Invoke-ComObject -ComObject $ComObject -Property AdsPath
 ```
@@ -68,8 +68,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

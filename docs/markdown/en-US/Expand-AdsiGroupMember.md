@@ -12,9 +12,9 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ## SYNTAX
 
-```
+```powershell
 Expand-AdsiGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String[]>] [-Cache] <PSReference>
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ Specifically gets the SID, and resolves foreign security principals to their Dir
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') |
 Get-AdsiGroupMember |
 Expand-AdsiGroupMember
@@ -36,7 +36,7 @@ Foreign security principals from trusted domains are
 resolved to their actual DirectoryEntry objects from the appropriate domain.
 
 ### EXAMPLE 2
-```
+```powershell
 [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
 Get-AdsiGroupMember |
 Expand-AdsiGroupMember -Cache $Cache
@@ -79,8 +79,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

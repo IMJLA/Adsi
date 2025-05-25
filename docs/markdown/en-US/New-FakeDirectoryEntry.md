@@ -12,7 +12,7 @@ Creates a fake DirectoryEntry object for security principals that don't have obj
 
 ## SYNTAX
 
-```
+```powershell
 New-FakeDirectoryEntry [[-DirectoryPath] <String>] [[-SID] <String>] [[-Description] <String>]
  [[-SchemaClassName] <String>] [[-InputObject] <Object>] [[-NameAllowList] <Hashtable>]
  [[-NameBlockList] <Hashtable>] [[-Name] <String>] [[-NTAccount] <String>]
@@ -26,7 +26,7 @@ This function creates a PSCustomObject that mimics a DirectoryEntry with the nec
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
 ```
 

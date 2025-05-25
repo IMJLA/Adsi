@@ -12,9 +12,9 @@ Use ADSI to collect more information about the IdentityReference in NTFS Access 
 
 ## SYNTAX
 
-```
+```powershell
 ConvertFrom-ResolvedID [[-IdentityReference] <String>] [-NoGroupMembers] [-Cache] <PSReference>
- [[-AccountProperty] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-AccountProperty] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ Use caching to reduce duplicate directory queries
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 (Get-Acl).Access |
 Resolve-IdentityReference |
 Group-Object -Property IdentityReferenceResolved |
@@ -102,8 +102,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

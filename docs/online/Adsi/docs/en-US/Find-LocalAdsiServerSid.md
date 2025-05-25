@@ -12,7 +12,7 @@ Finds the SID prefix of the local server by querying the built-in administrator 
 
 ## SYNTAX
 
-```
+```powershell
 Find-LocalAdsiServerSid [[-ComputerName] <String>] [-Cache] <PSReference> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -27,7 +27,7 @@ unique domain identifier in Active Directory environments.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Find-LocalAdsiServerSid -ComputerName "DC01" -Cache $Cache
 ```
 
@@ -68,8 +68,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

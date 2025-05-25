@@ -12,9 +12,9 @@ Gets the DNS name of the parent domain for a given computer or domain.
 
 ## SYNTAX
 
-```
+```powershell
 Get-ParentDomainDnsName [[-DomainNetbios] <String>] [[-CimSession] <CimSession>] [-RemoveCimSession]
- [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -28,7 +28,7 @@ The function uses caching to improve performance during repeated calls.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $Cache = @{}
 Get-ParentDomainDnsName -DomainNetbios "CORPDC01" -Cache ([ref]$Cache)
 ```
@@ -86,8 +86,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

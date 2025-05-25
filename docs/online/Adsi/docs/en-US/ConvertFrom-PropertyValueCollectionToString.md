@@ -12,7 +12,7 @@ Convert a PropertyValueCollection to a string
 
 ## SYNTAX
 
-```
+```powershell
 ConvertFrom-PropertyValueCollectionToString [[-PropertyValueCollection] <PropertyValueCollection>]
 ```
 
@@ -22,12 +22,12 @@ Useful when working with System.DirectoryServices and some other namespaces
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $DirectoryEntry = [adsi]("WinNT://$(hostname)")
 $DirectoryEntry.Properties.Keys |
-ForEach-Object {
+ForEach-Objec- `
  ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
-}
+)`
 ```
 
 For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string

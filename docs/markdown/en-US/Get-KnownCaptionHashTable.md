@@ -12,7 +12,7 @@ Creates a hashtable of well-known SIDs indexed by their NT Account names (captio
 
 ## SYNTAX
 
-```
+```powershell
 Get-KnownCaptionHashTable [[-WellKnownSidBySid] <Hashtable>]
 ```
 
@@ -26,7 +26,7 @@ you have the account name representation rather than the SID itself.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $sidBySid = Get-KnownSidHashTable
 $sidByCaption = Get-KnownCaptionHashTable -WellKnownSidBySid $sidBySid
 $systemInfo = $sidByCaption['NT AUTHORITY\SYSTEM']

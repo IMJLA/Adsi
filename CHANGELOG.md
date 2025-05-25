@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.92] - 2025-05-25
+### Fixed
+- bugfix psakefile
+
+## [5.0.91] - 2025-05-25
+### Changed
+- prep markdown for docusaurus build
+
 ## [5.0.90] - 2025-05-25
 ### Changed
 - troubleshoot online help build

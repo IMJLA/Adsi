@@ -12,9 +12,9 @@ Converts a domain DNS name to its corresponding SID string.
 
 ## SYNTAX
 
-```
+```powershell
 ConvertTo-DomainSidString [-DomainDnsName] <String> [[-AdsiProvider] <String>] [-Cache] <PSReference>
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +26,7 @@ and can fall back to local server resolution methods when needed.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
 ```
 
@@ -35,7 +35,7 @@ automatically determining the best ADSI provider to use and utilizing the cache 
 redundant directory queries.
 
 ### EXAMPLE 2
-```
+```powershell
 ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
 ```
 
@@ -94,8 +94,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

@@ -12,10 +12,10 @@ Use Active Directory Service Interfaces to search an LDAP directory
 
 ## SYNTAX
 
-```
+```powershell
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
  [[-SearchScope] <SearchScope>] [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>]
- [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +26,7 @@ Supports filtering, paging, and customizing which properties to return.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache
 ```
 
@@ -111,8 +111,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

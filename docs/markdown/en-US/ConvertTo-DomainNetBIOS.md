@@ -12,9 +12,9 @@ Converts a domain FQDN to its NetBIOS name.
 
 ## SYNTAX
 
-```
+```powershell
 ConvertTo-DomainNetBIOS [[-DomainFQDN] <String>] [[-AdsiProvider] <String>] [-Cache] <PSReference>
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +26,7 @@ For non-LDAP providers, it extracts the first part of the FQDN before the first 
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache
 ```
 
@@ -36,7 +36,7 @@ The function will check the
 cache first to avoid unnecessary directory queries.
 
 ### EXAMPLE 2
-```
+```powershell
 ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
 ```
 
@@ -91,8 +91,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

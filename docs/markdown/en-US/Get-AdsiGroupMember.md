@@ -12,9 +12,9 @@ Get members of a group from the LDAP provider
 
 ## SYNTAX
 
-```
+```powershell
 Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [-NoRecurse] [-PrimaryGroupOnly]
- [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ Return the group's DirectoryEntry plus a FullMembers property containing the mem
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 [System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
 Get-AdsiGroupMember -Cache $Cache
 ```
@@ -102,8 +102,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

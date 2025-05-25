@@ -34,7 +34,6 @@ Write-Verbose "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFil
 #Update the module description
 $RegEx = '(?ms)\#\#\ Description\s*[^\r\n]*\s*'
 $NewString = "## Description$NewLine$($NewManifestTest.Description)$NewLine$NewLine"
-
 Write-Verbose "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
 $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
@@ -75,6 +74,23 @@ ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
     $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
     $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
+
+    # Get rid of squiggly braces in parameter descriptions to avoid Docusaurus HTML conversion issues because of JSON escaping not being supported.
+    while ($ThisFunctionHelp -match '[^:][\s]{(?<expression>[^}]+)}') {
+        $ThisFunctionHelp = $ThisFunctionHelp.Replace($Matches[0], "- ``$($Matches['expression']))``")
+    }
+
+    # Workaround a bug since PS 7.4 introduced the ProgressAction common param which is not yet supported by PlatyPS
+    $ParamToRemove = '-ProgressAction'
+    $Pattern = "### $ParamToRemove\r?\n[\S\s\r\n]*?(?=#{2,3}?)"
+    $ThisFunctionHelp = [regex]::replace($ThisFunctionHelp, $Pattern, '')
+    $Pattern = [regex]::Escape('[-ProgressAction <ActionPreference>] ')
+    $ThisFunctionHelp = [regex]::replace($ThisFunctionHelp, $Pattern, '')
+
+    # Add PowerShell syntax highlighting
+    $ThisFunctionHelp = $ThisFunctionHelp -replace '\x60\x60\x60\r*\n(?!\r*\n)', "``````powershell`n"
+
+
     Write-Verbose "`tSet-Content -LiteralPath '$ThisFunctionHelpFile' -Value `$ThisFunctionHelp"
     Set-Content -LiteralPath $ThisFunctionHelpFile -Value $ThisFunctionHelp
 }

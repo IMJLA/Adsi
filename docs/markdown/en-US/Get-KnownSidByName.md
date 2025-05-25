@@ -12,7 +12,7 @@ Creates a hashtable of well-known SIDs indexed by their friendly names.
 
 ## SYNTAX
 
-```
+```powershell
 Get-KnownSidByName [[-WellKnownSIDBySID] <Hashtable>]
 ```
 
@@ -26,7 +26,7 @@ know the name but not the SID itself.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $sidBySid = Get-KnownSidHashTable
 $sidByName = Get-KnownSidByName -WellKnownSIDBySID $sidBySid
 $administratorsInfo = $sidByName['Administrators']

@@ -12,9 +12,9 @@ Get information about a directory server including the ADSI provider it hosts an
 
 ## SYNTAX
 
-```
+```powershell
 Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [-RemoveCimSession] [-Cache] <PSReference>
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Get-AdsiServer -Fqdn localhost -Cache $Cache
 ```
 
@@ -33,7 +33,7 @@ the LDAP or WinNT provider, and collects information about well-known security i
 This is essential for consistent identity resolution on the local system when analyzing permissions.
 
 ### EXAMPLE 2
-```
+```powershell
 Get-AdsiServer -Fqdn 'ad.contoso.com' -Cache $Cache
 ```
 
@@ -88,8 +88,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

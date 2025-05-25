@@ -604,7 +604,13 @@ Task CreateOnlineHelpFolder -depends FindNodeJS -action {
 
 } -description 'Create a folder for the Markdown help documentation.'
 
-Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -action {
+$OnlineHelpDoesNotExist = {
+    Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq '$ModuleName' } | Measure-Object | Select-Object -ExpandProperty Count"
+    $OnlineHelpExists = (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ModuleName } | Measure-Object).Count
+    $OnlineHelpExists -eq 0
+}
+
+Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -precondition $OnlineHelpDoesNotExist -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
@@ -646,9 +652,9 @@ Task CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -a
 
     ForEach ($Locale in $helpLocales) {
         Write-Information "`tCopy-Item -Path '$DocsMarkdownDir\*' -Destination '$OnlineHelpSourceMarkdown' -Recurse"
-        Copy-Item -Path "$DocsMarkdownDir\*" -Destination $OnlineHelpSourceMarkdown -Recurse
+        Copy-Item -Path "$DocsMarkdownDir\*" -Destination $OnlineHelpSourceMarkdown -Recurse -Force
         Write-Information "`tCopy-Item -Path '$MarkdownSourceCode\*' -Destination '$OnlineHelpSourceMarkdown\$Locale' -Recurse"
-        Copy-Item -Path "$MarkdownSourceCode\*" -Destination "$OnlineHelpSourceMarkdown\$Locale" -Recurse
+        Copy-Item -Path "$MarkdownSourceCode\*" -Destination "$OnlineHelpSourceMarkdown\$Locale" -Recurse -Force
     }
 
 }

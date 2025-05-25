@@ -12,9 +12,9 @@ Get the directory entries for a group and its members using ADSI
 
 ## SYNTAX
 
-```
+```powershell
 Get-AdsiGroup [[-DirectoryPath] <String>] [[-GroupName] <String>] [[-PropertiesToLoad] <String[]>]
- [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ Both the WinNT and LDAP providers are supported
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators -Cache $Cache
 ```
 
@@ -35,7 +35,7 @@ of local group memberships including nested groups and domain accounts that have
 local groups.
 
 ### EXAMPLE 2
-```
+```powershell
 Get-AdsiGroup -GroupName Administrators -Cache $Cache
 ```
 
@@ -92,8 +92,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

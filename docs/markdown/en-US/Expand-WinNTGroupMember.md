@@ -12,9 +12,9 @@ Use the LDAP provider to add information about group members to a DirectoryEntry
 
 ## SYNTAX
 
-```
+```powershell
 Expand-WinNTGroupMember [[-DirectoryEntry] <Object>] [-Cache] <PSReference> [[-AccountProperty] <String[]>]
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,7 +23,7 @@ Recursively retrieves group members and detailed information about them
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
 ```
 
@@ -79,8 +79,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

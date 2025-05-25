@@ -12,8 +12,8 @@ Returns a dictionary of trusted domains by the current computer
 
 ## SYNTAX
 
-```
-Get-TrustedDomain [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```powershell
+Get-TrustedDomain [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +26,7 @@ For each trusted domain the value contains the details retrieved with ADSI
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Get-TrustedDomain -Cache $Cache
 ```
 
@@ -54,8 +54,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

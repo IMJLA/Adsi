@@ -12,7 +12,7 @@ Returns a hashtable of known security identifiers (SIDs) with detailed informati
 
 ## SYNTAX
 
-```
+```powershell
 Get-KnownSidHashTable
 ```
 
@@ -26,7 +26,7 @@ Hardcoding them also improves performance by avoiding unnecessary directory quer
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $knownSids = Get-KnownSidHashTable
 ```
 

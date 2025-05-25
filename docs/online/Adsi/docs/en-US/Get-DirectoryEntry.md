@@ -12,9 +12,9 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 ## SYNTAX
 
-```
+```powershell
 Get-DirectoryEntry [[-DirectoryPath] <String>] [[-Credential] <PSCredential>] [[-PropertiesToLoad] <String[]>]
- [[-SidTypeMap] <Hashtable>] [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-SidTypeMap] <Hashtable>] [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,7 +23,7 @@ Retrieve a directory entry using either the WinNT or LDAP provider for ADSI
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Get-DirectoryEntry
 distinguishedName : {DC=ad,DC=contoso,DC=com}
 Path : LDAP://DC=ad,DC=contoso,DC=com
@@ -32,7 +32,7 @@ Path : LDAP://DC=ad,DC=contoso,DC=com
 As the current user on a domain-joined computer, bind to the current domain and retrieve the DirectoryEntry for the root of the domain
 
 ### EXAMPLE 2
-```
+```powershell
 Get-DirectoryEntry
 distinguishedName :
 Path : WinNT://ComputerName
@@ -89,8 +89,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

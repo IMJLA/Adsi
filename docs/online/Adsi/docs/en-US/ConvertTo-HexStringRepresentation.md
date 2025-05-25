@@ -12,7 +12,7 @@ Convert a SID from byte array format to a string representation of its hexadecim
 
 ## SYNTAX
 
-```
+```powershell
 ConvertTo-HexStringRepresentation [[-SIDByteArray] <Byte[]>]
 ```
 
@@ -22,7 +22,7 @@ Uses the custom format operator -f to format each byte as a string hex represent
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertTo-HexStringRepresentation -SIDByteArray $Bytes
 ```
 

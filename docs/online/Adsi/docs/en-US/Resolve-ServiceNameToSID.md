@@ -12,8 +12,8 @@ Resolves Windows service names to their corresponding security identifiers (SIDs
 
 ## SYNTAX
 
-```
-Resolve-ServiceNameToSID [[-InputObject] <Object>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```powershell
+Resolve-ServiceNameToSID [[-InputObject] <Object>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -25,7 +25,7 @@ enhanced objects with all original properties preserved.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Get-Service -Name "BITS" | Resolve-ServiceNameToSID
 ```
 
@@ -49,8 +49,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

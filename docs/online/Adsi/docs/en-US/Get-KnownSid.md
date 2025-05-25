@@ -12,7 +12,7 @@ Retrieves information about well-known security identifiers (SIDs).
 
 ## SYNTAX
 
-```
+```powershell
 Get-KnownSid [[-SID] <String>]
 ```
 
@@ -25,14 +25,14 @@ Uses Microsoft documentation references for SID information:
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Get-KnownSid -SID 'S-1-5-32-544'
 ```
 
 Returns information about the built-in Administrators group.
 
 ### EXAMPLE 2
-```
+```powershell
 Get-KnownSid -SID 'S-1-5-18'
 ```
 

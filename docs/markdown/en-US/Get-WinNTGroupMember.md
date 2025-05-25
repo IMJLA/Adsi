@@ -12,9 +12,9 @@ Get members of a group from the WinNT provider
 
 ## SYNTAX
 
-```
+```powershell
 Get-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String[]>] [-Cache] <PSReference>
- [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,7 +24,7 @@ Convert them from COM objects into usable DirectoryEntry objects
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember -Cache $Cache
 ```
 
@@ -66,8 +66,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

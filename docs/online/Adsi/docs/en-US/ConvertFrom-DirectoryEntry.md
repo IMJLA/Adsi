@@ -12,7 +12,7 @@ Convert a DirectoryEntry to a PSCustomObject
 
 ## SYNTAX
 
-```
+```powershell
 ConvertFrom-DirectoryEntry [[-DirectoryEntry] <DirectoryEntry[]>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -24,7 +24,7 @@ This obfuscates the troublesome PropertyCollection and PropertyValueCollection a
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $DirEntry = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator')
 ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry
 ```
@@ -51,8 +51,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

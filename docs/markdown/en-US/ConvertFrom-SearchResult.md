@@ -12,7 +12,7 @@ Convert a SearchResult to a PSCustomObject
 
 ## SYNTAX
 
-```
+```powershell
 ConvertFrom-SearchResult [[-SearchResult] <SearchResult[]>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -24,7 +24,7 @@ This obfuscates the troublesome ResultPropertyCollection and ResultPropertyValue
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 $DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new("LDAP://DC=contoso,DC=com")
 $DirectorySearcher.Filter = "(objectClass=user)"
 $SearchResults = $DirectorySearcher.FindAll()
@@ -39,8 +39,7 @@ regular object properties.
 
 ## PARAMETERS
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

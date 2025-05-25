@@ -12,8 +12,8 @@ Convert a SID from a string to binary format (byte array)
 
 ## SYNTAX
 
-```
-ConvertTo-SidByteArray [[-SidString] <String[]>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```powershell
+ConvertTo-SidByteArray [[-SidString] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -22,7 +22,7 @@ Uses the GetBinaryForm method of the \[System.Security.Principal.SecurityIdentif
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertTo-SidByteArray -SidString 'S-1-5-32-544'
 ```
 
@@ -31,8 +31,7 @@ representation, which is required when working with directory services that expe
 
 ## PARAMETERS
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

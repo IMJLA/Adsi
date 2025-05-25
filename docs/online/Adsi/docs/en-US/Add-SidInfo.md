@@ -12,7 +12,7 @@ Add some useful properties to a DirectoryEntry object for easier access
 
 ## SYNTAX
 
-```
+```powershell
 Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <PSReference>] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -23,7 +23,7 @@ Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
 distinguishedName :
 Path : WinNT://localhost/Administrator
@@ -65,8 +65,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

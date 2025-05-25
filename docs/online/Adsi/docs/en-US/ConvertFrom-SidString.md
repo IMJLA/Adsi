@@ -12,7 +12,7 @@ Converts a SID string to a DirectoryEntry object.
 
 ## SYNTAX
 
-```
+```powershell
 ConvertFrom-SidString [[-SID] <String>] [-Cache] <PSReference> [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
@@ -26,7 +26,7 @@ by the Export-Permission module.
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 ConvertFrom-SidString -SID 'S-1-5-21-3165297888-301567370-576410423-1103' -Cache $Cache
 ```
 
@@ -52,8 +52,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference

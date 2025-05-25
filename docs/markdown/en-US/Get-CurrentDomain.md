@@ -12,8 +12,8 @@ Use ADSI to get the current domain
 
 ## SYNTAX
 
-```
-Get-CurrentDomain [-Cache] <PSReference> [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```powershell
+Get-CurrentDomain [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -22,7 +22,7 @@ Works only on domain-joined systems, otherwise returns nothing
 ## EXAMPLES
 
 ### EXAMPLE 1
-```
+```powershell
 Get-CurrentDomain -Cache $Cache
 ```
 
@@ -50,8 +50,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction
-{{ Fill ProgressAction Description }}
+### -ProgressAction- `{ Fill ProgressAction Description )`}
 
 ```yaml
 Type: System.Management.Automation.ActionPreference
