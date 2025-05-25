@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.60] - 2025-05-25
+### Added
+- add github release step to build process
+
 ## [5.0.59] - 2025-05-24
 ### Changed
 - update build exclusions
