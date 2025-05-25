@@ -398,7 +398,19 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
 } -description 'Build a PowerShell script module based on the source directory'
 
-Task DeleteOldBuilds -depends BuildModule -action {
+Task FixModule -depends BuildModule -action {
+
+    $File = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
+    Write-InfoColor "`tRemove-Item -Path '$File'"
+    Remove-Item -Path $File -ErrorAction SilentlyContinue
+
+    $File = [IO.Path]::Combine($script:BuildOutputDir, 'psscriptanalyzerSettings.psd1')
+    Write-InfoColor "`tRemove-Item -Path '$File'"
+    Remove-Item -Path $File -ErrorAction SilentlyContinue
+
+}
+
+Task DeleteOldBuilds -depends FixModule -action {
 
     Write-InfoColor "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
     Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue

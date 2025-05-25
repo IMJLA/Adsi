@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.59] - 2025-05-24
+### Changed
+- update build exclusions
+
 ## [5.0.58] - 2025-05-23
 ### Changed
 - update build exclusions
