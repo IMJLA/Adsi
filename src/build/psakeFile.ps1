@@ -558,12 +558,12 @@ Task CreateGitHubRelease -depends SourceControl -action {
     $GitHubOrgName = 'IMJLA'
     $RepositoryPath = "$GitHubOrgName/$ModuleName"
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'New-GitHubRelease.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -GitHubToken '$env:GHFGPAT' -Repository '$RepositoryPath' -DistPath '$script:BuildOutputDir' -ReleaseNotes '$CommitMessage'"
+    Write-InfoColor "`t& '$ScriptToRun' -GitHubToken '$env:GHFGPATADSI' -Repository '$RepositoryPath' -DistPath '$script:BuildOutputDir' -ReleaseNotes '$CommitMessage'"
     & $ScriptToRun -GitHubToken $env:GHFGPAT -Repository $RepositoryPath -DistPath $script:BuildOutputDir -ReleaseNotes $CommitMessage
 
 } -description 'Create a GitHub release and upload the module files to it'
 
-Task Publish -depends SourceControl -action {
+Task Publish -depends CreateGitHubRelease -action {
     Assert -conditionToCheck ($PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
 
     $publishParams = @{
