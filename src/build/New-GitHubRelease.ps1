@@ -104,6 +104,8 @@ try {
     Write-InfoColor "`t`tGet-VersionFolder -DistPath '$DistPath'"
     $versionFolder = Get-VersionFolder -DistPath $DistPath
     $version = $versionFolder.Name
+    $versionFolderParentToReplace = $versionFolder.FullName | Split-Path -Parent
+    $versionFolderPath = $versionFolder.FullName -replace [regex]::Escape($versionFolderParentToReplace), $DistPath
 
     # Create the release
     Write-InfoColor "`t`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes'"
@@ -122,7 +124,8 @@ try {
         $null = Add-ReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName
 
         # Clean up temporary zip file
-        Write-Information "`tRemove-Item '$zipFilePath' -Force"
+        $ZipFileDisplayPath = [IO.Path]::Combine('$env:TEMP', $zipFileName)
+        Write-Information "`tRemove-Item '$ZipFileDisplayPath' -Force"
         Remove-Item $zipFilePath -Force
     }
     else {

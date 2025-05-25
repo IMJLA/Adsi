@@ -384,7 +384,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -558,7 +558,7 @@ Task CreateGitHubRelease -depends SourceControl -action {
     $GitHubOrgName = 'IMJLA'
     $RepositoryPath = "$GitHubOrgName/$ModuleName"
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'New-GitHubRelease.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -GitHubToken '$env:GHFGPATADSI' -Repository '$RepositoryPath' -DistPath '$BuildOutDir' -ReleaseNotes '$CommitMessage'"
+    Write-InfoColor "`t& '$ScriptToRun' -GitHubToken `$Token -Repository '$RepositoryPath' -DistPath '$BuildOutDir' -ReleaseNotes '$CommitMessage'"
     & $ScriptToRun -GitHubToken $env:GHFGPATADSI -Repository $RepositoryPath -DistPath $BuildOutDir -ReleaseNotes $CommitMessage
 
 } -description 'Create a GitHub release and upload the module files to it'
@@ -596,7 +596,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -611,9 +611,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -name $ModuleName -AllVersions
+        Uninstall-Module -Name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -628,16 +628,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 
