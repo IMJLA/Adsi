@@ -115,7 +115,7 @@ try {
     $zipFileName = "$version.zip"
     $zipFilePath = Join-Path $env:TEMP $zipFileName
 
-    Write-InfoColor "`t`tCompress-Archive -Path '$($versionFolder.FullName)\*' -DestinationPath '$zipFilePath' -Force"
+    Write-InfoColor "`t`tCompress-Archive -Path '$versionFolderPath\*' -DestinationPath '$zipFilePath' -Force"
     Compress-Archive -Path "$($versionFolder.FullName)\*" -DestinationPath $zipFilePath -Force
 
     # Check if zip file was created successfully
@@ -125,7 +125,7 @@ try {
 
         # Clean up temporary zip file
         $ZipFileDisplayPath = [IO.Path]::Combine('$env:TEMP', $zipFileName)
-        Write-Information "`tRemove-Item '$ZipFileDisplayPath' -Force"
+        Write-Information "`t`tRemove-Item '$ZipFileDisplayPath' -Force"
         Remove-Item $zipFilePath -Force
     }
     else {

@@ -559,7 +559,8 @@ Task CreateGitHubRelease -depends SourceControl -action {
     $RepositoryPath = "$GitHubOrgName/$ModuleName"
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'New-GitHubRelease.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -GitHubToken `$Token -Repository '$RepositoryPath' -DistPath '$BuildOutDir' -ReleaseNotes '$CommitMessage'"
-    & $ScriptToRun -GitHubToken $env:GHFGPATADSI -Repository $RepositoryPath -DistPath $BuildOutDir -ReleaseNotes $CommitMessage
+    $release = & $ScriptToRun -GitHubToken $env:GHFGPATADSI -Repository $RepositoryPath -DistPath $BuildOutDir -ReleaseNotes $CommitMessage
+    Write-InfoColor "$NewLine`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
 
 } -description 'Create a GitHub release and upload the module files to it'
 
