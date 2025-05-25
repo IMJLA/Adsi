@@ -183,10 +183,10 @@ Properties {
 
     $DocsImageSourceCodeDir = [IO.Path]::Combine($SourceCodeDir, 'img')
 
-    $DocsOnlineStaticImageDir = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'img')
-
     # Online help website will be created in this folder.
-    $DocsOnlineHelpDir = [IO.Path]::Combine('..', '..', 'docs', 'online', $ModuleName)
+    [string]$DocsOnlineHelpDir = [IO.Path]::Combine($DocsRootDir, 'online', $ModuleName)
+
+    $DocsOnlineStaticImageDir = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'img')
 
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
 
