@@ -184,7 +184,10 @@ Properties {
     $DocsImageSourceCodeDir = [IO.Path]::Combine($SourceCodeDir, 'img')
 
     # Online help website will be created in this folder.
-    [string]$DocsOnlineHelpDir = [IO.Path]::Combine($DocsRootDir, 'online', $ModuleName)
+    [string]$DocsOnlineHelpRoot = [IO.Path]::Combine($DocsRootDir, 'online')
+
+    # Online help website will be created in this folder.
+    [string]$DocsOnlineHelpDir = [IO.Path]::Combine($DocsOnlineHelpRoot, $ModuleName)
 
     $DocsOnlineStaticImageDir = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'img')
 
@@ -442,7 +445,7 @@ Task DeleteOldBuilds -depends FixModule -action {
 
 Task CreateMarkdownHelpFolder -depends DeleteOldBuilds -action {
 
-    Write-Host "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    Write-Information "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the Markdown help documentation.'
@@ -450,7 +453,7 @@ Task CreateMarkdownHelpFolder -depends DeleteOldBuilds -action {
 Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition { $FindDocsPrerequisite } -action {
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $HelpDefaultLocale)
-    Write-Host "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $MarkdownDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
@@ -514,14 +517,14 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
 Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
-    Write-Host "`tNew-Item -Path '$DocsMamlDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    Write-Information "`tNew-Item -Path '$DocsMamlDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMamlDir -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the MAML help files.'
 
 Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -precondition { $FindDocsPrerequisite } -action {
 
-    Write-Host "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsMamlDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 } -description 'Delete existing MAML help files to prepare for PlatyPS to build new ones.'
@@ -542,14 +545,14 @@ Task CopyMAMLHelp -depends BuildMAMLHelp -action {
 
 Task CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
-    Write-Host "`tNew-Item -Path '$DocsUpdateableDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    Write-Information "`tNew-Item -Path '$DocsUpdateableDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsUpdateableDir -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the Updateable help files.'
 
 Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -precondition { $FindDocsPrerequisite } -action {
 
-    Write-Host "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsUpdateableDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 } -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
@@ -572,53 +575,7 @@ Task BuildUpdatableHelp -depends DeleteUpdateableHelp -precondition $FindDocsUpd
 
 } -description 'Create updatable help .cab file based on PlatyPS markdown help.'
 
-Task CopyMarkdownAsSourceForOnlineHelp -depends BuildUpdatableHelp -action {
-
-    $OnlineHelpSourceMarkdown = [IO.Path]::Combine($DocsOnlineHelpDir, 'docs')
-    $MarkdownSourceCode = [IO.Path]::Combine('..', '..', 'src', 'docs')
-    $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory -Exclude 'UpdatableHelp').Name
-
-    ForEach ($Locale in $helpLocales) {
-        Write-Host "`tCopy-Item -Path '$DocsMarkdownDir\*' -Destination '$OnlineHelpSourceMarkdown' -Recurse"
-        Copy-Item -Path "$DocsMarkdownDir\*" -Destination $OnlineHelpSourceMarkdown -Recurse
-        Write-Host "`tCopy-Item -Path '$MarkdownSourceCode\*' -Destination '$OnlineHelpSourceMarkdown\$Locale' -Recurse"
-        Copy-Item -Path "$MarkdownSourceCode\*" -Destination "$OnlineHelpSourceMarkdown\$Locale" -Recurse
-    }
-
-}
-
-Task BuildArt -depends BuildUpdatableHelp -action {
-
-    $null = New-Item -ItemType Directory -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
-
-    ForEach ($ScriptToRun in (Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.ps1')) {
-        $ThisPath = [IO.Path]::Combine($DocsImageSourceCodeDir, $ScriptToRun.Name)
-        Write-Information "`t. $ThisPath -OutputDir '$DocsOnlineStaticImageDir'"
-        . $ThisPath -OutputDir $DocsOnlineStaticImageDir
-    }
-
-} -description 'Build dynamic SVG art using PSSVG.'
-
-Task CopyArt -depends BuildArt -action {
-
-    Write-Host "`tGet-ChildItem -Path '$DocsImageSourceCodeDir' -Filter '*.svg' |"
-    Write-Host "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
-
-    Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' |
-    Copy-Item -Destination $DocsOnlineStaticImageDir
-
-} -description 'Copy static SVG art to the online help website.'
-
-Task ConvertArt -depends CopyArt -action {
-
-    #$ScriptToRun = [IO.Path]::Combine('.', 'ConvertFrom-SVG.ps1')
-    #$sourceSVG = [IO.Path]::Combine($DocsOnlineStaticImageDir, 'logo.svg')
-    #Write-Host "`t. $ScriptToRun -Path '$sourceSVG' -ExportWidth 512"
-    #. $ScriptToRun -Path $sourceSVG -ExportWidth 512
-
-} -description 'Convert SVGs to PNG using Inkscape.'
-
-Task FindNodeJS -depends ConvertArt -action {
+Task FindNodeJS -depends BuildUpdatableHelp -action {
 
     Write-Information "`tGet-Command -Name node -ErrorAction SilentlyContinue"
     $NodeCommand = Get-Command -Name node -ErrorAction SilentlyContinue
@@ -642,41 +599,97 @@ Task FindNodeJS -depends ConvertArt -action {
 
 Task CreateOnlineHelpFolder -depends FindNodeJS -action {
 
-    Write-Host "`tNew-Item -Path '$DocsOnlineHelpDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $DocsOnlineHelpDir -ItemType Directory -ErrorAction SilentlyContinue
+    Write-Information "`tNew-Item -Path '$DocsOnlineHelpRoot' -ItemType Directory -ErrorAction SilentlyContinue"
+    $null = New-Item -Path $DocsOnlineHelpRoot -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the Markdown help documentation.'
 
 Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -action {
 
     $Location = Get-Location
-    Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
-    Set-Location $DocsOnlineHelpDir
+    Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
+    Set-Location $DocsOnlineHelpRoot
 
     # Check if package.json exists (indicating Docusaurus is already initialized)
     $PackageJsonPath = Join-Path $DocsOnlineHelpDir 'package.json'
 
-    if (-not (Test-Path $PackageJsonPath)) {
-        Write-Host "`tnpx --yes 'create-docusaurus@latest' . classic --typescript"
-        & npx --yes 'create-docusaurus@latest' . classic --typescript
-        Pause
-        Write-Host "`tnpm install"
-        & npm install
+    if (Test-Path $PackageJsonPath) {
+        Write-Information "`tDocusaurus website already exists, skipping initialization"
     }
     else {
-        Write-Host "`tDocusaurus website already exists, skipping initialization"
+
+        Write-Information "`t& cmd /c `"npx create-docusaurus@latest $ModuleName classic --typescript`""
+        & cmd /c "npx create-docusaurus@latest $ModuleName classic --typescript"
+
     }
 
     Set-Location $Location
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
-Task BuildOnlineHelpWebsite -depends CreateOnlineHelpScaffolding -action {
+Task InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
     Set-Location $DocsOnlineHelpDir
-    Write-Host "`tnpm run build"
+    Write-Information "`tnpm install"
+    & npm install
+    Set-Location $Location
+
+} -description 'Install the dependencies for the Online Help website.'
+
+Task CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -action {
+
+    $OnlineHelpSourceMarkdown = [IO.Path]::Combine($DocsOnlineHelpDir, 'docs')
+    $MarkdownSourceCode = [IO.Path]::Combine($SourceCodeDir, 'docs')
+    $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory -Exclude 'UpdatableHelp').Name
+
+    ForEach ($Locale in $helpLocales) {
+        Write-Information "`tCopy-Item -Path '$DocsMarkdownDir\*' -Destination '$OnlineHelpSourceMarkdown' -Recurse"
+        Copy-Item -Path "$DocsMarkdownDir\*" -Destination $OnlineHelpSourceMarkdown -Recurse
+        Write-Information "`tCopy-Item -Path '$MarkdownSourceCode\*' -Destination '$OnlineHelpSourceMarkdown\$Locale' -Recurse"
+        Copy-Item -Path "$MarkdownSourceCode\*" -Destination "$OnlineHelpSourceMarkdown\$Locale" -Recurse
+    }
+
+}
+
+Task BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
+
+    $null = New-Item -ItemType Directory -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
+
+    ForEach ($ScriptToRun in (Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.ps1')) {
+        $ThisPath = [IO.Path]::Combine($DocsImageSourceCodeDir, $ScriptToRun.Name)
+        Write-Information "`t. $ThisPath -OutputDir '$DocsOnlineStaticImageDir'"
+        . $ThisPath -OutputDir $DocsOnlineStaticImageDir
+    }
+
+} -description 'Build dynamic SVG art using PSSVG.'
+
+Task CopyArt -depends BuildArt -action {
+
+    Write-Information "`tGet-ChildItem -Path '$DocsImageSourceCodeDir' -Filter '*.svg' |"
+    Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
+
+    Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' |
+    Copy-Item -Destination $DocsOnlineStaticImageDir
+
+} -description 'Copy static SVG art to the online help website.'
+
+Task ConvertArt -depends CopyArt -action {
+
+    #$ScriptToRun = [IO.Path]::Combine('.', 'ConvertFrom-SVG.ps1')
+    #$sourceSVG = [IO.Path]::Combine($DocsOnlineStaticImageDir, 'logo.svg')
+    #Write-Information "`t. $ScriptToRun -Path '$sourceSVG' -ExportWidth 512"
+    #. $ScriptToRun -Path $sourceSVG -ExportWidth 512
+
+} -description 'Convert SVGs to PNG using Inkscape.'
+
+Task BuildOnlineHelpWebsite -depends ConvertArt -action {
+
+    $Location = Get-Location
+    Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
+    Set-Location $DocsOnlineHelpDir
+    Write-Information "`tnpm run build"
     & npm run build
     Set-Location $Location
 
