@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.79] - 2025-05-25
+### Fixed
+- bugfix escaping technique
+
+## [5.0.78] - 2025-05-25
+### Added
+- add missing folder
+
+## [5.0.77] - 2025-05-25
+### Fixed
+- bugfix relative paths
+
+## [5.0.76] - 2025-05-25
+### Changed
+- text-based help is already expected to exist in 1 subfolder per locale so ignore errors caused by those folders already existing
+
+## [5.0.75] - 2025-05-25
+### Fixed
+- bugfix task prereq
+
+## [5.0.74] - 2025-05-25
+### Fixed
+- bugfix task prereq
+
+## [5.0.73] - 2025-05-25
+### Fixed
+- bugfix remove deleted task
+
+## [5.0.72] - 2025-05-25
+### Changed
+- major upgrades to psakefile
+
 ## [5.0.71] - 2025-05-25
 ### Fixed
 - fix quotes in build console output
