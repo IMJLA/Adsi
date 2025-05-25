@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.82] - 2025-05-25
+### Changed
+- troubleshoot online help build
+
 ## [5.0.81] - 2025-05-25
 ### Fixed
 - bugfix path to online help dir

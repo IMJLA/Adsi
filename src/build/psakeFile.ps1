@@ -659,7 +659,7 @@ Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -action {
     if (-not (Test-Path $PackageJsonPath)) {
         Write-Host "`tnpx --yes 'create-docusaurus@latest' . classic --typescript"
         & npx --yes 'create-docusaurus@latest' . classic --typescript
-
+        Pause
         Write-Host "`tnpm install"
         & npm install
     }
