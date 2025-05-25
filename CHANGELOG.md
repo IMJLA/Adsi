@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.65] - 2025-05-25
+### Fixed
+- fix release asset addition
+
 ## [5.0.64] - 2025-05-25
 ### Fixed
 - fix version detection
