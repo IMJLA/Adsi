@@ -132,7 +132,7 @@ try {
         throw "Failed to create zip file at: $zipFilePath"
     }
 
-    Write-InfoColor "`t`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
+    return $release
 }
 catch {
 
