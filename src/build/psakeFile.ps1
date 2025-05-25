@@ -407,7 +407,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -621,7 +621,7 @@ Task ConvertArt -depends CopyArt -action {
 Task FindNodeJS -depends ConvertArt -action {
 
     Write-Information "`tGet-Command -Name node -ErrorAction SilentlyContinue"
-    $NodeCommand = Get-Command -name node -ErrorAction SilentlyContinue
+    $NodeCommand = Get-Command -Name node -ErrorAction SilentlyContinue
     if ($NodeCommand) {
 
         Write-InfoColor "`t& node -v 2>`$null"
@@ -640,7 +640,14 @@ Task FindNodeJS -depends ConvertArt -action {
 
 } -description 'Find Node.js installation.'
 
-Task CreateOnlineHelpWebsite -depends FindNodeJS {
+Task CreateOnlineHelpFolder -depends FindNodeJS -action {
+
+    Write-Host "`tNew-Item -Path '$DocsOnlineHelpDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    $null = New-Item -Path $DocsOnlineHelpDir -ItemType Directory -ErrorAction SilentlyContinue
+
+} -description 'Create a folder for the Markdown help documentation.'
+
+Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
@@ -650,8 +657,8 @@ Task CreateOnlineHelpWebsite -depends FindNodeJS {
     $PackageJsonPath = Join-Path $DocsOnlineHelpDir 'package.json'
 
     if (-not (Test-Path $PackageJsonPath)) {
-        Write-Host "`tnpx 'create-docusaurus@latest' . classic --typescript"
-        & npx 'create-docusaurus@latest' . classic --typescript
+        Write-Host "`tnpx --yes 'create-docusaurus@latest' . classic --typescript"
+        & npx --yes 'create-docusaurus@latest' . classic --typescript
 
         Write-Host "`tnpm install"
         & npm install
@@ -664,7 +671,7 @@ Task CreateOnlineHelpWebsite -depends FindNodeJS {
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
-Task BuildOnlineHelp -depends CreateOnlineHelpWebsite {
+Task BuildOnlineHelpWebsite -depends CreateOnlineHelpScaffolding -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
@@ -675,7 +682,7 @@ Task BuildOnlineHelp -depends CreateOnlineHelpWebsite {
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
-Task UnitTests -depends BuildOnlineHelp -precondition $FindUnitTestPrerequisite -action {
+Task UnitTests -depends BuildOnlineHelpWebsite -precondition $FindUnitTestPrerequisite -action {
 
     Write-InfoColor "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
@@ -745,7 +752,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -760,9 +767,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -777,16 +784,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 }
 

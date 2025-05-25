@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.80] - 2025-05-25
+### Fixed
+- bugfix psakefile
+
 ## [5.0.79] - 2025-05-25
 ### Fixed
 - bugfix escaping technique
