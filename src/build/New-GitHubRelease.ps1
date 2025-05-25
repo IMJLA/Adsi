@@ -20,7 +20,7 @@ function Get-VersionFolder {
         throw "Dist folder not found at: $DistPath"
     }
 
-    Write-InfoColor "`t`tGet-ChildItem -Path '$DistPath' -Directory | Where-Object {`$_.Name -match '^\d+\.\d+\.\d+'}"
+    Write-InfoColor "`t`t`tGet-ChildItem -Path '$DistPath' -Directory | Where-Object {`$_.Name -match '^\d+\.\d+\.\d+'}"
     $versionFolders = Get-ChildItem -Path $DistPath -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+' }
 
     if ($versionFolders.Count -eq 0) {
@@ -61,7 +61,7 @@ function New-GitHubRelease {
 
     $uri = "https://api.github.com/repos/$Repo/releases"
 
-    Write-InfoColor "`t`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$headers -Body `$releaseData"
+    Write-InfoColor "`t`t`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$headers -Body `$releaseData"
     try {
         $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $releaseData
         return $response
@@ -86,7 +86,7 @@ function Add-ReleaseAsset {
     }
 
     $uploadUri = $UploadUrl -replace '\{\?name,label\}', "?name=$FileName"
-    Write-InfoColor "`t`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile '$FilePath'"
+    Write-InfoColor "`t`t`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile '$FilePath'"
 
     try {
         $response = Invoke-RestMethod -Uri $uploadUri -Method Post -Headers $headers -InFile $FilePath
@@ -101,35 +101,35 @@ function Add-ReleaseAsset {
 try {
 
     # Find the version folder
-    Write-InfoColor "`tGet-VersionFolder -DistPath '$DistPath'"
+    Write-InfoColor "`t`tGet-VersionFolder -DistPath '$DistPath'"
     $versionFolder = Get-VersionFolder -DistPath $DistPath
     $version = $versionFolder.Name
 
     # Create the release
-    Write-InfoColor "`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes'"
+    Write-InfoColor "`t`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes'"
     $release = New-GitHubRelease -Token $GitHubToken -Repo $Repository -TagName "v$version" -ReleaseName "Release $version" -Body $ReleaseNotes
 
     # Create zip file from version folder contents
     $zipFileName = "$version.zip"
     $zipFilePath = Join-Path $env:TEMP $zipFileName
 
-    Write-InfoColor "`tCompress-Archive -Path '$($versionFolder.FullName)\*' -DestinationPath '$zipFilePath' -Force"
+    Write-InfoColor "`t`tCompress-Archive -Path '$($versionFolder.FullName)\*' -DestinationPath '$zipFilePath' -Force"
     Compress-Archive -Path "$($versionFolder.FullName)\*" -DestinationPath $zipFilePath -Force
 
     # Check if zip file was created successfully
     if (Test-Path $zipFilePath) {
-        Write-InfoColor "`tAdd-ReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath '$zipFilePath' -FileName '$zipFileName'" -ForegroundColor Yellow
-        Add-ReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName
+        Write-InfoColor "`t`tAdd-ReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath '$zipFilePath' -FileName '$zipFileName'"
+        $null = Add-ReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName
 
         # Clean up temporary zip file
+        Write-Information "`tRemove-Item '$zipFilePath' -Force"
         Remove-Item $zipFilePath -Force
-        Write-InfoColor "`tZip file uploaded and temporary file cleaned up"
     }
     else {
         throw "Failed to create zip file at: $zipFilePath"
     }
 
-    Write-InfoColor "`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
+    Write-InfoColor "`t`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
 }
 catch {
 
