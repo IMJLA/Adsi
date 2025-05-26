@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 5.0.91
+Help Version: 5.0.98
 Locale: en-US
 ---
 
@@ -11,7 +11,7 @@ Locale: en-US
 Use Active Directory Service Interfaces to query LDAP and WinNT directories
 
 ## Adsi Cmdlets
-### [Add-DomainFqdnToLdapPath](Add-DomainFqdnToLdapPath.md)
+### [Add-DomainFqdnToLdapPath](Add-DomainFqdnToLdapPath)
 Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
 
 ### [Add-SidInfo](Add-SidInfo.md)
@@ -118,5 +118,6 @@ Resolves Windows service names to their corresponding security identifiers (SIDs
 
 ### [Search-Directory](Search-Directory.md)
 Use Active Directory Service Interfaces to search an LDAP directory
+
 
 

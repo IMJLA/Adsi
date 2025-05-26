@@ -22,6 +22,9 @@ Properties {
 
     # PlatyPS (Markdown and Updateable help)
 
+    # Whether or not to generate markdown documentation using PlatyPS
+    [boolean]$DocumentationEnabled = $true
+
     # Directory PlatyPS markdown documentation will be saved to
     [string]$DocsRootDir = [IO.Path]::Combine('.', 'docs')
 
@@ -232,20 +235,33 @@ Task TestModuleManifest -depends SetLocation -action {
 
 } -description 'Validate the module manifest'
 
-Task FindLintPrerequisite -depends TestModuleManifest -action {
+$LintPrerequisite = {
 
-    if ($TestEnabled) {
+    # 'Find the PSScriptAnalyzer module for linting the source code.'
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
+
+    if ($LintEnabled) {
+
         Write-Information "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
-        $script:FindLintPrerequisites = [boolean](Get-Module -Name PSScriptAnalyzer -ListAvailable)
+
+        if (Get-Module -Name PSScriptAnalyzer -ListAvailable) {
+            Write-InfoColor "`t'PSScriptAnalyzer' PowerShell module is installed. Linting will be performed." -ForegroundColor Green
+            return $true
+        }
+        else {
+            Write-InfoColor "`t'PSScriptAnalyzer' PowerShell module is not installed. Linting will be skipped." -ForegroundColor Yellow
+            return $false
+        }
+
     }
     else {
-        Write-InfoColor "`t'PSScriptAnalyzer' PowerShell module is not installed. Linting will be skipped." -ForegroundColor Cyan
-        $script:FindLintPrerequisites = $false
+        Write-InfoColor "`tLinting is disabled. Linting will be skipped." -ForegroundColor Cyan
     }
 
-} -description 'Find the PSScriptAnalyzer module for linting the source code.'
+}
 
-Task Lint -depends FindLintPrerequisite -precondition { $script:FindLintPrerequisites } -action {
+Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Severity '$LintSeverityThreshold' -Recurse -Verbose:$VerbosePreference"
     $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -Verbose:$VerbosePreference
@@ -324,20 +340,33 @@ Task FindBuildCopyDirectories -depends ExportPublicFunctions -action {
 
 } -description 'Find all directories to copy to the build output directory, excluding empty directories'
 
-Task FindBuildPrerequisite -depends FindBuildCopyDirectories -action {
+$FindBuildPrerequisite = {
+
+    # 'Find the PSScriptAnalyzer module for linting the source code.'
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
 
     if ($BuildCompileModule) {
-        Write-InfoColor "`tGet-Module -Name PowerShellBuild -ListAvailable"
-        $script:FindBuildPrerequisite = [boolean](Get-Module -name PowerShellBuild -ListAvailable)
+
+        Write-Information "`tGet-Module -Name PowerShellBuild -ListAvailable"
+
+        if (Get-Module -Name PowerShellBuild -ListAvailable) {
+            Write-InfoColor "`t'PowerShellBuild' PowerShell module is installed. Build will be performed." -ForegroundColor Green
+            return $true
+        }
+        else {
+            Write-InfoColor "`t'PowerShellBuild' PowerShell module is not installed. Build will be skipped." -ForegroundColor Yellow
+            return $false
+        }
+
     }
     else {
-        Write-InfoColor "`tBuilding is disabled. Build will fail."
-        $script:FindBuildPrerequisite = $false
+        Write-InfoColor "`tBuilding is disabled. Build will be skipped." -ForegroundColor Cyan
     }
 
-} -description 'Find the PowerShellBuild module for building the PowerShell module.'
+}
 
-Task BuildModule -depends FindBuildPrerequisite -precondition { $script:FindBuildPrerequisite } -action {
+Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrerequisite -action {
 
     $buildParams = @{
         Path               = $SourceCodeDir
@@ -356,7 +385,7 @@ Task BuildModule -depends FindBuildPrerequisite -precondition { $script:FindBuil
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -389,21 +418,40 @@ Task DeleteOldBuilds -depends FixModule -action {
 
 } -description 'Delete old builds'
 
-Task FindDocsPrerequisite -depends DeleteOldBuilds -action {
-
-    Write-InfoColor "`tGet-Module -Name PlatyPS -ListAvailable"
-    $script:FindDocsPrerequisite = [boolean](Get-Module -Name PlatyPS -ListAvailable)
-
-} -description 'Find the PlatyPS module for generating Markdown help documentation.'
-
-Task CreateMarkdownHelpFolder -depends FindDocsPrerequisite -action {
+Task CreateMarkdownHelpFolder -depends DeleteOldBuilds -action {
 
     Write-Information "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the Markdown help documentation.'
 
-Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition { $script:FindDocsPrerequisite } -action {
+$DocsPrereq = {
+
+    # 'Find the PlatyPS module for generating Markdown help documentation.'
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
+
+    if ($DocumentationEnabled) {
+
+        Write-Information "`tGet-Module -Name PlatyPS -ListAvailable"
+
+        if (Get-Module -Name PlatyPS -ListAvailable) {
+            Write-InfoColor "`t'PlatyPS' PowerShell module is installed. Documentation will be performed." -ForegroundColor Green
+            return $true
+        }
+        else {
+            Write-InfoColor "`t'PlatyPS' PowerShell module is not installed. Documentation will be skipped." -ForegroundColor Yellow
+            return $false
+        }
+
+    }
+    else {
+        Write-InfoColor "`tDocumentation is disabled. Documentation will be skipped." -ForegroundColor Cyan
+    }
+
+}
+
+Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPrereq -action {
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
     Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue"
@@ -436,7 +484,7 @@ Task UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
 
 } -description 'Update existing Markdown help files using PlatyPS.'
 
-Task BuildMarkdownHelp -depends UpdateMarkDownHelp -precondition { $script:FindDocsPrerequisite } -action {
+Task BuildMarkdownHelp -depends UpdateMarkDownHelp -precondition $DocsPrereq -action {
 
     try {
 
@@ -475,7 +523,7 @@ Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
 } -description 'Create a folder for the MAML help files.'
 
-Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -precondition { $script:FindDocsPrerequisite } -action {
+Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -precondition $DocsPrereq -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsMamlDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
@@ -503,20 +551,20 @@ Task CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
 } -description 'Create a folder for the Updateable help files.'
 
-Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -precondition { $script:FindDocsPrerequisite } -action {
+Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -precondition $DocsPrereq -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsUpdateableDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 } -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
 
-Task FindDocsUpdateablePrerequisite -depends DeleteUpdateableHelp -action {
+$UpdateableHelpPrereq = {
 
-    $script:FindDocsUpdateablePrerequisite = $false
+    # Find prerequisites for creating updatable help files.
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindDocsUpdateablePrerequisite$NewLine" -ForegroundColor Blue
+    Write-InfoColor "FindUpdateableHelpPrerequisites$NewLine" -ForegroundColor Blue
 
-    if ($script:FindDocsPrerequisite) {
+    if ($DocsPrereq) {
 
         Write-InfoColor "`tGet-CimInstance -ClassName CIM_OperatingSystem"
         $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
@@ -524,21 +572,30 @@ Task FindDocsUpdateablePrerequisite -depends DeleteUpdateableHelp -action {
         if ($OS -match 'Windows') {
 
             Write-InfoColor "`tGet-Command -Name MakeCab.exe"
-            $script:FindDocsUpdateablePrerequisite = [boolean](Get-Command -Name MakeCab.exe)
+            if (Get-Command -Name MakeCab.exe) {
+                Write-InfoColor "`tMakeCab.exe is available on this operating system. Updateable Help will be generated." -ForegroundColor Green
+                return $true
+            }
+            else {
+                Write-InfoColor "`tMakeCab.exe is not available on this operating system. Updateable Help generation will be skipped." -ForegroundColor Yellow
+                return $false
+            }
 
         }
         else {
-            Write-InfoColor "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation."
+            Write-InfoColor "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation." -ForegroundColor Yellow
+            return $false
         }
 
     }
     else {
-        Write-InfoColor "`tPrerequisite module PlatyPS not found so Markdown docs will not be generated or converted to MAML for input to MakeCab.exe. Skipping Updateable Help generation."
+        Write-InfoColor "`tDocumentation prerequisites were not met. Updateable Help generation will be skipped." -ForegroundColor Cyan
+        return $false
     }
 
-} -description 'Find prerequisites for creating updatable help files.'
+}
 
-Task BuildUpdatableHelp -depends FindDocsUpdateablePrerequisite -precondition { $script:FindDocsUpdateablePrerequisite } -action {
+Task BuildUpdatableHelp -depends DeleteUpdateableHelp -precondition $UpdateableHelpPrereq -action {
 
     $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
@@ -556,11 +613,14 @@ Task BuildUpdatableHelp -depends FindDocsUpdateablePrerequisite -precondition { 
 
 } -description 'Create updatable help .cab file based on PlatyPS markdown help.'
 
-Task FindNodeJS -depends BuildUpdatableHelp -action {
+$OnlineHelpPrereqs = {
 
-    $script:NodeJSPrerequisite = $false
+    # Find Node.js installation.
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindOnlineHelpPrerequisites$NewLine" -ForegroundColor Blue
+
     Write-Information "`tGet-Command -Name node -ErrorAction SilentlyContinue"
-    $NodeCommand = Get-Command -name node -ErrorAction SilentlyContinue
+    $NodeCommand = Get-Command -Name node -ErrorAction SilentlyContinue
 
     if ($NodeCommand) {
 
@@ -568,35 +628,43 @@ Task FindNodeJS -depends BuildUpdatableHelp -action {
         $NodeJsVersion = & node -v 2>$null
 
         if ($NodeJsVersion -and [version]($NodeJsVersion.Replace('v', '')) -lt [version]'18.0.0') {
-            Write-Warning "Node.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Please update Node.js to continue."
+            Write-InfoColor "Node.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Online Help generation will be skipped." -ForegroundColor Yellow
+            return $false
         }
         else {
-            $script:NodeJSPrerequisite = $true
+            Write-InfoColor "Node.js is installed (version: $NodeJsVersion). Online Help will be generated." -ForegroundColor Green
+            return $true
         }
 
     }
     else {
-        Write-Warning 'Node.js is not installed or not found in the PATH. Please install Node.js to continue.'
+        Write-InfoColor 'Node.js is not installed or not found in the PATH. Online Help generation will be skipped.' -ForegroundColor Yellow
+        return $false
     }
 
-} -description 'Find Node.js installation.'
+}
 
-Task CreateOnlineHelpFolder -depends FindNodeJS -precondition { $script:NodeJSPrerequisite } -action {
+Task CreateOnlineHelpFolder -depends BuildUpdatableHelp -precondition $OnlineHelpPrereqs -action {
 
     Write-Information "`tNew-Item -Path '$DocsOnlineHelpRoot' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsOnlineHelpRoot -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the Online Help website.'
 
-Task FindOnlineHelpPrerequisite -depends CreateOnlineHelpFolder -action {
+$OnlineHelpScaffoldingPrereq = {
 
+    # Find prerequisites for creating updatable help files.
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindOnlineHelpScaffoldingPrerequisites$NewLine" -ForegroundColor Blue
+
+    # Determine whether the Online Help scaffolding already exists.
     Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq '$ModuleName' } | Measure-Object | Select-Object -ExpandProperty Count"
     $OnlineHelpExists = (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ModuleName } | Measure-Object).Count
-    [boolean]$script:OnlineHelpDoesNotExist = $OnlineHelpExists -eq 0
+    $OnlineHelpExists -eq 0
 
-} -description 'Find the Docusaurus module for creating the Online Help website.'
+}
 
-Task CreateOnlineHelpScaffolding -depends FindOnlineHelpPrerequisite -precondition { $script:OnlineHelpDoesNotExist } -action {
+Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -precondition $OnlineHelpScaffoldingPrereq -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
@@ -694,20 +762,29 @@ Task BuildOnlineHelpWebsite -depends ConvertArt -action {
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
-Task FindUnitTestPrerequisite -depends BuildOnlineHelpWebsite -action {
+$UnitTestPrereq = {
+
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindUnitTestPrerequisites$NewLine" -ForegroundColor Blue
 
     if ($TestEnabled) {
         Write-Information "`tGet-Module -Name Pester -ListAvailable"
-        $script:FindUnitTestPrerequisite = [boolean](Get-Module -Name Pester -ListAvailable)
+        if (Get-Module -Name Pester -ListAvailable) {
+            Write-InfoColor "`t'Pester' PowerShell module is installed. Unit testing will be performed." -ForegroundColor Green
+            return $true
+        }
+        else {
+            Write-InfoColor "`t'Pester' PowerShell module is not installed. Unit testing will be skipped." -ForegroundColor Cyan
+            return $false
+        }
     }
     else {
-        $script:FindUnitTestPrerequisite = $false
-        Write-InfoColor "`t'Pester' PowerShell module is not installed. Unit testing will be skipped." -ForegroundColor Cyan
+        Write-InfoColor "`tUnit testing is disabled. Unit testing will be skipped." -ForegroundColor Cyan
     }
 
-} -description "Find the 'Pester' PowerShell module for performing unit tests."
+}
 
-Task UnitTests -depends FindUnitTestPrerequisite -precondition { $script:FindUnitTestPrerequisite } -action {
+Task UnitTests -depends BuildOnlineHelpWebsite -precondition $UnitTestPrereq -action {
 
     Write-InfoColor "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
@@ -779,7 +856,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -794,9 +871,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -name $ModuleName -AllVersions
+        Uninstall-Module -Name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -811,16 +888,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 } -description 'Remove script-scoped variables to clean up the environment.'
 

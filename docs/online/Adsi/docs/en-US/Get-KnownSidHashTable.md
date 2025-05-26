@@ -51,3 +51,4 @@ $knownSids\['S-1-5-32-544'\].Description # Returns description of the Administra
 [https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids](https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids)
 
 
+
