@@ -39,36 +39,32 @@ if (-not (Get-Module -Name PSScriptAnalyzer -ListAvailable)) {
 Import-Module PSScriptAnalyzer
 
 # Get all PowerShell script files
+Write-Verbose "`tGet-ChildItem -Path '$Path' -Include '*.ps1', '*.psm1', '*.psd1' -Recurse"
 $ScriptFiles = Get-ChildItem -Path $Path -Include '*.ps1', '*.psm1', '*.psd1' -Recurse
-
-Write-Host "Found $($ScriptFiles.Count) PowerShell files to process" -ForegroundColor Cyan
 
 $FormattedCount = 0
 
 foreach ($File in $ScriptFiles) {
-    try {
-        $OriginalContent = Get-Content $File.FullName -Raw
 
-        # Format the content
-        $FormattedContent = Invoke-Formatter -ScriptDefinition $OriginalContent -Settings $SettingsPath
+    $RelativePath = $File.FullName.Substring($Path.Length).TrimStart('\')
+    Write-Verbose "`tGet-Content -Path '$RelativePath' -Raw"
+    $OriginalContent = Get-Content $File.FullName -Raw
+    # Format the content
+    Write-Verbose "`tInvoke-Formatter -ScriptDefinition '$RelativePath' -Settings '$SettingsPath' -ErrorAction Stop"
+    $FormattedContent = Invoke-Formatter -ScriptDefinition $OriginalContent -Settings $SettingsPath -ErrorAction Stop
+    try {
 
         # Check if content changed
         if ($FormattedContent -ne $OriginalContent) {
             if ($WhatIf) {
-                Write-Host "  Would format: $($File.FullName)" -ForegroundColor Yellow
+                Write-Information "`tSet-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"
             } elseif ($PSCmdlet.ShouldProcess($File.FullName, 'Format PowerShell file')) {
+                Write-Verbose "`tSet-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"
                 Set-Content -Path $File.FullName -Value $FormattedContent -NoNewline
-                Write-Host "  Formatted: $($File.FullName)" -ForegroundColor Green
                 $FormattedCount++
             }
         }
     } catch {
         Write-Warning "Failed to format $($File.FullName): $_"
     }
-}
-
-if ($WhatIf) {
-    Write-Host "Would format $FormattedCount files" -ForegroundColor Cyan
-} else {
-    Write-Host "Formatted $FormattedCount files" -ForegroundColor Green
 }

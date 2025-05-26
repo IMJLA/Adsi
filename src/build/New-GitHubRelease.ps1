@@ -1,3 +1,4 @@
+[CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter(Mandatory = $true)]
     [string]$GitHubToken,
@@ -36,6 +37,7 @@ function Get-VersionFolder {
 
 # Function to create GitHub release
 function New-GitHubRelease {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [string]$Token,
         [string]$Repo,
@@ -62,16 +64,20 @@ function New-GitHubRelease {
     $uri = "https://api.github.com/repos/$Repo/releases"
 
     Write-InfoColor "`t`t`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$headers -Body `$releaseData"
-    try {
-        $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $releaseData
-        return $response
-    } catch {
-        throw "Failed to create release: $($_.Exception.Message)"
+
+    if ($PSCmdlet.ShouldProcess("Repository: $Repo, Tag: $TagName", 'Create GitHub Release')) {
+        try {
+            $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $releaseData
+            return $response
+        } catch {
+            throw "Failed to create release: $($_.Exception.Message)"
+        }
     }
 }
 
 # Function to upload release asset
 function Add-ReleaseAsset {
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [string]$Token,
         [string]$UploadUrl,
@@ -87,11 +93,13 @@ function Add-ReleaseAsset {
     $uploadUri = $UploadUrl -replace '\{\?name,label\}', "?name=$FileName"
     Write-InfoColor "`t`t`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile '$FilePath'"
 
-    try {
-        $response = Invoke-RestMethod -Uri $uploadUri -Method Post -Headers $headers -InFile $FilePath
-        return $response
-    } catch {
-        throw "Failed to upload asset $FileName : $($_.Exception.Message)"
+    if ($PSCmdlet.ShouldProcess("File: $FileName", 'Upload Release Asset')) {
+        try {
+            $response = Invoke-RestMethod -Uri $uploadUri -Method Post -Headers $headers -InFile $FilePath
+            return $response
+        } catch {
+            throw "Failed to upload asset $FileName : $($_.Exception.Message)"
+        }
     }
 }
 
@@ -115,7 +123,10 @@ try {
     $ZipFileDisplayPath = [IO.Path]::Combine('$env:TEMP', $zipFileName)
 
     Write-InfoColor "`t`tCompress-Archive -Path '$versionFolderPath\*' -DestinationPath `"$ZipFileDisplayPath`" -Force"
-    Compress-Archive -Path "$($versionFolder.FullName)\*" -DestinationPath $zipFilePath -Force
+
+    if ($PSCmdlet.ShouldProcess($zipFilePath, 'Create Archive')) {
+        Compress-Archive -Path "$($versionFolder.FullName)\*" -DestinationPath $zipFilePath -Force
+    }
 
     # Check if zip file was created successfully
     if (Test-Path $zipFilePath) {
@@ -124,7 +135,9 @@ try {
 
         # Clean up temporary zip file
         Write-Information "`t`tRemove-Item `"$ZipFileDisplayPath`" -Force"
-        Remove-Item $zipFilePath -Force
+        if ($PSCmdlet.ShouldProcess($zipFilePath, 'Remove Temporary Zip File')) {
+            Remove-Item $zipFilePath -Force
+        }
     } else {
         throw "Failed to create zip file at: $zipFilePath"
     }
