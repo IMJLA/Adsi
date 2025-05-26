@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.133] - 2025-05-26
+### Added
+- add text file encoding and line ending normalization
+
 ## [5.0.132] - 2025-05-26
 ### Removed
 - remove unused params

@@ -340,7 +340,48 @@ $LintPrerequisite = {
 
 }
 
-Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
+Task Format -depends TestModuleManifest -precondition $LintPrerequisite -action {
+
+    Write-InfoColor "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps1' -Recurse"
+    $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps*1' -Recurse
+
+    foreach ($File in $ScriptFiles) {
+
+        $RelativePath = $File.FullName.Substring($SourceCodeDir.Length + 1)
+
+        # Read the original content of the file
+        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$RelativePath' -Raw -ErrorAction Stop"
+        $OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
+
+        <#
+        Normalize line endings to Windows format (CRLF) before formatting
+        In addition to ensuring consistency this prevents the following error from Invoke-Formatter:
+
+            Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
+        #>
+        Write-Verbose "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
+        $NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
+
+        Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
+        $FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $LintSettingsFile -ErrorAction Stop
+
+
+        # Only update file if content changed
+        if ($FormattedContent -ne $OriginalContent) {
+
+            # Use Set-Content with explicit encoding to ensure consistent line endings
+            Write-InfoColor "`tSet-Content -Path '$RelativePath' -Value `$FormattedContent -Encoding UTF8 -NoNewLine -ErrorAction Stop"
+            Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8 -NoNewline -ErrorAction Stop
+
+        }
+
+    }
+
+    Write-InfoColor "`t# Successfully formatted PowerShell script files." -ForegroundColor Green
+
+} -description 'Format PowerShell script files using PSScriptAnalyzer rules.'
+
+Task Lint -depends Format -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Recurse -ErrorAction Stop"
     $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Recurse -ErrorAction Stop
@@ -1157,26 +1198,3 @@ Task ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
         Write-Error "Failed to return to starting location. Current: $($currentLocation.Path), Expected: $($StartingLocation.Path)"
     }
 } -description 'Return to the original working directory.'
-
-Task Format -depends TestModuleManifest -precondition $LintPrerequisite -action {
-
-    Write-InfoColor "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps1' -Recurse"
-    $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps1' -Recurse
-
-    foreach ($File in $ScriptFiles) {
-
-        $RelativePath = $File.FullName.Substring($SourceCodeDir.Length + 1)
-        Write-InfoColor "`tInvoke-Formatter -ScriptDefinition (Get-Content '$RelativePath' -Raw) -Settings '$LintSettingsFile'"
-        $FormattedContent = Invoke-Formatter -ScriptDefinition (Get-Content $File.FullName -Raw) -Settings $LintSettingsFile
-
-        # Only update file if content changed
-        $OriginalContent = Get-Content $File.FullName -Raw
-        if ($FormattedContent -ne $OriginalContent) {
-            Write-InfoColor "`tSet-Content -Path $($File.FullName) -Value `$FormattedContent -NoNewLine"
-            Set-Content -Path $File.FullName -Value $FormattedContent -NoNewline
-        }
-    }
-
-    Write-InfoColor "`t# Successfully formatted PowerShell script files." -ForegroundColor Green
-
-} -description 'Format PowerShell script files using PSScriptAnalyzer rules.'
