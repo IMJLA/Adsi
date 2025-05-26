@@ -263,13 +263,13 @@ FormatTaskName {
 
 }
 
-Task ? -description 'Lists the available tasks' -action {
+Task -name ? -description 'Lists the available tasks' -action {
     'Available tasks:'
     $psake.context.Peek().Tasks.Keys | Sort-Object
 }
 
 # Define the default task that runs all tasks in the build process
-Task Default -description 'Run the default build tasks' -depends SetLocation, # Prepare the build environment.
+Task -name Default -description 'Run the default build tasks' -depends SetLocation, # Prepare the build environment.
 Format, # Format the source code files.
 LintAnalysis, # Perform linting and analysis of the source code.
 DetermineNewVersionNumber, # Determine the new version number.
@@ -286,7 +286,7 @@ Reinstall, # Publish the module to the a PowerShell repository.
 ReturnToStartingLocation # Reset the build environment to its starting state.
 
 # Prepare the build environment.
-Task SetLocation -action {
+Task -name SetLocation -action {
 
     Write-InfoColor "`tSet-Location -Path '$ModuleName'"
     Set-Location -Path $PSScriptRoot
@@ -303,7 +303,7 @@ Task SetLocation -action {
 
 
 # Perform linting and analysis of the source code.
-Task TestModuleManifest -action {
+Task -name TestModuleManifest -action {
 
     Write-InfoColor "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
     $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath -ErrorAction Stop
@@ -340,7 +340,7 @@ $LintPrerequisite = {
 
 }
 
-Task Format -depends TestModuleManifest -precondition $LintPrerequisite -action {
+Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
     Write-InfoColor "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps1' -Recurse"
     $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps*1' -Recurse
@@ -381,7 +381,7 @@ Task Format -depends TestModuleManifest -precondition $LintPrerequisite -action 
 
 } -description 'Format PowerShell script files using PSScriptAnalyzer rules.'
 
-Task Lint -depends Format -action {
+Task -name Lint -depends Format -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Recurse -ErrorAction Stop"
     $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Recurse -ErrorAction Stop
@@ -389,7 +389,7 @@ Task Lint -depends Format -action {
 
 } -description 'Perform linting with PSScriptAnalyzer.'
 
-Task LintAnalysis -depends Lint -action {
+Task -name LintAnalysis -depends Lint -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Select-LintResult.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -SeverityThreshold '$LintSeverityThreshold' -LintResult `$script:LintResult -ErrorAction Stop"
@@ -400,7 +400,7 @@ Task LintAnalysis -depends Lint -action {
 
 
 # Determine the new version number.
-Task DetermineNewVersionNumber -action {
+Task -name DetermineNewVersionNumber -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)' -ErrorAction Stop"
@@ -413,7 +413,7 @@ Task DetermineNewVersionNumber -action {
 
 
 # Build the module.
-Task UpdateModuleVersion -depends DetermineNewVersionNumber -action {
+Task -name UpdateModuleVersion -depends DetermineNewVersionNumber -action {
 
     Write-InfoColor "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
     Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
@@ -421,7 +421,7 @@ Task UpdateModuleVersion -depends DetermineNewVersionNumber -action {
 
 } -description 'Update the module manifest with the new version number'
 
-Task DeleteOldBuilds -depends UpdateModuleVersion -action {
+Task -name DeleteOldBuilds -depends UpdateModuleVersion -action {
 
     Write-InfoColor "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop"
     Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop
@@ -429,7 +429,7 @@ Task DeleteOldBuilds -depends UpdateModuleVersion -action {
 
 } -description 'Delete old builds'
 
-Task FindPublicFunctionFiles -depends DeleteOldBuilds -action {
+Task -name FindPublicFunctionFiles -depends DeleteOldBuilds -action {
 
     Write-InfoColor "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
@@ -441,7 +441,7 @@ Task FindPublicFunctionFiles -depends DeleteOldBuilds -action {
 
 } -description 'Find all public function files'
 
-Task ExportPublicFunctions -depends FindPublicFunctionFiles -action {
+Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -ErrorAction Stop"
@@ -450,7 +450,7 @@ Task ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
 } -description 'Export all public functions in the module'
 
-Task FindBuildCopyDirectories -depends ExportPublicFunctions -action {
+Task -name FindBuildCopyDirectories -depends ExportPublicFunctions -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Find-BuildCopyDirectory.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory @('$($BuildCopyDirectories -join "','")') -ErrorAction Stop"
@@ -483,7 +483,7 @@ $FindBuildPrerequisite = {
 
 }
 
-Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrerequisite -action {
+Task -name BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrerequisite -action {
 
     $buildParams = @{
         Compile            = $BuildCompileModule
@@ -504,7 +504,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
     # only add these configuration values to the build parameters if they have been been set
     $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
             $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
@@ -520,7 +520,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
 } -description 'Build a PowerShell script module based on the source directory'
 
-Task FixModule -depends BuildModule -action {
+Task -name FixModule -depends BuildModule -action {
 
     $File = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
     Write-InfoColor "`tRemove-Item -Path '$File'"
@@ -544,7 +544,7 @@ Task FixModule -depends BuildModule -action {
 
 
 # Add an entry to the Change Log.
-Task UpdateChangeLog -action {
+Task -name UpdateChangeLog -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Update-ChangeLog.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog' -ErrorAction Stop"
@@ -564,7 +564,7 @@ Task UpdateChangeLog -action {
 
 
 # Create Markdown and MAML help documentation.
-Task CreateMarkdownHelpFolder -action {
+Task -name CreateMarkdownHelpFolder -action {
 
     Write-Information "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
@@ -600,7 +600,7 @@ $DocsPrereq = {
 
 }
 
-Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPrereq -action {
+Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPrereq -action {
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
     Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Force -ErrorAction SilentlyContinue"
@@ -613,7 +613,7 @@ Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPre
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 
-Task UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
+Task -name UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
     if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
 
         Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
@@ -630,7 +630,7 @@ Task UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
     }
 } -description 'Update existing Markdown help files using PlatyPS.'
 
-Task BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
+Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
     try {
 
@@ -655,7 +655,7 @@ Task BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
 } -description 'Generate markdown files from the module help'
 
-Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
+Task -name FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Repair-MarkdownHelp.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine `$NewLine -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles -ErrorAction Stop"
@@ -664,7 +664,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
 
 } -description 'Fix Markdown help files for proper formatting and parameter documentation.'
 
-Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
+Task -name CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
     Write-Information "`tNew-Item -Path '$DocsMamlDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMamlDir -ItemType Directory -ErrorAction SilentlyContinue
@@ -676,7 +676,7 @@ Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
 } -description 'Create a folder for the MAML help files.'
 
-Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
+Task -name DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsMamlDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
@@ -684,7 +684,7 @@ Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
 
 } -description 'Delete existing MAML help files to prepare for PlatyPS to build new ones.'
 
-Task BuildMAMLHelp -depends DeleteMAMLHelp -action {
+Task -name BuildMAMLHelp -depends DeleteMAMLHelp -action {
 
     Write-InfoColor "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$DocsMamlDir' -ErrorAction Stop"
     Build-PSBuildMAMLHelp -Path $DocsMarkdownDir -DestinationPath $DocsMamlDir -ErrorAction Stop
@@ -692,7 +692,7 @@ Task BuildMAMLHelp -depends DeleteMAMLHelp -action {
 
 } -description 'Build MAML help files from the Markdown files by using PlatyPS invoked by PowerShellBuild.'
 
-Task CopyMAMLHelp -depends BuildMAMLHelp -action {
+Task -name CopyMAMLHelp -depends BuildMAMLHelp -action {
 
     Write-InfoColor "`tCopy-Item -Path '$DocsMamlDir\*' -Destination '$script:BuildOutputDir' -Recurse -ErrorAction SilentlyContinue"
     Copy-Item -Path "$DocsMamlDir\*" -Destination $script:BuildOutputDir -Recurse -ErrorAction SilentlyContinue
@@ -707,7 +707,7 @@ Task CopyMAMLHelp -depends BuildMAMLHelp -action {
 
 } -description 'Copy MAML help files to the build output directory.'
 
-Task CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
+Task -name CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
     Write-Information "`tNew-Item -Path '$DocsUpdateableDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsUpdateableDir -ItemType Directory -ErrorAction SilentlyContinue
@@ -720,7 +720,7 @@ Task CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
 } -description 'Create a folder for the Updateable help files.'
 
-Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
+Task -name DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
@@ -765,7 +765,7 @@ $UpdateableHelpPrereq = {
 
 }
 
-Task BuildUpdatableHelp -precondition $UpdateableHelpPrereq -action {
+Task -name BuildUpdatableHelp -precondition $UpdateableHelpPrereq -action {
 
     $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
@@ -816,7 +816,7 @@ $OnlineHelpPrereqs = {
 
 }
 
-Task CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
+Task -name CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
 
     Write-Information "`tNew-Item -Path '$DocsOnlineHelpRoot' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsOnlineHelpRoot -ItemType Directory -ErrorAction SilentlyContinue
@@ -853,7 +853,7 @@ $OnlineHelpScaffoldingPrereq = {
 
 }
 
-Task CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -action {
+Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
@@ -903,7 +903,7 @@ Task CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -act
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
-Task InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action {
+Task -name InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action {
 
     # npm install
     Write-InfoColor "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
@@ -924,7 +924,7 @@ Task InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action 
 
 } -description 'Install the dependencies for the Online Help website.'
 
-Task CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -action {
+Task -name CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -action {
 
     $MarkdownSourceCode = [IO.Path]::Combine($SourceCodeDir, 'docs')
     $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory -Exclude 'UpdatableHelp').Name
@@ -946,7 +946,7 @@ Task CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -a
 
 } -description 'Copy Markdown help files as source for online help website.'
 
-Task BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
+Task -name BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
 
     $null = New-Item -ItemType Directory -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
     $SourceArtFiles = Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.ps1'
@@ -967,7 +967,7 @@ Task BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
 
 } -description 'Build dynamic SVG art using PSSVG.'
 
-Task CopyArt -depends BuildArt -action {
+Task -name CopyArt -depends BuildArt -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsImageSourceCodeDir' -Filter '*.svg' -ErrorAction Stop |"
     Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
@@ -979,7 +979,7 @@ Task CopyArt -depends BuildArt -action {
 
 } -description 'Copy static SVG art to the online help website.'
 
-Task ConvertArt -depends CopyArt -action {
+Task -name ConvertArt -depends CopyArt -action {
 
     #$ScriptToRun = [IO.Path]::Combine('.', 'ConvertFrom-SVG.ps1')
     #$sourceSVG = [IO.Path]::Combine($DocsOnlineStaticImageDir, 'logo.svg')
@@ -990,7 +990,7 @@ Task ConvertArt -depends CopyArt -action {
 
 } -description 'Convert SVGs to PNG using Inkscape.'
 
-Task BuildOnlineHelpWebsite -depends ConvertArt -action {
+Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
 
     # & npm run build
     Write-InfoColor "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
@@ -1033,7 +1033,7 @@ $UnitTestPrereq = {
 
 }
 
-Task UnitTests -precondition $UnitTestPrereq -action {
+Task -name UnitTests -precondition $UnitTestPrereq -action {
 
     Write-InfoColor "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
@@ -1046,7 +1046,7 @@ Task UnitTests -precondition $UnitTestPrereq -action {
 
 
 # Commit changes to source control.
-Task SourceControl -action {
+Task -name SourceControl -action {
 
     # Find the current git branch
     $CurrentBranch = git branch --show-current
@@ -1071,7 +1071,7 @@ Task SourceControl -action {
 
 
 # Create a GitHub release.
-Task CreateGitHubRelease -action {
+Task -name CreateGitHubRelease -action {
 
     $GitHubOrgName = 'IMJLA'
     $RepositoryPath = "$GitHubOrgName/$ModuleName"
@@ -1090,7 +1090,7 @@ Task CreateGitHubRelease -action {
 
 
 # Publish the module to a PowerShell repository.
-Task Publish -action {
+Task -name Publish -action {
 
     Assert -conditionToCheck ($PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
 
@@ -1120,13 +1120,13 @@ Task Publish -action {
     }
 } -description 'Publish module to the defined PowerShell repository'
 
-Task AwaitRepoUpdate -depends Publish -action {
+Task -name AwaitRepoUpdate -depends Publish -action {
     $timer = 30
     $timeout = 60
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -1140,13 +1140,13 @@ Task AwaitRepoUpdate -depends Publish -action {
     }
 } -description 'Await the new version in the defined PowerShell repository'
 
-Task Uninstall -depends AwaitRepoUpdate -action {
+Task -name Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
-        Uninstall-Module -Name $ModuleName -AllVersions -ErrorAction Stop
+        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     } else {
         Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green
@@ -1154,16 +1154,16 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
 } -description 'Uninstall all versions of the module'
 
-Task Reinstall -depends Uninstall -action {
+Task -name Reinstall -depends Uninstall -action {
 
     [int]$attempts = 0
 
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-        $ModuleStatus = Get-Module -Name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
+        $ModuleStatus = Get-Module -name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
     } while ((-not $ModuleStatus) -and ($attempts -lt 3))
 
     # Test if reinstall was successful
@@ -1178,16 +1178,16 @@ Task Reinstall -depends Uninstall -action {
 
 # Reset the build environment to its starting state.
 
-Task RemoveScriptScopedVariables -action {
+Task -name RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
     Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
 
 } -description 'Remove script-scoped variables to clean up the environment.'
 
-Task ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
+Task -name ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
     Set-Location $StartingLocation
 
     # Test if we're back at the starting location
