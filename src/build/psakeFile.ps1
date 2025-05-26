@@ -348,10 +348,11 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
     foreach ($File in $ScriptFiles) {
 
         $CurrentDirectory = (Get-Location -PSProvider FileSystem).Path
-        $RelativePath = [IO.Path]::GetRelativePath($CurrentDirectory, $File.FullName)
+        $PartialRelativePath = [IO.Path]::GetRelativePath($CurrentDirectory, $File.FullName)
+        $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
 
         # Read the original content of the file
-        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$RelativePath' -Raw -ErrorAction Stop"
+        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw -ErrorAction Stop"
         $OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
 
         # Check current file encoding
@@ -377,7 +378,7 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         if ($ContentChanged -or $EncodingNeedsUpdate) {
 
             if ($ContentChanged -and $EncodingNeedsUpdate) {
-                Write-InfoColor "`tSet-Content -Path '$RelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
+                Write-InfoColor "`tSet-Content -Path '$FullRelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
                 Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
             }
 

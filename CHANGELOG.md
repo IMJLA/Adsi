@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.150] - 2025-05-26
+### Fixed
+- fix format task relative path calculation
+
 ## [5.0.149] - 2025-05-26
 ### Fixed
 - fix format task relative path calculation
