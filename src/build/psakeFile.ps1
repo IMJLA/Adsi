@@ -226,12 +226,26 @@ Task SetLocation -action {
     [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
     Set-Location -Path $ProjectRoot
 
+    if (((Get-Location -PSProvider FileSystem -ErrorAction Stop).Path | Split-Path -Leaf) -eq $ModuleName) {
+        Write-InfoColor "`t# Current Working Directory is now '$ModuleName'" -ForegroundColor Green
+    }
+    else {
+        Write-Error "Failed to set Working Directory to '$ModuleName'."
+    }
+
 } -description 'Set the working directory to the project root to ensure all relative paths are correct'
 
 Task TestModuleManifest -depends SetLocation -action {
 
     Write-InfoColor "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
-    $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath
+    $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath -ErrorAction Stop
+
+    if ($script:ManifestTest) {
+        Write-InfoColor "`t# Successfully validated the module manifest." -ForegroundColor Green
+    }
+    else {
+        Write-Error 'Failed to validate the module manifest.'
+    }
 
 } -description 'Validate the module manifest'
 
@@ -246,17 +260,17 @@ $LintPrerequisite = {
         Write-Information "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
 
         if (Get-Module -Name PSScriptAnalyzer -ListAvailable) {
-            Write-InfoColor "`t'PSScriptAnalyzer' PowerShell module is installed. Linting will be performed." -ForegroundColor Green
+            Write-InfoColor "`t# 'PSScriptAnalyzer' PowerShell module is installed. Linting will be performed." -ForegroundColor Green
             return $true
         }
         else {
-            Write-InfoColor "`t'PSScriptAnalyzer' PowerShell module is not installed. Linting will be skipped." -ForegroundColor Yellow
+            Write-InfoColor "`t# 'PSScriptAnalyzer' PowerShell module is not installed. Linting will be skipped." -ForegroundColor Yellow
             return $false
         }
 
     }
     else {
-        Write-InfoColor "`tLinting is disabled. Linting will be skipped." -ForegroundColor Cyan
+        Write-InfoColor "`t# Linting is disabled. Linting will be skipped." -ForegroundColor Cyan
     }
 
 }
@@ -264,7 +278,14 @@ $LintPrerequisite = {
 Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Severity '$LintSeverityThreshold' -Recurse -Verbose:$VerbosePreference"
-    $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -Verbose:$VerbosePreference
+    $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -Verbose:$VerbosePreference -ErrorAction Stop
+
+    if ($script:LintResult) {
+        Write-InfoColor "`t# Completed linting successfully." -ForegroundColor Green
+    }
+    else {
+        Write-InfoColor '# Failed to complete linting. No results were returned, but neither was an error.' -ForegroundColor Yellow
+    }
 
 } -description 'Perform linting with PSScriptAnalyzer.'
 
@@ -272,7 +293,8 @@ Task LintAnalysis -depends Lint -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Select-LintResult.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -Path '$SourceCodeDir' -SeverityThreshold '$LintSeverityThreshold' -SettingsPath '$LintSettingsFile' -LintResult `$script:LintResult"
-    & $ScriptToRun -Path $SourceCodeDir -SeverityThreshold $LintSeverityThreshold -SettingsPath $LintSettingsFile -LintResult $script:LintResult
+    & $ScriptToRun -Path $SourceCodeDir -SeverityThreshold $LintSeverityThreshold -SettingsPath $LintSettingsFile -LintResult $script:LintResult -ErrorAction Stop
+    Write-InfoColor "`t# Completed lint output analysis successfully." -ForegroundColor Green
 
 } -description 'Analyze the linting results and determine if the build should fail.'
 
@@ -280,9 +302,10 @@ Task DetermineNewVersionNumber -depends LintAnalysis -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
-    $script:NewModuleVersion = & $ScriptToRun -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version
+    $script:NewModuleVersion = & $ScriptToRun -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version -ErrorAction Stop
     $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
+    Write-InfoColor "`t# Successfully determined the new version number: $script:NewModuleVersion" -ForegroundColor Green
 
 } -description 'Determine the new version number based on the build parameters'
 
@@ -290,6 +313,7 @@ Task UpdateModuleVersion -depends DetermineNewVersionNumber -action {
 
     Write-InfoColor "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
     Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
+    Write-InfoColor "`t# Successfully updated the module manifest with the new version number." -ForegroundColor Green
 
 } -description 'Update the module manifest with the new version number'
 
@@ -385,7 +409,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -862,7 +886,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -877,9 +901,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -name $ModuleName -AllVersions
+        Uninstall-Module -Name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -894,16 +918,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 } -description 'Remove script-scoped variables to clean up the environment.'
 

@@ -44,8 +44,9 @@ $warnings = ($filteredResult.where({ $_Severity -eq 'Warning' })).Count
 $infos = ($filteredResult.where({ $_Severity -eq 'Information' })).Count
 
 if ($filteredResult) {
-    Write-InfoColor "`tPSScriptAnalyzer results:" -ForegroundColor Yellow
-    Write-InfoColor ($filteredResult | Format-Table -AutoSize | Out-String)
+    Write-InfoColor "`tPSScriptAnalyzer results:" -ForegroundColor Cyan
+    $formattedOutput = ($filteredResult | Format-Table -AutoSize | Out-String) -split "`n" | ForEach-Object { "`t$_" }
+    Write-InfoColor ($formattedOutput -join "`n") -ForegroundColor Cyan
 }
 
 switch ($SeverityThreshold) {
