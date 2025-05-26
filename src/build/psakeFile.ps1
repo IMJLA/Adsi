@@ -1164,13 +1164,15 @@ Task Format -depends TestModuleManifest -precondition $LintPrerequisite -action 
     $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps1' -Recurse
 
     foreach ($File in $ScriptFiles) {
-        Write-InfoColor "`tInvoke-Formatter -ScriptDefinition (Get-Content '$($File.FullName)' -Raw) -Settings '$LintSettingsFile'"
+
+        $RelativePath = $File.FullName.Substring($SourceCodeDir.Length + 1)
+        Write-InfoColor "`tInvoke-Formatter -ScriptDefinition (Get-Content '$RelativePath' -Raw) -Settings '$LintSettingsFile'"
         $FormattedContent = Invoke-Formatter -ScriptDefinition (Get-Content $File.FullName -Raw) -Settings $LintSettingsFile
 
         # Only update file if content changed
         $OriginalContent = Get-Content $File.FullName -Raw
         if ($FormattedContent -ne $OriginalContent) {
-            Write-InfoColor "`t  Formatting: $($File.Name)" -ForegroundColor Yellow
+            Write-InfoColor "`tSet-Content -Path $($File.FullName) -Value `$FormattedContent -NoNewLine"
             Set-Content -Path $File.FullName -Value $FormattedContent -NoNewline
         }
     }
