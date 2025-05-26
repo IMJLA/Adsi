@@ -14,6 +14,8 @@ foreach ($File in $MarkdownFiles) {
     }
 
     # Write back to the file
+    $FullPath = [io.path]::Combine($Path, $File.Name)
+    Write-InfoColor "`t`tSet-Content -Path $FullPath -Value `$Content"
     Set-Content -Path $File.FullName -Value $Content
 
 }
