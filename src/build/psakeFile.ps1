@@ -347,8 +347,8 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
 
     foreach ($File in $ScriptFiles) {
 
-        $AbsoluteSourceCodeDir = [IO.Path]::GetFullPath($SourceCodeDir)
-        $RelativePath = [IO.Path]::GetRelativePath($AbsoluteSourceCodeDir, $File.FullName)
+        $CurrentDirectory = [IO.Directory]::GetCurrentDirectory()
+        $RelativePath = [IO.Path]::GetRelativePath($CurrentDirectory, $File.FullName)
 
         # Read the original content of the file
         Write-Verbose "`t`$OriginalContent = Get-Content -Path '$RelativePath' -Raw -ErrorAction Stop"
