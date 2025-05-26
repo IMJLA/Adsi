@@ -51,7 +51,7 @@ function Get-WinNTGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         $Log = @{ 'Cache' = $Cache }
         $DirectoryParams = @{ 'Cache' = $Cache ; 'PropertiesToLoad' = $PropertiesToLoad }
@@ -106,8 +106,7 @@ function Get-WinNTGroupMember {
 
                 }
 
-            }
-            else {
+            } else {
                 Write-LogMsg @Log -Text ' # Is not a group'
             }
 

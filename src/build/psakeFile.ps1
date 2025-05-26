@@ -232,8 +232,7 @@ Properties {
             foreach ($line in $output) {
                 if ($line -is [System.Management.Automation.ErrorRecord]) {
                     Write-InfoColor "`t`tERROR: $($line.Exception.Message)" -ForegroundColor Red
-                }
-                else {
+                } else {
                     Write-InfoColor "`t`t$line" -ForegroundColor Gray
                 }
             }
@@ -246,8 +245,7 @@ Properties {
             if ($PassThru) {
                 return $output
             }
-        }
-        finally {
+        } finally {
             Set-Location $originalLocation
         }
     }
@@ -272,6 +270,7 @@ Task ? -description 'Lists the available tasks' -action {
 
 # Define the default task that runs all tasks in the build process
 Task Default -description 'Run the default build tasks' -depends SetLocation, # Prepare the build environment.
+Format, # Format the source code files.
 LintAnalysis, # Perform linting and analysis of the source code.
 DetermineNewVersionNumber, # Determine the new version number.
 FixModule, # Build the module.
@@ -296,8 +295,7 @@ Task SetLocation -action {
 
     if (((Get-Location -PSProvider FileSystem -ErrorAction Stop).Path | Split-Path -Leaf) -eq $ModuleName) {
         Write-InfoColor "`t# Current Working Directory is now '$ModuleName'" -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error "Failed to set Working Directory to '$ModuleName'."
     }
 
@@ -312,8 +310,7 @@ Task TestModuleManifest -action {
 
     if ($script:ManifestTest) {
         Write-InfoColor "`t# Successfully validated the module manifest." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to validate the module manifest.'
     }
 
@@ -332,14 +329,12 @@ $LintPrerequisite = {
         if (Get-Module -Name PSScriptAnalyzer -ListAvailable) {
             Write-InfoColor "`t# 'PSScriptAnalyzer' PowerShell module is installed. Linting will be performed." -ForegroundColor Green
             return $true
-        }
-        else {
+        } else {
             Write-InfoColor "`t# 'PSScriptAnalyzer' PowerShell module is not installed. Linting will be skipped." -ForegroundColor Yellow
             return $false
         }
 
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Linting is disabled. Linting will be skipped." -ForegroundColor Cyan
     }
 
@@ -399,8 +394,7 @@ Task FindPublicFunctionFiles -depends DeleteOldBuilds -action {
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
     if ($script:PublicFunctionFiles.Count -eq 0) {
         Write-InfoColor "`t# No public function files found." -ForegroundColor Yellow
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Found $($script:PublicFunctionFiles.Count) public function files." -ForegroundColor Green
     }
 
@@ -437,14 +431,12 @@ $FindBuildPrerequisite = {
         if (Get-Module -Name PowerShellBuild -ListAvailable) {
             Write-InfoColor "`t# 'PowerShellBuild' PowerShell module is installed. Build will be performed." -ForegroundColor Green
             return $true
-        }
-        else {
+        } else {
             Write-InfoColor "`t# 'PowerShellBuild' PowerShell module is not installed. Build will be skipped." -ForegroundColor Yellow
             return $false
         }
 
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Building is disabled. Build will be skipped." -ForegroundColor Cyan
     }
 
@@ -503,8 +495,7 @@ Task FixModule -depends BuildModule -action {
 
     if ((Test-Path -Path $File)) {
         Write-Error 'Failed to remove unnecessary file '$File' from the build output directory.'
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Successfully removed unnecessary files from the build output directory." -ForegroundColor Green
     }
 
@@ -538,8 +529,7 @@ Task CreateMarkdownHelpFolder -action {
     $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
     if (Test-Path -Path $DocsMarkdownDir) {
         Write-InfoColor "`t# Markdown help directory exists." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to create the Markdown help directory'
     }
 
@@ -558,14 +548,12 @@ $DocsPrereq = {
         if (Get-Module -Name PlatyPS -ListAvailable) {
             Write-InfoColor "`t# 'PlatyPS' PowerShell module is installed. Documentation will be performed." -ForegroundColor Green
             return $true
-        }
-        else {
+        } else {
             Write-InfoColor "`t# 'PlatyPS' PowerShell module is not installed. Documentation will be skipped." -ForegroundColor Yellow
             return $false
         }
 
-    }
-    else {
+    } else {
         Write-InfoColor "`tDocumentation is disabled. Documentation will be skipped." -ForegroundColor Cyan
     }
 
@@ -578,8 +566,7 @@ Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPre
     Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     if (Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction SilentlyContinue) {
         Write-Error 'Failed to delete existing Markdown help files.'
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Successfully deleted existing Markdown help files." -ForegroundColor Green
     }
 
@@ -597,8 +584,7 @@ Task UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
         }
         Write-InfoColor "`t# Successfully updated existing Markdown help files." -ForegroundColor Green
 
-    }
-    else {
+    } else {
         Write-InfoColor "`t# No existing Markdown help files found to update." -ForegroundColor Green
     }
 } -description 'Update existing Markdown help files using PlatyPS.'
@@ -621,8 +607,7 @@ Task BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
         }
         Write-InfoColor "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$script:NewModuleVersion' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
         $null = New-MarkdownHelp @newMDParams
-    }
-    finally {
+    } finally {
         Remove-Module $ModuleName -Force -ErrorAction SilentlyContinue
     }
     Write-InfoColor "`t# Successfully generated Markdown help files." -ForegroundColor Green
@@ -644,8 +629,7 @@ Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
     $null = New-Item -Path $DocsMamlDir -ItemType Directory -ErrorAction SilentlyContinue
     if (Test-Path -Path $DocsMamlDir) {
         Write-InfoColor "`t# MAML help folder exists." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to create the MAML help folder'
     }
 
@@ -676,8 +660,7 @@ Task CopyMAMLHelp -depends BuildMAMLHelp -action {
     $copiedFiles = Get-ChildItem -Path $script:BuildOutputDir -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue
     if ($copiedFiles) {
         Write-InfoColor "`t# Successfully copied MAML help files to the build output directory." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to copy MAML help files to the build output directory.'
     }
 
@@ -690,8 +673,7 @@ Task CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
     if (Test-Path -Path $DocsUpdateableDir) {
         Write-InfoColor "`t# Updateable help directory exists." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to create the Updateable help directory'
     }
 
@@ -725,20 +707,17 @@ $UpdateableHelpPrereq = {
             if (Get-Command -Name MakeCab.exe) {
                 Write-InfoColor "`t# MakeCab.exe is available on this operating system. Updateable Help will be generated." -ForegroundColor Green
                 return $true
-            }
-            else {
+            } else {
                 Write-InfoColor "`t# MakeCab.exe is not available on this operating system. Updateable Help generation will be skipped." -ForegroundColor Yellow
                 return $false
             }
 
-        }
-        else {
+        } else {
             Write-InfoColor "`t# MakeCab.exe is not available on this operating system. Skipping Updateable Help generation." -ForegroundColor Yellow
             return $false
         }
 
-    }
-    else {
+    } else {
         Write-InfoColor "`tMAML Help files are not avaialable. Updateable Help generation will be skipped." -ForegroundColor Cyan
         return $false
     }
@@ -784,14 +763,12 @@ $OnlineHelpPrereqs = {
         if ($NodeJsVersion -and [version]($NodeJsVersion.Replace('v', '')) -lt [version]'18.0.0') {
             Write-InfoColor "`t# Node.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Online Help generation will be skipped." -ForegroundColor Yellow
             return $false
-        }
-        else {
+        } else {
             Write-InfoColor "`t# Node.js is installed (version: $NodeJsVersion). Online Help will be generated." -ForegroundColor Green
             return $true
         }
 
-    }
-    else {
+    } else {
         Write-InfoColor "`tNode.js is not installed or not found in the PATH. Online Help generation will be skipped." -ForegroundColor Yellow
         return $false
     }
@@ -805,8 +782,7 @@ Task CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
 
     if (Test-Path -Path $DocsOnlineHelpRoot) {
         Write-InfoColor "`t# Online help root directory exists." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to create the Online help root directory'
     }
 
@@ -829,8 +805,7 @@ $OnlineHelpScaffoldingPrereq = {
     if (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction Stop | Where-Object { $_.Name -eq $ModuleName }) {
         Write-InfoColor "`t# Online Help scaffolding already exists. It will be updated.$NewLine" -ForegroundColor Green
         return $false
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Online Help scaffolding does not exist. It will be created." -ForegroundColor Green
         return $true
     }
@@ -849,8 +824,7 @@ Task CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -act
     if (Test-Path $PackageJsonPath) {
         Write-Information "`tDocusaurus website already exists, skipping initialization"
         Write-InfoColor "`t# Docusaurus scaffolding already exists." -ForegroundColor Green
-    }
-    else {
+    } else {
 
         # & cmd /c "npx create-docusaurus@latest $ModuleName classic --typescript"
 
@@ -873,16 +847,13 @@ Task CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -act
                 # Test if scaffolding was created successfully
                 if (Test-Path $PackageJsonPath) {
                     Write-InfoColor "`t# Successfully created Docusaurus scaffolding." -ForegroundColor Green
-                }
-                else {
+                } else {
                     Write-Error 'Failed to create Docusaurus scaffolding - package.json not found'
                 }
-            }
-            else {
+            } else {
                 Write-Error "Failed to create Docusaurus scaffolding - npx exited with code $($process.ExitCode)"
             }
-        }
-        catch {
+        } catch {
             Write-Error "Failed to create Docusaurus scaffolding: $_"
         }
     }
@@ -898,8 +869,7 @@ Task InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action 
 
     try {
         Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-    }
-    catch {
+    } catch {
         Write-Error "Failed to install Online Help dependencies: $_"
     }
 
@@ -907,8 +877,7 @@ Task InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action 
     $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'node_modules')
     if (Test-Path $TestPath) {
         Write-InfoColor "`t# Successfully installed Online Help dependencies." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to install Online Help dependencies. The node_modules directory was not created.'
     }
 
@@ -930,8 +899,7 @@ Task CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -a
     $copiedMarkdown = Get-ChildItem -Path $OnlineHelpSourceMarkdown -Filter '*.md' -Recurse -ErrorAction SilentlyContinue
     if ($copiedMarkdown) {
         Write-InfoColor "`t# Successfully copied Markdown files for online help." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to copy Markdown files for online help'
     }
 
@@ -952,8 +920,7 @@ Task BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
     $artFiles = Get-ChildItem -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
     if ($artFiles.Count -eq $SourceArtFiles.Count) {
         Write-InfoColor "`t# Successfully built dynamic art files." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-InfoColor "`t# No art files were generated (this may be expected if no art scripts exist)." -ForegroundColor Green
     }
 
@@ -965,7 +932,7 @@ Task CopyArt -depends BuildArt -action {
     Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
 
     Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop |
-    Copy-Item -Destination $DocsOnlineStaticImageDir
+        Copy-Item -Destination $DocsOnlineStaticImageDir
 
     Write-InfoColor "`t# Successfully copied static SVG art files to the online help directory." -ForegroundColor Green
 
@@ -989,8 +956,7 @@ Task BuildOnlineHelpWebsite -depends ConvertArt -action {
 
     try {
         Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir
-    }
-    catch {
+    } catch {
         Write-Error "Failed to build online help website: $_"
     }
 
@@ -998,8 +964,7 @@ Task BuildOnlineHelpWebsite -depends ConvertArt -action {
     $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'build')
     if (Test-Path $TestPath) {
         Write-InfoColor "`t# Successfully built online help website." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to build online help website'
     }
 
@@ -1017,13 +982,11 @@ $UnitTestPrereq = {
         if (Get-Module -Name Pester -ListAvailable) {
             Write-InfoColor "`t# 'Pester' PowerShell module is installed. Unit testing will be performed." -ForegroundColor Green
             return $true
-        }
-        else {
+        } else {
             Write-InfoColor "`t# 'Pester' PowerShell module is not installed. Unit testing will be skipped." -ForegroundColor Cyan
             return $false
         }
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Unit testing is disabled. Unit testing will be skipped." -ForegroundColor Cyan
     }
 
@@ -1059,8 +1022,7 @@ Task SourceControl -action {
     $gitStatus = git status --porcelain
     if (-not $gitStatus) {
         Write-InfoColor "`t# Successfully committed and pushed changes to source control." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to commit all changes to source control'
     }
 
@@ -1079,8 +1041,7 @@ Task CreateGitHubRelease -action {
     if ($release -and $release.html_url) {
         Write-InfoColor "$NewLine`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
         Write-InfoColor "`t# Successfully created GitHub release." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error 'Failed to create GitHub release'
     }
 
@@ -1112,8 +1073,7 @@ Task Publish -action {
         # Publish to PSGallery
         Publish-Module @publishParams
         Write-InfoColor "`t# Successfully published module to $PublishPSRepository." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Verbose 'Skipping publishing. NoPublish is $NoPublish and current git branch is $CurrentBranch'
         Write-InfoColor "`t# Skipped publishing (NoPublish: $NoPublish, Branch: $CurrentBranch)." -ForegroundColor Green
     }
@@ -1134,8 +1094,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     if ($timer -eq $timeout) {
         Write-Warning "Cannot retrieve version '$script:NewModuleVersion' of module '$ModuleName' from repo '$PublishPSRepository'"
         Write-Error "Timeout waiting for module version $script:NewModuleVersion to appear in $PublishPSRepository"
-    }
-    else {
+    } else {
         Write-InfoColor "`t# Successfully confirmed module version $script:NewModuleVersion is available in $PublishPSRepository." -ForegroundColor Green
     }
 } -description 'Await the new version in the defined PowerShell repository'
@@ -1148,8 +1107,7 @@ Task Uninstall -depends AwaitRepoUpdate -action {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
         Uninstall-Module -Name $ModuleName -AllVersions -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green
     }
 
@@ -1170,8 +1128,7 @@ Task Reinstall -depends Uninstall -action {
     # Test if reinstall was successful
     if ($ModuleStatus) {
         Write-InfoColor "`t# Successfully reinstalled module $ModuleName (version: $($ModuleStatus.Version))." -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error "Failed to reinstall module $ModuleName after $attempts attempts"
     }
 
@@ -1196,8 +1153,28 @@ Task ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
     $currentLocation = Get-Location
     if ($currentLocation.Path -eq $StartingLocation.Path) {
         Write-InfoColor "`t# Successfully returned to starting location: $($StartingLocation.Path)" -ForegroundColor Green
-    }
-    else {
+    } else {
         Write-Error "Failed to return to starting location. Current: $($currentLocation.Path), Expected: $($StartingLocation.Path)"
     }
 } -description 'Return to the original working directory.'
+
+Task Format -depends TestModuleManifest -precondition $LintPrerequisite -action {
+
+    Write-InfoColor "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps1' -Recurse"
+    $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps1' -Recurse
+
+    foreach ($File in $ScriptFiles) {
+        Write-InfoColor "`tInvoke-Formatter -ScriptDefinition (Get-Content '$($File.FullName)' -Raw) -Settings '$LintSettingsFile'"
+        $FormattedContent = Invoke-Formatter -ScriptDefinition (Get-Content $File.FullName -Raw) -Settings $LintSettingsFile
+
+        # Only update file if content changed
+        $OriginalContent = Get-Content $File.FullName -Raw
+        if ($FormattedContent -ne $OriginalContent) {
+            Write-InfoColor "`t  Formatting: $($File.Name)" -ForegroundColor Yellow
+            Set-Content -Path $File.FullName -Value $FormattedContent -NoNewline
+        }
+    }
+
+    Write-InfoColor "`t# Successfully formatted PowerShell script files." -ForegroundColor Green
+
+} -description 'Format PowerShell script files using PSScriptAnalyzer rules.'

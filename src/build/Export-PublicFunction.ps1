@@ -26,8 +26,7 @@ if ($ModuleContent -match 'Export-ModuleMember -Function') {
     Write-Verbose "`t`$ModuleContent | Out-File -Path '$ModuleFilePath' -Force"
     $ModuleContent | Out-File -Path $ModuleFilePath -Force
 
-}
-else {
+} else {
     Write-Verbose "`t`"$NewFunctionExportStatement`" | Out-File '$ModuleFilePath' -Append"
     $NewFunctionExportStatement | Out-File $ModuleFilePath -Append
 }

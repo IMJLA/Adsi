@@ -48,16 +48,14 @@ if ($Bootstrap.IsPresent) {
         }
         Import-Module -Name PSDepend -Verbose:$false
         Invoke-PSDepend -Path $PSDependFile -Install -Import -Force -WarningAction SilentlyContinue
-    }
-    else {
+    } else {
         Write-Warning 'No [psdependRequirements.psd1] found. Skipping build dependency installation.'
     }
 }
 
 if ($IncrementMajorVersion) {
     $Properties['IncrementMajorVersion'] = $true
-}
-else {
+} else {
     if ($IncrementMinorVersion) {
         $Properties['IncrementMinorVersion'] = $true
     }
@@ -67,9 +65,8 @@ else {
 $psakeFile = [IO.Path]::Combine('.', 'src', 'build', 'psakeFile.ps1')
 if ($PSCmdlet.ParameterSetName -eq 'Help') {
     Get-PSakeScriptTasks -buildFile $psakeFile |
-    Format-Table -Property Name, Description, Alias, DependsOn
-}
-else {
+        Format-Table -Property Name, Description, Alias, DependsOn
+} else {
     Invoke-psake -buildFile $psakeFile -taskList $Task -properties $Properties -parameters $Parameters
     exit ([int](-not $psake.build_success))
 }

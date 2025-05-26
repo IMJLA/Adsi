@@ -144,8 +144,7 @@ function New-FakeDirectoryEntry {
     $SID = $Properties['SID']
     if ($SID) {
         $Properties['objectSid'] = ConvertTo-SidByteArray -SidString $SID
-    }
-    else {
+    } else {
         $Properties['objectSid'] = $null
     }
 

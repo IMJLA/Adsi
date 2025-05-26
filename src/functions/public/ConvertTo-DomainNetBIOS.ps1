@@ -75,15 +75,13 @@ function ConvertTo-DomainNetBIOS {
 
         }
 
-    }
-    else {
+    } else {
 
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
 
         if ($LengthOfNetBIOSName -eq -1) {
             $DomainFQDN
-        }
-        else {
+        } else {
             $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
         }
 

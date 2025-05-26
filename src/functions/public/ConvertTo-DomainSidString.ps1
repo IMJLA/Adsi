@@ -73,8 +73,7 @@ function ConvertTo-DomainSidString {
 
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
-        }
-        catch {
+        } catch {
 
             Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim()) -Cache `$Cache"
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -82,8 +81,7 @@ function ConvertTo-DomainSidString {
 
         }
 
-    }
-    else {
+    } else {
 
         Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache"
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -99,13 +97,11 @@ function ConvertTo-DomainSidString {
 
         if ($objectSIDProperty.Value) {
             $SidByteArray = [byte[]]$objectSIDProperty.Value
-        }
-        else {
+        } else {
             $SidByteArray = [byte[]]$objectSIDProperty
         }
 
-    }
-    else {
+    } else {
         $SidByteArray = [byte[]]$DomainDirectoryEntry.objectSid
     }
 
@@ -114,8 +110,7 @@ function ConvertTo-DomainSidString {
 
     if ($DomainSid) {
         return $DomainSid
-    }
-    else {
+    } else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually

@@ -65,8 +65,7 @@ function New-GitHubRelease {
     try {
         $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $releaseData
         return $response
-    }
-    catch {
+    } catch {
         throw "Failed to create release: $($_.Exception.Message)"
     }
 }
@@ -91,8 +90,7 @@ function Add-ReleaseAsset {
     try {
         $response = Invoke-RestMethod -Uri $uploadUri -Method Post -Headers $headers -InFile $FilePath
         return $response
-    }
-    catch {
+    } catch {
         throw "Failed to upload asset $FileName : $($_.Exception.Message)"
     }
 }
@@ -127,14 +125,12 @@ try {
         # Clean up temporary zip file
         Write-Information "`t`tRemove-Item `"$ZipFileDisplayPath`" -Force"
         Remove-Item $zipFilePath -Force
-    }
-    else {
+    } else {
         throw "Failed to create zip file at: $zipFilePath"
     }
 
     return $release
-}
-catch {
+} catch {
 
     Write-Error "Script failed: $($_.Exception.Message)"
     exit 1

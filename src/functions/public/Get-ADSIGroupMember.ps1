@@ -70,7 +70,7 @@ function Get-AdsiGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         $SearchParams = @{
             Cache            = $Cache
@@ -94,16 +94,14 @@ function Get-AdsiGroupMember {
 
             if ($PrimaryGroupOnly) {
                 $SearchParams['Filter'] = $primaryGroupIdFilter
-            }
-            else {
+            } else {
 
                 if ($NoRecurse) {
 
                     # Non-recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf=$($ThisGroup.Properties['distinguishedname']))"
 
-                }
-                else {
+                } else {
 
                     # Recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf:1.2.840.113556.1.4.1941:=$($ThisGroup.Properties['distinguishedname']))"
@@ -122,13 +120,11 @@ function Get-AdsiGroupMember {
                     $Domain = ([regex]::Matches($ThisGroup.Path, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$Domain" -Cache $Cache
 
-                }
-                else {
+                } else {
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
                 }
 
-            }
-            else {
+            } else {
                 $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
             }
 
@@ -146,7 +142,7 @@ function Get-AdsiGroupMember {
                 $CurrentADGroupMembers = [System.Collections.Generic.List[System.DirectoryServices.DirectoryEntry]]::new()
 
                 $MembersThatAreGroups = $GroupMemberSearch |
-                Where-Object -FilterScript { $_.Properties['objectClass'] -contains 'group' }
+                    Where-Object -FilterScript { $_.Properties['objectClass'] -contains 'group' }
 
                 $DirectoryEntryParams = @{
                     Cache            = $Cache
@@ -195,8 +191,7 @@ function Get-AdsiGroupMember {
 
                 }
 
-            }
-            else {
+            } else {
                 $CurrentADGroupMembers = $null
             }
 

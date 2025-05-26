@@ -88,5 +88,14 @@
         PSUseCorrectCasing                   = @{
             Enable = $true
         }
+
+        # Additional formatting rules
+        PSAvoidTrailingWhitespace            = @{
+            Enable = $true
+        }
+
+        PSAvoidSemicolonsAsLineTerminators   = @{
+            Enable = $true
+        }
     }
 }

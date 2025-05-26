@@ -144,14 +144,14 @@ Write-Verbose "`t`$ReadMeContents = `$ModuleHelp"
 $ReadMeContents = $ModuleHelp
 $DocsRootForURL = [IO.Path]::Combine('docs', $DocsDefaultLocale)
 [regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
-ForEach-Object {
-    $EscapedTextToReplace = [regex]::Escape($_)
-    $Replacement = "$DocsRootForURL/$_"
-    Write-Verbose "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
-    $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
-}
+    ForEach-Object {
+        $EscapedTextToReplace = [regex]::Escape($_)
+        $Replacement = "$DocsRootForURL/$_"
+        Write-Verbose "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
+        $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
+    }
 $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
-Select-Object -First 1
+    Select-Object -First 1
 
 Write-Verbose "`tSet-Content -LiteralPath '$($ReadMePath.FullName)' -Value `$ReadMeContents"
 Set-Content -Path $ReadMePath.FullName -Value $ReadMeContents

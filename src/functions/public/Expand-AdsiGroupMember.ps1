@@ -61,7 +61,7 @@ function Expand-AdsiGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         # The DomainBySid cache must be populated with trusted domains in order to translate foreign security principals
         if ( $DomainBySid.Keys.Count -lt 1 ) {
@@ -73,8 +73,7 @@ function Expand-AdsiGroupMember {
                 $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -Cache $Cache
             }
 
-        }
-        else {
+        } else {
             #Write-LogMsg @Log -Text '# Valid DomainBySid cache found'
         }
 
@@ -111,8 +110,7 @@ function Expand-AdsiGroupMember {
                         Write-LogMsg @Log -Text "`$Principal.RefreshCache('$($PropertiesToLoad -join "','")')"
                         $null = $Principal.RefreshCache($PropertiesToLoad)
 
-                    }
-                    catch {
+                    } catch {
 
                         $Principal = $Entry
                         Write-LogMsg @Log -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
@@ -133,8 +131,7 @@ function Expand-AdsiGroupMember {
 
                 }
 
-            }
-            else {
+            } else {
                 $Principal = $Entry
             }
 

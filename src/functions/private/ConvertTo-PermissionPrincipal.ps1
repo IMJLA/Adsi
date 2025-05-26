@@ -64,7 +64,7 @@ None. This function populates the PrincipalById cache with permission principal 
     )
 
     $PropertiesToLoad = $PropertiesToLoad |
-    Sort-Object -Unique
+        Sort-Object -Unique
 
     $PrincipalById = $Cache.Value['PrincipalById']
 
@@ -76,15 +76,13 @@ None. This function populates the PrincipalById cache with permission principal 
 
         if ($DirectoryEntry.Name) {
             $AccountName = $DirectoryEntry.Name
-        }
-        else {
+        } else {
 
             if ($DirectoryEntry.Properties) {
 
                 if ($DirectoryEntry.Properties['name'].Value) {
                     $AccountName = $DirectoryEntry.Properties['name'].Value
-                }
-                else {
+                } else {
                     $AccountName = $DirectoryEntry.Properties['name']
                 }
 
@@ -116,8 +114,7 @@ None. This function populates the PrincipalById cache with permission principal 
                 Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -Cache `$Cache # is an LDAP security principal $LogSuffix"
                 $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -PropertiesToLoad $PropertiesToLoad -Cache $Cache).FullMembers
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal $LogSuffix"
 
@@ -140,8 +137,7 @@ None. This function populates the PrincipalById cache with permission principal 
                         # Include specific desired properties
                         $OutputProperties = @{}
 
-                    }
-                    else {
+                    } else {
 
                         # Include specific desired properties
                         $OutputProperties = @{
@@ -166,8 +162,7 @@ None. This function populates the PrincipalById cache with permission principal 
 
                     if ($ThisMember.sAmAccountName) {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.sAmAccountName)"
-                    }
-                    else {
+                    } else {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                     }
 
@@ -190,8 +185,7 @@ None. This function populates the PrincipalById cache with permission principal 
 
         $PropertiesToAdd['Members'] = $GroupMembers
 
-    }
-    else {
+    } else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually

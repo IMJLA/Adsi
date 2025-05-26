@@ -52,7 +52,7 @@ function Expand-WinNTGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         $AdsiGroupSplat = @{
             'Cache'            = $Cache
@@ -77,8 +77,7 @@ function Expand-WinNTGroupMember {
                 Write-LogMsg @Log -Text " # '$ThisEntry' has no properties"
                 $Cache.Value['LogType'].Value = $StartingLogType
 
-            }
-            elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
+            } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 $Log['Suffix'] = " # Is an ADSI group $Suffix"
                 Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
@@ -87,8 +86,7 @@ function Expand-WinNTGroupMember {
                 Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
-            }
-            else {
+            } else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
 
@@ -102,8 +100,7 @@ function Expand-WinNTGroupMember {
 
                     }
 
-                }
-                else {
+                } else {
 
                     $Log['Suffix'] = " # Is a user account $Suffix"
                     Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$ThisEntry -DomainsBySid [ref]`$Cache.Value['DomainBySid']"

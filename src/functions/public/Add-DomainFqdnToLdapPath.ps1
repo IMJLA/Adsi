@@ -62,20 +62,17 @@ function Add-DomainFqdnToLdapPath {
                         #Write-LogMsg -Text " # Domain FQDN already found in the directory path: '$ThisPath'" -Cache $Cache
                         $ThisPath
 
-                    }
-                    else {
+                    } else {
                         $ThisPath.Replace( 'LDAP://', $DomainLdapPath )
                     }
-                }
-                else {
+                } else {
 
                     #Write-LogMsg -Text " # Domain DN not found in the directory path: '$ThisPath'" -Cache $Cache
                     $ThisPath
 
                 }
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg -Text " # Not an expected directory path: '$ThisPath'" -Cache $Cache
                 $ThisPath

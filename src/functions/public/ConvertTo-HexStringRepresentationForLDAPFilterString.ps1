@@ -19,15 +19,15 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
         [byte[]]$SIDByteArray
     )
     $Hexes = $SIDByteArray |
-    ForEach-Object {
-        '{0:X}' -f $_
-    } |
-    ForEach-Object {
-        if ($_.Length -eq 2) {
-            $_
-        } else {
-            "0$_"
+        ForEach-Object {
+            '{0:X}' -f $_
+        } |
+        ForEach-Object {
+            if ($_.Length -eq 2) {
+                $_
+            } else {
+                "0$_"
+            }
         }
-    }
     "\$($Hexes -join '\')"
 }

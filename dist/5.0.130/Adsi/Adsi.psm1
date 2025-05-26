@@ -321,8 +321,7 @@ function ConvertFrom-AppCapabilitySid {
     $KnownGuid = $KnownDeviceInterfaceGuids[$Guid]
     if ($KnownGuid) {
         return $KnownGuid
-    }
-    else {
+    } else {
         return [PSCustomObject]@{
             'SID'             = $SID
             'Description'     = "Apps w/ access to app capability {$Guid}"
@@ -456,8 +455,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
             $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
             $SearchSplat['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
 
-        }
-        else {
+        } else {
 
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'" -Cache $Cache
 
@@ -475,8 +473,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
-        }
-        catch {
+        } catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -488,8 +485,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         if ($DirectoryEntry) { return $DirectoryEntry }
 
-    }
-    elseif (
+    } elseif (
         $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.Value.SIDString
     ) {
 
@@ -528,8 +524,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
-        }
-        catch {
+        } catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -586,8 +581,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
             $DomainNetBIOS = $DomainObject.Netbios
             $DomainDN = $DomainObject.DistinguishedName
 
-        }
-        else {
+        } else {
 
             $DirectoryPath = "WinNT://$DomainNetBIOS/Users"
             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -Cache $Cache
@@ -598,8 +592,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         try {
             $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
-        }
-        catch {
+        } catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -613,9 +606,9 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -Cache $Cache
 
         $DirectoryEntry = $MembersOfUsersGroup |
-        Where-Object -FilterScript {
+            Where-Object -FilterScript {
             ($SamAccountNameOrSid -eq $([System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'], 0)))
-        }
+            }
 
         return $DirectoryEntry
 
@@ -626,8 +619,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
     if ($DomainNetbiosCacheResult) {
         $DirectoryPath = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"
-    }
-    else {
+    } else {
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
     }
 
@@ -635,8 +627,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
     try {
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
-    }
-    catch {
+    } catch {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -715,7 +706,7 @@ None. This function populates the PrincipalById cache with permission principal 
     )
 
     $PropertiesToLoad = $PropertiesToLoad |
-    Sort-Object -Unique
+        Sort-Object -Unique
 
     $PrincipalById = $Cache.Value['PrincipalById']
 
@@ -727,15 +718,13 @@ None. This function populates the PrincipalById cache with permission principal 
 
         if ($DirectoryEntry.Name) {
             $AccountName = $DirectoryEntry.Name
-        }
-        else {
+        } else {
 
             if ($DirectoryEntry.Properties) {
 
                 if ($DirectoryEntry.Properties['name'].Value) {
                     $AccountName = $DirectoryEntry.Properties['name'].Value
-                }
-                else {
+                } else {
                     $AccountName = $DirectoryEntry.Properties['name']
                 }
 
@@ -767,8 +756,7 @@ None. This function populates the PrincipalById cache with permission principal 
                 Write-LogMsg @Log -Text "Get-AdsiGroupMember -Group `$DirectoryEntry -Cache `$Cache # is an LDAP security principal $LogSuffix"
                 $Members = (Get-AdsiGroupMember -Group $DirectoryEntry -PropertiesToLoad $PropertiesToLoad -Cache $Cache).FullMembers
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg @Log -Text " # '$($DirectoryEntry.Path)' is a WinNT security principal $LogSuffix"
 
@@ -791,8 +779,7 @@ None. This function populates the PrincipalById cache with permission principal 
                         # Include specific desired properties
                         $OutputProperties = @{}
 
-                    }
-                    else {
+                    } else {
 
                         # Include specific desired properties
                         $OutputProperties = @{
@@ -817,8 +804,7 @@ None. This function populates the PrincipalById cache with permission principal 
 
                     if ($ThisMember.sAmAccountName) {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.sAmAccountName)"
-                    }
-                    else {
+                    } else {
                         $ResolvedAccountName = "$($OutputProperties['Domain'].Netbios)\$($ThisMember.Name)"
                     }
 
@@ -841,8 +827,7 @@ None. This function populates the PrincipalById cache with permission principal 
 
         $PropertiesToAdd['Members'] = $GroupMembers
 
-    }
-    else {
+    } else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -950,8 +935,7 @@ System.Security.Principal.SecurityIdentifier
 
     try {
         & { $NTAccount.Translate([System.Security.Principal.SecurityIdentifier]) } 2>$null
-    }
-    catch {
+    } catch {
 
         $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
         Write-LogMsg -Text " # '$ServerNetBIOS\$Name' could not be translated from NTAccount to SID: $($_.Exception.Message)" -Cache $Cache
@@ -1490,15 +1474,13 @@ function Resolve-IdRefAppPkgAuth {
             $AccountProperties[$Prop] = $Known.$Prop
         }
 
-    }
-    else {
+    } else {
         $SIDString = $Name
     }
 
     if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
-    }
-    else {
+    } else {
 
         Write-LogMsg -Text "ConvertTo-Fqdn -NetBIOS '$ServerNetBIOS' -Cache `$Cache # cache miss # IdentityReference '$IdentityReference' # Domain NetBIOS '$ServerNetBIOS'" -Cache $Cache
         $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -Cache $Cache
@@ -2035,8 +2017,7 @@ function Resolve-SidAuthority {
         $DirectorySplit['ResolvedDomain'] = $ParentName
         $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath'].Replace($Domain, $ParentName)
 
-    }
-    else {
+    } else {
 
         $DirectorySplit['ResolvedDomain'] = $Domain
         $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath']
@@ -2207,20 +2188,17 @@ function Add-DomainFqdnToLdapPath {
                         #Write-LogMsg -Text " # Domain FQDN already found in the directory path: '$ThisPath'" -Cache $Cache
                         $ThisPath
 
-                    }
-                    else {
+                    } else {
                         $ThisPath.Replace( 'LDAP://', $DomainLdapPath )
                     }
-                }
-                else {
+                } else {
 
                     #Write-LogMsg -Text " # Domain DN not found in the directory path: '$ThisPath'" -Cache $Cache
                     $ThisPath
 
                 }
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg -Text " # Not an expected directory path: '$ThisPath'" -Cache $Cache
                 $ThisPath
@@ -2702,9 +2680,9 @@ function ConvertTo-DecStringRepresentation {
     )
 
     $ByteArray |
-    ForEach-Object {
-        '{0}' -f $_
-    }
+        ForEach-Object {
+            '{0}' -f $_
+        }
 
 }
 function ConvertTo-DistinguishedName {
@@ -2816,8 +2794,7 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain NetBIOS cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($Cache.Value['DomainByNetbios'].Value.Keys -join ',')"
                 Write-LogMsg -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'" -Cache $Cache
@@ -2830,8 +2807,7 @@ function ConvertTo-DistinguishedName {
                 #    Exception calling "InvokeMember" with "5" argument(s): "The specified domain either does not exist or could not be contacted. (0x8007054B)"
                 try {
                     $null = $IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
-                }
-                catch {
+                } catch {
 
                     Write-LogMsg -Text " #Error: $($_.Exception.Message) # For $ThisDomain" -Cache $Cache
                     continue
@@ -2861,8 +2837,7 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain FQDN cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg -Text " # Domain FQDN cache miss for '$ThisDomain'" -Cache $Cache
 
@@ -2958,15 +2933,13 @@ function ConvertTo-DomainNetBIOS {
 
         }
 
-    }
-    else {
+    } else {
 
         $LengthOfNetBIOSName = $DomainFQDN.IndexOf('.')
 
         if ($LengthOfNetBIOSName -eq -1) {
             $DomainFQDN
-        }
-        else {
+        } else {
             $DomainFQDN.Substring(0, $LengthOfNetBIOSName)
         }
 
@@ -3048,8 +3021,7 @@ function ConvertTo-DomainSidString {
 
         try {
             $null = $DomainDirectoryEntry.RefreshCache('objectSid')
-        }
-        catch {
+        } catch {
 
             Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache # LDAP connection failed - $($_.Exception.Message.Replace("`r`n",' ').Trim()) -Cache `$Cache"
             $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -3057,8 +3029,7 @@ function ConvertTo-DomainSidString {
 
         }
 
-    }
-    else {
+    } else {
 
         Write-LogMsg @Log -Text "Find-LocalAdsiServerSid -ComputerName '$DomainDnsName' -Cache `$Cache"
         $DomainSid = Find-LocalAdsiServerSid -ComputerName $DomainDnsName -Cache $Cache
@@ -3074,13 +3045,11 @@ function ConvertTo-DomainSidString {
 
         if ($objectSIDProperty.Value) {
             $SidByteArray = [byte[]]$objectSIDProperty.Value
-        }
-        else {
+        } else {
             $SidByteArray = [byte[]]$objectSIDProperty
         }
 
-    }
-    else {
+    } else {
         $SidByteArray = [byte[]]$DomainDirectoryEntry.objectSid
     }
 
@@ -3089,8 +3058,7 @@ function ConvertTo-DomainSidString {
 
     if ($DomainSid) {
         return $DomainSid
-    }
-    else {
+    } else {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -3196,9 +3164,9 @@ function ConvertTo-HexStringRepresentation {
     )
 
     $SIDHexString = $SIDByteArray |
-    ForEach-Object {
-        '{0:X}' -f $_
-    }
+        ForEach-Object {
+            '{0:X}' -f $_
+        }
     return $SIDHexString
 }
 function ConvertTo-HexStringRepresentationForLDAPFilterString {
@@ -3222,16 +3190,16 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
         [byte[]]$SIDByteArray
     )
     $Hexes = $SIDByteArray |
-    ForEach-Object {
-        '{0:X}' -f $_
-    } |
-    ForEach-Object {
-        if ($_.Length -eq 2) {
-            $_
-        } else {
-            "0$_"
+        ForEach-Object {
+            '{0:X}' -f $_
+        } |
+        ForEach-Object {
+            if ($_.Length -eq 2) {
+                $_
+            } else {
+                "0$_"
+            }
         }
-    }
     "\$($Hexes -join '\')"
 }
 function ConvertTo-SidByteArray {
@@ -3328,7 +3296,7 @@ function Expand-AdsiGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         # The DomainBySid cache must be populated with trusted domains in order to translate foreign security principals
         if ( $DomainBySid.Keys.Count -lt 1 ) {
@@ -3340,8 +3308,7 @@ function Expand-AdsiGroupMember {
                 $null = Get-AdsiServer -Fqdn $TrustedDomain.DomainFqdn -Cache $Cache
             }
 
-        }
-        else {
+        } else {
             #Write-LogMsg @Log -Text '# Valid DomainBySid cache found'
         }
 
@@ -3378,8 +3345,7 @@ function Expand-AdsiGroupMember {
                         Write-LogMsg @Log -Text "`$Principal.RefreshCache('$($PropertiesToLoad -join "','")')"
                         $null = $Principal.RefreshCache($PropertiesToLoad)
 
-                    }
-                    catch {
+                    } catch {
 
                         $Principal = $Entry
                         Write-LogMsg @Log -Text " # SID '$SID' could not be retrieved from domain '$Domain'"
@@ -3400,8 +3366,7 @@ function Expand-AdsiGroupMember {
 
                 }
 
-            }
-            else {
+            } else {
                 $Principal = $Entry
             }
 
@@ -3467,7 +3432,7 @@ function Expand-WinNTGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         $AdsiGroupSplat = @{
             'Cache'            = $Cache
@@ -3492,8 +3457,7 @@ function Expand-WinNTGroupMember {
                 Write-LogMsg @Log -Text " # '$ThisEntry' has no properties"
                 $Cache.Value['LogType'].Value = $StartingLogType
 
-            }
-            elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
+            } elseif ($ThisEntry.Properties['objectClass'] -contains 'group') {
 
                 $Log['Suffix'] = " # Is an ADSI group $Suffix"
                 Write-LogMsg @Log -Text "`$AdsiGroup = Get-AdsiGroup" -Expand $AdsiGroupSplat -ExpansionMap $Cache.Value['LogCacheMap'].Value
@@ -3502,8 +3466,7 @@ function Expand-WinNTGroupMember {
                 Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$AdsiGroup.FullMembers -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
                 Add-SidInfo -InputObject $AdsiGroup.FullMembers -DomainsBySid $DomainBySid
 
-            }
-            else {
+            } else {
 
                 if ($ThisEntry.SchemaClassName -eq 'group') {
 
@@ -3517,8 +3480,7 @@ function Expand-WinNTGroupMember {
 
                     }
 
-                }
-                else {
+                } else {
 
                     $Log['Suffix'] = " # Is a user account $Suffix"
                     Write-LogMsg @Log -Text "Add-SidInfo -InputObject `$ThisEntry -DomainsBySid [ref]`$Cache.Value['DomainBySid']"
@@ -3662,7 +3624,7 @@ function Get-AdsiGroup {
     )
 
     $PropertiesToLoad = $PropertiesToLoad |
-    Sort-Object -Unique
+        Sort-Object -Unique
 
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
@@ -3686,8 +3648,7 @@ function Get-AdsiGroup {
 
             if ($GroupName) {
                 $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
-            }
-            else {
+            } else {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 
@@ -3774,7 +3735,7 @@ function Get-AdsiGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         $SearchParams = @{
             Cache            = $Cache
@@ -3798,16 +3759,14 @@ function Get-AdsiGroupMember {
 
             if ($PrimaryGroupOnly) {
                 $SearchParams['Filter'] = $primaryGroupIdFilter
-            }
-            else {
+            } else {
 
                 if ($NoRecurse) {
 
                     # Non-recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf=$($ThisGroup.Properties['distinguishedname']))"
 
-                }
-                else {
+                } else {
 
                     # Recursive search of the memberOf attribute
                     $MemberOfFilter = "(memberOf:1.2.840.113556.1.4.1941:=$($ThisGroup.Properties['distinguishedname']))"
@@ -3826,13 +3785,11 @@ function Get-AdsiGroupMember {
                     $Domain = ([regex]::Matches($ThisGroup.Path, $DomainRegEx) | ForEach-Object { $_.Value }) -join ','
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath "LDAP://$Domain" -Cache $Cache
 
-                }
-                else {
+                } else {
                     $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
                 }
 
-            }
-            else {
+            } else {
                 $SearchParams['DirectoryPath'] = Add-DomainFqdnToLdapPath -DirectoryPath $ThisGroup.Path -Cache $Cache
             }
 
@@ -3850,7 +3807,7 @@ function Get-AdsiGroupMember {
                 $CurrentADGroupMembers = [System.Collections.Generic.List[System.DirectoryServices.DirectoryEntry]]::new()
 
                 $MembersThatAreGroups = $GroupMemberSearch |
-                Where-Object -FilterScript { $_.Properties['objectClass'] -contains 'group' }
+                    Where-Object -FilterScript { $_.Properties['objectClass'] -contains 'group' }
 
                 $DirectoryEntryParams = @{
                     Cache            = $Cache
@@ -3899,8 +3856,7 @@ function Get-AdsiGroupMember {
 
                 }
 
-            }
-            else {
+            } else {
                 $CurrentADGroupMembers = $null
             }
 
@@ -4100,8 +4056,7 @@ function Get-AdsiServer {
                 Write-LogMsg @Log -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' -Cache `$Cache"
                 $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -Cache $Cache
 
-            }
-            else {
+            } else {
 
                 Write-LogMsg @Log -Text "Get-ParentDomainDnsName -DomainNetbios '$DomainNetBIOS' -CimSession `$CimSession -Cache `$Cache"
                 $ParentDomainDnsName = Get-ParentDomainDnsName -DomainNetbios $DomainNetBIOS -CimSession $CimSession -Cache $Cache
@@ -4193,8 +4148,7 @@ function Get-CurrentDomain {
         Get-AdsiServer -Fqdn $ComputerName -Cache $Cache
         $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$ComputerName]
 
-    }
-    else {
+    } else {
 
         Write-LogMsg -Text "Get-AdsiServer -Fqdn '$($Comp.Domain))' -Cache `$Cache" -Cache $Cache -Suffix " # is either domain-joined or joined to a custom-named workgroup$Suffix"
         Get-AdsiServer -Fqdn $Comp.Domain -Cache $Cache
@@ -4311,22 +4265,20 @@ function Get-DirectoryEntry {
                     $($Credential.GetNetworkCredential().password)
                 )
 
-            }
-            else {
+            } else {
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
             }
 
             $SampleUser = @(
                 $DirectoryEntry.PSBase.Children |
-                Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
-            )[0] |
-            Add-SidInfo -DomainsBySid [ref]$Cache.Value['DomainBySid']
+                    Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
+                )[0] |
+                    Add-SidInfo -DomainsBySid [ref]$Cache.Value['DomainBySid']
 
             $DirectoryEntry |
-            Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+                Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
-        }
-        else {
+        } else {
 
             # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
             Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
@@ -4337,8 +4289,7 @@ function Get-DirectoryEntry {
                     $($Credential.UserName),
                     $($Credential.GetNetworkCredential().password)
                 )
-            }
-            else {
+            } else {
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
             }
 
@@ -4353,8 +4304,7 @@ function Get-DirectoryEntry {
             # If the $DirectoryPath was invalid, this line will return an error
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
 
-        }
-        catch {
+        } catch {
 
             $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
 
@@ -6303,7 +6253,7 @@ function Get-WinNTGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+            Sort-Object -Unique
 
         $Log = @{ 'Cache' = $Cache }
         $DirectoryParams = @{ 'Cache' = $Cache ; 'PropertiesToLoad' = $PropertiesToLoad }
@@ -6358,8 +6308,7 @@ function Get-WinNTGroupMember {
 
                 }
 
-            }
-            else {
+            } else {
                 Write-LogMsg @Log -Text ' # Is not a group'
             }
 
@@ -6423,11 +6372,9 @@ function Invoke-ComObject {
     #>
     If ($Method) {
         $Invoke = 'InvokeMethod'
-    }
-    ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
+    } ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
         $Invoke = 'SetProperty'
-    }
-    Else {
+    } Else {
         $Invoke = 'GetProperty'
     }
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
@@ -6578,8 +6525,7 @@ function New-FakeDirectoryEntry {
     $SID = $Properties['SID']
     if ($SID) {
         $Properties['objectSid'] = ConvertTo-SidByteArray -SidString $SID
-    }
-    else {
+    } else {
         $Properties['objectSid'] = $null
     }
 
@@ -6667,8 +6613,7 @@ function Resolve-IdentityReference {
         $Name = $IdentityReference
         $Domain = ''
 
-    }
-    else {
+    } else {
 
         $StartIndex = $LastSlashIndex + 1
         $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
@@ -6718,8 +6663,7 @@ function Resolve-IdentityReference {
 
         if ($TryGetValueResult) {
             #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache hit for '$ServerNetBIOS'" -Cache $Cache
-        }
-        else {
+        } else {
 
             #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache miss for '$ServerNetBIOS'" -Cache $Cache
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -Cache $Cache
@@ -6753,8 +6697,7 @@ function Resolve-IdentityReference {
             $Name = $IdentityReference
             Write-LogMsg -Text " # IdentityReference '$IdentityReference' # No name could be parsed." -Cache $Cache
 
-        }
-        else {
+        } else {
             Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Name parsed is '$Name'." -Cache $Cache
         }
 
@@ -6918,6 +6861,7 @@ ForEach ($ThisFile in $CSharpFiles) {
 #>
 
 Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashTable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
+
 
 
 

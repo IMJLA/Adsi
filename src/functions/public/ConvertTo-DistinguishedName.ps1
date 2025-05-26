@@ -107,8 +107,7 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain NetBIOS cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg -Text " # Domain NetBIOS cache miss for '$ThisDomain'. Available keys: $($Cache.Value['DomainByNetbios'].Value.Keys -join ',')"
                 Write-LogMsg -Text "`$IADsNameTranslateComObject = New-Object -comObject 'NameTranslate' # For '$ThisDomain'" -Cache $Cache
@@ -121,8 +120,7 @@ function ConvertTo-DistinguishedName {
                 #    Exception calling "InvokeMember" with "5" argument(s): "The specified domain either does not exist or could not be contacted. (0x8007054B)"
                 try {
                     $null = $IADsNameTranslateInterface.InvokeMember('Init', 'InvokeMethod', $Null, $IADsNameTranslateComObject, ($ChosenInitType, $Null))
-                }
-                catch {
+                } catch {
 
                     Write-LogMsg -Text " #Error: $($_.Exception.Message) # For $ThisDomain" -Cache $Cache
                     continue
@@ -152,8 +150,7 @@ function ConvertTo-DistinguishedName {
                 #Write-LogMsg -Text " # Domain FQDN cache hit for '$ThisDomain'" -Cache $Cache
                 $DomainCacheResult.DistinguishedName
 
-            }
-            else {
+            } else {
 
                 #Write-LogMsg -Text " # Domain FQDN cache miss for '$ThisDomain'" -Cache $Cache
 

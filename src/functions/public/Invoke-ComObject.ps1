@@ -53,11 +53,9 @@ function Invoke-ComObject {
     #>
     If ($Method) {
         $Invoke = 'InvokeMethod'
-    }
-    ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
+    } ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
         $Invoke = 'SetProperty'
-    }
-    Else {
+    } Else {
         $Invoke = 'GetProperty'
     }
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)

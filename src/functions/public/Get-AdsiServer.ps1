@@ -185,8 +185,7 @@ function Get-AdsiServer {
                 Write-LogMsg @Log -Text "ConvertTo-Fqdn -DistinguishedName '$DomainDn' -Cache `$Cache"
                 $DomainDnsName = ConvertTo-Fqdn -DistinguishedName $DomainDn -Cache $Cache
 
-            }
-            else {
+            } else {
 
                 Write-LogMsg @Log -Text "Get-ParentDomainDnsName -DomainNetbios '$DomainNetBIOS' -CimSession `$CimSession -Cache `$Cache"
                 $ParentDomainDnsName = Get-ParentDomainDnsName -DomainNetbios $DomainNetBIOS -CimSession $CimSession -Cache $Cache

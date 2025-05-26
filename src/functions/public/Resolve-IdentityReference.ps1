@@ -68,8 +68,7 @@ function Resolve-IdentityReference {
         $Name = $IdentityReference
         $Domain = ''
 
-    }
-    else {
+    } else {
 
         $StartIndex = $LastSlashIndex + 1
         $Name = $IdentityReference.Substring( $StartIndex , $IdentityReference.Length - $StartIndex )
@@ -119,8 +118,7 @@ function Resolve-IdentityReference {
 
         if ($TryGetValueResult) {
             #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache hit for '$ServerNetBIOS'" -Cache $Cache
-        }
-        else {
+        } else {
 
             #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Domain NetBIOS cache miss for '$ServerNetBIOS'" -Cache $Cache
             $CacheResult = Get-AdsiServer -Netbios $ServerNetBIOS -Cache $Cache
@@ -154,8 +152,7 @@ function Resolve-IdentityReference {
             $Name = $IdentityReference
             Write-LogMsg -Text " # IdentityReference '$IdentityReference' # No name could be parsed." -Cache $Cache
 
-        }
-        else {
+        } else {
             Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Name parsed is '$Name'." -Cache $Cache
         }
 

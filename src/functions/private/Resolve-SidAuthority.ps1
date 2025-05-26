@@ -53,8 +53,7 @@ function Resolve-SidAuthority {
         $DirectorySplit['ResolvedDomain'] = $ParentName
         $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath'].Replace($Domain, $ParentName)
 
-    }
-    else {
+    } else {
 
         $DirectorySplit['ResolvedDomain'] = $Domain
         $DirectorySplit['ResolvedDirectoryPath'] = $DirectorySplit['DirectoryPath']

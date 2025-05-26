@@ -74,7 +74,7 @@ function Get-AdsiGroup {
     )
 
     $PropertiesToLoad = $PropertiesToLoad |
-    Sort-Object -Unique
+        Sort-Object -Unique
 
     switch -Regex ($DirectoryPath) {
         '^WinNT' {
@@ -98,8 +98,7 @@ function Get-AdsiGroup {
 
             if ($GroupName) {
                 $GroupParams['Filter'] = "(&(objectClass=group)(cn=$GroupName))"
-            }
-            else {
+            } else {
                 $GroupParams['Filter'] = '(objectClass=group)'
             }
 

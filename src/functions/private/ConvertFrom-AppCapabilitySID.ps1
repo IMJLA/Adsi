@@ -212,8 +212,7 @@ function ConvertFrom-AppCapabilitySid {
     $KnownGuid = $KnownDeviceInterfaceGuids[$Guid]
     if ($KnownGuid) {
         return $KnownGuid
-    }
-    else {
+    } else {
         return [PSCustomObject]@{
             'SID'             = $SID
             'Description'     = "Apps w/ access to app capability {$Guid}"

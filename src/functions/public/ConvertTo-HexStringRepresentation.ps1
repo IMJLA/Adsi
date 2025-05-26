@@ -20,8 +20,8 @@ function ConvertTo-HexStringRepresentation {
     )
 
     $SIDHexString = $SIDByteArray |
-    ForEach-Object {
-        '{0:X}' -f $_
-    }
+        ForEach-Object {
+            '{0:X}' -f $_
+        }
     return $SIDHexString
 }

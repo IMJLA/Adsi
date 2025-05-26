@@ -40,8 +40,7 @@ function Get-CurrentDomain {
         Get-AdsiServer -Fqdn $ComputerName -Cache $Cache
         $Cache.Value['ThisParentDomain'] = [ref]$Cache.Value['DomainByFqdn'].Value[$ComputerName]
 
-    }
-    else {
+    } else {
 
         Write-LogMsg -Text "Get-AdsiServer -Fqdn '$($Comp.Domain))' -Cache `$Cache" -Cache $Cache -Suffix " # is either domain-joined or joined to a custom-named workgroup$Suffix"
         Get-AdsiServer -Fqdn $Comp.Domain -Cache $Cache

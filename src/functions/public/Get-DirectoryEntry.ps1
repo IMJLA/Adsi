@@ -106,22 +106,20 @@ function Get-DirectoryEntry {
                     $($Credential.GetNetworkCredential().password)
                 )
 
-            }
-            else {
+            } else {
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
             }
 
             $SampleUser = @(
                 $DirectoryEntry.PSBase.Children |
-                Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
-            )[0] |
-            Add-SidInfo -DomainsBySid [ref]$Cache.Value['DomainBySid']
+                    Where-Object -FilterScript { $_.schemaclassname -eq 'user' }
+                )[0] |
+                    Add-SidInfo -DomainsBySid [ref]$Cache.Value['DomainBySid']
 
             $DirectoryEntry |
-            Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
+                Add-Member -MemberType NoteProperty -Name 'Domain' -Value $SampleUser.Domain -Force
 
-        }
-        else {
+        } else {
 
             # Otherwise the DirectoryPath is an LDAP path or a WinNT path (treated the same at this stage)
             Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::new('$DirectoryPath')"
@@ -132,8 +130,7 @@ function Get-DirectoryEntry {
                     $($Credential.UserName),
                     $($Credential.GetNetworkCredential().password)
                 )
-            }
-            else {
+            } else {
                 $DirectoryEntry = [System.DirectoryServices.DirectoryEntry]::new($DirectoryPath)
             }
 
@@ -148,8 +145,7 @@ function Get-DirectoryEntry {
             # If the $DirectoryPath was invalid, this line will return an error
             $null = $DirectoryEntry.RefreshCache($PropertiesToLoad)
 
-        }
-        catch {
+        } catch {
 
             $Log['Type'] = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
 

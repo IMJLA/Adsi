@@ -81,8 +81,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
             $DomainDn = $DomainNetbiosCacheResult.DistinguishedName
             $SearchSplat['DirectoryPath'] = "LDAP://$($DomainNetbiosCacheResult.Dns)/$DomainDn"
 
-        }
-        else {
+        } else {
 
             #Write-LogMsg @Log -Text " # Domain NetBIOS cache miss for '$DomainNetBIOS'" -Cache $Cache
 
@@ -100,8 +99,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
-        }
-        catch {
+        } catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -113,8 +111,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         if ($DirectoryEntry) { return $DirectoryEntry }
 
-    }
-    elseif (
+    } elseif (
         $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-') + 1) -eq $CurrentDomain.Value.SIDString
     ) {
 
@@ -153,8 +150,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         try {
             $DirectoryEntry = Search-Directory @DirectoryParams @SearchSplat
-        }
-        catch {
+        } catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -211,8 +207,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
             $DomainNetBIOS = $DomainObject.Netbios
             $DomainDN = $DomainObject.DistinguishedName
 
-        }
-        else {
+        } else {
 
             $DirectoryPath = "WinNT://$DomainNetBIOS/Users"
             $DomainDn = ConvertTo-DistinguishedName -Domain $DomainNetBIOS -Cache $Cache
@@ -223,8 +218,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
         try {
             $UsersGroup = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
-        }
-        catch {
+        } catch {
 
             $StartingLogType = $Cache.Value['LogType'].Value
             $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
@@ -238,9 +232,9 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -Cache $Cache
 
         $DirectoryEntry = $MembersOfUsersGroup |
-        Where-Object -FilterScript {
+            Where-Object -FilterScript {
             ($SamAccountNameOrSid -eq $([System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'], 0)))
-        }
+            }
 
         return $DirectoryEntry
 
@@ -251,8 +245,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
     if ($DomainNetbiosCacheResult) {
         $DirectoryPath = "WinNT://$($DomainNetbiosCacheResult.Dns)/$SamAccountNameOrSid"
-    }
-    else {
+    } else {
         $DirectoryPath = "WinNT://$DomainNetBIOS/$SamAccountNameOrSid"
     }
 
@@ -260,8 +253,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
     try {
         $DirectoryEntry = Get-DirectoryEntry -DirectoryPath $DirectoryPath @DirectoryParams
-    }
-    catch {
+    } catch {
 
         $StartingLogType = $Cache.Value['LogType'].Value
         $Cache.Value['LogType'].Value = 'Warning' # PS 5.1 can't override the Splat by calling the param, so we must update the splat manually
