@@ -348,6 +348,7 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
     foreach ($File in $ScriptFiles) {
 
         $CurrentDirectory = [IO.Directory]::GetCurrentDirectory()
+        Write-InfoColor "`t# Current Directory: $CurrentDirectory"
         $RelativePath = [IO.Path]::GetRelativePath($CurrentDirectory, $File.FullName)
 
         # Read the original content of the file
