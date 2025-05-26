@@ -12,7 +12,7 @@
     RootModule        = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion     = '5.0.134'
+    ModuleVersion     = '5.0.128'
 
     # ID used to uniquely identify this module
     GUID              = '282a2aed-9567-49a1-901c-122b7831a805'
@@ -38,10 +38,16 @@
     # Minimum version of the PowerShell host required by this module
     # PowerShellHostVersion = ''
 
-    # Minimum version of Microsoft .NET Framework required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
+    <#
+    Minimum version of Microsoft .NET Framework required by this module.
+    This prerequisite is valid for the PowerShell Desktop edition only.
+    #>
     # DotNetFrameworkVersion = ''
 
-    # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
+    <#
+    Minimum version of the common language runtime (CLR) required by this module.
+    This prerequisite is valid for the PowerShell Desktop edition only.
+    #>
     # ClrVersion = ''
 
     # Processor architecture (None, X86, Amd64) required by this module
@@ -65,10 +71,25 @@
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     # NestedModules = @()
 
-    # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
+    <#
+    Functions to export from this module
+    For best performance, do not use wildcards.
+    For best performance, do not delete the entry if there are no Functions to export. Use an empty array.
+    #>
     FunctionsToExport = @('Add-DomainFqdnToLdapPath','Add-SidInfo','ConvertFrom-DirectoryEntry','ConvertFrom-PropertyValueCollectionToString','ConvertFrom-ResolvedID','ConvertFrom-ResultPropertyValueCollectionToString','ConvertFrom-SearchResult','ConvertFrom-SidString','ConvertTo-DecStringRepresentation','ConvertTo-DistinguishedName','ConvertTo-DomainNetBIOS','ConvertTo-DomainSidString','ConvertTo-Fqdn','ConvertTo-HexStringRepresentation','ConvertTo-HexStringRepresentationForLDAPFilterString','ConvertTo-SidByteArray','Expand-AdsiGroupMember','Expand-WinNTGroupMember','Find-LocalAdsiServerSid','Get-AdsiGroup','Get-AdsiGroupMember','Get-AdsiServer','Get-CurrentDomain','Get-DirectoryEntry','Get-KnownCaptionHashTable','Get-KnownSid','Get-KnownSidByName','Get-KnownSidHashTable','Get-ParentDomainDnsName','Get-TrustedDomain','Get-WinNTGroupMember','Invoke-ComObject','New-FakeDirectoryEntry','Resolve-IdentityReference','Resolve-ServiceNameToSID','Search-Directory')
-    # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
+
+    <#
+    Cmdlets to export from this module
+    For best performance, do not use wildcards.
+    For best performance, do not delete the entry if there are no Cmdlets to export. Use an empty array.
+    #>
     CmdletsToExport   = @()
+
+    <#
+    Aliases to export from this module
+    For best performance, do not use wildcards.
+    For best performance, do not delete the entry if there are no Aliases to export. Use an empty array.
+    #>
     AliasesToExport   = @()
 
     # DSC resources to export from this module
@@ -80,7 +101,10 @@
     # List of all files packaged with this module
     # FileList = @()
 
-    # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
+    <#
+    Private data to pass to the module specified in RootModule/ModuleToProcess.
+    This may also contain a PSData hashtable with additional module metadata used by PowerShell.
+    #>
     PrivateData       = @{
 
         PSData = @{
