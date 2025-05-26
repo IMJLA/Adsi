@@ -189,6 +189,8 @@ Properties {
     # Online help website will be created in this folder.
     [string]$DocsOnlineHelpDir = [IO.Path]::Combine($DocsOnlineHelpRoot, $ModuleName)
 
+    $OnlineHelpSourceMarkdown = [IO.Path]::Combine($DocsOnlineHelpDir, 'docs')
+
     $DocsOnlineStaticImageDir = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'img')
 
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
@@ -212,89 +214,7 @@ FormatTaskName {
 
 }
 
-Task Default -depends SetLocation, DeleteOldBuilds, ReturnToStartingLocation
-
-$FindLintPrerequisites = {
-
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
-
-    if ($LintEnabled) {
-        Write-InfoColor "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
-        [boolean](Get-Module -Name PSScriptAnalyzer -ListAvailable)
-    }
-    else {
-        Write-InfoColor "`tLinting is disabled. Skipping PSScriptAnalyzer check."
-    }
-
-}
-
-$FindBuildPrerequisite = {
-
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindBuildPrerequisite$NewLine" -ForegroundColor Blue
-
-    if ($BuildCompileModule) {
-        Write-InfoColor "`tGet-Module -Name PowerShellBuild -ListAvailable"
-        [boolean](Get-Module -Name PowerShellBuild -ListAvailable)
-    }
-    else {
-        Write-InfoColor "`tBuilding is disabled. Skipping PowerShellBuild check."
-    }
-
-}
-
-$FindUnitTestPrerequisite = {
-
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindUnitTestPrerequisite$NewLine" -ForegroundColor Blue
-
-    if ($TestEnabled) {
-        Write-InfoColor "`tGet-Module -Name Pester -ListAvailable"
-        [boolean](Get-Module -Name Pester -ListAvailable)
-    }
-    else {
-        Write-InfoColor "`tUnit testing is disabled. Skipping Pester check."
-    }
-
-}
-
-$FindDocsPrerequisite = {
-
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindDocsPrerequisite$NewLine" -ForegroundColor Blue
-
-    Write-InfoColor "`tGet-Module -Name PlatyPS -ListAvailable"
-    [boolean](Get-Module -Name PlatyPS -ListAvailable)
-
-}
-
-$FindDocsUpdateablePrerequisite = {
-
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindDocsUpdateablePrerequisite$NewLine" -ForegroundColor Blue
-
-    if ($FindDocsPrerequisite) {
-
-        Write-InfoColor "`tGet-CimInstance -ClassName CIM_OperatingSystem"
-        $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
-
-        if ($OS -match 'Windows') {
-
-            Write-InfoColor "`tGet-Command -Name MakeCab.exe"
-            [boolean](Get-Command -Name MakeCab.exe)
-
-        }
-        else {
-            Write-InfoColor "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation."
-        }
-
-    }
-    else {
-        Write-InfoColor "`tPrerequisite module PlatyPS not found so Markdown docs will not be generated or converted to MAML for input to MakeCab.exe. Skipping Updateable Help generation."
-    }
-
-}
+Task Default -depends ReturnToStartingLocation -description 'Run the default build tasks'
 
 Task SetLocation -action {
 
@@ -312,7 +232,20 @@ Task TestModuleManifest -depends SetLocation -action {
 
 } -description 'Validate the module manifest'
 
-Task Lint -precondition $FindLintPrerequisites -depends TestModuleManifest -action {
+Task FindLintPrerequisite -depends TestModuleManifest -action {
+
+    if ($TestEnabled) {
+        Write-Information "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
+        $script:FindLintPrerequisites = [boolean](Get-Module -Name PSScriptAnalyzer -ListAvailable)
+    }
+    else {
+        Write-InfoColor "`t'PSScriptAnalyzer' PowerShell module is not installed. Linting will be skipped." -ForegroundColor Cyan
+        $script:FindLintPrerequisites = $false
+    }
+
+} -description 'Find the PSScriptAnalyzer module for linting the source code.'
+
+Task Lint -depends FindLintPrerequisite -precondition { $script:FindLintPrerequisites } -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Severity '$LintSeverityThreshold' -Recurse -Verbose:$VerbosePreference"
     $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -Verbose:$VerbosePreference
@@ -387,11 +320,24 @@ Task FindBuildCopyDirectories -depends ExportPublicFunctions -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Find-BuildCopyDirectory.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory @('$($BuildCopyDirectories -join "','")')"
-    & $ScriptToRun -BuildCopyDirectory $BuildCopyDirectories
+    $Script:CopyDirectories = & $ScriptToRun -BuildCopyDirectory $BuildCopyDirectories
 
 } -description 'Find all directories to copy to the build output directory, excluding empty directories'
 
-Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrerequisite -action {
+Task FindBuildPrerequisite -depends FindBuildCopyDirectories -action {
+
+    if ($BuildCompileModule) {
+        Write-InfoColor "`tGet-Module -Name PowerShellBuild -ListAvailable"
+        $script:FindBuildPrerequisite = [boolean](Get-Module -name PowerShellBuild -ListAvailable)
+    }
+    else {
+        Write-InfoColor "`tBuilding is disabled. Build will fail."
+        $script:FindBuildPrerequisite = $false
+    }
+
+} -description 'Find the PowerShellBuild module for building the PowerShell module.'
+
+Task BuildModule -depends FindBuildPrerequisite -precondition { $script:FindBuildPrerequisite } -action {
 
     $buildParams = @{
         Path               = $SourceCodeDir
@@ -410,7 +356,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -443,16 +389,23 @@ Task DeleteOldBuilds -depends FixModule -action {
 
 } -description 'Delete old builds'
 
-Task CreateMarkdownHelpFolder -depends DeleteOldBuilds -action {
+Task FindDocsPrerequisite -depends DeleteOldBuilds -action {
+
+    Write-InfoColor "`tGet-Module -Name PlatyPS -ListAvailable"
+    $script:FindDocsPrerequisite = [boolean](Get-Module -Name PlatyPS -ListAvailable)
+
+} -description 'Find the PlatyPS module for generating Markdown help documentation.'
+
+Task CreateMarkdownHelpFolder -depends FindDocsPrerequisite -action {
 
     Write-Information "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the Markdown help documentation.'
 
-Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition { $FindDocsPrerequisite } -action {
+Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition { $script:FindDocsPrerequisite } -action {
 
-    $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $HelpDefaultLocale)
+    $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
     Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $MarkdownDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
@@ -483,7 +436,7 @@ Task UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
 
 } -description 'Update existing Markdown help files using PlatyPS.'
 
-Task BuildMarkdownHelp -depends UpdateMarkDownHelp -precondition $FindDocsPrerequisite -action {
+Task BuildMarkdownHelp -depends UpdateMarkDownHelp -precondition { $script:FindDocsPrerequisite } -action {
 
     try {
 
@@ -513,7 +466,7 @@ Task FixMarkdownHelp -depends BuildMarkdownHelp -action {
     Write-InfoColor "`t& '$ScriptToRun' -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine `$NewLine -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles"
     & $ScriptToRun -BuildOutputDir $script:BuildOutputDir -ModuleName $ModuleName -DocsMarkdownDefaultLocaleDir $DocsMarkdownDefaultLocaleDir -NewLine $NewLine -DocsDefaultLocale $DocsDefaultLocale -PublicFunctionFiles $script:PublicFunctionFiles
 
-}
+} -description 'Fix Markdown help files for proper formatting and parameter documentation.'
 
 Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
@@ -522,7 +475,7 @@ Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
 } -description 'Create a folder for the MAML help files.'
 
-Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -precondition { $FindDocsPrerequisite } -action {
+Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -precondition { $script:FindDocsPrerequisite } -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsMamlDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
@@ -550,14 +503,42 @@ Task CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
 } -description 'Create a folder for the Updateable help files.'
 
-Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -precondition { $FindDocsPrerequisite } -action {
+Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -precondition { $script:FindDocsPrerequisite } -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsUpdateableDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
 } -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
 
-Task BuildUpdatableHelp -depends DeleteUpdateableHelp -precondition $FindDocsUpdateablePrerequisite -action {
+Task FindDocsUpdateablePrerequisite -depends DeleteUpdateableHelp -action {
+
+    $script:FindDocsUpdateablePrerequisite = $false
+    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
+    Write-InfoColor "FindDocsUpdateablePrerequisite$NewLine" -ForegroundColor Blue
+
+    if ($script:FindDocsPrerequisite) {
+
+        Write-InfoColor "`tGet-CimInstance -ClassName CIM_OperatingSystem"
+        $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
+
+        if ($OS -match 'Windows') {
+
+            Write-InfoColor "`tGet-Command -Name MakeCab.exe"
+            $script:FindDocsUpdateablePrerequisite = [boolean](Get-Command -Name MakeCab.exe)
+
+        }
+        else {
+            Write-InfoColor "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation."
+        }
+
+    }
+    else {
+        Write-InfoColor "`tPrerequisite module PlatyPS not found so Markdown docs will not be generated or converted to MAML for input to MakeCab.exe. Skipping Updateable Help generation."
+    }
+
+} -description 'Find prerequisites for creating updatable help files.'
+
+Task BuildUpdatableHelp -depends FindDocsUpdateablePrerequisite -precondition { $script:FindDocsUpdateablePrerequisite } -action {
 
     $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
@@ -577,40 +558,45 @@ Task BuildUpdatableHelp -depends DeleteUpdateableHelp -precondition $FindDocsUpd
 
 Task FindNodeJS -depends BuildUpdatableHelp -action {
 
+    $script:NodeJSPrerequisite = $false
     Write-Information "`tGet-Command -Name node -ErrorAction SilentlyContinue"
-    $NodeCommand = Get-Command -Name node -ErrorAction SilentlyContinue
+    $NodeCommand = Get-Command -name node -ErrorAction SilentlyContinue
+
     if ($NodeCommand) {
 
         Write-InfoColor "`t& node -v 2>`$null"
         $NodeJsVersion = & node -v 2>$null
 
-        if ([version]($NodeJsVersion.Replace('v', '')) -lt [version]'18.0.0') {
+        if ($NodeJsVersion -and [version]($NodeJsVersion.Replace('v', '')) -lt [version]'18.0.0') {
             Write-Warning "Node.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Please update Node.js to continue."
-            Exit 1
+        }
+        else {
+            $script:NodeJSPrerequisite = $true
         }
 
     }
     else {
         Write-Warning 'Node.js is not installed or not found in the PATH. Please install Node.js to continue.'
-        Exit 1
     }
 
 } -description 'Find Node.js installation.'
 
-Task CreateOnlineHelpFolder -depends FindNodeJS -action {
+Task CreateOnlineHelpFolder -depends FindNodeJS -precondition { $script:NodeJSPrerequisite } -action {
 
     Write-Information "`tNew-Item -Path '$DocsOnlineHelpRoot' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsOnlineHelpRoot -ItemType Directory -ErrorAction SilentlyContinue
 
-} -description 'Create a folder for the Markdown help documentation.'
+} -description 'Create a folder for the Online Help website.'
 
-$OnlineHelpDoesNotExist = {
+Task FindOnlineHelpPrerequisite -depends CreateOnlineHelpFolder -action {
+
     Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq '$ModuleName' } | Measure-Object | Select-Object -ExpandProperty Count"
     $OnlineHelpExists = (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ModuleName } | Measure-Object).Count
-    $OnlineHelpExists -eq 0
-}
+    [boolean]$script:OnlineHelpDoesNotExist = $OnlineHelpExists -eq 0
 
-Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -precondition $OnlineHelpDoesNotExist -action {
+} -description 'Find the Docusaurus module for creating the Online Help website.'
+
+Task CreateOnlineHelpScaffolding -depends FindOnlineHelpPrerequisite -precondition { $script:OnlineHelpDoesNotExist } -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
@@ -646,20 +632,27 @@ Task InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action 
 
 Task CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -action {
 
-    $OnlineHelpSourceMarkdown = [IO.Path]::Combine($DocsOnlineHelpDir, 'docs')
     $MarkdownSourceCode = [IO.Path]::Combine($SourceCodeDir, 'docs')
     $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory -Exclude 'UpdatableHelp').Name
 
     ForEach ($Locale in $helpLocales) {
-        Write-Information "`tCopy-Item -Path '$DocsMarkdownDir\*' -Destination '$OnlineHelpSourceMarkdown' -Recurse"
+        Write-Information "`tCopy-Item -Path '$DocsMarkdownDir\*' -Destination '$OnlineHelpSourceMarkdown' -Recurse -Force"
         Copy-Item -Path "$DocsMarkdownDir\*" -Destination $OnlineHelpSourceMarkdown -Recurse -Force
-        Write-Information "`tCopy-Item -Path '$MarkdownSourceCode\*' -Destination '$OnlineHelpSourceMarkdown\$Locale' -Recurse"
+        Write-Information "`tCopy-Item -Path '$MarkdownSourceCode\*' -Destination '$OnlineHelpSourceMarkdown\$Locale' -Recurse -Force"
         Copy-Item -Path "$MarkdownSourceCode\*" -Destination "$OnlineHelpSourceMarkdown\$Locale" -Recurse -Force
     }
 
-}
+} -description 'Copy Markdown help files as source for online help website.'
 
-Task BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
+Task PrepareMarkdownForDocusaurusBuild -depends CopyMarkdownAsSourceForOnlineHelp -action {
+
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'ConvertTo-DocusaurusMarkdown.ps1')
+    Write-Information "`t& '$ScriptToRun' -Path '$OnlineHelpSourceMarkdown'"
+    & $ScriptToRun -Path $OnlineHelpSourceMarkdown
+
+} -description 'Prepare Markdown files for Docusaurus build.'
+
+Task BuildArt -depends PrepareMarkdownForDocusaurusBuild -action {
 
     $null = New-Item -ItemType Directory -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
 
@@ -701,7 +694,20 @@ Task BuildOnlineHelpWebsite -depends ConvertArt -action {
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
-Task UnitTests -depends BuildOnlineHelpWebsite -precondition $FindUnitTestPrerequisite -action {
+Task FindUnitTestPrerequisite -depends BuildOnlineHelpWebsite -action {
+
+    if ($TestEnabled) {
+        Write-Information "`tGet-Module -Name Pester -ListAvailable"
+        $script:FindUnitTestPrerequisite = [boolean](Get-Module -Name Pester -ListAvailable)
+    }
+    else {
+        $script:FindUnitTestPrerequisite = $false
+        Write-InfoColor "`t'Pester' PowerShell module is not installed. Unit testing will be skipped." -ForegroundColor Cyan
+    }
+
+} -description "Find the 'Pester' PowerShell module for performing unit tests."
+
+Task UnitTests -depends FindUnitTestPrerequisite -precondition { $script:FindUnitTestPrerequisite } -action {
 
     Write-InfoColor "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
@@ -739,6 +745,7 @@ Task CreateGitHubRelease -depends SourceControl -action {
 } -description 'Create a GitHub release and upload the module files to it'
 
 Task Publish -depends CreateGitHubRelease -action {
+
     Assert -conditionToCheck ($PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
 
     $publishParams = @{
@@ -768,6 +775,7 @@ Task Publish -depends CreateGitHubRelease -action {
 
 Task AwaitRepoUpdate -depends Publish -action {
     $timer = 30
+    $timeout = 60
     do {
         Start-Sleep -Seconds 1
         $timer++
@@ -812,13 +820,13 @@ Task Reinstall -depends Uninstall -action {
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
-}
+} -description 'Remove script-scoped variables to clean up the environment.'
 
 Task ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
     Set-Location $StartingLocation
-}
+} -description 'Return to the original working directory.'
 
 Task ? -description 'Lists the available tasks' -action {
     'Available tasks:'

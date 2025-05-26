@@ -90,7 +90,6 @@ ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
     # Add PowerShell syntax highlighting
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\x60\x60\x60\r*\n(?!\r*\n)', "``````powershell`n"
 
-
     Write-Verbose "`tSet-Content -LiteralPath '$ThisFunctionHelpFile' -Value `$ThisFunctionHelp"
     Set-Content -LiteralPath $ThisFunctionHelpFile -Value $ThisFunctionHelp
 }

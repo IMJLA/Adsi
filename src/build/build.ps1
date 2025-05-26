@@ -54,10 +54,6 @@ if ($Bootstrap.IsPresent) {
     }
 }
 
-if (-not $NoPublish) {
-    $Task.Add('Publish')
-}
-
 if ($IncrementMajorVersion) {
     $Properties['IncrementMajorVersion'] = $true
 }
