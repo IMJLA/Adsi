@@ -52,19 +52,21 @@ function Resolve-IdRefAppPkgAuth {
 
     if ($null -ne $Known) {
 
-        $SIDString = $Known.SID        
+        $SIDString = $Known.SID
 
         ForEach ($Prop in $Known.PSObject.Properties.GetEnumerator().Name) {
             $AccountProperties[$Prop] = $Known.$Prop
         }
 
-    } else {
+    }
+    else {
         $SIDString = $Name
     }
 
     if ($TryGetValueResult) {
         $DomainDns = $DomainCacheResult.Dns
-    } else {
+    }
+    else {
 
         Write-LogMsg -Text "ConvertTo-Fqdn -NetBIOS '$ServerNetBIOS' -Cache `$Cache # cache miss # IdentityReference '$IdentityReference' # Domain NetBIOS '$ServerNetBIOS'" -Cache $Cache
         $DomainDns = ConvertTo-Fqdn -NetBIOS $ServerNetBIOS -Cache $Cache
