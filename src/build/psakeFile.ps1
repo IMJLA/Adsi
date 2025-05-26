@@ -347,7 +347,8 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
 
     foreach ($File in $ScriptFiles) {
 
-        $RelativePath = $File.FullName.Substring($SourceCodeDir.Length + 1)
+        $AbsoluteSourceCodeDir = [IO.Path]::GetFullPath($SourceCodeDir)
+        $RelativePath = [IO.Path]::GetRelativePath($AbsoluteSourceCodeDir, $File.FullName)
 
         # Read the original content of the file
         Write-Verbose "`t`$OriginalContent = Get-Content -Path '$RelativePath' -Raw -ErrorAction Stop"
@@ -356,7 +357,7 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         # Check current file encoding
         $FileBytes = [System.IO.File]::ReadAllBytes($File.FullName)
         $HasBOM = $FileBytes.Length -ge 3 -and $FileBytes[0] -eq 0xEF -and $FileBytes[1] -eq 0xBB -and $FileBytes[2] -eq 0xBF
-        
+
         <#
         Normalize line endings to Windows format (CRLF) before formatting
         In addition to ensuring consistency this prevents the following error from Invoke-Formatter:
@@ -374,14 +375,14 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         $EncodingNeedsUpdate = -not $HasBOM
 
         if ($ContentChanged -or $EncodingNeedsUpdate) {
-            
+
             if ($ContentChanged -and $EncodingNeedsUpdate) {
                 Write-InfoColor "`tSet-Content -Path '$RelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
                 Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
             }
 
         }
-        
+
     }
 
     Write-InfoColor "`t# Successfully formatted PowerShell script files and ensured UTF8 with BOM encoding." -ForegroundColor Green
