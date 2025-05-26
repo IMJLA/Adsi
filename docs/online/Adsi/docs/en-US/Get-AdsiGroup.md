@@ -25,24 +25,18 @@ Both the WinNT and LDAP providers are supported
 
 ### EXAMPLE 1
 ```powershell
-Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators -Cache $Cache
+Get-AdsiGroup -DirectoryPath 'WinNT://WORKGROUP/localhost' -GroupName Administrators
 ```
 
-Retrieves the local Administrators group from the specified computer using the WinNT provider,
-and returns all member accounts as DirectoryEntry objects.
-This allows for complete analysis
-of local group memberships including nested groups and domain accounts that have been added to
-local groups.
+Get members of the local Administrators group
 
 ### EXAMPLE 2
 ```powershell
-Get-AdsiGroup -GroupName Administrators -Cache $Cache
+Get-AdsiGroup -GroupName Administrators
 ```
 
-On a domain-joined computer, retrieves the domain's Administrators group and all of its members.
-On a workgroup computer, retrieves the local Administrators group and its members.
-This automatic
-detection simplifies scripts that need to work in both domain and workgroup environments.
+On a domain-joined computer, this will get members of the domain's Administrators group
+On a workgroup computer, this will get members of the local Administrators group
 
 ## PARAMETERS
 
@@ -87,20 +81,6 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -1067,16 +1067,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
     if (Get-Module -name $ModuleName -ListAvailable) {
-        Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -name $ModuleName -AllVersions
-
-        # Test if uninstall was successful
-        if (-not (Get-Module -name $ModuleName -ListAvailable)) {
-            Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
-        }
-        else {
-            Write-Error "Failed to uninstall all versions of module $ModuleName"
-        }
+        Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
+        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
+        Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     }
     else {
         Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green

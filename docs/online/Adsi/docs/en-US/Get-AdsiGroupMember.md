@@ -25,16 +25,10 @@ Return the group's DirectoryEntry plus a FullMembers property containing the mem
 
 ### EXAMPLE 1
 ```powershell
-[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
-Get-AdsiGroupMember -Cache $Cache
+[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') | Get-AdsiGroupMember
 ```
 
-Retrieves all members of the domain's Administrators group, including both direct members and those
-who inherit membership through their primary group.
-The function returns the original group DirectoryEntry
-object with an added FullMembers property containing all member DirectoryEntry objects.
-This
-approach ensures proper resolution of all group memberships regardless of how they are assigned.
+Get members of the domain Administrators group
 
 ## PARAMETERS
 
@@ -98,20 +92,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

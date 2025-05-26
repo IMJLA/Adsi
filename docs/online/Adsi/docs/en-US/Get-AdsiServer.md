@@ -25,21 +25,17 @@ Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
 
 ### EXAMPLE 1
 ```powershell
-Get-AdsiServer -Fqdn localhost -Cache $Cache
+Get-AdsiServer -Fqdn localhost
 ```
 
-Retrieves information about the local computer's directory service, determining whether it uses
-the LDAP or WinNT provider, and collects information about well-known security identifiers (SIDs).
-This is essential for consistent identity resolution on the local system when analyzing permissions.
+Find the ADSI provider of the local computer
 
 ### EXAMPLE 2
 ```powershell
-Get-AdsiServer -Fqdn 'ad.contoso.com' -Cache $Cache
+Get-AdsiServer -Fqdn 'ad.contoso.com'
 ```
 
-Connects to the domain controller for 'ad.contoso.com', determines it uses the LDAP provider,
-and retrieves domain-specific information including SIDs, NetBIOS name, and distinguished name.
-This enables proper identity resolution for domain accounts when working with permissions across systems.
+Find the ADSI provider of the AD domain 'ad.contoso.com'
 
 ## PARAMETERS
 
@@ -83,20 +79,6 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

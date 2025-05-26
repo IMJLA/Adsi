@@ -32,12 +32,11 @@ For the NetBIOS parameter, uses ConvertTo-DistinguishedName to convert from NetB
 
 ### EXAMPLE 1
 ```powershell
-ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com' -Cache $Cache
+ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com'
+ad.contoso.com
 ```
 
-Converts the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'.
-This is essential when working with LDAP directory paths that need to be converted to readable domain
-names or when constructing proper LDAP paths that require the FQDN of the domain for remote connections.
+Convert the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'
 
 ## PARAMETERS
 
@@ -83,20 +82,6 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

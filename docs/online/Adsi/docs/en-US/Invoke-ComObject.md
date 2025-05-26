@@ -1,7 +1,7 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
+online version:
 schema: 2.0.0
 ---
 
@@ -33,8 +33,6 @@ Invoke-ComObject -ComObject $ComObject -Property AdsPath
 
 Get the first member of the local Administrators group on the current computer
 Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property
-This technique is essential when working with ADSI objects that expose properties or methods only through COM interfaces,
-providing a consistent way to access these properties in PowerShell.
 
 ## PARAMETERS
 
@@ -64,20 +62,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

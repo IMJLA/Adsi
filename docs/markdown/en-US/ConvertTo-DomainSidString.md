@@ -8,7 +8,7 @@ schema: 2.0.0
 # ConvertTo-DomainSidString
 
 ## SYNOPSIS
-Converts a domain DNS name to its corresponding SID string.
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
@@ -18,39 +18,21 @@ ConvertTo-DomainSidString [-DomainDnsName] <String> [[-AdsiProvider] <String>] [
 ```
 
 ## DESCRIPTION
-Retrieves the security identifier (SID) string for a specified domain DNS name using either
-cached values or by querying the directory service.
-It supports both LDAP and WinNT providers
-and can fall back to local server resolution methods when needed.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -Cache $Cache
+PS C:\> {{ Add example code here }}
 ```
 
-Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
-automatically determining the best ADSI provider to use and utilizing the cache to avoid
-redundant directory queries.
-
-### EXAMPLE 2
-```powershell
-ConvertTo-DomainSidString -DomainDnsName 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache
-```
-
-Converts the DNS domain name 'contoso.com' to its corresponding domain SID string by
-explicitly using the LDAP provider, which can be more efficient when you already know
-the appropriate provider to use.
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -AdsiProvider
-AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
-
-This parameter can be used to reduce calls to Find-AdsiProvider
-
-Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
+{{ Fill AdsiProvider Description }}
 
 ```yaml
 Type: System.String
@@ -58,14 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+{{ Fill Cache Description }}
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -73,14 +55,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DomainDnsName
-Domain DNS name to convert to the domain's SID
+{{ Fill DomainDnsName Description }}
 
 ```yaml
 Type: System.String
@@ -88,21 +70,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -113,10 +81,10 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None. Pipeline input is not accepted.
+### None
 ## OUTPUTS
 
-### System.String. The SID string of the specified domain.
+### System.Object
 ## NOTES
 
 ## RELATED LINKS

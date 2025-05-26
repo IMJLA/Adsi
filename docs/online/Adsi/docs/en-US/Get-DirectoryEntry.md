@@ -89,20 +89,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -PropertiesToLoad
 Properties of the target object to retrieve
 
@@ -119,7 +105,7 @@ Accept wildcard characters: False
 ```
 
 ### -SidTypeMap
-Mapping of SID types to descriptions used for converting security identifiers
+{{ Fill SidTypeMap Description }}
 
 ```yaml
 Type: System.Collections.Hashtable

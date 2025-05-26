@@ -1,7 +1,7 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
+online version:
 schema: 2.0.0
 ---
 
@@ -14,24 +14,22 @@ Use Active Directory Service Interfaces to search an LDAP directory
 
 ```powershell
 Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <Int32>]
- [[-SearchScope] <SearchScope>] [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>]
+ [[-PropertiesToLoad] <String[]>] [[-Credential] <PSCredential>] [[-SearchScope] <String>]
  [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
 Provides a wrapper around the \[System.DirectoryServices.DirectorySearcher\] class
-Supports filtering, paging, and customizing which properties to return.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```powershell
-Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache
+Search-Directory -Filter ''
 ```
 
-Searches the contoso.com domain for all user objects, retrieving results in pages of 1000 objects at a time.
-This is useful for efficiently retrieving large sets of directory objects without overwhelming memory resources.
+As the current user on a domain-joined computer, bind to the current domain and search for all directory entries matching the LDAP filter
 
 ## PARAMETERS
 
@@ -59,7 +57,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -97,7 +95,7 @@ Accept wildcard characters: False
 ```
 
 ### -PageSize
-Number of results to return in each page
+Number of records per page of results
 
 ```yaml
 Type: System.Int32
@@ -111,20 +109,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -PropertiesToLoad
 Additional properties to return
 
@@ -134,23 +118,22 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -SearchScope
-Search scope (Base, OneLevel, or Subtree)
+Scope of the search
 
 ```yaml
-Type: System.DirectoryServices.SearchScope
+Type: System.String
 Parameter Sets: (All)
 Aliases:
-Accepted values: Base, OneLevel, Subtree
 
 Required: False
-Position: 4
+Position: 6
 Default value: Subtree
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -164,7 +147,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.DirectoryServices.SearchResult collection representing the matching directory objects.
+### [System.DirectoryServices.DirectoryEntry]
 ## NOTES
 
 ## RELATED LINKS

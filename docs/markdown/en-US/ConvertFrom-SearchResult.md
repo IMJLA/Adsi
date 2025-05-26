@@ -23,38 +23,17 @@ This obfuscates the troublesome ResultPropertyCollection and ResultPropertyValue
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new("LDAP://DC=contoso,DC=com")
-$DirectorySearcher.Filter = "(objectClass=user)"
-$SearchResults = $DirectorySearcher.FindAll()
-$SearchResults | ConvertFrom-SearchResult
+PS C:\> {{ Add example code here }}
 ```
 
-Performs a search in Active Directory for all user objects, then converts each SearchResult
-into a PSCustomObject with simplified properties.
-This makes it easier to work with the
-search results in PowerShell by flattening complex nested property collections into
-regular object properties.
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -SearchResult
-SearchResult objects to convert to PSCustomObjects
+{{ Fill SearchResult Description }}
 
 ```yaml
 Type: System.DirectoryServices.SearchResult[]
@@ -73,12 +52,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.DirectoryServices.SearchResult[]
-### Accepts SearchResult objects from a directory search via the pipeline.
 ## OUTPUTS
 
-### PSCustomObject
-### Returns PSCustomObject instances with simplified properties.
 ## NOTES
 # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of SearchResult to see how to get those properties
 

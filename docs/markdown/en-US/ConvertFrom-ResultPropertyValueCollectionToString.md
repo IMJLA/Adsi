@@ -26,9 +26,9 @@ Useful when working with System.DirectoryServices and some other namespaces
 ```powershell
 $DirectoryEntry = [adsi]("WinNT://$(hostname)")
 $DirectoryEntry.Properties.Keys |
-ForEach-Objec- `
+ForEach-Object {
  ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
-)`
+}
 ```
 
 For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
@@ -36,7 +36,7 @@ For each property in a DirectoryEntry, convert its corresponding PropertyValueCo
 ## PARAMETERS
 
 ### -ResultPropertyValueCollection
-ResultPropertyValueCollection object to convert to a string
+{{ Fill ResultPropertyValueCollection Description }}
 
 ```yaml
 Type: System.DirectoryServices.ResultPropertyValueCollection

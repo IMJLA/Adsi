@@ -77,9 +77,9 @@ ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
 
     # Get rid of squiggly braces in parameter descriptions to avoid Docusaurus HTML conversion issues because of JSON escaping not being supported.
-    while ($ThisFunctionHelp -match '[^:][\s]{(?<expression>[^}]+)}') {
-        $ThisFunctionHelp = $ThisFunctionHelp.Replace($Matches[0], "- ``$($Matches['expression']))``")
-    }
+    ##while ($ThisFunctionHelp -match '[^:][\s]{(?<expression>[^}]+)}') {
+    ##    $ThisFunctionHelp = $ThisFunctionHelp.Replace($Matches[0], "- ``$($Matches['expression']))``")
+    ##}
 
     # Workaround a bug since PS 7.4 introduced the ProgressAction common param which is not yet supported by PlatyPS
     $ParamToRemove = '-ProgressAction'

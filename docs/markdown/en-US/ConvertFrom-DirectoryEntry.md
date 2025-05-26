@@ -23,21 +23,17 @@ This obfuscates the troublesome PropertyCollection and PropertyValueCollection a
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-$DirEntry = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator')
-ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry
+PS C:\> {{ Add example code here }}
 ```
 
-Converts the DirectoryEntry for the local Administrator account into a PowerShell custom object with simplified
-property values.
-This makes it easier to work with the object in PowerShell and avoids the complexity of
-DirectoryEntry property collections, which can be difficult to access and manipulate directly.
+{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -DirectoryEntry
-DirectoryEntry objects to convert to PSCustomObjects
+{{ Fill DirectoryEntry Description }}
 
 ```yaml
 Type: System.DirectoryServices.DirectoryEntry[]
@@ -51,29 +47,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
-### [System.DirectoryServices.DirectoryEntry]
 ## OUTPUTS
 
-### [PSCustomObject]
 ## NOTES
 
 ## RELATED LINKS

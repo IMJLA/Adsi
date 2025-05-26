@@ -25,9 +25,9 @@ Useful when working with System.DirectoryServices and some other namespaces
 ```powershell
 $DirectoryEntry = [adsi]("WinNT://$(hostname)")
 $DirectoryEntry.Properties.Keys |
-ForEach-Objec- `
+ForEach-Object {
  ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
-)`
+}
 ```
 
 For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
@@ -55,7 +55,6 @@ Accept wildcard characters: False
 ## OUTPUTS
 
 ### [System.String]
-### Returns a string representation of the PropertyValueCollection's value.
 ## NOTES
 
 ## RELATED LINKS

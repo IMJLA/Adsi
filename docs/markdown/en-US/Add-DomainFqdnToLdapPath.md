@@ -27,14 +27,11 @@ Uses RegEx to:
 
 ### EXAMPLE 1
 ```powershell
-Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' -Cache $Cache
+Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com'
+LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com
 ```
 
-Completes the partial LDAP path 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' to
-'LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' with the domain FQDN added as the
-server address.
-This is crucial for making remote LDAP queries to specific domain controllers, especially
-when working in multi-domain environments or when connecting to trusted domains.
+Add the domain FQDN to a single LDAP directory path
 
 ## PARAMETERS
 
@@ -65,20 +62,6 @@ Required: False
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -ProgressAction- `{ Fill ProgressAction Description )`}
-
-```yaml
-Type: System.Management.Automation.ActionPreference
-Parameter Sets: (All)
-Aliases: proga
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

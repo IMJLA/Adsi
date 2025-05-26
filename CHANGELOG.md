@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.120] - 2025-05-26
+### Changed
+- troubleshoot repair-markdownhelp
+
+## [5.0.119] - 2025-05-26
+### Fixed
+- bugfix module uninstall test
+
+## [5.0.118] - 2025-05-26
+### Fixed
+- bugfix module uninstall test
+
 ## [5.0.117] - 2025-05-26
 ### Fixed
 - bugfix search path for build
