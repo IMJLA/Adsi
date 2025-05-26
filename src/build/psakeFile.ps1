@@ -217,8 +217,28 @@ FormatTaskName {
 
 }
 
-Task Default -depends ReturnToStartingLocation -description 'Run the default build tasks'
+Task ? -description 'Lists the available tasks' -action {
+    'Available tasks:'
+    $psake.context.Peek().Tasks.Keys | Sort-Object
+}
 
+# Define the default task that runs all tasks in the build process
+Task Default -description 'Run the default build tasks' -depends SetLocation, # Prepare the build environment.
+LintAnalysis, # Perform linting and analysis of the source code.
+DetermineNewVersionNumber, # Determine the new version number.
+DeleteOldBuilds, # Build the module.
+UpdateChangeLog, # Add an entry to the Change Log.
+DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
+BuildUpdatableHelp, # Create Updateable help documentation.
+CreateOnlineHelpFolder, # Create a folder for the Online help documentation.
+BuildOnlineHelpWebsite, # Create the Online help documentation website.
+UnitTests, # Perform unit testing.
+SourceControl, # Commit changes to source control.
+CreateGitHubRelease, # Create a GitHub release.
+Reinstall, # Publish the module to the a PowerShell repository.
+ReturnToStartingLocation # Reset the build environment to its starting state.
+
+# Prepare the build environment.
 Task SetLocation -action {
 
     Write-InfoColor "`tSet-Location -Path '$ModuleName'"
@@ -235,7 +255,9 @@ Task SetLocation -action {
 
 } -description 'Set the working directory to the project root to ensure all relative paths are correct'
 
-Task TestModuleManifest -depends SetLocation -action {
+
+# Perform linting and analysis of the source code.
+Task TestModuleManifest -action {
 
     Write-InfoColor "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
     $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath -ErrorAction Stop
@@ -292,7 +314,9 @@ Task LintAnalysis -depends Lint -action {
 
 } -description 'Analyze the linting results and determine if the build should fail.'
 
-Task DetermineNewVersionNumber -depends LintAnalysis -action {
+
+# Determine the new version number.
+Task DetermineNewVersionNumber -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
@@ -303,6 +327,8 @@ Task DetermineNewVersionNumber -depends LintAnalysis -action {
 
 } -description 'Determine the new version number based on the build parameters'
 
+
+# Build the module.
 Task UpdateModuleVersion -depends DetermineNewVersionNumber -action {
 
     Write-InfoColor "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
@@ -318,24 +344,7 @@ Task BackupOldBuilds -depends UpdateModuleVersion -action {
 
 } -description 'Backup old builds'
 
-Task UpdateChangeLog -depends BackupOldBuilds -action {
-
-    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Update-ChangeLog.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
-    & $ScriptToRun -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
-
-    <#
-    TODO
-        This task runs before the Test task so that tests of the change log will pass
-        But I also need one that runs *after* the build to compare it against the previous build
-        The post-build UpdateChangeLog will automatically add to the change log any:
-            New/removed exported commands
-            New/removed files
-    #>
-
-} -description 'Add an entry to the the Change Log.'
-
-Task FindPublicFunctionFiles -depends UpdateChangeLog -action {
+Task FindPublicFunctionFiles -depends BackupOldBuilds -action {
 
     Write-InfoColor "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
@@ -436,7 +445,28 @@ Task DeleteOldBuilds -depends FixModule -action {
 
 } -description 'Delete old builds'
 
-Task CreateMarkdownHelpFolder -depends DeleteOldBuilds -action {
+
+# Add an entry to the Change Log.
+Task UpdateChangeLog -action {
+
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Update-ChangeLog.ps1')
+    Write-InfoColor "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
+    & $ScriptToRun -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
+
+    <#
+    TODO
+        This task runs before the Test task so that tests of the change log will pass
+        But I also need one that runs *after* the build to compare it against the previous build
+        The post-build UpdateChangeLog will automatically add to the change log any:
+            New/removed exported commands
+            New/removed files
+    #>
+
+} -description 'Add an entry to the the Change Log.'
+
+
+# Create Markdown and MAML help documentation.
+Task CreateMarkdownHelpFolder -action {
 
     Write-Information "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
@@ -502,7 +532,7 @@ Task UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
 
 } -description 'Update existing Markdown help files using PlatyPS.'
 
-Task BuildMarkdownHelp -depends UpdateMarkDownHelp -precondition $DocsPrereq -action {
+Task BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
     try {
 
@@ -541,7 +571,7 @@ Task CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
 } -description 'Create a folder for the MAML help files.'
 
-Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -precondition $DocsPrereq -action {
+Task DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsMamlDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
@@ -569,20 +599,24 @@ Task CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
 } -description 'Create a folder for the Updateable help files.'
 
-Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -precondition $DocsPrereq -action {
+Task DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
 
-    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
-    Get-ChildItem -Path $DocsUpdateableDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+    Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Write-InfoColor "`t# Successfully deleted existing Updateable help files." -ForegroundColor Green
+    $script:ReadyForUpdateableHelp = $true
 
 } -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
 
+
+# Create Updateable help documentation.
 $UpdateableHelpPrereq = {
 
     # Find prerequisites for creating updatable help files.
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
     Write-InfoColor "FindUpdateableHelpPrerequisites$NewLine" -ForegroundColor Blue
 
-    if ($DocsPrereq) {
+    if ($script:ReadyForUpdateableHelp) {
 
         Write-InfoColor "`tGet-CimInstance -ClassName CIM_OperatingSystem"
         $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
@@ -607,13 +641,13 @@ $UpdateableHelpPrereq = {
 
     }
     else {
-        Write-InfoColor "`tDocumentation prerequisites were not met. Updateable Help generation will be skipped." -ForegroundColor Cyan
+        Write-InfoColor "`tMAML Help files are not avaialable. Updateable Help generation will be skipped." -ForegroundColor Cyan
         return $false
     }
 
 }
 
-Task BuildUpdatableHelp -depends DeleteUpdateableHelp -precondition $UpdateableHelpPrereq -action {
+Task BuildUpdatableHelp -precondition $UpdateableHelpPrereq -action {
 
     $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
@@ -631,6 +665,8 @@ Task BuildUpdatableHelp -depends DeleteUpdateableHelp -precondition $UpdateableH
 
 } -description 'Create updatable help .cab file based on PlatyPS markdown help.'
 
+
+# Create a folder for the Online help documentation.
 $OnlineHelpPrereqs = {
 
     # Find Node.js installation.
@@ -662,13 +698,15 @@ $OnlineHelpPrereqs = {
 
 }
 
-Task CreateOnlineHelpFolder -depends BuildUpdatableHelp -precondition $OnlineHelpPrereqs -action {
+Task CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
 
     Write-Information "`tNew-Item -Path '$DocsOnlineHelpRoot' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsOnlineHelpRoot -ItemType Directory -ErrorAction SilentlyContinue
 
 } -description 'Create a folder for the Online Help website.'
 
+
+# Create the Online help documentation website.
 $OnlineHelpScaffoldingPrereq = {
 
     # Find prerequisites for creating updatable help files.
@@ -692,7 +730,7 @@ $OnlineHelpScaffoldingPrereq = {
 
 }
 
-Task CreateOnlineHelpScaffolding -depends CreateOnlineHelpFolder -precondition $OnlineHelpScaffoldingPrereq -action {
+Task CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
@@ -790,6 +828,8 @@ Task BuildOnlineHelpWebsite -depends ConvertArt -action {
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
+
+# Perform unit testing.
 $UnitTestPrereq = {
 
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
@@ -812,7 +852,7 @@ $UnitTestPrereq = {
 
 }
 
-Task UnitTests -depends BuildOnlineHelpWebsite -precondition $UnitTestPrereq -action {
+Task UnitTests -precondition $UnitTestPrereq -action {
 
     Write-InfoColor "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
@@ -823,7 +863,9 @@ Task UnitTests -depends BuildOnlineHelpWebsite -precondition $UnitTestPrereq -ac
 
 } -description 'Perform unit tests using Pester.'
 
-Task SourceControl -depends UnitTests -action {
+
+# Commit changes to source control.
+Task SourceControl -action {
 
     # Find the current git branch
     $CurrentBranch = git branch --show-current
@@ -838,7 +880,9 @@ Task SourceControl -depends UnitTests -action {
 
 } -description 'git add, commit, and push'
 
-Task CreateGitHubRelease -depends SourceControl -action {
+
+# Create a GitHub release.
+Task CreateGitHubRelease -action {
 
     $GitHubOrgName = 'IMJLA'
     $RepositoryPath = "$GitHubOrgName/$ModuleName"
@@ -849,7 +893,9 @@ Task CreateGitHubRelease -depends SourceControl -action {
 
 } -description 'Create a GitHub release and upload the module files to it'
 
-Task Publish -depends CreateGitHubRelease -action {
+
+# Publish the module to a PowerShell repository.
+Task Publish -action {
 
     Assert -conditionToCheck ($PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
 
@@ -922,7 +968,10 @@ Task Reinstall -depends Uninstall -action {
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
-Task RemoveScriptScopedVariables -depends Reinstall -action {
+
+# Reset the build environment to its starting state.
+
+Task RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
     Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
@@ -932,8 +981,3 @@ Task RemoveScriptScopedVariables -depends Reinstall -action {
 Task ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
     Set-Location $StartingLocation
 } -description 'Return to the original working directory.'
-
-Task ? -description 'Lists the available tasks' -action {
-    'Available tasks:'
-    $psake.context.Peek().Tasks.Keys | Sort-Object
-}

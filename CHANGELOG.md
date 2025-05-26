@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.105] - 2025-05-26
+### Changed
+- may not need convertto-docusaurusmarkdown
+
+## [5.0.104] - 2025-05-26
+### Fixed
+- bugfix write-info vs write-infocolor
+
+## [5.0.103] - 2025-05-26
+### Changed
+- restructure psake task sequence
+
 ## [5.0.102] - 2025-05-25
 ### Changed
 - troubleshoot psakefile
