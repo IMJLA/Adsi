@@ -395,7 +395,7 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
 
         # Read the original content of the file
-        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw -ErrorAction Stop"
+        Write-Information "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw -ErrorAction Stop"
         $OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
 
         # Check current file encoding
