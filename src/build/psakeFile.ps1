@@ -226,7 +226,7 @@ Task ? -description 'Lists the available tasks' -action {
 Task Default -description 'Run the default build tasks' -depends SetLocation, # Prepare the build environment.
 LintAnalysis, # Perform linting and analysis of the source code.
 DetermineNewVersionNumber, # Determine the new version number.
-DeleteOldBuilds, # Build the module.
+FixModule, # Build the module.
 UpdateChangeLog, # Add an entry to the Change Log.
 DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
 BuildUpdatableHelp, # Create Updateable help documentation.
@@ -337,14 +337,15 @@ Task UpdateModuleVersion -depends DetermineNewVersionNumber -action {
 
 } -description 'Update the module manifest with the new version number'
 
-Task BackupOldBuilds -depends UpdateModuleVersion -action {
+Task DeleteOldBuilds -depends UpdateModuleVersion -action {
 
-    Write-InfoColor "`tRename-Item -Path '$BuildOutDir' -NewName '$BuildOutDir.old' -Force"
-    Rename-Item -Path $BuildOutDir -NewName "$BuildOutDir.old" -Force -ErrorAction SilentlyContinue
+    Write-InfoColor "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop"
+    Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop
+    Write-InfoColor "`t# Successfully deleted old builds." -ForegroundColor Green
 
-} -description 'Backup old builds'
+} -description 'Delete old builds'
 
-Task FindPublicFunctionFiles -depends BackupOldBuilds -action {
+Task FindPublicFunctionFiles -depends DeleteOldBuilds -action {
 
     Write-InfoColor "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
@@ -412,7 +413,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -437,13 +438,6 @@ Task FixModule -depends BuildModule -action {
     Remove-Item -Path $File -ErrorAction SilentlyContinue
 
 } -description 'Fix the module after building it by removing unnecessary files. This is a workaround until PowerShellBuild usage is replaced with custom build scripts.'
-
-Task DeleteOldBuilds -depends FixModule -action {
-
-    Write-InfoColor "`tRemove-Item -Path '$BuildOutDir.old' -Recurse -Force -ErrorAction SilentlyContinue"
-    Remove-Item -Path "$BuildOutDir.old" -Recurse -Force -ErrorAction SilentlyContinue
-
-} -description 'Delete old builds'
 
 
 # Add an entry to the Change Log.
@@ -778,15 +772,7 @@ Task CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -a
 
 } -description 'Copy Markdown help files as source for online help website.'
 
-Task PrepareMarkdownForDocusaurusBuild -depends CopyMarkdownAsSourceForOnlineHelp -action {
-
-    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'ConvertTo-DocusaurusMarkdown.ps1')
-    Write-Information "`t& '$ScriptToRun' -Path '$OnlineHelpSourceMarkdown'"
-    & $ScriptToRun -Path $OnlineHelpSourceMarkdown
-
-} -description 'Prepare Markdown files for Docusaurus build.'
-
-Task BuildArt -depends PrepareMarkdownForDocusaurusBuild -action {
+Task BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
 
     $null = New-Item -ItemType Directory -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
 
@@ -930,7 +916,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -945,9 +931,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -name $ModuleName -AllVersions
+        Uninstall-Module -Name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -962,9 +948,9 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
@@ -974,7 +960,7 @@ Task Reinstall -depends Uninstall -action {
 Task RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 } -description 'Remove script-scoped variables to clean up the environment.'
 
