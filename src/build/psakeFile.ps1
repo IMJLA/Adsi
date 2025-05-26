@@ -341,7 +341,7 @@ Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
     Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -ErrorAction Stop"
     & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath -ErrorAction Stop
     Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
-    pause
+
 } -description 'Export all public functions in the module'
 
 
@@ -430,7 +430,7 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
     }
 
     Write-InfoColor "`t# Successfully formatted PowerShell script files and ensured UTF8 with BOM encoding." -ForegroundColor Green
-    pause
+
 } -description 'Format PowerShell script files using PSScriptAnalyzer rules and ensure UTF8 with BOM encoding.'
 
 Task -name Lint -depends Format -action {
@@ -622,6 +622,8 @@ Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $D
     } else {
         Write-InfoColor "`t# Successfully deleted existing Markdown help files." -ForegroundColor Green
     }
+    Write-Progress -Activity 'Deleting old Markdown docs' -Status 'Completed' -Completed
+    
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 
@@ -693,6 +695,7 @@ Task -name DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
     Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $DocsMamlDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted existing MAML help files." -ForegroundColor Green
+    Write-Progress -Activity 'Deleting MAML docs' -Status 'Completed' -Completed
 
 } -description 'Delete existing MAML help files to prepare for PlatyPS to build new ones.'
 
@@ -738,6 +741,7 @@ Task -name DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
     Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted existing Updateable help files." -ForegroundColor Green
     $script:ReadyForUpdateableHelp = $true
+    Write-Progress -Activity 'Deleting old Updateable Help' -Status 'Completed' -Completed
 
 } -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
 
