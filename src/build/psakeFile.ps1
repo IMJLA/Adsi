@@ -408,10 +408,10 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
 
             Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
         #>
-        Write-Verbose "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
+        Write-Information "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
         $NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
 
-        Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
+        Write-Information "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
         $FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $LintSettingsFile -ErrorAction Stop
 
         # Update file if content changed or encoding needs to be fixed
