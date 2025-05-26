@@ -27,8 +27,8 @@ param(
 
     [string]$SettingsPath,
 
-    [string]$ExcludeRulesByFile = @{
-        #'psakeFile.ps1' = @('PSUseDeclaredVarsMoreThanAssignments')
+    [hashtable]$ExcludeRulesByFile = @{
+        'psakeFile.ps1' = @('PSUseDeclaredVarsMoreThanAssignments') # Exclude this rule for psakeFile.ps1 as uses the psake syntax.
     },
 
     $LintResult
@@ -36,8 +36,8 @@ param(
 )
 
 $filteredResult = ForEach ($result in $LintResult) {
-    if ($ExcludeRulesByFile.ContainsKey($result.FileName)) {
-        if ($ExcludeRulesByFile[$result.FileName] -contains $result.RuleName) {
+    if ($ExcludeRulesByFile.ContainsKey($result.ScriptName)) {
+        if ($ExcludeRulesByFile[$result.ScriptName] -contains $result.RuleName) {
             continue
         }
     }

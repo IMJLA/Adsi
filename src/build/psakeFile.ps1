@@ -113,7 +113,7 @@ Properties {
         Warning # Fail the build on Warning and Error diagnostic records.
         Information # Fail the build on any diagnostic record, regardless of severity.
     }
-    [LintSeverity]$LintSeverityThreshold = 'Error'
+    [LintSeverity]$LintSeverityThreshold = 'Information'
 
     # Path to the PSScriptAnalyzer settings file.
     [string]$LintSettingsFile = [IO.Path]::Combine($SourceCodeDir, 'build', 'psscriptanalyzerSettings.psd1')
@@ -349,7 +349,9 @@ Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Severity '$LintSeverityThreshold' -Recurse -ErrorAction Stop"
     $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -ErrorAction Stop
-    Write-InfoColor "`t# Completed linting successfully." -ForegroundColor Green
+    Write-InfoColor "`t# Completed linting successfully. Found '$($script:LintResult.Count)' rule violations" -ForegroundColor Green
+    Write-InfoColor ($script:LintResult | Format-List * | Out-String) -ForegroundColor Cyan
+
 
 } -description 'Perform linting with PSScriptAnalyzer.'
 
