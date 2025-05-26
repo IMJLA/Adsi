@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: {{ Update Download Link }}
-Help Version: 5.0.107
+Help Version: 5.0.108
 Locale: en-US
 ---
 
@@ -92,7 +92,7 @@ Retrieves information about well-known security identifiers (SIDs).
 ### [Get-KnownSidByName](docs\en-US/Get-KnownSidByName.md)
 Creates a hashtable of well-known SIDs indexed by their friendly names.
 
-### [Get-KnownSidHashtable](docs\en-US/Get-KnownSidHashtable.md)
+### [Get-KnownSidHashTable](docs\en-US/Get-KnownSidHashTable.md)
 Returns a hashtable of known security identifiers (SIDs) with detailed information.
 
 ### [Get-ParentDomainDnsName](docs\en-US/Get-ParentDomainDnsName.md)
