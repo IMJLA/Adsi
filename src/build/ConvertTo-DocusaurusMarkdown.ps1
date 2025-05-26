@@ -2,6 +2,10 @@ param ($Path)
 
 $MarkdownFiles = Get-ChildItem -Path $Path -Filter '*.md' -Recurse
 
+foreach ($Folder in $MarkdownFiles | Select-Object -ExpandProperty DirectoryName -Unique) {
+    Write-InfoColor "Processing folder: $Folder"
+}
+
 foreach ($File in $MarkdownFiles) {
 
     $Content = Get-Content -Path $File.FullName -Raw
