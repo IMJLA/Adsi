@@ -348,7 +348,7 @@ $LintPrerequisite = {
 Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Severity '$LintSeverityThreshold' -Recurse -ErrorAction Stop"
-    Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -ErrorAction Stop
+    $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -ErrorAction Stop
     Write-InfoColor "`t# Completed linting successfully." -ForegroundColor Green
 
 } -description 'Perform linting with PSScriptAnalyzer.'
