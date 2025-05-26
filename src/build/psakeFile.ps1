@@ -204,6 +204,51 @@ Properties {
 
     $InformationPreference = 'Continue'
 
+    # Custom npm wrapper function
+    function Invoke-NpmCommand {
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory)]
+            [string]$Command,
+
+            [string]$WorkingDirectory = (Get-Location).Path,
+
+            [switch]$PassThru
+        )
+
+        $originalLocation = Get-Location
+        Set-Location $WorkingDirectory
+        Write-InfoColor "`t> npm $Command" -ForegroundColor Cyan
+
+        try {
+
+            # Capture both stdout and stderr
+            $output = & cmd /c "npm $Command" 2>&1
+
+            # Process output
+            foreach ($line in $output) {
+                if ($line -is [System.Management.Automation.ErrorRecord]) {
+                    Write-InfoColor "`t  ERROR: $($line.Exception.Message)" -ForegroundColor Red
+                }
+                else {
+                    Write-InfoColor "`t  $line" -ForegroundColor Gray
+                }
+            }
+
+            # Check exit code
+            if ($LASTEXITCODE -ne 0) {
+                throw "npm command failed with exit code $LASTEXITCODE"
+            }
+
+            if ($PassThru) {
+                return $output
+            }
+        }
+        finally {
+            Set-Location $originalLocation
+        }
+    }
+
 }
 
 FormatTaskName {
@@ -423,7 +468,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
     # only add these configuration values to the build parameters if they have been been set
     $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
             $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
@@ -708,10 +753,12 @@ Task BuildUpdatableHelp -precondition $UpdateableHelpPrereq -action {
             CabFilesFolder  = [IO.Path]::Combine($script:BuildOutputDir, $locale)
             LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
             OutputFolder    = $DocsUpdateableDir
+            ErrorAction     = 'Stop' # Stop on any error
         }
-        Write-InfoColor "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)'"
-        New-ExternalHelpCab @cabParams > $null
+        Write-InfoColor "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)' -ErrorAction 'Stop'"
+        $null = New-ExternalHelpCab @cabParams
     }
+    Write-InfoColor "`t# Successfully created updatable help .cab files." -ForegroundColor Green
 
 } -description 'Create updatable help .cab file based on PlatyPS markdown help.'
 
@@ -777,7 +824,7 @@ $OnlineHelpScaffoldingPrereq = {
     # Determine whether the Online Help scaffolding already exists.
     Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { `$_.Name -eq '$ModuleName' }"
     if (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction Stop | Where-Object { $_.Name -eq $ModuleName }) {
-        Write-InfoColor "`t# Online Help scaffolding already exists. It will be updated." -ForegroundColor Cyan
+        Write-InfoColor "`t# Online Help scaffolding already exists. It will be updated.$NewLine" -ForegroundColor Green
         return $false
     }
     else {
@@ -802,17 +849,39 @@ Task CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -act
     }
     else {
 
-        Write-Information "`t& cmd /c `"npx create-docusaurus@latest $ModuleName classic --typescript`""
-        & cmd /c "npx create-docusaurus@latest $ModuleName classic --typescript"
+        # & cmd /c "npx create-docusaurus@latest $ModuleName classic --typescript"
 
-        # Test if scaffolding was created successfully
-        if (Test-Path $PackageJsonPath) {
-            Write-InfoColor "`t# Successfully created Docusaurus scaffolding." -ForegroundColor Green
-        }
-        else {
-            Write-Error 'Failed to create Docusaurus scaffolding'
-        }
+        try {
+            Write-InfoColor "`t> npx create-docusaurus@latest $ModuleName classic --typescript" -ForegroundColor Cyan
 
+            # Use Start-Process for better control over npx output
+            $processArgs = @{
+                FilePath         = 'npx'
+                ArgumentList     = @('create-docusaurus@latest', $ModuleName, 'classic', '--typescript')
+                WorkingDirectory = $DocsOnlineHelpRoot
+                Wait             = $true
+                NoNewWindow      = $true
+                PassThru         = $true
+            }
+
+            $process = Start-Process @processArgs
+
+            if ($process.ExitCode -eq 0) {
+                # Test if scaffolding was created successfully
+                if (Test-Path $PackageJsonPath) {
+                    Write-InfoColor "`t# Successfully created Docusaurus scaffolding." -ForegroundColor Green
+                }
+                else {
+                    Write-Error 'Failed to create Docusaurus scaffolding - package.json not found'
+                }
+            }
+            else {
+                Write-Error "Failed to create Docusaurus scaffolding - npx exited with code $($process.ExitCode)"
+            }
+        }
+        catch {
+            Write-Error "Failed to create Docusaurus scaffolding: $_"
+        }
     }
 
     Set-Location $Location
@@ -821,21 +890,24 @@ Task CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -act
 
 Task InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action {
 
-    $Location = Get-Location
-    Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
-    Set-Location $DocsOnlineHelpDir
-    Write-Information "`tnpm install"
-    & npm install
+    # npm install
+    Write-InfoColor "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
 
-    # Test if node_modules directory was created (indicating successful install)
-    if (Test-Path 'node_modules') {
+    try {
+        Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
+    }
+    catch {
+        Write-Error "Failed to install Online Help dependencies: $_"
+    }
+
+    # Determine whether the node_modules directory was created (indicating successful install)
+    $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'node_modules')
+    if (Test-Path $TestPath) {
         Write-InfoColor "`t# Successfully installed Online Help dependencies." -ForegroundColor Green
     }
     else {
-        Write-Error 'Failed to install Online Help dependencies'
+        Write-Error 'Failed to install Online Help dependencies. The node_modules directory was not created.'
     }
-
-    Set-Location $Location
 
 } -description 'Install the dependencies for the Online Help website.'
 
@@ -909,21 +981,24 @@ Task ConvertArt -depends CopyArt -action {
 
 Task BuildOnlineHelpWebsite -depends ConvertArt -action {
 
-    $Location = Get-Location
-    Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
-    Set-Location $DocsOnlineHelpDir
-    Write-Information "`tnpm run build"
-    & npm run build
+    # & npm run build
+    Write-InfoColor "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
 
-    # Test if build directory was created
-    if (Test-Path 'build') {
+    try {
+        Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir
+    }
+    catch {
+        Write-Error "Failed to build online help website: $_"
+    }
+
+    # Determine whether the build directory was created (indicating successful build)
+    $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'build')
+    if (Test-Path $TestPath) {
         Write-InfoColor "`t# Successfully built online help website." -ForegroundColor Green
     }
     else {
         Write-Error 'Failed to build online help website'
     }
-
-    Set-Location $Location
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
@@ -1047,7 +1122,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -1066,9 +1141,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
-        Uninstall-Module -Name $ModuleName -AllVersions -ErrorAction Stop
+        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     }
     else {
@@ -1084,12 +1159,12 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
     # Test if reinstall was successful
-    $installedModule = Get-Module -Name $ModuleName -ListAvailable
+    $installedModule = Get-Module -name $ModuleName -ListAvailable
     if ($installedModule) {
         Write-InfoColor "`t# Successfully reinstalled module $ModuleName (version: $($installedModule.Version))." -ForegroundColor Green
     }
@@ -1105,7 +1180,7 @@ Task Reinstall -depends Uninstall -action {
 Task RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
     Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
 

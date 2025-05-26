@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.126] - 2025-05-26
+### Fixed
+- fix npm cmds with spaces
+
+## [5.0.125] - 2025-05-26
+### Fixed
+- fix npm commands with spaces between params
+
+## [5.0.124] - 2025-05-26
+### Fixed
+- fix path for success validation
+
+## [5.0.123] - 2025-05-26
+### Changed
+- Use wrappers for npm and npx commands
+
 ## [5.0.122] - 2025-05-26
 ### Fixed
 - fix markdown repair
