@@ -278,14 +278,8 @@ $LintPrerequisite = {
 Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
     Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Severity '$LintSeverityThreshold' -Recurse -Verbose:$VerbosePreference"
-    $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -Verbose:$VerbosePreference -ErrorAction Stop
-
-    if ($script:LintResult) {
-        Write-InfoColor "`t# Completed linting successfully." -ForegroundColor Green
-    }
-    else {
-        Write-InfoColor '# Failed to complete linting. No results were returned, but neither was an error.' -ForegroundColor Yellow
-    }
+    Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -Verbose:$VerbosePreference -ErrorAction Stop
+    Write-InfoColor "`t# Completed linting successfully." -ForegroundColor Green
 
 } -description 'Perform linting with PSScriptAnalyzer.'
 
@@ -375,17 +369,17 @@ $FindBuildPrerequisite = {
         Write-Information "`tGet-Module -Name PowerShellBuild -ListAvailable"
 
         if (Get-Module -Name PowerShellBuild -ListAvailable) {
-            Write-InfoColor "`t'PowerShellBuild' PowerShell module is installed. Build will be performed." -ForegroundColor Green
+            Write-InfoColor "`t# 'PowerShellBuild' PowerShell module is installed. Build will be performed." -ForegroundColor Green
             return $true
         }
         else {
-            Write-InfoColor "`t'PowerShellBuild' PowerShell module is not installed. Build will be skipped." -ForegroundColor Yellow
+            Write-InfoColor "`t# 'PowerShellBuild' PowerShell module is not installed. Build will be skipped." -ForegroundColor Yellow
             return $false
         }
 
     }
     else {
-        Write-InfoColor "`tBuilding is disabled. Build will be skipped." -ForegroundColor Cyan
+        Write-InfoColor "`t# Building is disabled. Build will be skipped." -ForegroundColor Cyan
     }
 
 }
@@ -460,11 +454,11 @@ $DocsPrereq = {
         Write-Information "`tGet-Module -Name PlatyPS -ListAvailable"
 
         if (Get-Module -Name PlatyPS -ListAvailable) {
-            Write-InfoColor "`t'PlatyPS' PowerShell module is installed. Documentation will be performed." -ForegroundColor Green
+            Write-InfoColor "`t# 'PlatyPS' PowerShell module is installed. Documentation will be performed." -ForegroundColor Green
             return $true
         }
         else {
-            Write-InfoColor "`t'PlatyPS' PowerShell module is not installed. Documentation will be skipped." -ForegroundColor Yellow
+            Write-InfoColor "`t# 'PlatyPS' PowerShell module is not installed. Documentation will be skipped." -ForegroundColor Yellow
             return $false
         }
 
@@ -597,17 +591,17 @@ $UpdateableHelpPrereq = {
 
             Write-InfoColor "`tGet-Command -Name MakeCab.exe"
             if (Get-Command -Name MakeCab.exe) {
-                Write-InfoColor "`tMakeCab.exe is available on this operating system. Updateable Help will be generated." -ForegroundColor Green
+                Write-InfoColor "`t# MakeCab.exe is available on this operating system. Updateable Help will be generated." -ForegroundColor Green
                 return $true
             }
             else {
-                Write-InfoColor "`tMakeCab.exe is not available on this operating system. Updateable Help generation will be skipped." -ForegroundColor Yellow
+                Write-InfoColor "`t# MakeCab.exe is not available on this operating system. Updateable Help generation will be skipped." -ForegroundColor Yellow
                 return $false
             }
 
         }
         else {
-            Write-InfoColor "`tMakeCab.exe is not available on this operating system. Skipping Updateable Help generation." -ForegroundColor Yellow
+            Write-InfoColor "`t# MakeCab.exe is not available on this operating system. Skipping Updateable Help generation." -ForegroundColor Yellow
             return $false
         }
 
@@ -652,11 +646,11 @@ $OnlineHelpPrereqs = {
         $NodeJsVersion = & node -v 2>$null
 
         if ($NodeJsVersion -and [version]($NodeJsVersion.Replace('v', '')) -lt [version]'18.0.0') {
-            Write-InfoColor "`tNode.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Online Help generation will be skipped." -ForegroundColor Yellow
+            Write-InfoColor "`t# Node.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Online Help generation will be skipped." -ForegroundColor Yellow
             return $false
         }
         else {
-            Write-InfoColor "`tNode.js is installed (version: $NodeJsVersion). Online Help will be generated." -ForegroundColor Green
+            Write-InfoColor "`t# Node.js is installed (version: $NodeJsVersion). Online Help will be generated." -ForegroundColor Green
             return $true
         }
 
@@ -680,15 +674,19 @@ $OnlineHelpScaffoldingPrereq = {
     # Find prerequisites for creating updatable help files.
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
     Write-InfoColor "FindOnlineHelpScaffoldingPrerequisites$NewLine" -ForegroundColor Blue
+    Write-InfoColor "`tSet-Location -Path '$ModuleName'"
+    Set-Location -Path $PSScriptRoot
+    [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
+    Set-Location -Path $ProjectRoot
 
     # Determine whether the Online Help scaffolding already exists.
     Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { `$_.Name -eq '$ModuleName' }"
-    if (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ModuleName }) {
-        Write-InfoColor "`tOnline Help scaffolding already exists. It will not be created." -ForegroundColor Cyan
+    if (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction Stop | Where-Object { $_.Name -eq $ModuleName }) {
+        Write-InfoColor "`t# Online Help scaffolding already exists. It will be updated." -ForegroundColor Cyan
         return $false
     }
     else {
-        Write-InfoColor "`tOnline Help scaffolding does not exist. It will be created." -ForegroundColor Green
+        Write-InfoColor "`t# Online Help scaffolding does not exist. It will be created." -ForegroundColor Green
         return $true
     }
 
@@ -800,16 +798,16 @@ $UnitTestPrereq = {
     if ($TestEnabled) {
         Write-Information "`tGet-Module -Name Pester -ListAvailable"
         if (Get-Module -Name Pester -ListAvailable) {
-            Write-InfoColor "`t'Pester' PowerShell module is installed. Unit testing will be performed." -ForegroundColor Green
+            Write-InfoColor "`t# 'Pester' PowerShell module is installed. Unit testing will be performed." -ForegroundColor Green
             return $true
         }
         else {
-            Write-InfoColor "`t'Pester' PowerShell module is not installed. Unit testing will be skipped." -ForegroundColor Cyan
+            Write-InfoColor "`t# 'Pester' PowerShell module is not installed. Unit testing will be skipped." -ForegroundColor Cyan
             return $false
         }
     }
     else {
-        Write-InfoColor "`tUnit testing is disabled. Unit testing will be skipped." -ForegroundColor Cyan
+        Write-InfoColor "`t# Unit testing is disabled. Unit testing will be skipped." -ForegroundColor Cyan
     }
 
 }
