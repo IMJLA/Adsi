@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.139] - 2025-05-26
+### Added
+- address param capitalization issues and vscode workspace issues
+
 ## [5.0.138] - 2025-05-26
 ### Added
 - address param capitalization issue in settings.json for vscode

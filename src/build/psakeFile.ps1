@@ -504,7 +504,7 @@ Task -name BuildModule -depends FindBuildCopyDirectories -precondition $FindBuil
     # only add these configuration values to the build parameters if they have been been set
     $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
             $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
@@ -1144,9 +1144,9 @@ Task -name Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
-        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
+        Uninstall-Module -Name $ModuleName -AllVersions -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     } else {
         Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green
@@ -1161,9 +1161,9 @@ Task -name Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-        $ModuleStatus = Get-Module -name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
+        $ModuleStatus = Get-Module -Name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
     } while ((-not $ModuleStatus) -and ($attempts -lt 3))
 
     # Test if reinstall was successful
@@ -1181,7 +1181,7 @@ Task -name Reinstall -depends Uninstall -action {
 Task -name RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
     Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
 
