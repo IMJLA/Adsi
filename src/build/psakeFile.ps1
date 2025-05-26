@@ -658,9 +658,15 @@ $OnlineHelpScaffoldingPrereq = {
     Write-InfoColor "FindOnlineHelpScaffoldingPrerequisites$NewLine" -ForegroundColor Blue
 
     # Determine whether the Online Help scaffolding already exists.
-    Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq '$ModuleName' } | Measure-Object | Select-Object -ExpandProperty Count"
-    $OnlineHelpExists = (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ModuleName } | Measure-Object).Count
-    $OnlineHelpExists -eq 0
+    Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq '$ModuleName' }"
+    if (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -eq $ModuleName }) {
+        Write-InfoColor "`tOnline Help scaffolding already exists. It will not be created." -ForegroundColor Cyan
+        return $false
+    }
+    else {
+        Write-InfoColor "`tOnline Help scaffolding does not exist. It will be created." -ForegroundColor Green
+        return $true
+    }
 
 }
 
