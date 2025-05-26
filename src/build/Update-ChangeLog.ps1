@@ -1,5 +1,6 @@
 #requires -Module ChangelogManagement
 
+[CmdletBinding()]
 param (
     [version]$Version,
     [string]$CommitMessage,

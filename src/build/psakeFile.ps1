@@ -467,8 +467,9 @@ Task FixModule -depends BuildModule -action {
 Task UpdateChangeLog -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Update-ChangeLog.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
-    & $ScriptToRun -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
+    Write-InfoColor "`t& '$ScriptToRun' -Version $script:NewModuleVersion -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog' -ErrorAction Stop"
+    & $ScriptToRun -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog -ErrorAction Stop
+    Write-InfoColor "`t# Successfully updated the Change Log with the new version and commit message." -ForegroundColor Green
 
     <#
     TODO
@@ -487,6 +488,12 @@ Task CreateMarkdownHelpFolder -action {
 
     Write-Information "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
+    if (Test-Path -Path $DocsMarkdownDir) {
+        Write-InfoColor "`t# Markdown help directory exists." -ForegroundColor Green
+    }
+    else {
+        Write-Error 'Failed to create the Markdown help directory'
+    }
 
 } -description 'Create a folder for the Markdown help documentation.'
 
@@ -519,34 +526,33 @@ $DocsPrereq = {
 Task DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPrereq -action {
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
-    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue"
-    Get-ChildItem -Path $MarkdownDir -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Force -ErrorAction SilentlyContinue"
+    Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    if (Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction SilentlyContinue) {
+        Write-Error 'Failed to delete existing Markdown help files.'
+    }
+    else {
+        Write-InfoColor "`t# Successfully deleted existing Markdown help files." -ForegroundColor Green
+    }
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 
 Task UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
-
     if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
 
         Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
 
             $DirName = $_.FullName
             Write-InfoColor "`tUpdate-MarkdownHelp -Path '$($_.FullName)'"
-
-            try {
-                Update-MarkdownHelp -Path $_.FullName -Verbose:$VerbosePreference > $null
-            }
-            catch {
-                Write-Warning "Failed to update markdown help for $DirName`: $($_.Exception.Message)"
-            }
+            Update-MarkdownHelp -Path $_.FullName -ErrorAction Stop
 
         }
+        Write-InfoColor "`t# Successfully updated existing Markdown help files." -ForegroundColor Green
 
     }
     else {
-        Write-InfoColor "`tNo existing Markdown help files found to update." -ForegroundColor Cyan
+        Write-InfoColor "`tNo existing Markdown help files found to update." -ForegroundColor Green
     }
-
 } -description 'Update existing Markdown help files using PlatyPS.'
 
 Task BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
