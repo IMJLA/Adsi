@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.107] - 2025-05-26
+### Fixed
+- fix capitalization
+
 ## [5.0.106] - 2025-05-26
 ### Fixed
 - fix capitalization
