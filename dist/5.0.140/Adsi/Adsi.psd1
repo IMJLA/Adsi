@@ -12,7 +12,7 @@
     RootModule        = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion     = '5.0.139'
+    ModuleVersion     = '5.0.140'
 
     # ID used to uniquely identify this module
     GUID              = '282a2aed-9567-49a1-901c-122b7831a805'

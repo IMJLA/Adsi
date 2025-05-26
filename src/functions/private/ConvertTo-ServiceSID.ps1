@@ -39,7 +39,7 @@ function ConvertTo-ServiceSID {
 
     #5: Reverse the byte() string returned from the SHA1 hash function (on Little Endian systems Not tested on Big Endian systems)
     [Array]::Reverse($hashBytes)
-    [string[]]$hashString = $hashBytes | ForEach-Object { $_.ToString("X2") }
+    [string[]]$hashString = $hashBytes | ForEach-Object { $_.ToString('X2') }
 
     #6: Split the reversed string into 5 blocks of 4 bytes each.
     $blocks = @()
@@ -56,6 +56,6 @@ function ConvertTo-ServiceSID {
     #9: Create the first part of the SID “S-1-5-80“
     #10: Tack on each block of Decimal strings with a “-“ in between each block that was converted and reversed.
     #11: Finally out put the complete SID for the service.
-    return "S-1-5-80-$([String]::Join("-", $blocks))"
+    return "S-1-5-80-$([String]::Join('-', $blocks))"
 
 }
