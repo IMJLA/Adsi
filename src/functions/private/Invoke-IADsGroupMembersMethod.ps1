@@ -45,6 +45,13 @@
 
     )
 
-    & { $DirectoryEntry.Invoke('Members') } 2>$null
+    process {
+
+        ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
+            # Invoke the Members method to get the group members
+            & { $ThisDirectoryEntry.Invoke('Members') 2>$null }
+        }
+
+    }
 
 }

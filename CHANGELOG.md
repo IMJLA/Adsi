@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.159] - 2025-05-26
+### Added
+- address linting issues
+
 ## [5.0.158] - 2025-05-26
 ### Changed
 - excludePSAvoidLongLines
