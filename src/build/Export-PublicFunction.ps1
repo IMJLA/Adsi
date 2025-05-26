@@ -23,12 +23,17 @@ if ($ModuleContent -match 'Export-ModuleMember -Function') {
 
     Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace 'Export-ModuleMember -Function.*' , `"$NewFunctionExportStatement`""
     $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewFunctionExportStatement
-    Write-Verbose "`t`$ModuleContent | Out-File -Path '$ModuleFilePath' -Force"
-    $ModuleContent | Out-File -Path $ModuleFilePath -Force
+    Write-Verbose "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+    Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 
 } else {
-    Write-Verbose "`t`"$NewFunctionExportStatement`" | Out-File '$ModuleFilePath' -Append"
-    $NewFunctionExportStatement | Out-File $ModuleFilePath -Append
+    # Ensure the module content doesn't end with a newline before appending
+    if (-not $ModuleContent.EndsWith("`r`n") -and -not $ModuleContent.EndsWith("`n")) {
+        $ModuleContent += "`r`n"
+    }
+    $ModuleContent += $NewFunctionExportStatement
+    Write-Verbose "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+    Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 }
 
 # Create a string representation of the public functions array
