@@ -1,4 +1,4 @@
-function Get-KnownSidHashtable {
+function Get-KnownSidHashTable {
 
     <#
     .SYNOPSIS
