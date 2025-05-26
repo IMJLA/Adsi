@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.142] - 2025-05-26
+### Changed
+- Update rule exclusions
+
 ## [5.0.141] - 2025-05-26
 ### Changed
 - update analyzer settings
