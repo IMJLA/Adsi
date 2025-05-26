@@ -270,9 +270,9 @@ Task -name ? -description 'Lists the available tasks' -action {
 
 # Define the default task that runs all tasks in the build process
 Task -name Default -description 'Run the default build tasks' -depends SetLocation, # Prepare the build environment.
+ExportPublicFunctions, # Update the module source code.
 Format, # Format the source code files.
 LintAnalysis, # Perform linting and analysis of the source code.
-DetermineNewVersionNumber, # Determine the new version number.
 FixModule, # Build the module.
 UpdateChangeLog, # Add an entry to the Change Log.
 DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
@@ -284,6 +284,7 @@ SourceControl, # Commit changes to source control.
 CreateGitHubRelease, # Create a GitHub release.
 Reinstall, # Publish the module to the a PowerShell repository.
 ReturnToStartingLocation # Reset the build environment to its starting state.
+
 
 # Prepare the build environment.
 Task -name SetLocation -action {
@@ -300,6 +301,48 @@ Task -name SetLocation -action {
     }
 
 } -description 'Set the working directory to the project root to ensure all relative paths are correct'
+
+
+# Update the module source code.
+Task -name DetermineNewVersionNumber -action {
+
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
+    Write-InfoColor "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)' -ErrorAction Stop"
+    $script:NewModuleVersion = & $ScriptToRun -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version -ErrorAction Stop
+    $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
+    $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
+    Write-InfoColor "`t# Successfully determined the new version number: $script:NewModuleVersion" -ForegroundColor Green
+
+} -description 'Determine the new version number based on the build parameters'
+
+Task -name UpdateModuleVersion -depends DetermineNewVersionNumber -action {
+
+    Write-InfoColor "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
+    Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
+    Write-InfoColor "`t# Successfully updated the module manifest with the new version number." -ForegroundColor Green
+
+} -description 'Update the module manifest with the new version number'
+
+Task -name FindPublicFunctionFiles -depends UpdateModuleVersion -action {
+
+    Write-InfoColor "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
+    $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
+    if ($script:PublicFunctionFiles.Count -eq 0) {
+        Write-InfoColor "`t# No public function files found." -ForegroundColor Yellow
+    } else {
+        Write-InfoColor "`t# Found $($script:PublicFunctionFiles.Count) public function files." -ForegroundColor Green
+    }
+
+} -description 'Find all public function files'
+
+Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
+
+    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
+    Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -ErrorAction Stop"
+    & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath -ErrorAction Stop
+    Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
+
+} -description 'Export all public functions in the module'
 
 
 # Perform linting and analysis of the source code.
@@ -408,29 +451,9 @@ Task -name LintAnalysis -depends Lint -action {
 } -description 'Analyze the linting results and determine if the build should fail.'
 
 
-# Determine the new version number.
-Task -name DetermineNewVersionNumber -action {
-
-    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)' -ErrorAction Stop"
-    $script:NewModuleVersion = & $ScriptToRun -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version -ErrorAction Stop
-    $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
-    $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
-    Write-InfoColor "`t# Successfully determined the new version number: $script:NewModuleVersion" -ForegroundColor Green
-
-} -description 'Determine the new version number based on the build parameters'
-
-
 # Build the module.
-Task -name UpdateModuleVersion -depends DetermineNewVersionNumber -action {
 
-    Write-InfoColor "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
-    Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
-    Write-InfoColor "`t# Successfully updated the module manifest with the new version number." -ForegroundColor Green
-
-} -description 'Update the module manifest with the new version number'
-
-Task -name DeleteOldBuilds -depends UpdateModuleVersion -action {
+Task -name DeleteOldBuilds -action {
 
     Write-InfoColor "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop"
     Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop
@@ -438,28 +461,7 @@ Task -name DeleteOldBuilds -depends UpdateModuleVersion -action {
 
 } -description 'Delete old builds'
 
-Task -name FindPublicFunctionFiles -depends DeleteOldBuilds -action {
-
-    Write-InfoColor "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
-    $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
-    if ($script:PublicFunctionFiles.Count -eq 0) {
-        Write-InfoColor "`t# No public function files found." -ForegroundColor Yellow
-    } else {
-        Write-InfoColor "`t# Found $($script:PublicFunctionFiles.Count) public function files." -ForegroundColor Green
-    }
-
-} -description 'Find all public function files'
-
-Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
-
-    $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -ErrorAction Stop"
-    & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath -ErrorAction Stop
-    Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
-
-} -description 'Export all public functions in the module'
-
-Task -name FindBuildCopyDirectories -depends ExportPublicFunctions -action {
+Task -name FindBuildCopyDirectories -depends DeleteOldBuilds -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Find-BuildCopyDirectory.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory @('$($BuildCopyDirectories -join "','")') -ErrorAction Stop"

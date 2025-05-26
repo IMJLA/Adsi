@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [5.0.151] - 2025-05-26
 ### Fixed
+- fix build sequence
+
+## [5.0.151] - 2025-05-26
+### Fixed
 - fix extra line problem in module file
 
 ## [5.0.150] - 2025-05-26
