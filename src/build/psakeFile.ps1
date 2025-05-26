@@ -206,7 +206,9 @@ Properties {
 
     # Custom npm wrapper function
     function Invoke-NpmCommand {
+
         [CmdletBinding()]
+
         param(
             [Parameter(Mandatory)]
             [string]$Command,
@@ -217,8 +219,9 @@ Properties {
         )
 
         $originalLocation = Get-Location
+        Write-InfoColor "`t`tSet-Location -Path '$WorkingDirectory'"
         Set-Location $WorkingDirectory
-        Write-InfoColor "`t> npm $Command" -ForegroundColor Cyan
+        Write-InfoColor "`t`t& cmd /c `"npm $Command`" 2>&1"
 
         try {
 
@@ -228,10 +231,10 @@ Properties {
             # Process output
             foreach ($line in $output) {
                 if ($line -is [System.Management.Automation.ErrorRecord]) {
-                    Write-InfoColor "`t  ERROR: $($line.Exception.Message)" -ForegroundColor Red
+                    Write-InfoColor "`t`tERROR: $($line.Exception.Message)" -ForegroundColor Red
                 }
                 else {
-                    Write-InfoColor "`t  $line" -ForegroundColor Gray
+                    Write-InfoColor "`t`t$line" -ForegroundColor Gray
                 }
             }
 
@@ -468,7 +471,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
     # only add these configuration values to the build parameters if they have been been set
     $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
             $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
@@ -1122,7 +1125,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -1141,9 +1144,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
-        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
+        Uninstall-Module -Name $ModuleName -AllVersions -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     }
     else {
@@ -1159,13 +1162,13 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+        $ModuleStatus = Get-Module -Name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
+    } while ((-not $ModuleStatus) -and ($attempts -lt 3))
 
     # Test if reinstall was successful
-    $installedModule = Get-Module -name $ModuleName -ListAvailable
-    if ($installedModule) {
+    if ($ModuleStatus) {
         Write-InfoColor "`t# Successfully reinstalled module $ModuleName (version: $($installedModule.Version))." -ForegroundColor Green
     }
     else {
@@ -1180,7 +1183,7 @@ Task Reinstall -depends Uninstall -action {
 Task RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
     Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.127] - 2025-05-26
+### Fixed
+- fix module detection
+
 ## [5.0.126] - 2025-05-26
 ### Fixed
 - fix npm cmds with spaces
