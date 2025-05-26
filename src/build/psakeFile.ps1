@@ -623,7 +623,6 @@ Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $D
         Write-InfoColor "`t# Successfully deleted existing Markdown help files." -ForegroundColor Green
     }
     Write-Progress -Activity 'Deleting old Markdown docs' -Status 'Completed' -Completed
-    
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 

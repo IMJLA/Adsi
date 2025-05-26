@@ -16,6 +16,7 @@
     ExcludeRules        = @(
         # Add any rules you want to exclude here
         # Example: 'PSAvoidUsingWriteHost'
+        'PSAvoidLongLines'
     )
 
     # Configure severity levels for rules

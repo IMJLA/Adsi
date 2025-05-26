@@ -16,16 +16,17 @@ $publicFunctions = $PublicFunctionFiles.BaseName
 
 # Create a string representation of the public functions array
 $PublicFunctionsJoined = $publicFunctions -join "', '"
-$publicFunctionsAsString = "@('$publicFunctionsJoined')"
+$strPublicFunctions = "@('$publicFunctionsJoined')"
 
 Write-Verbose "`t[string]`$ModuleContent = Get-Content -LiteralPath '$ModuleFilePath' -Raw"
 $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
-$NewFunctionExportStatement = "Export-ModuleMember -Function $publicFunctionsAsString"
+$NewExportStmt = "Export-ModuleMember -Function $strPublicFunctions"
 
 if ($ModuleContent -match 'Export-ModuleMember -Function') {
 
-    Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace 'Export-ModuleMember -Function.*' , `"$NewFunctionExportStatement`""
-    $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewFunctionExportStatement
+    $OldExportStmt = 'Export-ModuleMember -Function .*'
+    Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace '$OldExportStmt' , `"$NewExportStmt`""
+    $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewExportStmt
     Write-Verbose "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
     Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 
@@ -34,11 +35,11 @@ if ($ModuleContent -match 'Export-ModuleMember -Function') {
     if (-not $ModuleContent.EndsWith("`r`n") -and -not $ModuleContent.EndsWith("`n")) {
         $ModuleContent += "`r`n"
     }
-    $ModuleContent += $NewFunctionExportStatement
+    $ModuleContent += $NewExportStmt
     Write-Verbose "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
     Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 }
 
 # Export public functions in the manifest
-Write-Verbose "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"
+Write-Verbose "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $strPublicFunctions"
 Update-Metadata -Path $ModuleManifestPath -PropertyName FunctionsToExport -Value $publicFunctions
