@@ -504,7 +504,7 @@ Task -name BuildModule -depends FindBuildCopyDirectories -precondition $FindBuil
     # only add these configuration values to the build parameters if they have been been set
     $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
             $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
@@ -1126,7 +1126,7 @@ Task -name AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -1181,7 +1181,7 @@ Task -name Reinstall -depends Uninstall -action {
 Task -name RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
     Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
 
