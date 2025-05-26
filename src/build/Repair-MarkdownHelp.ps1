@@ -23,12 +23,14 @@ param (
     $PublicFunctionFiles
 )
 
+#Fix the Module Page () things PlatyPS does not do):
+
+# Get the module manifest file
 $ManifestPath = [IO.Path]::Combine($BuildOutputDir, "$ModuleName.psd1")
 $NewManifestTest = Test-ModuleManifest -Path $ManifestPath
 
-#Fix the Module Page () things PlatyPS does not do):
+# Get the module help file
 $ModuleHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
-
 Write-Verbose "`t[string]`$ModuleHelp = Get-Content -LiteralPath '$ModuleHelpFile' -Raw"
 [string]$ModuleHelp = Get-Content -LiteralPath $ModuleHelpFile -Raw
 
@@ -66,10 +68,20 @@ $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
 Remove-Module $ModuleName -Force
 
 ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
+
+    # Get the help file for the function
     $fileNameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($ThisFunction)
     $ThisFunctionHelpFile = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$fileNameWithoutExtension.md")
     Write-Verbose "`t[string]`$ThisFunctionHelp = Get-Content -LiteralPath '$ThisFunctionHelpFile' -Raw"
     [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
+
+    # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
+    <#
+    Error: 4/8/2025 11:35:12 PM:
+    At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): "C:\Export-Permission\Entire Project\Adsi\docs\en-US\New-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+    Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+    Invalid yaml: expected simple key-value pairs
+    #>
     Write-Verbose "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
     $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
@@ -77,6 +89,8 @@ ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
 
     # Get rid of squiggly braces in parameter descriptions, synopsis, example descriptions, etc. to avoid Docusaurus HTML conversion issues due to JSON escaping not being supported.
+    # This is a workaround for functions without these fields, which result in PlatyPS generating one in the format: {{ Fill in the Synopsis }}.
+    # This can also be a bug in PlatyPS where it does not populate those fields correctly.
     <#
     [ERROR] Client bundle compiled with errors therefore further build is impossible.
 Error: MDX compilation failed for file ".\docs\online\Adsi\docs\en-US\Adsi.md"
