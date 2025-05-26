@@ -385,7 +385,7 @@ $LintPrerequisite = {
 
 Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
-    Write-InfoColor "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps1' -Recurse"
+    Write-InfoColor "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps*1' -Recurse"
     $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps*1' -Recurse
 
     foreach ($File in $ScriptFiles) {

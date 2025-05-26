@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.152] - 2025-05-26
+### Changed
+- troubleshoot format task
+
 ## [5.0.151] - 2025-05-26
 ### Fixed
 - fix build sequence
