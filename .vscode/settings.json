@@ -1,4 +1,5 @@
 {
+    "files.encoding": "utf8bom",
     "files.trimTrailingWhitespace": false,
     "files.insertFinalNewline": true,
     "editor.insertSpaces": true,

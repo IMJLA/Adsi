@@ -14,7 +14,8 @@
 
     # Specify rules to exclude (if any)
     ExcludeRules        = @(
-        'PSUseCorrectCasing'  # Exclude casing rule to allow VSCode formatting
+        # Add any rules you want to exclude here
+        # Example: 'PSAvoidUsingWriteHost'
     )
 
     # Configure severity levels for rules
@@ -82,6 +83,10 @@
             NewLineAfter       = $false
             IgnoreOneLineBlock = $true
             NoEmptyLineBefore  = $false
+        }
+
+        PSUseCorrectCasing                   = @{
+            Enable = $true
         }
 
         # Additional formatting rules

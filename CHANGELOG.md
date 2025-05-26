@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.141] - 2025-05-26
+### Changed
+- update analyzer settings
+
 ## [5.0.140] - 2025-05-26
 ### Added
 - address file encoding BOM issues
