@@ -1,7 +1,7 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
 schema: 2.0.0
 ---
 
@@ -30,7 +30,10 @@ Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable com
 Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')
 ```
 
-Get information about the local Administrator account
+Resolves the local Administrator account on the BUILTIN domain to its proper SID, NetBIOS name,
+and DNS name format.
+This is useful when analyzing permissions to ensure consistency in how identities
+are represented, especially when comparing permissions across different systems or domains.
 
 ## PARAMETERS
 

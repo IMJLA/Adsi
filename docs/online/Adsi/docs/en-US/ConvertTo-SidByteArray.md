@@ -23,10 +23,11 @@ Uses the GetBinaryForm method of the \[System.Security.Principal.SecurityIdentif
 
 ### EXAMPLE 1
 ```powershell
-ConvertTo-SidByteArray -SidString $SID
+ConvertTo-SidByteArray -SidString 'S-1-5-32-544'
 ```
 
-Convert the SID string to a byte array
+Converts the SID string for the built-in Administrators group ('S-1-5-32-544') to a byte array
+representation, which is required when working with directory services that expect SIDs in binary format.
 
 ## PARAMETERS
 

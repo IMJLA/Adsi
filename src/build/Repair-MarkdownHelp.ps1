@@ -76,10 +76,40 @@ ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
     $ThisFunctionHelp = $ThisFunctionHelp -replace '[ ]{2,}', ' '
     $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n\s\}', ' }'
 
-    # Get rid of squiggly braces in parameter descriptions to avoid Docusaurus HTML conversion issues because of JSON escaping not being supported.
-    ##while ($ThisFunctionHelp -match '[^:][\s]{(?<expression>[^}]+)}') {
-    ##    $ThisFunctionHelp = $ThisFunctionHelp.Replace($Matches[0], "- ``$($Matches['expression']))``")
-    ##}
+    # Get rid of squiggly braces in parameter descriptions, synopsis, example descriptions, etc. to avoid Docusaurus HTML conversion issues due to JSON escaping not being supported.
+    <#
+    [ERROR] Client bundle compiled with errors therefore further build is impossible.
+Error: MDX compilation failed for file ".\docs\online\Adsi\docs\en-US\Adsi.md"
+Cause: Could not parse expression with acorn
+Details:
+{
+  "cause": {
+    "pos": 1335,
+    "loc": {
+      "line": 36,
+      "column": 8
+    },
+    "raisedAt": 9
+  },
+  "column": 9,
+  "message": "Could not parse expression with acorn",
+  "line": 36,
+  "name": "36:9",
+  "place": {
+    "line": 36,
+    "column": 9,
+    "offset": 1335
+  },
+  "reason": "Could not parse expression with acorn",
+  "ruleId": "acorn",
+  "source": "micromark-extension-mdx-expression",
+  "url": "https://github.com/micromark/micromark-extension-mdx-expression/tree/main/packages/micromark-extension-mdx-expression#could-not-parse-expression-with-acorn"
+}
+
+    #>
+    while ($ThisFunctionHelp -match '{{(?<expression>[^}]+)}}') {
+        $ThisFunctionHelp = $ThisFunctionHelp.Replace( $Matches[0], $Matches['expression'].Trim() )
+    }
 
     # Workaround a bug since PS 7.4 introduced the ProgressAction common param which is not yet supported by PlatyPS
     $ParamToRemove = '-ProgressAction'

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.121] - 2025-05-26
+### Added
+- implement workaround for PlatyPS bug
+
 ## [5.0.120] - 2025-05-26
 ### Changed
 - troubleshoot repair-markdownhelp
