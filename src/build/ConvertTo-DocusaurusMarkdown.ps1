@@ -12,9 +12,13 @@ foreach ($File in $MarkdownFiles) {
 
     # Convert to Docusaurus format by updating links.
     # In the source Markdown, links point to files with `.md` extension, but Docusaurus converts each of these to a page with no extension.
-    if ($Content -match '\((?<File>[^\.]*).md\)') {
-        $FileName = $Matches['File']
-        $Content = $Content.Replace($Matches[0], "($FileName)")
+    $RegExMatches = $null
+    $RegExMatches = [regex]::Matches($Content, '\((?<File>[^\.]*).md\)')
+
+    ForEach ($Match in $RegExMatches) {
+        $TargetName = $Match.Groups['File'].Value
+        Write-InfoColor "`t`t`$Content = `$Content.Replace('$($Match.Value)', '$TargetName')"
+        $Content = $Content.Replace($Match.Value, "$TargetName")
     }
 
     # Write back to the file
