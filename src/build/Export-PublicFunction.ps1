@@ -13,11 +13,14 @@ param (
 )
 # Export public functions in the module
 $publicFunctions = $PublicFunctionFiles.BaseName
-$PublicFunctionsJoined = $publicFunctions -join "','"
+
+# Create a string representation of the public functions array
+$PublicFunctionsJoined = $publicFunctions -join "', '"
+$publicFunctionsAsString = "@('$publicFunctionsJoined')"
 
 Write-Verbose "`t[string]`$ModuleContent = Get-Content -LiteralPath '$ModuleFilePath' -Raw"
 $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
-$NewFunctionExportStatement = "Export-ModuleMember -Function @('$PublicFunctionsJoined')"
+$NewFunctionExportStatement = "Export-ModuleMember -Function $publicFunctionsAsString"
 
 if ($ModuleContent -match 'Export-ModuleMember -Function') {
 
@@ -35,9 +38,6 @@ if ($ModuleContent -match 'Export-ModuleMember -Function') {
     Write-Verbose "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
     Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 }
-
-# Create a string representation of the public functions array
-$publicFunctionsAsString = "@('" + ($publicFunctions -join "','") + "')"
 
 # Export public functions in the manifest
 Write-Verbose "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $publicFunctionsAsString"

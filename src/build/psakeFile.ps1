@@ -341,7 +341,7 @@ Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
     Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -ErrorAction Stop"
     & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath -ErrorAction Stop
     Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
-
+    pause
 } -description 'Export all public functions in the module'
 
 
@@ -430,7 +430,7 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
     }
 
     Write-InfoColor "`t# Successfully formatted PowerShell script files and ensured UTF8 with BOM encoding." -ForegroundColor Green
-
+    pause
 } -description 'Format PowerShell script files using PSScriptAnalyzer rules and ensure UTF8 with BOM encoding.'
 
 Task -name Lint -depends Format -action {
