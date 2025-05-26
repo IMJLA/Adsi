@@ -347,8 +347,8 @@ $LintPrerequisite = {
 
 Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
 
-    Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Severity '$LintSeverityThreshold' -Recurse -ErrorAction Stop"
-    $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Severity $LintSeverityThreshold -Recurse -ErrorAction Stop -Verbose
+    Write-InfoColor "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Recurse -ErrorAction Stop"
+    $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Recurse -ErrorAction Stop
     Write-InfoColor "`t# Completed linting successfully. Found '$($script:LintResult.Count)' rule violations" -ForegroundColor Green
 
 } -description 'Perform linting with PSScriptAnalyzer.'
@@ -471,7 +471,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
     # only add these configuration values to the build parameters if they have been been set
     $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
             $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
@@ -1125,7 +1125,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -1144,9 +1144,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
+    if (Get-Module -Name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
-        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
+        Uninstall-Module -Name $ModuleName -AllVersions -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     }
     else {
@@ -1162,9 +1162,9 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-        $ModuleStatus = Get-Module -name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
+        $ModuleStatus = Get-Module -Name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
     } while ((-not $ModuleStatus) -and ($attempts -lt 3))
 
     # Test if reinstall was successful
@@ -1183,7 +1183,7 @@ Task Reinstall -depends Uninstall -action {
 Task RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
     Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
 

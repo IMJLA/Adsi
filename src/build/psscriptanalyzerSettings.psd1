@@ -6,10 +6,87 @@
     # Need a test to detect .Net type accelerators (aliases) and a Fix to replace them with their corresponding fully-qualified types
     #####[System.Management.Automation.PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get
 
-    # Specify which rules to run
-    IncludeRules = @('*')
+    # Include all default PSScriptAnalyzer rules
+    IncludeDefaultRules = $true
 
-    # Specify rules to exclude
-    ExcludeRules = @()
+    # Specify which rules to run (using wildcard to include all)
+    IncludeRules        = @('*')
 
+    # Specify rules to exclude (if any)
+    ExcludeRules        = @(
+        # Add any rules you want to exclude here
+        # Example: 'PSAvoidUsingWriteHost'
+    )
+
+    # Configure severity levels for rules
+    Rules               = @{
+        PSProvideCommentHelp                 = @{
+            Enable                  = $true
+            ExportedOnly            = $true
+            BlockComment            = $true
+            VSCodeSnippetCorrection = $true
+            Placement               = 'before'
+        }
+
+        PSReviewUnusedParameter              = @{
+            CommandsToTraverse = @(
+                'Invoke-Expression'
+                'Invoke-Command'
+                'Invoke-RestMethod'
+                'Invoke-WebRequest'
+                'Start-Process'
+            )
+        }
+
+        PSUseDeclaredVarsMoreThanAssignments = @{
+            Enable = $true
+        }
+
+        PSAvoidLongLines                     = @{
+            Enable            = $true
+            MaximumLineLength = 120
+        }
+
+        PSAlignAssignmentStatement           = @{
+            Enable         = $true
+            CheckHashtable = $true
+        }
+
+        PSUseConsistentIndentation           = @{
+            Enable              = $true
+            Kind                = 'space'
+            PipelineIndentation = 'IncreaseIndentationForFirstPipeline'
+            IndentationSize     = 4
+        }
+
+        PSUseConsistentWhitespace            = @{
+            Enable                          = $true
+            CheckInnerBrace                 = $true
+            CheckOpenBrace                  = $true
+            CheckOpenParen                  = $true
+            CheckOperator                   = $true
+            CheckPipe                       = $true
+            CheckPipeForRedundantWhitespace = $false
+            CheckSeparator                  = $true
+            CheckParameter                  = $false
+        }
+
+        PSPlaceOpenBrace                     = @{
+            Enable             = $true
+            OnSameLine         = $true
+            NewLineAfter       = $true
+            IgnoreOneLineBlock = $true
+        }
+
+        PSPlaceCloseBrace                    = @{
+            Enable             = $true
+            NewLineAfter       = $false
+            IgnoreOneLineBlock = $true
+            NoEmptyLineBefore  = $false
+        }
+
+        PSUseCorrectCasing                   = @{
+            Enable = $true
+        }
+    }
 }

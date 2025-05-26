@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.134] - 2025-05-26
+### Changed
+- troubleshoot lint analysis
+
 ## [5.0.133] - 2025-05-26
 ### Changed
 - troubleshoot lint analysis
