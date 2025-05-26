@@ -1,4 +1,4 @@
-function ConvertTo-HexStringRepresentationForLDAPFilterString {
+﻿function ConvertTo-HexStringRepresentationForLDAPFilterString {
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string

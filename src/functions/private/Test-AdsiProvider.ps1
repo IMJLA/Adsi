@@ -1,4 +1,4 @@
-function Test-AdsiProvider {
+﻿function Test-AdsiProvider {
 
     <#
     .SYNOPSIS

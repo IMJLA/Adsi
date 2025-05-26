@@ -1,4 +1,4 @@
-function Search-Directory {
+﻿function Search-Directory {
 
     <#
     .SYNOPSIS

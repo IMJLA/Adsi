@@ -1,4 +1,4 @@
-function Get-KnownSidByName {
+﻿function Get-KnownSidByName {
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their friendly names.

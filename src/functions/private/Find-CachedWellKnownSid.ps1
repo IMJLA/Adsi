@@ -1,4 +1,4 @@
-function Find-CachedWellKnownSID {
+﻿function Find-CachedWellKnownSID {
 
     param (
 

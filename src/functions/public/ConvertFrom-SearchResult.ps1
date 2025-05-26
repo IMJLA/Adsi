@@ -1,4 +1,4 @@
-function ConvertFrom-SearchResult {
+﻿function ConvertFrom-SearchResult {
 
     <#
     .SYNOPSIS

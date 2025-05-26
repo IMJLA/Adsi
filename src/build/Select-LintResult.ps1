@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Run PSScriptAnalyzer tests against a module.
 .DESCRIPTION

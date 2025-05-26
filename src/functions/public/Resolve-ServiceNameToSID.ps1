@@ -1,4 +1,4 @@
-function Resolve-ServiceNameToSID {
+﻿function Resolve-ServiceNameToSID {
     <#
     .SYNOPSIS
         Resolves Windows service names to their corresponding security identifiers (SIDs).

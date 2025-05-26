@@ -1,4 +1,4 @@
-function Invoke-IADsGroupMembersMethod {
+﻿function Invoke-IADsGroupMembersMethod {
     <#
         .SYNOPSIS
         Get members of a group from the WinNT provider

@@ -1,4 +1,4 @@
-function Resolve-IdentityReference {
+﻿function Resolve-IdentityReference {
 
     <#
     .SYNOPSIS

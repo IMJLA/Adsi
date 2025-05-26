@@ -1,4 +1,4 @@
-function Resolve-IdRefSID {
+﻿function Resolve-IdRefSID {
 
     [OutputType([PSCustomObject])]
 

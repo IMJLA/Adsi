@@ -1,4 +1,4 @@
-function Get-AdsiServer {
+﻿function Get-AdsiServer {
 
     <#
     .SYNOPSIS

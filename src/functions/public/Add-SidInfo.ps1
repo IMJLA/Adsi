@@ -1,4 +1,4 @@
-function Add-SidInfo {
+﻿function Add-SidInfo {
 
     <#
     .SYNOPSIS

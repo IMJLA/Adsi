@@ -1,4 +1,4 @@
-function Get-AdsiGroup {
+﻿function Get-AdsiGroup {
 
     <#
     .SYNOPSIS

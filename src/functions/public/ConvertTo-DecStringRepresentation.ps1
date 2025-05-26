@@ -1,4 +1,4 @@
-function ConvertTo-DecStringRepresentation {
+﻿function ConvertTo-DecStringRepresentation {
 
     <#
     .SYNOPSIS

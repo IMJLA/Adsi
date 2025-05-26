@@ -1,4 +1,4 @@
-function ConvertFrom-ResultPropertyValueCollectionToString {
+﻿function ConvertFrom-ResultPropertyValueCollectionToString {
 
     <#
     .SYNOPSIS

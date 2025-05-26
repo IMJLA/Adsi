@@ -1,4 +1,4 @@
-param (
+﻿param (
     [version]$OldVersion,
     [switch]$IncrementMajorVersion,
     [switch]$IncrementMinorVersion

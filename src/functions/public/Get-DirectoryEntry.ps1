@@ -1,4 +1,4 @@
-function Get-DirectoryEntry {
+﻿function Get-DirectoryEntry {
 
     <#
     .SYNOPSIS

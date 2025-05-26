@@ -1,4 +1,4 @@
-function Add-DomainFqdnToLdapPath {
+﻿function Add-DomainFqdnToLdapPath {
 
     <#
     .SYNOPSIS

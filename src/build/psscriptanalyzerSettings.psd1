@@ -1,4 +1,4 @@
-@{
+﻿@{
     # Need a test to detect missing [CmdletBinding()] in public function
     # Need a test to detect missing pipeline support (at least 1 parameter needs to support [Parameter(ValueFromPipeline)])
     # Need a test to detect missing pipeline support (needs a process block)

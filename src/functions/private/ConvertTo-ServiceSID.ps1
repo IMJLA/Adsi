@@ -1,4 +1,4 @@
-function ConvertTo-ServiceSID {
+﻿function ConvertTo-ServiceSID {
     <#
     .SYNOPSIS
     This script calculates the SID of a Virtual Service Account.

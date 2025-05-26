@@ -1,4 +1,4 @@
-function Get-ParentDomainDnsName {
+﻿function Get-ParentDomainDnsName {
     <#
     .SYNOPSIS
         Gets the DNS name of the parent domain for a given computer or domain.

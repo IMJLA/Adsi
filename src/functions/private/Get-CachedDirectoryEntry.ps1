@@ -1,4 +1,4 @@
-function Get-CachedDirectoryEntry {
+﻿function Get-CachedDirectoryEntry {
 
     # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
 

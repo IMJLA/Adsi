@@ -1,4 +1,4 @@
-function Expand-AdsiGroupMember {
+﻿function Expand-AdsiGroupMember {
     <#
     .SYNOPSIS
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access

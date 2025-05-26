@@ -1,4 +1,4 @@
-function New-FakeDirectoryEntry {
+﻿function New-FakeDirectoryEntry {
 
     <#
     .SYNOPSIS

@@ -1,4 +1,4 @@
-function Get-KnownSid {
+﻿function Get-KnownSid {
 
     <#
     .SYNOPSIS

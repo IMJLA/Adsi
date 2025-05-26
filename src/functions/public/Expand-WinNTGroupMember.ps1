@@ -1,4 +1,4 @@
-function Expand-WinNTGroupMember {
+﻿function Expand-WinNTGroupMember {
 
     <#
     .SYNOPSIS

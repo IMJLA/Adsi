@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Format PowerShell source code files using PSScriptAnalyzer rules.
 

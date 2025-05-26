@@ -1,4 +1,4 @@
-#requires -Module ChangelogManagement
+﻿#requires -Module ChangelogManagement
 
 [CmdletBinding()]
 param (

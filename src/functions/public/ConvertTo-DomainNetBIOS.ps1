@@ -1,4 +1,4 @@
-function ConvertTo-DomainNetBIOS {
+﻿function ConvertTo-DomainNetBIOS {
 
     <#
     .SYNOPSIS

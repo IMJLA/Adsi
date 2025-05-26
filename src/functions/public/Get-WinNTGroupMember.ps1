@@ -1,4 +1,4 @@
-function Get-WinNTGroupMember {
+﻿function Get-WinNTGroupMember {
 
     <#
     .SYNOPSIS

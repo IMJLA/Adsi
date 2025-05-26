@@ -1,4 +1,4 @@
-function Split-DirectoryPath {
+﻿function Split-DirectoryPath {
 
     <#
     .EXAMPLE

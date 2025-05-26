@@ -1,4 +1,4 @@
-function Get-SidTypeMap {
+﻿function Get-SidTypeMap {
 
     <#
     .SYNOPSIS

@@ -1,4 +1,4 @@
-function Resolve-IdRefCached {
+﻿function Resolve-IdRefCached {
 
     [OutputType([PSCustomObject])]
 

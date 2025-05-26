@@ -1,4 +1,4 @@
-function Resolve-IdRefGetDirEntry {
+﻿function Resolve-IdRefGetDirEntry {
 
     [OutputType([string])]
 

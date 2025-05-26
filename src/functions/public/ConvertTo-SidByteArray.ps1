@@ -1,4 +1,4 @@
-function ConvertTo-SidByteArray {
+﻿function ConvertTo-SidByteArray {
     <#
     .SYNOPSIS
     Convert a SID from a string to binary format (byte array)

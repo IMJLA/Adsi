@@ -1,4 +1,4 @@
-function ConvertFrom-SidString {
+﻿function ConvertFrom-SidString {
 
     <#
     .SYNOPSIS

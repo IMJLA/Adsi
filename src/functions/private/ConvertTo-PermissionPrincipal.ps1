@@ -1,4 +1,4 @@
-function ConvertTo-PermissionPrincipal {
+﻿function ConvertTo-PermissionPrincipal {
 
     <#
 .SYNOPSIS

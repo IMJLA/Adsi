@@ -1,4 +1,4 @@
-function Resolve-IdRefAppPkgAuth {
+﻿function Resolve-IdRefAppPkgAuth {
 
     [OutputType([PSCustomObject])]
 

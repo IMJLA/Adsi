@@ -1,4 +1,4 @@
-function Invoke-ComObject {
+﻿function Invoke-ComObject {
 
     <#
     .SYNOPSIS

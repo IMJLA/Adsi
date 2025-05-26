@@ -1,4 +1,4 @@
-function Invoke-ScShowSid {
+﻿function Invoke-ScShowSid {
 
     # Invoke sc.exe showsid
 

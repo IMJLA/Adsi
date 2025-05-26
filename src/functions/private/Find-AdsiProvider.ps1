@@ -1,4 +1,4 @@
-function Find-AdsiProvider {
+﻿function Find-AdsiProvider {
 
     <#
         .SYNOPSIS

@@ -1,4 +1,4 @@
-function Find-LocalAdsiServerSid {
+﻿function Find-LocalAdsiServerSid {
     <#
     .SYNOPSIS
         Finds the SID prefix of the local server by querying the built-in administrator account.

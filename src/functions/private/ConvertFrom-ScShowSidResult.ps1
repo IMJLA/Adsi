@@ -1,4 +1,4 @@
-function ConvertFrom-ScShowSidResult {
+﻿function ConvertFrom-ScShowSidResult {
     # Convert the results from sc.exe into an object
     param (
         [string[]]$Result

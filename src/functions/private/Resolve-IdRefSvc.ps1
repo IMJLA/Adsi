@@ -1,4 +1,4 @@
-function Resolve-IdRefSvc {
+﻿function Resolve-IdRefSvc {
 
     [OutputType([PSCustomObject])]
 

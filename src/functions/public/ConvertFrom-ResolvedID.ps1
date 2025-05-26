@@ -1,4 +1,4 @@
-function ConvertFrom-ResolvedID {
+﻿function ConvertFrom-ResolvedID {
 
     <#
     .SYNOPSIS

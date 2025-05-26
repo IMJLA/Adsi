@@ -1,4 +1,4 @@
-#[NoRunspaceAffinity()] # Make this class thread-safe (requires PS 7+)
+﻿#[NoRunspaceAffinity()] # Make this class thread-safe (requires PS 7+)
 class FakeDirectoryEntry {
 
     <#

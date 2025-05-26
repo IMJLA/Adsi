@@ -1,4 +1,4 @@
-function Get-CurrentDomain {
+﻿function Get-CurrentDomain {
 
     <#
     .SYNOPSIS

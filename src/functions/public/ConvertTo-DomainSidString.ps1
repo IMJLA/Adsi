@@ -1,4 +1,4 @@
-function ConvertTo-DomainSidString {
+﻿function ConvertTo-DomainSidString {
 
     <#
     .SYNOPSIS

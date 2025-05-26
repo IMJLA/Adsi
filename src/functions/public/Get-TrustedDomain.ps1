@@ -1,4 +1,4 @@
-function Get-TrustedDomain {
+﻿function Get-TrustedDomain {
     <#
     .SYNOPSIS
     Returns a dictionary of trusted domains by the current computer

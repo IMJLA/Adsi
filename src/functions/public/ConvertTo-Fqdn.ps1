@@ -1,4 +1,4 @@
-function ConvertTo-Fqdn {
+﻿function ConvertTo-Fqdn {
 
     <#
     .SYNOPSIS

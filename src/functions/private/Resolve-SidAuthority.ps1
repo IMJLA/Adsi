@@ -1,4 +1,4 @@
-function Resolve-SidAuthority {
+﻿function Resolve-SidAuthority {
 
     <#
     .SYNOPSIS

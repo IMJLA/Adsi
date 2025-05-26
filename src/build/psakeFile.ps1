@@ -1,4 +1,4 @@
-using namespace System.Management.Automation
+﻿using namespace System.Management.Automation
 #TODO : Use Fixer 'Get-TextFilesList $pwd | ConvertTo-SpaceIndentation'.
 
 Properties {
@@ -365,21 +365,21 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
         $FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $LintSettingsFile -ErrorAction Stop
 
-
-        # Only update file if content changed
+        # Always re-encode as UTF8 with BOM and update file if content changed or encoding needs to be fixed
         if ($FormattedContent -ne $OriginalContent) {
-
-            # Use Set-Content with explicit encoding to ensure consistent line endings
-            Write-InfoColor "`tSet-Content -Path '$RelativePath' -Value `$FormattedContent -Encoding UTF8 -NoNewLine -ErrorAction Stop"
-            Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8 -NoNewline -ErrorAction Stop
-
+            Write-InfoColor "`tSet-Content -Path '$RelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
+            Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
+        } else {
+            # Even if content is the same, re-encode to ensure UTF8 with BOM
+            Write-InfoColor "`tRe-encoding '$RelativePath' as UTF8 with BOM"
+            Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
         }
 
     }
 
-    Write-InfoColor "`t# Successfully formatted PowerShell script files." -ForegroundColor Green
+    Write-InfoColor "`t# Successfully formatted and re-encoded PowerShell script files as UTF8 with BOM." -ForegroundColor Green
 
-} -description 'Format PowerShell script files using PSScriptAnalyzer rules.'
+} -description 'Format PowerShell script files using PSScriptAnalyzer rules and re-encode as UTF8 with BOM.'
 
 Task -name Lint -depends Format -action {
 
@@ -504,7 +504,7 @@ Task -name BuildModule -depends FindBuildCopyDirectories -precondition $FindBuil
     # only add these configuration values to the build parameters if they have been been set
     $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
             $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
@@ -1126,7 +1126,7 @@ Task -name AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -1144,9 +1144,9 @@ Task -name Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
-        Uninstall-Module -Name $ModuleName -AllVersions -ErrorAction Stop
+        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     } else {
         Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green
@@ -1161,9 +1161,9 @@ Task -name Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
+        Install-Module -name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-        $ModuleStatus = Get-Module -Name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
+        $ModuleStatus = Get-Module -name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
     } while ((-not $ModuleStatus) -and ($attempts -lt 3))
 
     # Test if reinstall was successful
@@ -1181,7 +1181,7 @@ Task -name Reinstall -depends Uninstall -action {
 Task -name RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
     Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
 

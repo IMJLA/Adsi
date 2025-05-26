@@ -1,4 +1,4 @@
-function ConvertTo-DistinguishedName {
+﻿function ConvertTo-DistinguishedName {
 
     <#
     .SYNOPSIS

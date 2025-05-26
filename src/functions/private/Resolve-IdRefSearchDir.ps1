@@ -1,4 +1,4 @@
-function Resolve-IdRefSearchDir {
+﻿function Resolve-IdRefSearchDir {
 
     [OutputType([string])]
 

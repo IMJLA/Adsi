@@ -1,4 +1,4 @@
-function ConvertTo-AccountCache {
+﻿function ConvertTo-AccountCache {
 
     param (
         $Account,

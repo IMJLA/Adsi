@@ -1,4 +1,4 @@
-function ConvertFrom-DirectoryEntry {
+﻿function ConvertFrom-DirectoryEntry {
 
     <#
     .SYNOPSIS

@@ -1,4 +1,4 @@
-function Get-KnownCaptionHashTable {
+﻿function Get-KnownCaptionHashTable {
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).

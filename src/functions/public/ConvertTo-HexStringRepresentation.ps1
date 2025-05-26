@@ -1,4 +1,4 @@
-function ConvertTo-HexStringRepresentation {
+﻿function ConvertTo-HexStringRepresentation {
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format

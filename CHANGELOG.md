@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.144] - 2025-05-26
+### Changed
+- update format task to fix file encoding
+
 ## [5.0.143] - 2025-05-26
 ### Added
 - address file encoding BOM issues
