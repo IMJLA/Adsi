@@ -1,4 +1,4 @@
-function ConvertFrom-AppCapabilitySid {
+﻿function ConvertFrom-AppCapabilitySid {
 
     <#
     .SYNOPSIS
