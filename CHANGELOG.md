@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.117] - 2025-05-26
+### Fixed
+- bugfix search path for build
+
+## [5.0.116] - 2025-05-26
+### Fixed
+- bugfix search path for node_modules
+
+## [5.0.115] - 2025-05-26
+### Fixed
+- bugfix MAML search needs recursion because files will be nested into locale dirs
+
+## [5.0.114] - 2025-05-26
+### Added
+- add lots of build console output
+
 ## [5.0.113] - 2025-05-26
 ### Changed
 - update build console output
