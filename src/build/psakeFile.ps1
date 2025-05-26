@@ -395,7 +395,7 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
 
         # Read the original content of the file
-        Write-Information "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw -ErrorAction Stop"
+        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw -ErrorAction Stop"
         $OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
 
         # Check current file encoding
@@ -408,10 +408,10 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
 
             Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
         #>
-        Write-Information "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
+        Write-Verbose "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
         $NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
 
-        Write-Information "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
+        Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
         $FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $LintSettingsFile -ErrorAction Stop
 
         # Update file if content changed or encoding needs to be fixed
@@ -458,6 +458,7 @@ Task -name DeleteOldBuilds -action {
     Write-InfoColor "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop"
     Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop
     Write-InfoColor "`t# Successfully deleted old builds." -ForegroundColor Green
+    Write-Progress -Activity 'Deleting old builds' -Status 'Completed' -Completed
 
 } -description 'Delete old builds'
 
