@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.112] - 2025-05-26
+### Changed
+- improve psakefile console output
+
 ## [5.0.111] - 2025-05-26
 ### Fixed
 - bugfix null Compile header and footer params

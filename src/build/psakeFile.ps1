@@ -445,9 +445,20 @@ Task FixModule -depends BuildModule -action {
     Write-InfoColor "`tRemove-Item -Path '$File'"
     Remove-Item -Path $File -ErrorAction SilentlyContinue
 
+    if (Test-Path -Path $File) {
+        Write-Error 'Failed to remove unnecessary file '$File' from the build output directory.'
+    }
+
     $File = [IO.Path]::Combine($script:BuildOutputDir, 'psscriptanalyzerSettings.psd1')
     Write-InfoColor "`tRemove-Item -Path '$File'"
     Remove-Item -Path $File -ErrorAction SilentlyContinue
+
+    if ((Test-Path -Path $File)) {
+        Write-Error 'Failed to remove unnecessary file '$File' from the build output directory.'
+    }
+    else {
+        Write-InfoColor "`t# Successfully removed unnecessary files from the build output directory." -ForegroundColor Green
+    }
 
 } -description 'Fix the module after building it by removing unnecessary files. This is a workaround until PowerShellBuild usage is replaced with custom build scripts.'
 
