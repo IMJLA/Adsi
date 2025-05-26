@@ -64,7 +64,7 @@
             CheckInnerBrace                 = $true
             CheckOpenBrace                  = $true
             CheckOpenParen                  = $true
-            CheckOperator                   = $true
+            CheckOperator                   = $false  # Let PSAlignAssignmentStatement handle this
             CheckPipe                       = $true
             CheckPipeForRedundantWhitespace = $false
             CheckSeparator                  = $true
