@@ -19,16 +19,12 @@
 
 param(
 
-    [parameter(Mandatory)]
-    [string]$Path,
-
     [ValidateSet('None', 'Error', 'Warning', 'Information')]
     [string]$SeverityThreshold,
 
-    [string]$SettingsPath,
-
     [hashtable]$ExcludeRulesByFile = @{
-        #'psakeFile.ps1' = @('PSUseDeclaredVarsMoreThanAssignments') # Exclude this rule for psakeFile.ps1 as uses the psake syntax.
+        # Exclude this rule for this file because psake variable scoping is not understood by PSScriptAnalyzer.
+        'psakeFile.ps1' = @('PSUseDeclaredVarsMoreThanAssignments')
     },
 
     $LintResult

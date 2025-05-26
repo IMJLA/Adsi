@@ -351,8 +351,8 @@ Task Lint -depends TestModuleManifest -precondition $LintPrerequisite -action {
 Task LintAnalysis -depends Lint -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Select-LintResult.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -Path '$SourceCodeDir' -SeverityThreshold '$LintSeverityThreshold' -SettingsPath '$LintSettingsFile' -LintResult `$script:LintResult -ErrorAction Stop"
-    & $ScriptToRun -Path $SourceCodeDir -SeverityThreshold $LintSeverityThreshold -SettingsPath $LintSettingsFile -LintResult $script:LintResult -ErrorAction Stop
+    Write-InfoColor "`t& '$ScriptToRun' -SeverityThreshold '$LintSeverityThreshold' -LintResult `$script:LintResult -ErrorAction Stop"
+    & $ScriptToRun -SeverityThreshold $LintSeverityThreshold -LintResult $script:LintResult -ErrorAction Stop
     Write-InfoColor "`t# Completed lint output analysis successfully." -ForegroundColor Green
 
 } -description 'Analyze the linting results and determine if the build should fail.'
