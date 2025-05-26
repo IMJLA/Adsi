@@ -344,7 +344,7 @@ $FindBuildPrerequisite = {
 
     # 'Find the PSScriptAnalyzer module for linting the source code.'
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
+    Write-InfoColor "FindBuildPrerequisites$NewLine" -ForegroundColor Blue
 
     if ($BuildCompileModule) {
 
@@ -385,7 +385,7 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
 
     # only add these configuration values to the build parameters if they have been been set
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
         if ($Val -ne '') {
             $buildParams.$_ = $Val
         }
@@ -429,7 +429,7 @@ $DocsPrereq = {
 
     # 'Find the PlatyPS module for generating Markdown help documentation.'
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
+    Write-InfoColor "FindDocumentationPrerequisites$NewLine" -ForegroundColor Blue
 
     if ($DocumentationEnabled) {
 
@@ -628,17 +628,17 @@ $OnlineHelpPrereqs = {
         $NodeJsVersion = & node -v 2>$null
 
         if ($NodeJsVersion -and [version]($NodeJsVersion.Replace('v', '')) -lt [version]'18.0.0') {
-            Write-InfoColor "Node.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Online Help generation will be skipped." -ForegroundColor Yellow
+            Write-InfoColor "`tNode.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Online Help generation will be skipped." -ForegroundColor Yellow
             return $false
         }
         else {
-            Write-InfoColor "Node.js is installed (version: $NodeJsVersion). Online Help will be generated." -ForegroundColor Green
+            Write-InfoColor "`tNode.js is installed (version: $NodeJsVersion). Online Help will be generated." -ForegroundColor Green
             return $true
         }
 
     }
     else {
-        Write-InfoColor 'Node.js is not installed or not found in the PATH. Online Help generation will be skipped.' -ForegroundColor Yellow
+        Write-InfoColor "`tNode.js is not installed or not found in the PATH. Online Help generation will be skipped." -ForegroundColor Yellow
         return $false
     }
 
@@ -765,7 +765,7 @@ Task BuildOnlineHelpWebsite -depends ConvertArt -action {
 $UnitTestPrereq = {
 
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindUnitTestPrerequisites$NewLine" -ForegroundColor Blue
+    Write-InfoColor "FindUnitTestingPrerequisites$NewLine" -ForegroundColor Blue
 
     if ($TestEnabled) {
         Write-Information "`tGet-Module -Name Pester -ListAvailable"
@@ -856,7 +856,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -871,9 +871,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -888,16 +888,16 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
 Task RemoveScriptScopedVariables -depends Reinstall -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 } -description 'Remove script-scoped variables to clean up the environment.'
 
