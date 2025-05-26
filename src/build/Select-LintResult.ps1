@@ -14,8 +14,11 @@
 
     Run ScriptAnalyzer on built module in ./Output/Mymodule/0.1.0. Throw error if any errors are found.
 #>
+
 [cmdletbinding()]
+
 param(
+
     [parameter(Mandatory)]
     [string]$Path,
 
@@ -25,10 +28,11 @@ param(
     [string]$SettingsPath,
 
     [string]$ExcludeRulesByFile = @{
-        'psakeFile.ps1' = @('PSUseDeclaredVarsMoreThanAssignments')
+        #'psakeFile.ps1' = @('PSUseDeclaredVarsMoreThanAssignments')
     },
 
     $LintResult
+
 )
 
 $filteredResult = ForEach ($result in $LintResult) {
