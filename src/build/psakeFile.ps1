@@ -349,22 +349,30 @@ Task FindPublicFunctionFiles -depends DeleteOldBuilds -action {
 
     Write-InfoColor "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
     $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
+    if ($script:PublicFunctionFiles.Count -eq 0) {
+        Write-InfoColor "`t# No public function files found." -ForegroundColor Yellow
+    }
+    else {
+        Write-InfoColor "`t# Found $($script:PublicFunctionFiles.Count) public function files." -ForegroundColor Green
+    }
 
 } -description 'Find all public function files'
 
 Task ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Export-PublicFunction.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
-    & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath
+    Write-InfoColor "`t& '$ScriptToRun' -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -ErrorAction Stop"
+    & $ScriptToRun -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath -ErrorAction Stop
+    Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
 
 } -description 'Export all public functions in the module'
 
 Task FindBuildCopyDirectories -depends ExportPublicFunctions -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Find-BuildCopyDirectory.ps1')
-    Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory @('$($BuildCopyDirectories -join "','")')"
-    $Script:CopyDirectories = & $ScriptToRun -BuildCopyDirectory $BuildCopyDirectories
+    Write-InfoColor "`t& '$ScriptToRun' -BuildCopyDirectory @('$($BuildCopyDirectories -join "','")') -ErrorAction Stop"
+    $Script:CopyDirectories = & $ScriptToRun -BuildCopyDirectory $BuildCopyDirectories -ErrorAction Stop
+    Write-InfoColor "`t# Found $($Script:CopyDirectories.Count) directories to copy to the build output directory." -ForegroundColor Green
 
 } -description 'Find all directories to copy to the build output directory, excluding empty directories'
 
@@ -397,14 +405,15 @@ $FindBuildPrerequisite = {
 Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrerequisite -action {
 
     $buildParams = @{
-        Path               = $SourceCodeDir
-        ModuleName         = $ModuleName
-        DestinationPath    = $script:BuildOutputDir
-        Exclude            = $BuildExclude + "$ModuleName.psm1"
         Compile            = $BuildCompileModule
         CompileDirectories = $BuildCompileDirectories
         CopyDirectories    = $script:CopyDirectories
         Culture            = $DocsDefaultLocale
+        DestinationPath    = $script:BuildOutputDir
+        ErrorAction        = 'Stop' # Stop on any error
+        Exclude            = $BuildExclude + "$ModuleName.psm1"
+        ModuleName         = $ModuleName
+        Path               = $SourceCodeDir
     }
 
     if ($DocsConvertReadMeToAboutFile) {
@@ -412,18 +421,21 @@ Task BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrere
     }
 
     # only add these configuration values to the build parameters if they have been been set
+    $CompileParamStr = ''
     'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -Name $_ -ValueOnly -ErrorAction SilentlyContinue
-        if ($Val -ne '') {
+        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
+        if ($Val -ne '' -and $Val -ne $null) {
             $buildParams.$_ = $Val
+            $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
         }
     }
 
     $ExcludeJoined = $buildParams['Exclude'] -join "','"
     $CompileDirectoriesJoined = $buildParams['CompileDirectories'] -join "','"
     $CopyDirectoriesJoined = $buildParams['CopyDirectories'] -join "','"
-    Write-InfoColor "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$DocsMarkdownReadMePath' -CompileHeader '$($buildParams['CompileHeader'])' -CompileFooter '$($buildParams['CompileFooter'])' -CompileScriptHeader '$($buildParams['CompileScriptHeader'])' -CompileScriptFooter '$($buildParams['CompileScriptFooter'])'"
+    Write-InfoColor "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$DocsMarkdownReadMePath' $CompileParamStr-ErrorAction 'Stop'"
     Build-PSBuildModule @buildParams
+    Write-InfoColor "`t# Successfully built the module." -ForegroundColor Green
 
 } -description 'Build a PowerShell script module based on the source directory'
 
@@ -916,7 +928,7 @@ Task AwaitRepoUpdate -depends Publish -action {
     do {
         Start-Sleep -Seconds 1
         $timer++
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
+        $VersionInGallery = Find-Module -name $ModuleName -Repository $PublishPSRepository
     } while (
         $VersionInGallery.Version -lt $script:NewModuleVersion -and
         $timer -lt $timeout
@@ -931,9 +943,9 @@ Task Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
 
-    if (Get-Module -Name $ModuleName -ListAvailable) {
+    if (Get-Module -name $ModuleName -ListAvailable) {
         Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions"
-        Uninstall-Module -Name $ModuleName -AllVersions
+        Uninstall-Module -name $ModuleName -AllVersions
     }
     else {
         Write-InfoColor ''
@@ -948,9 +960,9 @@ Task Reinstall -depends Uninstall -action {
     do {
         $attempts++
         Write-InfoColor "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -name $ModuleName -Force -ErrorAction Continue
+        Install-Module -Name $ModuleName -Force -ErrorAction Continue
         Start-Sleep -Seconds 1
-    } while ($null -eq (Get-Module -Name $ModuleName -ListAvailable) -and ($attempts -lt 3))
+    } while ($null -eq (Get-Module -name $ModuleName -ListAvailable) -and ($attempts -lt 3))
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
 
@@ -960,7 +972,7 @@ Task Reinstall -depends Uninstall -action {
 Task RemoveScriptScopedVariables -action {
 
     # Remove script-scoped variables to avoid their accidental re-use
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
+    Remove-Variable -Name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
 
 } -description 'Remove script-scoped variables to clean up the environment.'
 

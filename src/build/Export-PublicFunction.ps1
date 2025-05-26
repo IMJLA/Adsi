@@ -1,3 +1,4 @@
+[CmdletBinding()]
 param (
 
     # The collection of files containing public functions

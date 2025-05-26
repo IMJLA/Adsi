@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.111] - 2025-05-26
+### Fixed
+- bugfix null Compile header and footer params
+
 ## [5.0.109] - 2025-05-26
 ### Changed
 - update deletion of old builds
