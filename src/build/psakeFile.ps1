@@ -353,6 +353,10 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         Write-Verbose "`t`$OriginalContent = Get-Content -Path '$RelativePath' -Raw -ErrorAction Stop"
         $OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
 
+        # Check current file encoding
+        $FileBytes = [System.IO.File]::ReadAllBytes($File.FullName)
+        $HasBOM = $FileBytes.Length -ge 3 -and $FileBytes[0] -eq 0xEF -and $FileBytes[1] -eq 0xBB -and $FileBytes[2] -eq 0xBF
+        
         <#
         Normalize line endings to Windows format (CRLF) before formatting
         In addition to ensuring consistency this prevents the following error from Invoke-Formatter:
@@ -365,21 +369,24 @@ Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -a
         Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
         $FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $LintSettingsFile -ErrorAction Stop
 
-        # Always re-encode as UTF8 with BOM and update file if content changed or encoding needs to be fixed
-        if ($FormattedContent -ne $OriginalContent) {
-            Write-InfoColor "`tSet-Content -Path '$RelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
-            Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
-        } else {
-            # Even if content is the same, re-encode to ensure UTF8 with BOM
-            Write-InfoColor "`tRe-encoding '$RelativePath' as UTF8 with BOM"
-            Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
-        }
+        # Update file if content changed or encoding needs to be fixed
+        $ContentChanged = $FormattedContent -ne $OriginalContent
+        $EncodingNeedsUpdate = -not $HasBOM
 
+        if ($ContentChanged -or $EncodingNeedsUpdate) {
+            
+            if ($ContentChanged -and $EncodingNeedsUpdate) {
+                Write-InfoColor "`tSet-Content -Path '$RelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
+                Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
+            }
+
+        }
+        
     }
 
-    Write-InfoColor "`t# Successfully formatted and re-encoded PowerShell script files as UTF8 with BOM." -ForegroundColor Green
+    Write-InfoColor "`t# Successfully formatted PowerShell script files and ensured UTF8 with BOM encoding." -ForegroundColor Green
 
-} -description 'Format PowerShell script files using PSScriptAnalyzer rules and re-encode as UTF8 with BOM.'
+} -description 'Format PowerShell script files using PSScriptAnalyzer rules and ensure UTF8 with BOM encoding.'
 
 Task -name Lint -depends Format -action {
 
@@ -973,7 +980,7 @@ Task -name CopyArt -depends BuildArt -action {
     Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
 
     Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop |
-        Copy-Item -Destination $DocsOnlineStaticImageDir
+    Copy-Item -Destination $DocsOnlineStaticImageDir
 
     Write-InfoColor "`t# Successfully copied static SVG art files to the online help directory." -ForegroundColor Green
 
