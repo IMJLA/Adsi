@@ -1228,15 +1228,16 @@ Task -name Uninstall -depends AwaitRepoUpdate -action {
         try {
             $Result | Uninstall-Module -ErrorAction Stop
         } catch {
-            switch ($_.Exception.Message) {
-                "No match was found for the specified search criteria and module names 'Adsi'." {
-                    Remove-Item $script:BuildOutputDir -Recurse -Force -ErrorAction Stop
+            $ErrorMessage = "$_"
+            switch ("$ErrorMessage") {
+                "No match was found for the specified search criteria and module names '$ModuleName'." {
+                    Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
+                    Remove-Item $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop
                 }
                 default {
-                    Write-Error "An unexpected error occurred while uninstalling module $ModuleName`: $_"
+                    Write-Error "An unexpected error occurred while uninstalling module $ModuleName`: $ErrorMessage"
                 }
             }
-            Write-Error "Failed to uninstall module $ModuleName`: $_"
         }
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     } else {
