@@ -654,7 +654,18 @@ Task -name ImportModule -depends InstallTempModule -action {
 
     Write-InfoColor "`tImport-Module -Name '$ModuleName' -Force -ErrorAction Stop"
     Import-Module -Name $ModuleName -Force -ErrorAction Stop
-    Write-InfoColor "`t# Successfully imported the module." -ForegroundColor Green
+    Write-InfoColor "`tGet-Module -Name '$ModuleName' -ErrorAction Stop"
+    $Result = Get-Module -Name $ModuleName -ErrorAction Stop
+
+    if ($Result) {
+        if ($Result.Count -gt 1) {
+            Write-Error "`t# Multiple versions of the module '$ModuleName' are loaded: $($Result.Version -join ' & ')." -ForegroundColor Yellow
+        } else {
+            Write-InfoColor "`t# Successfully imported the '$($Result.Name)' module (version $($Result.Version))" -ForegroundColor Green
+        }
+    } else {
+        Write-Error "Failed to import the module '$ModuleName'."
+    }
 
 } -description 'Import the module to ensure it is loaded for help generation.'
 
@@ -679,29 +690,12 @@ Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
     $VerbosePreference = 'Continue'
 
-    # First import by path to ensure it's available
-    #Write-InfoColor "`tImport-Module -Name '$ModuleManifestPath' -Force -ErrorAction Stop"
-    #Import-Module -Name $ModuleManifestPath -Force -ErrorAction Stop
-
-    # Then import by name so PlatyPS can find it
-    #Write-InfoColor "`tImport-Module -Name '$ModuleName' -Force -ErrorAction Stop"
-    #Import-Module -Name $ModuleName -Force -ErrorAction Stop
-
-    Write-InfoColor "`tGet-Module -Name '$ModuleName' -ErrorAction Stop"
-    $Result = Get-Module -Name $ModuleName -ErrorAction Stop
-
-    if (-not $Result) {
-        Write-Error "Failed to import the module '$ModuleName'."
-    }
-
-    Write-InfoColor "`t# Successfully imported the '$($Result.Name)' module (version $($Result.Version))" -ForegroundColor Green
-
     $newMDParams = @{
         AlphabeticParamsOrder = $true
         Locale                = $DocsDefaultLocale
         ErrorAction           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
-        HelpVersion           = $Result.Version
-        Module                = $Result.Name
+        HelpVersion           = $script:NewModuleVersion
+        Module                = $ModuleName
         # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
         # OnlineVersionUrl = $GitHubPagesLinkForThisModule
         OutputFolder          = $DocsMarkdownDefaultLocaleDir
@@ -1225,10 +1219,11 @@ Task -name AwaitRepoUpdate -depends Publish -action {
 Task -name Uninstall -depends AwaitRepoUpdate -action {
 
     Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable"
+    $Result = Get-Module -Name $ModuleName -ListAvailable
 
-    if (Get-Module -name $ModuleName -ListAvailable) {
-        Write-InfoColor "`tUninstall-Module -Name '$ModuleName' -AllVersions -ErrorAction Stop"
-        Uninstall-Module -name $ModuleName -AllVersions -ErrorAction Stop
+    if ($Result) {
+        Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable | Uninstall-Module -ErrorAction Stop"
+        $Result | Uninstall-Module -ErrorAction Stop
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     } else {
         Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green

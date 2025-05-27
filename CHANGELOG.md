@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.185] - 2025-05-26
+### Changed
+- troubleshoot tmp module import
+
+## [5.0.184] - 2025-05-26
+### Changed
+- troubleshoot temp module import
+
+## [5.0.182] - 2025-05-26
+### Fixed
+- fix uninstall bug
+
 ## [5.0.181] - 2025-05-26
 ### Fixed
 - fix help generation temp module usage
