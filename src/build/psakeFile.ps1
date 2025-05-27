@@ -659,7 +659,7 @@ Task -name ImportModule -depends InstallTempModule -action {
 
     if ($Result) {
         if ($Result.Count -gt 1) {
-            Write-Error "`t# Multiple versions of the module '$ModuleName' are loaded: $($Result.Version -join ' & ')." -ForegroundColor Yellow
+            Write-Error "`t# Multiple versions of the module '$ModuleName' are loaded: $($Result.Version -join ' & ')."
         } else {
             Write-InfoColor "`t# Successfully imported the '$($Result.Name)' module (version $($Result.Version))" -ForegroundColor Green
         }
@@ -670,6 +670,7 @@ Task -name ImportModule -depends InstallTempModule -action {
 } -description 'Import the module to ensure it is loaded for help generation.'
 
 Task -name UpdateMarkDownHelp -depends ImportModule -action {
+
     if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
 
         Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
@@ -679,6 +680,7 @@ Task -name UpdateMarkDownHelp -depends ImportModule -action {
             Update-MarkdownHelp -Path $_.FullName -ErrorAction Stop
 
         }
+
         Write-InfoColor "`t# Successfully updated existing Markdown help files." -ForegroundColor Green
 
     } else {
@@ -730,7 +732,7 @@ Task -Name UninstallTempModule -depends RemoveModule -action {
 
 } -description 'Uninstall the temporary module used for help generation.'
 
-Task -name FixMarkdownHelp -depends RemoveModule -action {
+Task -name FixMarkdownHelp -depends UninstallTempModule -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Repair-MarkdownHelp.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine `$NewLine -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles -ErrorAction Stop"
@@ -1223,7 +1225,19 @@ Task -name Uninstall -depends AwaitRepoUpdate -action {
 
     if ($Result) {
         Write-InfoColor "`tGet-Module -Name '$ModuleName' -ListAvailable | Uninstall-Module -ErrorAction Stop"
-        $Result | Uninstall-Module -ErrorAction Stop
+        try {
+            $Result | Uninstall-Module -ErrorAction Stop
+        } catch {
+            switch ($_.Exception.Message) {
+                "No match was found for the specified search criteria and module names 'Adsi'." {
+                    Remove-Item $script:BuildOutputDir -Recurse -Force -ErrorAction Stop
+                }
+                default {
+                    Write-Error "An unexpected error occurred while uninstalling module $ModuleName`: $_"
+                }
+            }
+            Write-Error "Failed to uninstall module $ModuleName`: $_"
+        }
         Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
     } else {
         Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green
