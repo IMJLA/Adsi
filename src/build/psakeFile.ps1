@@ -624,33 +624,33 @@ Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $D
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 
-Task -name InstallModule -depends DeleteMarkdownHelp -action {
+Task -name InstallTempModule -depends DeleteMarkdownHelp -action {
 
-    $ModuleInstallDir = $env:PSModulePath -split ';' | Select-Object -First 1
-    $ModuleInstallDir = [IO.Path]::Combine($ModuleInstallDir, $ModuleName)
-    Write-InfoColor "`tNew-Item -Path '$ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
-    if (Test-Path -Path $ModuleInstallDir) {
+    $script:ModuleInstallDir = $env:PSModulePath -split ';' | Select-Object -First 1
+    $script:ModuleInstallDir = [IO.Path]::Combine($script:ModuleInstallDir, $ModuleName)
+    Write-InfoColor "`tNew-Item -Path '$script:ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    $null = New-Item -Path $script:ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
+    if (Test-Path -Path $script:ModuleInstallDir) {
         Write-InfoColor "`t# Module installation directory exists." -ForegroundColor Green
     } else {
         Write-Error 'Failed to create the module installation directory.'
     }
-    Write-InfoColor "`tNew-Item -Path '$ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
-    if (Test-Path -Path $ModuleInstallDir) {
+    $script:ModuleInstallDir = [IO.Path]::Combine($script:ModuleInstallDir, $script:NewModuleVersion)
+    Write-InfoColor "`tNew-Item -Path '$script:ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    $null = New-Item -Path $script:ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
+    if (Test-Path -Path $script:ModuleInstallDir) {
         Write-InfoColor "`t# Module version installation directory exists." -ForegroundColor Green
     } else {
         Write-Error 'Failed to create the module version installation directory.'
     }
-    $ModuleInstallDir = [IO.Path]::Combine($ModuleInstallDir, $script:NewModuleVersion)
 
-    Write-InfoColor "`tCopy-Item -Path '$script:BuildOutputDir\*' -Destination '$ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
-    Copy-Item -Path "$script:BuildOutputDir\*" -Destination $ModuleInstallDir -Recurse -Force -ErrorAction Stop
+    Write-InfoColor "`tCopy-Item -Path '$script:BuildOutputDir\*' -Destination '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
+    Copy-Item -Path "$script:BuildOutputDir\*" -Destination $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop
     Write-InfoColor "`t# Successfully copied the module files to the version installation directory." -ForegroundColor Green
 
 } -description 'Install the module so it can be loaded by name for help generation.'
 
-Task -name ImportModule -depends InstallModule -action {
+Task -name ImportModule -depends InstallTempModule -action {
 
     Write-InfoColor "`tImport-Module -Name '$ModuleName' -Force -ErrorAction Stop"
     Import-Module -Name $ModuleName -Force -ErrorAction Stop
@@ -723,6 +723,18 @@ Task -name RemoveModule -depends BuildMarkdownHelp -action {
     Write-InfoColor "`t# Successfully removed the module." -ForegroundColor Green
 
 } -description 'Remove the module from the current PowerShell session now that help generation is complete.'
+
+Task -Name UninstallTempModule -depends RemoveModule -action {
+
+    Write-InfoColor "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
+    Remove-Item -Path $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop
+    if (Test-Path -Path $script:ModuleInstallDir) {
+        Write-Error 'Failed to remove the temporary module installation directory.'
+    } else {
+        Write-InfoColor "`t# Successfully removed the temporary module installation directory." -ForegroundColor Green
+    }
+
+} -description 'Uninstall the temporary module used for help generation.'
 
 Task -name FixMarkdownHelp -depends RemoveModule -action {
 

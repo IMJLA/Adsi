@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.181] - 2025-05-26
+### Fixed
+- fix help generation temp module usage
+
 ## [5.0.179] - 2025-05-26
 ### Changed
 - troubleshoot platyps issues
