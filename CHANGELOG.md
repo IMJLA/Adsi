@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.193] - 2025-05-26
+### Changed
+- troubleshoot build
+
 ## [5.0.192] - 2025-05-26
 ### Changed
 - troubleshoot lint and tmp module

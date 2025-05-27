@@ -87,7 +87,7 @@
         }
 
         PSUseCorrectCasing                   = @{
-            Enable = $true
+            Enable = $false  # Disabled because ForEach is better than foreach and PSScriptAnalyzer's opinion is wrong!
         }
 
         # Additional formatting rules
