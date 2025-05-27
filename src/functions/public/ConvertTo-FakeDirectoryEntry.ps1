@@ -1,4 +1,4 @@
-﻿function New-FakeDirectoryEntry {
+﻿function ConvertTo-FakeDirectoryEntry {
 
     <#
     .SYNOPSIS
@@ -10,7 +10,7 @@
     This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.
 
     .EXAMPLE
-    New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
+    ConvertTo-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
 
     Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0",
     which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.
@@ -96,13 +96,7 @@
             'System Managed Accounts Group'       = $null
             'Users'                               = $null
             'WinRMRemoteWMIUsers__'               = $null
-        },
-
-        # Unused but here for convenient splats
-        [string]$Name,
-
-        # Unused but here for convenient splats
-        [string]$NTAccount
+        }
 
     )
 

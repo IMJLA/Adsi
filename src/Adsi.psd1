@@ -12,7 +12,7 @@
     RootModule        = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion     = '5.0.160'
+    ModuleVersion     = '5.0.179'
 
     # ID used to uniquely identify this module
     GUID              = '282a2aed-9567-49a1-901c-122b7831a805'
@@ -76,7 +76,7 @@
     For best performance, do not use wildcards.
     For best performance, do not delete the entry if there are no Functions to export. Use an empty array.
     #>
-    FunctionsToExport = @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertFrom-ResolvedID', 'ConvertFrom-ResultPropertyValueCollectionToString', 'ConvertFrom-SearchResult', 'ConvertFrom-SidString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-WinNTGroupMember', 'Find-LocalAdsiServerSid', 'Get-AdsiGroup', 'Get-AdsiGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-KnownCaptionHashTable', 'Get-KnownSid', 'Get-KnownSidByName', 'Get-KnownSidHashTable', 'Get-ParentDomainDnsName', 'Get-TrustedDomain', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'New-FakeDirectoryEntry', 'Resolve-IdentityReference', 'Resolve-ServiceNameToSID', 'Search-Directory')
+    FunctionsToExport = @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertFrom-ResolvedID', 'ConvertFrom-ResultPropertyValueCollectionToString', 'ConvertFrom-SearchResult', 'ConvertFrom-SidString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-FakeDirectoryEntry', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-WinNTGroupMember', 'Find-LocalAdsiServerSid', 'Get-AdsiGroup', 'Get-AdsiGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-KnownCaptionHashTable', 'Get-KnownSid', 'Get-KnownSidByName', 'Get-KnownSidHashTable', 'Get-ParentDomainDnsName', 'Get-TrustedDomain', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'Resolve-IdentityReference', 'Resolve-ServiceNameToSID', 'Search-Directory')
 
     <#
     Cmdlets to export from this module

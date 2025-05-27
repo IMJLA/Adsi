@@ -7,6 +7,106 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.179] - 2025-05-26
+### Changed
+- troubleshoot platyps issues
+
+## [5.0.178] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.177] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.176] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.175] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.174] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.173] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.172] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.171] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.170] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.169] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.168] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.167] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.166] - 2025-05-26
+### Changed
+- troubleshoot platyps issue
+
+## [5.0.165] - 2025-05-26
+### Fixed
+- fix markdown help docs issue
+
+## [5.0.164] - 2025-05-26
+### Fixed
+- fix markdown help docs issue
+
+## [5.0.163] - 2025-05-26
+### Fixed
+- fix markdown help docs issue
+
+## [5.0.162] - 2025-05-26
+### Fixed
+- fix build sequence
+
+## [0.0.1] - 2025-05-26
+### Changed
+- test build
+
+## [5.0.166] - 2025-05-26
+### Changed
+- troubleshoot markdown generation (it's skipping a file)
+
+## [5.0.165] - 2025-05-26
+### Fixed
+- fix no need to remove module now that it isn't loaded for get-help
+
+## [5.0.164] - 2025-05-26
+### Added
+- address linting issues
+
+## [5.0.163] - 2025-05-26
+### Added
+- address linting issues
+
+## [5.0.162] - 2025-05-26
+### Changed
+- avoid dependency on exiting pwsh help for synopsis lookup
+
+## [5.0.161] - 2025-05-26
+### Added
+- address linting issues
+
 ## [5.0.160] - 2025-05-26
 ### Removed
 - remove unused code

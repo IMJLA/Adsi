@@ -1,6 +1,6 @@
 {
     "files.encoding": "utf8bom",
-    "files.trimTrailingWhitespace": false,
+    "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "editor.insertSpaces": true,
     "editor.tabSize": 4,

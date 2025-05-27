@@ -413,7 +413,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
             InputObject   = $CachedWellKnownSID
         }
 
-        $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
+        $DirectoryEntry = ConvertTo-FakeDirectoryEntry @FakeDirectoryEntryParams
         if ($DirectoryEntry) { return $DirectoryEntry }
 
     }
@@ -555,7 +555,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
                 InputObject   = $Known
             }
 
-            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
+            $DirectoryEntry = ConvertTo-FakeDirectoryEntry @FakeDirectoryEntryParams
             return $DirectoryEntry
 
         }
@@ -605,10 +605,9 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$UsersGroup -Cache `$Cache"
         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -Cache $Cache
 
-        $DirectoryEntry = $MembersOfUsersGroup |
-            Where-Object -FilterScript {
+        $DirectoryEntry = $MembersOfUsersGroup | Where-Object -FilterScript {
             ($SamAccountNameOrSid -eq $([System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'], 0)))
-            }
+        }
 
         return $DirectoryEntry
 
@@ -1176,9 +1175,9 @@ function Get-CachedDirectoryEntry {
             #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Known SID cache hit on this server."
 
             if ($SIDCacheResult.SIDType) {
-                New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
+                ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
             } else {
-                New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
+                ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
             }
 
 
@@ -1192,9 +1191,9 @@ function Get-CachedDirectoryEntry {
                 #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache hit on this server."
 
                 if ($NameCacheResult.SIDType) {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
                 } else {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
                 }
 
             } else {
@@ -1216,9 +1215,9 @@ function Get-CachedDirectoryEntry {
                 #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Known SID cache hit on this server."
 
                 if ($SIDCacheResult.SIDType) {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
                 } else {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
                 }
 
             } else {
@@ -1231,9 +1230,9 @@ function Get-CachedDirectoryEntry {
                     #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache hit on this server."Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
 
                     if ($NameCacheResult.SIDType) {
-                        New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
+                        ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
                     } else {
-                        New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
+                        ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
                     }
 
                 } else {
@@ -1254,7 +1253,7 @@ function Get-CachedDirectoryEntry {
                 if ($SIDCacheResult) {
 
                     #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Known SID cache hit on this server."
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                 } else {
 
@@ -1264,7 +1263,7 @@ function Get-CachedDirectoryEntry {
                     if ($NameCacheResult) {
 
                         #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache hit on this server."Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
-                        New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+                        ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                     } else {
                         #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache miss on this server."
@@ -3073,6 +3072,164 @@ function ConvertTo-DomainSidString {
         $Cache.Value['LogType'].Value = $StartingLogType
 
     }
+
+}
+function ConvertTo-FakeDirectoryEntry {
+
+    <#
+    .SYNOPSIS
+    Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
+
+    .DESCRIPTION
+    Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory.
+    The WinNT provider only throws an error if you try to retrieve certain accounts/identities.
+    This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.
+
+    .EXAMPLE
+    ConvertTo-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
+
+    Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0",
+    which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.
+
+    .INPUTS
+    None. Pipeline input is not accepted.
+
+    .OUTPUTS
+    PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,
+    SchemaClassName, and objectSid.
+    #>
+
+    param (
+        # Full directory path for the fake entry in the format "Provider://Domain/Name"
+        [string]$DirectoryPath,
+
+        # Security Identifier (SID) string for the fake entry
+        [string]$SID,
+
+        # Description of the security principal
+        [string]$Description,
+
+        # Schema class name (e.g., 'user', 'group', 'computer')
+        [string]$SchemaClassName,
+
+        # Optional input object containing additional properties to include in the fake directory entry
+        $InputObject,
+
+        # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
+        [hashtable]$NameAllowList = @{
+            'ALL APPLICATION PACKAGES'            = $null
+            'ALL RESTRICTED APPLICATION PACKAGES' = $null
+            'ANONYMOUS LOGON'                     = $null
+            'Authenticated Users'                 = $null
+            'BATCH'                               = $null
+            'BUILTIN'                             = $null
+            'CREATOR GROUP'                       = $null
+            'CREATOR GROUP SERVER'                = $null
+            'CREATOR OWNER'                       = $null
+            'CREATOR OWNER SERVER'                = $null
+            'DIALUP'                              = $null
+            'ENTERPRISE DOMAIN CONTROLLERS'       = $null
+            'Everyone'                            = $null
+            'INTERACTIVE'                         = $null
+            'internetExplorer'                    = $null
+            'IUSR'                                = $null
+            'LOCAL'                               = $null
+            'LOCAL SERVICE'                       = $null
+            'NETWORK'                             = $null
+            'NETWORK SERVICE'                     = $null
+            'OWNER RIGHTS'                        = $null
+            'PROXY'                               = $null
+            'RDS Endpoint Servers'                = $null
+            'RDS Management Servers'              = $null
+            'RDS Remote Access Servers'           = $null
+            'REMOTE INTERACTIVE LOGON'            = $null
+            'RESTRICTED'                          = $null
+            'SELF'                                = $null
+            'SERVICE'                             = $null
+            'SYSTEM'                              = $null
+            'TERMINAL SERVER USER'                = $null
+        },
+
+        # These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries
+        [hashtable]$NameBlockList = @{
+            'Access Control Assistance Operators' = $null
+            'Administrators'                      = $null
+            'Backup Operators'                    = $null
+            'Cryptographic Operators'             = $null
+            'DefaultAccount'                      = $null
+            'Distributed COM Users'               = $null
+            'Event Log Readers'                   = $null
+            'Guests'                              = $null
+            'Hyper-V Administrators'              = $null
+            'IIS_IUSRS'                           = $null
+            'Network Configuration Operators'     = $null
+            'Performance Log Users'               = $null
+            'Performance Monitor Users'           = $null
+            'Power Users'                         = $null
+            'Remote Desktop Users'                = $null
+            'Remote Management Users'             = $null
+            'Replicator'                          = $null
+            'System Managed Accounts Group'       = $null
+            'Users'                               = $null
+            'WinRMRemoteWMIUsers__'               = $null
+        }
+
+    )
+
+    $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
+    $StartIndex = $LastSlashIndex + 1
+    $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
+
+    if (
+        $InputObject.SidType -eq 4 -or
+        $InputObject.SidType -eq 5
+    ) {
+
+        if (-not $NameAllowList.ContainsKey($Name)) {
+            return
+        }
+
+    }
+
+    if (
+        $NameBlockList.ContainsKey($Name)
+    ) {
+        return $null
+    }
+
+    $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
+    $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
+
+    $Properties = @{
+        Name            = $Name
+        Description     = $Description
+        SamAccountName  = $Name
+        SchemaClassName = $SchemaClassName
+    }
+
+    ForEach ($Prop in $InputObject.PSObject.Properties.GetEnumerator().Name) {
+        $Properties[$Prop] = $InputObject.$Prop
+    }
+
+    $SID = $Properties['SID']
+    if ($SID) {
+        $Properties['objectSid'] = ConvertTo-SidByteArray -SidString $SID
+    } else {
+        $Properties['objectSid'] = $null
+    }
+
+    $TopLevelOnlyProperties = @{
+        Parent      = $Parent
+        Path        = $DirectoryPath
+        SchemaEntry = $SchemaEntry
+        Properties  = $Properties
+    }
+
+    $AllProperties = $Properties + $TopLevelOnlyProperties
+    $Object = [PSCustomObject]$AllProperties
+    Add-Member -InputObject $Object -Name RefreshCache -MemberType ScriptMethod -Value {}
+    Add-Member -InputObject $Object -Name Invoke -MemberType ScriptMethod -Value {}
+    return $Object
 
 }
 function ConvertTo-Fqdn {
@@ -6259,8 +6416,7 @@ function Get-WinNTGroupMember {
             'samAccountName'
         )
 
-        $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+        $PropertiesToLoad = $PropertiesToLoad | Sort-Object -Unique
 
         $Log = @{ 'Cache' = $Cache }
         $DirectoryParams = @{ 'Cache' = $Cache ; 'PropertiesToLoad' = $PropertiesToLoad }
@@ -6383,170 +6539,6 @@ function Invoke-ComObject {
         $Invoke = 'GetProperty'
     }
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
-}
-function New-FakeDirectoryEntry {
-
-    <#
-    .SYNOPSIS
-    Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
-
-    .DESCRIPTION
-    Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory.
-    The WinNT provider only throws an error if you try to retrieve certain accounts/identities.
-    This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.
-
-    .EXAMPLE
-    New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
-
-    Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0",
-    which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.
-
-    .INPUTS
-    None. Pipeline input is not accepted.
-
-    .OUTPUTS
-    PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,
-    SchemaClassName, and objectSid.
-    #>
-
-    param (
-        # Full directory path for the fake entry in the format "Provider://Domain/Name"
-        [string]$DirectoryPath,
-
-        # Security Identifier (SID) string for the fake entry
-        [string]$SID,
-
-        # Description of the security principal
-        [string]$Description,
-
-        # Schema class name (e.g., 'user', 'group', 'computer')
-        [string]$SchemaClassName,
-
-        # Optional input object containing additional properties to include in the fake directory entry
-        $InputObject,
-
-        # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
-        [hashtable]$NameAllowList = @{
-            'ALL APPLICATION PACKAGES'            = $null
-            'ALL RESTRICTED APPLICATION PACKAGES' = $null
-            'ANONYMOUS LOGON'                     = $null
-            'Authenticated Users'                 = $null
-            'BATCH'                               = $null
-            'BUILTIN'                             = $null
-            'CREATOR GROUP'                       = $null
-            'CREATOR GROUP SERVER'                = $null
-            'CREATOR OWNER'                       = $null
-            'CREATOR OWNER SERVER'                = $null
-            'DIALUP'                              = $null
-            'ENTERPRISE DOMAIN CONTROLLERS'       = $null
-            'Everyone'                            = $null
-            'INTERACTIVE'                         = $null
-            'internetExplorer'                    = $null
-            'IUSR'                                = $null
-            'LOCAL'                               = $null
-            'LOCAL SERVICE'                       = $null
-            'NETWORK'                             = $null
-            'NETWORK SERVICE'                     = $null
-            'OWNER RIGHTS'                        = $null
-            'PROXY'                               = $null
-            'RDS Endpoint Servers'                = $null
-            'RDS Management Servers'              = $null
-            'RDS Remote Access Servers'           = $null
-            'REMOTE INTERACTIVE LOGON'            = $null
-            'RESTRICTED'                          = $null
-            'SELF'                                = $null
-            'SERVICE'                             = $null
-            'SYSTEM'                              = $null
-            'TERMINAL SERVER USER'                = $null
-        },
-
-        # These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries
-        [hashtable]$NameBlockList = @{
-            'Access Control Assistance Operators' = $null
-            'Administrators'                      = $null
-            'Backup Operators'                    = $null
-            'Cryptographic Operators'             = $null
-            'DefaultAccount'                      = $null
-            'Distributed COM Users'               = $null
-            'Event Log Readers'                   = $null
-            'Guests'                              = $null
-            'Hyper-V Administrators'              = $null
-            'IIS_IUSRS'                           = $null
-            'Network Configuration Operators'     = $null
-            'Performance Log Users'               = $null
-            'Performance Monitor Users'           = $null
-            'Power Users'                         = $null
-            'Remote Desktop Users'                = $null
-            'Remote Management Users'             = $null
-            'Replicator'                          = $null
-            'System Managed Accounts Group'       = $null
-            'Users'                               = $null
-            'WinRMRemoteWMIUsers__'               = $null
-        },
-
-        # Unused but here for convenient splats
-        [string]$Name,
-
-        # Unused but here for convenient splats
-        [string]$NTAccount
-
-    )
-
-    $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
-    $StartIndex = $LastSlashIndex + 1
-    $Name = $DirectoryPath.Substring($StartIndex, $DirectoryPath.Length - $StartIndex)
-
-    if (
-        $InputObject.SidType -eq 4 -or
-        $InputObject.SidType -eq 5
-    ) {
-
-        if (-not $NameAllowList.ContainsKey($Name)) {
-            return
-        }
-
-    }
-
-    if (
-        $NameBlockList.ContainsKey($Name)
-    ) {
-        return $null
-    }
-
-    $Parent = $DirectoryPath.Substring(0, $LastSlashIndex)
-    $SchemaEntry = [System.DirectoryServices.DirectoryEntry]
-
-    $Properties = @{
-        Name            = $Name
-        Description     = $Description
-        SamAccountName  = $Name
-        SchemaClassName = $SchemaClassName
-    }
-
-    ForEach ($Prop in $InputObject.PSObject.Properties.GetEnumerator().Name) {
-        $Properties[$Prop] = $InputObject.$Prop
-    }
-
-    $SID = $Properties['SID']
-    if ($SID) {
-        $Properties['objectSid'] = ConvertTo-SidByteArray -SidString $SID
-    } else {
-        $Properties['objectSid'] = $null
-    }
-
-    $TopLevelOnlyProperties = @{
-        Parent      = $Parent
-        Path        = $DirectoryPath
-        SchemaEntry = $SchemaEntry
-        Properties  = $Properties
-    }
-
-    $AllProperties = $Properties + $TopLevelOnlyProperties
-    $Object = [PSCustomObject]$AllProperties
-    Add-Member -InputObject $Object -Name RefreshCache -MemberType ScriptMethod -Value {}
-    Add-Member -InputObject $Object -Name Invoke -MemberType ScriptMethod -Value {}
-    return $Object
-
 }
 function Resolve-IdentityReference {
 
@@ -6865,5 +6857,5 @@ ForEach ($ThisFile in $CSharpFiles) {
 }
 #>
 
-Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertFrom-ResolvedID', 'ConvertFrom-ResultPropertyValueCollectionToString', 'ConvertFrom-SearchResult', 'ConvertFrom-SidString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-WinNTGroupMember', 'Find-LocalAdsiServerSid', 'Get-AdsiGroup', 'Get-AdsiGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-KnownCaptionHashTable', 'Get-KnownSid', 'Get-KnownSidByName', 'Get-KnownSidHashTable', 'Get-ParentDomainDnsName', 'Get-TrustedDomain', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'New-FakeDirectoryEntry', 'Resolve-IdentityReference', 'Resolve-ServiceNameToSID', 'Search-Directory')
+Export-ModuleMember -Function @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertFrom-ResolvedID', 'ConvertFrom-ResultPropertyValueCollectionToString', 'ConvertFrom-SearchResult', 'ConvertFrom-SidString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-FakeDirectoryEntry', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-WinNTGroupMember', 'Find-LocalAdsiServerSid', 'Get-AdsiGroup', 'Get-AdsiGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-KnownCaptionHashTable', 'Get-KnownSid', 'Get-KnownSidByName', 'Get-KnownSidHashTable', 'Get-ParentDomainDnsName', 'Get-TrustedDomain', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'Resolve-IdentityReference', 'Resolve-ServiceNameToSID', 'Search-Directory')
 

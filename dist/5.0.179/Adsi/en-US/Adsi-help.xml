@@ -1519,6 +1519,237 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
+      <command:name>ConvertTo-FakeDirectoryEntry</command:name>
+      <command:verb>ConvertTo</command:verb>
+      <command:noun>FakeDirectoryEntry</command:noun>
+      <maml:description>
+        <maml:para>Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory. The WinNT provider only throws an error if you try to retrieve certain accounts/identities. This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>ConvertTo-FakeDirectoryEntry</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+          <maml:name>DirectoryPath</maml:name>
+          <maml:description>
+            <maml:para>Full directory path for the fake entry in the format "Provider://Domain/Name"</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>SID</maml:name>
+          <maml:description>
+            <maml:para>Security Identifier (SID) string for the fake entry</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+          <maml:name>Description</maml:name>
+          <maml:description>
+            <maml:para>Description of the security principal</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+          <maml:name>SchemaClassName</maml:name>
+          <maml:description>
+            <maml:para>Schema class name (e.g., 'user', 'group', 'computer')</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+          <maml:name>InputObject</maml:name>
+          <maml:description>
+            <maml:para>Optional input object containing additional properties to include in the fake directory entry</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Object</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+          <maml:name>NameAllowList</maml:name>
+          <maml:description>
+            <maml:para>Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>@{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null }</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+          <maml:name>NameBlockList</maml:name>
+          <maml:description>
+            <maml:para>These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Collections.Hashtable</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>@{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null }</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <maml:name>Description</maml:name>
+        <maml:description>
+          <maml:para>Description of the security principal</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <maml:name>DirectoryPath</maml:name>
+        <maml:description>
+          <maml:para>Full directory path for the fake entry in the format "Provider://Domain/Name"</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <maml:name>InputObject</maml:name>
+        <maml:description>
+          <maml:para>Optional input object containing additional properties to include in the fake directory entry</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Object</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <maml:name>NameAllowList</maml:name>
+        <maml:description>
+          <maml:para>Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>@{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null }</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
+        <maml:name>NameBlockList</maml:name>
+        <maml:description>
+          <maml:para>These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Collections.Hashtable</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>@{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null }</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <maml:name>SchemaClassName</maml:name>
+        <maml:description>
+          <maml:para>Schema class name (e.g., 'user', 'group', 'computer')</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>SID</maml:name>
+        <maml:description>
+          <maml:para>Security Identifier (SID) string for the fake entry</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>SchemaClassName, and objectSid.</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para></maml:para>
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"</dev:code>
+        <dev:remarks>
+          <maml:para>Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0", which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.</maml:para>
+        </dev:remarks>
+      </command:example>
+    </command:examples>
+    <command:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <command:details>
       <command:name>ConvertTo-Fqdn</command:name>
       <command:verb>ConvertTo</command:verb>
       <command:noun>Fqdn</command:noun>
@@ -3890,290 +4121,6 @@ Get-ParentDomainDnsName -DomainNetbios "CORPDC01" -Cache ([ref]$Cache)</dev:code
 Invoke-ComObject -ComObject $ComObject -Property AdsPath</dev:code>
         <dev:remarks>
           <maml:para>Get the first member of the local Administrators group on the current computer Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property This technique is essential when working with ADSI objects that expose properties or methods only through COM interfaces, providing a consistent way to access these properties in PowerShell.</maml:para>
-        </dev:remarks>
-      </command:example>
-    </command:examples>
-    <command:relatedLinks>
-      <maml:navigationLink>
-        <maml:linkText>Online Version:</maml:linkText>
-        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
-      </maml:navigationLink>
-    </command:relatedLinks>
-  </command:command>
-  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
-    <command:details>
-      <command:name>New-FakeDirectoryEntry</command:name>
-      <command:verb>New</command:verb>
-      <command:noun>FakeDirectoryEntry</command:noun>
-      <maml:description>
-        <maml:para>Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.</maml:para>
-      </maml:description>
-    </command:details>
-    <maml:description>
-      <maml:para>Used in place of a DirectoryEntry for certain WinNT security principals that do not have objects in the directory. The WinNT provider only throws an error if you try to retrieve certain accounts/identities. This function creates a PSCustomObject that mimics a DirectoryEntry with the necessary properties.</maml:para>
-    </maml:description>
-    <command:syntax>
-      <command:syntaxItem>
-        <maml:name>New-FakeDirectoryEntry</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>DirectoryPath</maml:name>
-          <maml:description>
-            <maml:para>Full directory path for the fake entry in the format "Provider://Domain/Name"</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-          <maml:name>SID</maml:name>
-          <maml:description>
-            <maml:para>Security Identifier (SID) string for the fake entry</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-          <maml:name>Description</maml:name>
-          <maml:description>
-            <maml:para>Description of the security principal</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-          <maml:name>SchemaClassName</maml:name>
-          <maml:description>
-            <maml:para>Schema class name (e.g., 'user', 'group', 'computer')</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-          <maml:name>InputObject</maml:name>
-          <maml:description>
-            <maml:para>Optional input object containing additional properties to include in the fake directory entry</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Object</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-          <maml:name>NameAllowList</maml:name>
-          <maml:description>
-            <maml:para>Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>@{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null }</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
-          <maml:name>NameBlockList</maml:name>
-          <maml:description>
-            <maml:para>These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-          <dev:type>
-            <maml:name>System.Collections.Hashtable</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>@{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null }</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
-          <maml:name>Name</maml:name>
-          <maml:description>
-            <maml:para>Unused but here for convenient splats</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
-          <maml:name>NTAccount</maml:name>
-          <maml:description>
-            <maml:para>Unused but here for convenient splats</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-      </command:syntaxItem>
-    </command:syntax>
-    <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
-        <maml:name>Description</maml:name>
-        <maml:description>
-          <maml:para>Description of the security principal</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>DirectoryPath</maml:name>
-        <maml:description>
-          <maml:para>Full directory path for the fake entry in the format "Provider://Domain/Name"</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
-        <maml:name>InputObject</maml:name>
-        <maml:description>
-          <maml:para>Optional input object containing additional properties to include in the fake directory entry</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Object</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Object</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="8" aliases="none">
-        <maml:name>Name</maml:name>
-        <maml:description>
-          <maml:para>Unused but here for convenient splats</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
-        <maml:name>NameAllowList</maml:name>
-        <maml:description>
-          <maml:para>Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>@{ 'ALL APPLICATION PACKAGES' = $null ; 'ALL RESTRICTED APPLICATION PACKAGES' = $null ; 'ANONYMOUS LOGON' = $null ; 'Authenticated Users' = $null ; 'BATCH' = $null ; 'BUILTIN' = $null ; 'CREATOR GROUP' = $null ; 'CREATOR GROUP SERVER' = $null ; 'CREATOR OWNER' = $null ; 'CREATOR OWNER SERVER' = $null ; 'DIALUP' = $null ; 'ENTERPRISE DOMAIN CONTROLLERS' = $null ; 'Everyone' = $null ; 'INTERACTIVE' = $null ; 'internetExplorer' = $null ; 'IUSR' = $null ; 'LOCAL' = $null ; 'LOCAL SERVICE' = $null ; 'NETWORK' = $null ; 'NETWORK SERVICE' = $null ; 'OWNER RIGHTS' = $null ; 'PROXY' = $null ; 'RDS Endpoint Servers' = $null ; 'RDS Management Servers' = $null ; 'RDS Remote Access Servers' = $null ; 'REMOTE INTERACTIVE LOGON' = $null ; 'RESTRICTED' = $null ; 'SELF' = $null ; 'SERVICE' = $null ; 'SYSTEM' = $null ; 'TERMINAL SERVER USER' = $null }</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
-        <maml:name>NameBlockList</maml:name>
-        <maml:description>
-          <maml:para>These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
-        <dev:type>
-          <maml:name>System.Collections.Hashtable</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>@{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null }</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="9" aliases="none">
-        <maml:name>NTAccount</maml:name>
-        <maml:description>
-          <maml:para>Unused but here for convenient splats</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
-        <maml:name>SchemaClassName</maml:name>
-        <maml:description>
-          <maml:para>Schema class name (e.g., 'user', 'group', 'computer')</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
-        <maml:name>SID</maml:name>
-        <maml:description>
-          <maml:para>Security Identifier (SID) string for the fake entry</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-    </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>None. Pipeline input is not accepted.</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>SchemaClassName, and objectSid.</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
-    <maml:alertSet>
-      <maml:alert>
-        <maml:para></maml:para>
-      </maml:alert>
-    </maml:alertSet>
-    <command:examples>
-      <command:example>
-        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
-        <dev:code>New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"</dev:code>
-        <dev:remarks>
-          <maml:para>Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0", which can be used for permission analysis when a real DirectoryEntry object cannot be retrieved.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>

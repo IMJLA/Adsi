@@ -302,9 +302,21 @@ Task -name SetLocation -action {
 
 } -description 'Set the working directory to the project root to ensure all relative paths are correct'
 
+Task -name TestModuleManifest -action {
+
+    Write-InfoColor "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
+    $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath -ErrorAction Stop
+
+    if ($script:ManifestTest) {
+        Write-InfoColor "`t# Successfully validated the module manifest." -ForegroundColor Green
+    } else {
+        Write-Error 'Failed to validate the module manifest.'
+    }
+
+} -description 'Validate the module manifest'
 
 # Update the module source code.
-Task -name DetermineNewVersionNumber -action {
+Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Get-NewVersion.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)' -ErrorAction Stop"
@@ -346,19 +358,6 @@ Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
 
 # Perform linting and analysis of the source code.
-Task -name TestModuleManifest -action {
-
-    Write-InfoColor "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
-    $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath -ErrorAction Stop
-
-    if ($script:ManifestTest) {
-        Write-InfoColor "`t# Successfully validated the module manifest." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to validate the module manifest.'
-    }
-
-} -description 'Validate the module manifest'
-
 $LintPrerequisite = {
 
     # 'Find the PSScriptAnalyzer module for linting the source code.'
@@ -383,7 +382,7 @@ $LintPrerequisite = {
 
 }
 
-Task -name Format -depends TestModuleManifest -precondition $LintPrerequisite -action {
+Task -name Format -precondition $LintPrerequisite -action {
 
     Write-InfoColor "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps*1' -Recurse"
     $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps*1' -Recurse
@@ -452,7 +451,6 @@ Task -name LintAnalysis -depends Lint -action {
 
 
 # Build the module.
-
 Task -name DeleteOldBuilds -action {
 
     Write-InfoColor "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop"
@@ -626,7 +624,41 @@ Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $D
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 
-Task -name UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
+Task -name InstallModule -depends DeleteMarkdownHelp -action {
+
+    $ModuleInstallDir = $env:PSModulePath -split ';' | Select-Object -First 1
+    $ModuleInstallDir = [IO.Path]::Combine($ModuleInstallDir, $ModuleName)
+    Write-InfoColor "`tNew-Item -Path '$ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    $null = New-Item -Path $ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
+    if (Test-Path -Path $ModuleInstallDir) {
+        Write-InfoColor "`t# Module installation directory exists." -ForegroundColor Green
+    } else {
+        Write-Error 'Failed to create the module installation directory.'
+    }
+    Write-InfoColor "`tNew-Item -Path '$ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    $null = New-Item -Path $ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
+    if (Test-Path -Path $ModuleInstallDir) {
+        Write-InfoColor "`t# Module version installation directory exists." -ForegroundColor Green
+    } else {
+        Write-Error 'Failed to create the module version installation directory.'
+    }
+    $ModuleInstallDir = [IO.Path]::Combine($ModuleInstallDir, $script:NewModuleVersion)
+
+    Write-InfoColor "`tCopy-Item -Path '$script:BuildOutputDir\*' -Destination '$ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
+    Copy-Item -Path "$script:BuildOutputDir\*" -Destination $ModuleInstallDir -Recurse -Force -ErrorAction Stop
+    Write-InfoColor "`t# Successfully copied the module files to the version installation directory." -ForegroundColor Green
+
+} -description 'Install the module so it can be loaded by name for help generation.'
+
+Task -name ImportModule -depends InstallModule -action {
+
+    Write-InfoColor "`tImport-Module -Name '$ModuleName' -Force -ErrorAction Stop"
+    Import-Module -Name $ModuleName -Force -ErrorAction Stop
+    Write-InfoColor "`t# Successfully imported the module." -ForegroundColor Green
+
+} -description 'Import the module to ensure it is loaded for help generation.'
+
+Task -name UpdateMarkDownHelp -depends ImportModule -action {
     if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
 
         Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
@@ -645,30 +677,54 @@ Task -name UpdateMarkDownHelp -depends DeleteMarkdownHelp -action {
 
 Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
-    try {
+    $VerbosePreference = 'Continue'
 
-        $newMDParams = @{
-            AlphabeticParamsOrder = $true
-            Locale                = $DocsDefaultLocale
-            ErrorAction           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
-            HelpVersion           = $script:NewModuleVersion
-            Module                = $ModuleName
-            # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
-            # OnlineVersionUrl = $GitHubPagesLinkForThisModule
-            OutputFolder          = $DocsMarkdownDefaultLocaleDir
-            UseFullTypeName       = $true
-            WithModulePage        = $true
-        }
-        Write-InfoColor "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$script:NewModuleVersion' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
-        $null = New-MarkdownHelp @newMDParams
-    } finally {
-        Remove-Module $ModuleName -Force -ErrorAction SilentlyContinue
+    # First import by path to ensure it's available
+    #Write-InfoColor "`tImport-Module -Name '$ModuleManifestPath' -Force -ErrorAction Stop"
+    #Import-Module -Name $ModuleManifestPath -Force -ErrorAction Stop
+
+    # Then import by name so PlatyPS can find it
+    #Write-InfoColor "`tImport-Module -Name '$ModuleName' -Force -ErrorAction Stop"
+    #Import-Module -Name $ModuleName -Force -ErrorAction Stop
+
+    Write-InfoColor "`tGet-Module -Name '$ModuleName' -ErrorAction Stop"
+    $Result = Get-Module -Name $ModuleName -ErrorAction Stop
+
+    if (-not $Result) {
+        Write-Error "Failed to import the module '$ModuleName'."
     }
+
+    Write-InfoColor "`t# Successfully imported the '$($Result.Name)' module (version $($Result.Version))" -ForegroundColor Green
+
+    $newMDParams = @{
+        AlphabeticParamsOrder = $true
+        Locale                = $DocsDefaultLocale
+        ErrorAction           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
+        HelpVersion           = $Result.Version
+        Module                = $Result.Name
+        # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
+        # OnlineVersionUrl = $GitHubPagesLinkForThisModule
+        OutputFolder          = $DocsMarkdownDefaultLocaleDir
+        UseFullTypeName       = $true
+        WithModulePage        = $true
+    }
+
+    Write-InfoColor "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($Result.Version)' -Locale '$DocsDefaultLocale' -Module '$($Result.Name)' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
+    $null = New-MarkdownHelp @newMDParams
     Write-InfoColor "`t# Successfully generated Markdown help files." -ForegroundColor Green
+    $VerbosePreference = 'SilentlyContinue'
 
 } -description 'Generate markdown files from the module help'
 
-Task -name FixMarkdownHelp -depends BuildMarkdownHelp -action {
+Task -name RemoveModule -depends BuildMarkdownHelp -action {
+
+    Write-InfoColor "`tRemove-Module -Name '$ModuleName' -Force -ErrorAction Stop"
+    Remove-Module -Name $ModuleName -Force -ErrorAction Stop
+    Write-InfoColor "`t# Successfully removed the module." -ForegroundColor Green
+
+} -description 'Remove the module from the current PowerShell session now that help generation is complete.'
+
+Task -name FixMarkdownHelp -depends RemoveModule -action {
 
     $ScriptToRun = [IO.Path]::Combine($SourceCodeDir, 'build', 'Repair-MarkdownHelp.ps1')
     Write-InfoColor "`t& '$ScriptToRun' -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine `$NewLine -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles -ErrorAction Stop"
@@ -987,8 +1043,7 @@ Task -name CopyArt -depends BuildArt -action {
     Write-Information "`tGet-ChildItem -Path '$DocsImageSourceCodeDir' -Filter '*.svg' -ErrorAction Stop |"
     Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
 
-    Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop |
-    Copy-Item -Destination $DocsOnlineStaticImageDir
+    Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop | Copy-Item -Destination $DocsOnlineStaticImageDir
 
     Write-InfoColor "`t# Successfully copied static SVG art files to the online help directory." -ForegroundColor Green
 

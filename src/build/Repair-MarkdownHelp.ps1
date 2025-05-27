@@ -42,17 +42,57 @@ $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
 
 #Update the description of each function (use its synopsis for brevity)
 ForEach ($ThisFunction in $NewManifestTest.ExportedCommands.Keys) {
-    $Synopsis = (Get-Help -Name $ThisFunction).Synopsis
+
+    # Find the corresponding PS1 file for this function
+    $FunctionFile = $PublicFunctionFiles | Where-Object { $_.BaseName -eq $ThisFunction }
+
+    if ($FunctionFile) {
+
+        try {
+
+            # Parse the PowerShell file using AST
+            $ast = [System.Management.Automation.Language.Parser]::ParseFile($FunctionFile.FullName, [ref]$null, [ref]$null)
+
+            # Find the function definition
+            $AllFunctionDefinitions = $ast.FindAll(
+                {
+                    param($node)
+                    $node -is [System.Management.Automation.Language.FunctionDefinitionAst]
+                },
+                $true
+            )
+
+            # Get the first function definition
+            $functionAst = $AllFunctionDefinitions | Select-Object -First 1
+
+            if ($functionAst -and $functionAst.GetHelpContent()) {
+                $helpContent = $functionAst.GetHelpContent()
+                $Synopsis = $helpContent.Synopsis
+                if ([string]::IsNullOrWhiteSpace($Synopsis)) {
+                    $Synopsis = "Description for $ThisFunction"
+                }
+            } else {
+                $Synopsis = "Description for $ThisFunction"
+            }
+        } catch {
+            Write-Warning "Failed to parse $($FunctionFile.FullName): $_"
+            $Synopsis = "Description for $ThisFunction"
+        }
+    } else {
+        $Synopsis = "Description for $ThisFunction"
+    }
+
     $RegEx = "(?ms)\#\#\#\ \[$ThisFunction]\($ThisFunction\.md\)\s*[^\r\n]*\s*"
     $NewString = "### [$ThisFunction]($ThisFunction.md)$NewLine$Synopsis$NewLine$NewLine"
     $ModuleHelp = $ModuleHelp -replace $RegEx, $NewString
     Write-Verbose "`t`$ModuleHelp -replace '$RegEx', `"$($NewString -replace '\r', '`r' -replace '\n', '`n')`""
+
 }
 
 # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
 <#
     Error: 4/8/2025 11:35:12 PM:
-    At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): "C:\Export-Permission\Entire Project\Adsi\docs\en-US\New-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+    At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): ".\docs\en-US\ConvertTo-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
     Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
     Invalid yaml: expected simple key-value pairs
 #>
@@ -65,8 +105,6 @@ $ModuleHelp = $ModuleHelp -replace '\r?\n\s\}', ' }'
 Write-Verbose "`t`$ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8"
 $ModuleHelp | Set-Content -LiteralPath $ModuleHelpFile -Encoding utf8
 
-Remove-Module $ModuleName -Force
-
 ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
 
     # Get the help file for the function
@@ -78,7 +116,7 @@ ForEach ($ThisFunction in $PublicFunctionFiles.Name) {
     # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
     <#
     Error: 4/8/2025 11:35:12 PM:
-    At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): "C:\Export-Permission\Entire Project\Adsi\docs\en-US\New-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
+    At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): ".\Adsi\docs\en-US\ConvertTo-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
     Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
     Invalid yaml: expected simple key-value pairs
     #>
@@ -143,15 +181,15 @@ Details:
 Write-Verbose "`t`$ReadMeContents = `$ModuleHelp"
 $ReadMeContents = $ModuleHelp
 $DocsRootForURL = [IO.Path]::Combine('docs', $DocsDefaultLocale)
-[regex]::Matches($ModuleHelp, '[^(]*\.md').Value |
-    ForEach-Object {
-        $EscapedTextToReplace = [regex]::Escape($_)
-        $Replacement = "$DocsRootForURL/$_"
-        Write-Verbose "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
-        $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
-    }
-$readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 |
-    Select-Object -First 1
+
+[regex]::Matches($ModuleHelp, '[^(]*\.md').Value | ForEach-Object {
+    $EscapedTextToReplace = [regex]::Escape($_)
+    $Replacement = "$DocsRootForURL/$_"
+    Write-Verbose "`t`$ReadMeContents -replace '$EscapedTextToReplace', '$Replacement'"
+    $ReadMeContents = $ReadMeContents -replace $EscapedTextToReplace, $Replacement
+}
+
+$readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 | Select-Object -First 1
 
 Write-Verbose "`tSet-Content -LiteralPath '$($ReadMePath.FullName)' -Value `$ReadMeContents"
 Set-Content -Path $ReadMePath.FullName -Value $ReadMeContents

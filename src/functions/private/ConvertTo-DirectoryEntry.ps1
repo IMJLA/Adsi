@@ -39,7 +39,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
             InputObject   = $CachedWellKnownSID
         }
 
-        $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
+        $DirectoryEntry = ConvertTo-FakeDirectoryEntry @FakeDirectoryEntryParams
         if ($DirectoryEntry) { return $DirectoryEntry }
 
     }
@@ -181,7 +181,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
                 InputObject   = $Known
             }
 
-            $DirectoryEntry = New-FakeDirectoryEntry @FakeDirectoryEntryParams
+            $DirectoryEntry = ConvertTo-FakeDirectoryEntry @FakeDirectoryEntryParams
             return $DirectoryEntry
 
         }
@@ -231,10 +231,9 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         Write-LogMsg @Log -Text "Get-WinNTGroupMember -DirectoryEntry `$UsersGroup -Cache `$Cache"
         $MembersOfUsersGroup = Get-WinNTGroupMember -DirectoryEntry $UsersGroup -Cache $Cache
 
-        $DirectoryEntry = $MembersOfUsersGroup |
-            Where-Object -FilterScript {
+        $DirectoryEntry = $MembersOfUsersGroup | Where-Object -FilterScript {
             ($SamAccountNameOrSid -eq $([System.Security.Principal.SecurityIdentifier]::new([byte[]]$_.Properties['objectSid'], 0)))
-            }
+        }
 
         return $DirectoryEntry
 

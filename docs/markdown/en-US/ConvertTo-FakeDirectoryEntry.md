@@ -1,11 +1,11 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
+online version:
 schema: 2.0.0
 ---
 
-# New-FakeDirectoryEntry
+# ConvertTo-FakeDirectoryEntry
 
 ## SYNOPSIS
 Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
@@ -13,9 +13,9 @@ Creates a fake DirectoryEntry object for security principals that don't have obj
 ## SYNTAX
 
 ```powershell
-New-FakeDirectoryEntry [[-DirectoryPath] <String>] [[-SID] <String>] [[-Description] <String>]
+ConvertTo-FakeDirectoryEntry [[-DirectoryPath] <String>] [[-SID] <String>] [[-Description] <String>]
  [[-SchemaClassName] <String>] [[-InputObject] <Object>] [[-NameAllowList] <Hashtable>]
- [[-NameBlockList] <Hashtable>] [[-Name] <String>] [[-NTAccount] <String>]
+ [[-NameBlockList] <Hashtable>]
 ```
 
 ## DESCRIPTION
@@ -27,7 +27,7 @@ This function creates a PSCustomObject that mimics a DirectoryEntry with the nec
 
 ### EXAMPLE 1
 ```powershell
-New-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
+ConvertTo-FakeDirectoryEntry -DirectoryPath "WinNT://BUILTIN/Everyone" -SID "S-1-1-0"
 ```
 
 Creates a fake DirectoryEntry object for the well-known "Everyone" security principal with the SID "S-1-1-0",
@@ -80,21 +80,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Name
-Unused but here for convenient splats
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 8
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -NameAllowList
 Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
 
@@ -121,21 +106,6 @@ Aliases:
 Required: False
 Position: 7
 Default value: @{ 'Access Control Assistance Operators' = $null ; 'Administrators' = $null ; 'Backup Operators' = $null ; 'Cryptographic Operators' = $null ; 'DefaultAccount' = $null ; 'Distributed COM Users' = $null ; 'Event Log Readers' = $null ; 'Guests' = $null ; 'Hyper-V Administrators' = $null ; 'IIS_IUSRS' = $null ; 'Network Configuration Operators' = $null ; 'Performance Log Users' = $null ; 'Performance Monitor Users' = $null ; 'Power Users' = $null ; 'Remote Desktop Users' = $null ; 'Remote Management Users' = $null ; 'Replicator' = $null ; 'System Managed Accounts Group' = $null ; 'Users' = $null ; 'WinRMRemoteWMIUsers__' = $null }
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -NTAccount
-Unused but here for convenient splats
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 9
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -39,9 +39,9 @@
             #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Known SID cache hit on this server."
 
             if ($SIDCacheResult.SIDType) {
-                New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
+                ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
             } else {
-                New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
+                ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
             }
 
 
@@ -55,9 +55,9 @@
                 #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache hit on this server."
 
                 if ($NameCacheResult.SIDType) {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
                 } else {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
                 }
 
             } else {
@@ -79,9 +79,9 @@
                 #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Known SID cache hit on this server."
 
                 if ($SIDCacheResult.SIDType) {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult -SchemaClassName $SidTypeMap[[int]$SIDCacheResult.SIDType]
                 } else {
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $SIDCacheResult
                 }
 
             } else {
@@ -94,9 +94,9 @@
                     #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache hit on this server."Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
 
                     if ($NameCacheResult.SIDType) {
-                        New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
+                        ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult -SchemaClassName $SidTypeMap[[int]$NameCacheResult.SIDType]
                     } else {
-                        New-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
+                        ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath -InputObject $NameCacheResult
                     }
 
                 } else {
@@ -117,7 +117,7 @@
                 if ($SIDCacheResult) {
 
                     #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Known SID cache hit on this server."
-                    New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
+                    ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath @SIDCacheResult
 
                 } else {
 
@@ -127,7 +127,7 @@
                     if ($NameCacheResult) {
 
                         #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache hit on this server."Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Well-known SID by name cache hit for '$AccountName' on host with NetBIOS '$Server'"
-                        New-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
+                        ConvertTo-FakeDirectoryEntry -DirectoryPath $DirectoryPath @NameCacheResult
 
                     } else {
                         #Write-LogMsg -Cache $Cache -Text " # DirectoryPath '$DirectoryPath' # Server FQDN '$Server' # NTAccount '$ID' # Name '$AccountName' # Known Name cache miss on this server."

@@ -50,8 +50,7 @@
             'samAccountName'
         )
 
-        $PropertiesToLoad = $PropertiesToLoad |
-        Sort-Object -Unique
+        $PropertiesToLoad = $PropertiesToLoad | Sort-Object -Unique
 
         $Log = @{ 'Cache' = $Cache }
         $DirectoryParams = @{ 'Cache' = $Cache ; 'PropertiesToLoad' = $PropertiesToLoad }
