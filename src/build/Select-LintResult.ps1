@@ -45,9 +45,11 @@ $warnings = ($filteredResult.where({ $_Severity -eq 'Warning' })).Count
 $infos = ($filteredResult.where({ $_Severity -eq 'Information' })).Count
 
 if ($filteredResult) {
-    Write-InfoColor "`tPSScriptAnalyzer results:" -ForegroundColor Cyan
+    Write-InfoColor "`t# PSScriptAnalyzer results:" -ForegroundColor Cyan
     $formattedOutput = ($filteredResult | Format-Table -AutoSize | Out-String) -split "`n" | ForEach-Object { "`t$_" }
     Write-InfoColor ($formattedOutput -join "`n") -ForegroundColor Cyan
+} else {
+    Write-InfoColor "`t# No PSScriptAnalyzer issues found after exclusion filters ($($LintResult.Count) before filtering)." -ForegroundColor Cyan
 }
 
 switch ($SeverityThreshold) {
