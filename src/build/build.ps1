@@ -32,16 +32,24 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Dynamically load all build functions
+$FunctionsPath = [IO.Path]::Combine($PSScriptRoot, 'functions', '*.ps1')
+Get-ChildItem -Path $FunctionsPath | ForEach-Object {
+    Write-Verbose "Loading function from: $($_.Name)"
+    . $_.FullName
+}
+
 if (!($PSBoundParameters.ContainsKey('Parameters'))) {
     $Parameters = @{}
 }
 $Parameters['CommitMessage'] = $CommitMessage
+$Parameters['NoPublish'] = $NoPublish
 
 # Bootstrap dependencies
 if ($Bootstrap.IsPresent) {
     Get-PackageProvider -Name Nuget -ForceBootstrap | Out-Null
     Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-    $PSDependFile = [IO.Path]::Combine('.', 'src', 'build', 'psdependRequirements.ps1')
+    $PSDependFile = [IO.Path]::Combine('.', 'src', 'build', 'config', 'psdependRequirements.psd1')
     if ((Test-Path -Path $PSDependFile)) {
         if (-not (Get-Module -Name PSDepend -ListAvailable)) {
             Install-Module -Name PSDepend -Repository PSGallery -Scope CurrentUser -Force
@@ -65,7 +73,7 @@ if ($IncrementMajorVersion) {
 $psakeFile = [IO.Path]::Combine('.', 'src', 'build', 'psakeFile.ps1')
 if ($PSCmdlet.ParameterSetName -eq 'Help') {
     Get-PSakeScriptTasks -buildFile $psakeFile |
-        Format-Table -Property Name, Description, Alias, DependsOn
+    Format-Table -Property Name, Description, Alias, DependsOn
 } else {
     Invoke-psake -buildFile $psakeFile -taskList $Task -properties $Properties -parameters $Parameters
     exit ([int](-not $psake.build_success))
