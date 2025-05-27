@@ -6260,7 +6260,7 @@ function Get-WinNTGroupMember {
         )
 
         $PropertiesToLoad = $PropertiesToLoad |
-            Sort-Object -Unique
+        Sort-Object -Unique
 
         $Log = @{ 'Cache' = $Cache }
         $DirectoryParams = @{ 'Cache' = $Cache ; 'PropertiesToLoad' = $PropertiesToLoad }
@@ -6273,8 +6273,6 @@ function Get-WinNTGroupMember {
 
             $LogSuffix = "# For '$($ThisDirEntry.Path)'"
             $Log['Suffix'] = " $LogSuffix"
-            $ThisSplitPath = Split-DirectoryPath -DirectoryPath $ThisDirEntry.Path
-            $SourceDomainNetbiosOrFqdn = $ThisSplitPath['Domain']
 
             if (
                 $null -ne $ThisDirEntry.Properties['groupType'] -or
