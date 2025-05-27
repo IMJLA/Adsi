@@ -16,6 +16,7 @@
     "powershell.codeFormatting.whitespaceAroundOperator": true,
     "powershell.codeFormatting.whitespaceAfterSeparator": true,
     "powershell.codeFormatting.alignPropertyValuePairs": true,
+    "powershell.debugging.createTemporaryIntegratedConsole": true,
     "powershell.scriptAnalysis.settingsPath": "src\\build\\psscriptanalyzersettings.psd1",
     "powershell.scriptAnalysis.enable": true,
     "editor.trimAutoWhitespace": false
