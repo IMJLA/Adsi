@@ -32,14 +32,19 @@
             $output = @()
             & cmd /c "chcp 65001 >nul && npm $Command" 2>&1 | ForEach-Object {
                 $output += $_
-                Write-Host "`t`t$_"
+                [Console]::Write("`t`t")
+                [Console]::WriteLine($_)
             }
+
         } else {
+
             # Direct output with UTF-8 encoding
             # chcp 65001 changes the Windows Command Prompt's code page to UTF-8 (code page 65001).
             & cmd /c "chcp 65001 >nul && npm $Command" 2>&1 | ForEach-Object {
-                Write-Host "`t`t$_"
+                [Console]::Write("`t`t")
+                [Console]::WriteLine($_)
             }
+
         }
 
     } finally {
@@ -58,4 +63,5 @@
     if ($PassThru) {
         return $output
     }
+
 }
