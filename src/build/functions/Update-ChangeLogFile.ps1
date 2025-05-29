@@ -20,6 +20,7 @@
         default { $Type = 'Changed' }
     }
 
+    $InformationPreference = 'Continue'
     $cmdstr = "`t`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
     $cmdstr2 = "`t`tUpdate-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path '$ChangeLog'"
 

@@ -12,6 +12,9 @@
         [string]$ModuleManifestPath
 
     )
+
+    $InformationPreference = 'Continue'
+
     # Export public functions in the module
     $publicFunctions = $PublicFunctionFiles.BaseName
 
@@ -28,7 +31,7 @@
         $OldExportStmt = 'Export-ModuleMember -Function .*'
         Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace '$OldExportStmt' , `"$NewExportStmt`""
         $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewExportStmt
-        Write-Verbose "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+        Write-Information "`t`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
         Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 
     } else {
@@ -37,11 +40,11 @@
             $ModuleContent += "`r`n"
         }
         $ModuleContent += $NewExportStmt
-        Write-Verbose "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+        Write-Information "`t`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
         Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
     }
 
     # Export public functions in the manifest
-    Write-Verbose "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $strPublicFunctions"
+    Write-Information "`t`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $strPublicFunctions"
     Update-Metadata -Path $ModuleManifestPath -PropertyName FunctionsToExport -Value $publicFunctions
 }

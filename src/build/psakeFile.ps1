@@ -563,7 +563,7 @@ $DocsPrereq = {
 Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPrereq -action {
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
-    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Force -ErrorAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
     Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     if (Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction SilentlyContinue) {
         Write-Error 'Failed to delete existing Markdown help files.'
@@ -677,6 +677,7 @@ Task -Name UninstallTempModule -depends RemoveModule -action {
 
     Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
     Remove-Item -Path $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop
+
     if (Test-Path -Path $script:ModuleInstallDir) {
         Write-Error 'Failed to remove the temporary module installation directory.'
     } else {
@@ -687,7 +688,7 @@ Task -Name UninstallTempModule -depends RemoveModule -action {
 
 Task -name FixMarkdownHelp -depends UninstallTempModule -action {
 
-    Write-Information "`tRepair-MarkdownHelp -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine '$NewLine' -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles"
+    Write-Information "`tRepair-MarkdownHelp -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine '``r``n' -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles"
     Repair-MarkdownHelp -BuildOutputDir $script:BuildOutputDir -ModuleName $ModuleName -DocsMarkdownDefaultLocaleDir $DocsMarkdownDefaultLocaleDir -NewLine $NewLine -DocsDefaultLocale $DocsDefaultLocale -PublicFunctionFiles $script:PublicFunctionFiles
     Write-InfoColor "`t# Successfully fixed Markdown help files for proper formatting and parameter documentation." -ForegroundColor Green
 
@@ -697,6 +698,7 @@ Task -name CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
     Write-Information "`tNew-Item -Path '$DocsMamlDir' -ItemType Directory -ErrorAction SilentlyContinue"
     $null = New-Item -Path $DocsMamlDir -ItemType Directory -ErrorAction SilentlyContinue
+
     if (Test-Path -Path $DocsMamlDir) {
         Write-InfoColor "`t# MAML help folder exists." -ForegroundColor Green
     } else {
@@ -823,7 +825,6 @@ $OnlineHelpPrereqs = {
     # Find Node.js installation.
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
     Write-InfoColor "FindOnlineHelpPrerequisites$NewLine" -ForegroundColor Blue
-
     Write-Information "`tGet-Command -Name node -ErrorAction SilentlyContinue"
     $NodeCommand = Get-Command -Name node -ErrorAction SilentlyContinue
 

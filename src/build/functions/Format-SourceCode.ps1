@@ -1,4 +1,6 @@
 ﻿function Format-SourceCode {
+    #requires -module PSScriptAnalyzer
+
     <#
     .SYNOPSIS
     Format PowerShell source code files using PSScriptAnalyzer rules.
@@ -21,6 +23,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         [string]$Path = (Join-Path $PSScriptRoot '..' ),
 
@@ -32,13 +35,9 @@
         throw 'PSScriptAnalyzer module is required but not installed. Install with: Install-Module PSScriptAnalyzer'
     }
 
-    Import-Module PSScriptAnalyzer
-
     # Get all PowerShell script files
     Write-Verbose "`tGet-ChildItem -Path '$Path' -Include '*.ps1', '*.psm1', '*.psd1' -Recurse"
     $ScriptFiles = Get-ChildItem -Path $Path -Include '*.ps1', '*.psm1', '*.psd1' -Recurse
-
-    $FormattedCount = 0
 
     foreach ($File in $ScriptFiles) {
 
@@ -48,20 +47,19 @@
         # Format the content
         Write-Verbose "`tInvoke-Formatter -ScriptDefinition '$RelativePath' -Settings '$SettingsPath' -ErrorAction Stop"
         $FormattedContent = Invoke-Formatter -ScriptDefinition $OriginalContent -Settings $SettingsPath -ErrorAction Stop
-        try {
 
-            # Check if content changed
-            if ($FormattedContent -ne $OriginalContent) {
-                if ($WhatIfPreference) {
-                    Write-Information "`tSet-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"
-                } elseif ($PSCmdlet.ShouldProcess($File.FullName, 'Format PowerShell file')) {
-                    Write-Verbose "`tSet-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"
-                    Set-Content -Path $File.FullName -Value $FormattedContent -NoNewline
-                    $FormattedCount++
-                }
+        # Check if content changed
+        if ($FormattedContent -ne $OriginalContent) {
+
+            if ($WhatIfPreference) {
+                Write-Information "`t`twould run: Set-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"
+            } elseif ($PSCmdlet.ShouldProcess($File.FullName, 'Format PowerShell file')) {
+                Write-Information "`t`tSet-Content -Path '$($File.FullName)' -Value '`$FormattedContent' -NoNewline"
+                Set-Content -Path $File.FullName -Value $FormattedContent -NoNewline
             }
-        } catch {
-            Write-Warning "Failed to format $($File.FullName): $_"
+
         }
+
     }
+
 }
