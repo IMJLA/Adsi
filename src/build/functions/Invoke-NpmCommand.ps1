@@ -51,6 +51,11 @@
             $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
             $psi.WorkingDirectory = [System.IO.Path]::GetFullPath($WorkingDirectory, $originalLocation.Path)
 
+            # Force npm to output colors even when redirected
+            $psi.EnvironmentVariables['FORCE_COLOR'] = '1'
+            $psi.EnvironmentVariables['NPM_CONFIG_COLOR'] = 'always'
+            $psi.EnvironmentVariables['TERM'] = 'xterm-256color'
+
             $process = [System.Diagnostics.Process]::Start($psi)
 
             # Read streams synchronously to preserve ANSI sequences

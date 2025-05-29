@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.224] - 2025-05-28
+### Fixed
+- fix moar color
+
 ## [5.0.223] - 2025-05-28
 ### Changed
 - test build
