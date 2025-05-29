@@ -58,31 +58,14 @@
 
             $process = [System.Diagnostics.Process]::Start($psi)
 
-            # Read streams synchronously to preserve ANSI sequences
-            $atLineStart = $true
-            $errorAtLineStart = $true
-            $tabsAddedToLine = $false
-            $errorTabsAddedToLine = $false
-
-            while (-not $process.HasExited) {
+            # Read all output first, then process with regex
+            $allOutput = ''
+            while (-not $process.HasExited -or $process.StandardOutput.Peek() -ge 0 -or $process.StandardError.Peek() -ge 0) {
                 # Process stdout
                 while ($process.StandardOutput.Peek() -ge 0) {
                     $char = $process.StandardOutput.Read()
                     if ($char -ge 0) {
-                        $charValue = [char]$char
-                        if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $tabsAddedToLine) {
-                            [Console]::Write("`t`t")
-                            $atLineStart = $false
-                            $tabsAddedToLine = $true
-                        }
-                        [Console]::Write($charValue)
-                        if ($charValue -eq "`n") {
-                            $atLineStart = $true
-                            $tabsAddedToLine = $false
-                        } elseif ($charValue -eq "`r") {
-                            # Carriage return - cursor goes to start but don't reset tab flag
-                            $atLineStart = $true
-                        }
+                        $allOutput += [char]$char
                     }
                 }
 
@@ -90,20 +73,7 @@
                 while ($process.StandardError.Peek() -ge 0) {
                     $char = $process.StandardError.Read()
                     if ($char -ge 0) {
-                        $charValue = [char]$char
-                        if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $errorTabsAddedToLine) {
-                            [Console]::Write("`t`t")
-                            $errorAtLineStart = $false
-                            $errorTabsAddedToLine = $true
-                        }
-                        [Console]::Write($charValue)
-                        if ($charValue -eq "`n") {
-                            $errorAtLineStart = $true
-                            $errorTabsAddedToLine = $false
-                        } elseif ($charValue -eq "`r") {
-                            # Carriage return - cursor goes to start but don't reset tab flag
-                            $errorAtLineStart = $true
-                        }
+                        $allOutput += [char]$char
                     }
                 }
 
@@ -111,46 +81,18 @@
                 Start-Sleep -Milliseconds 10
             }
 
-            # Process any remaining output
-            while ($process.StandardOutput.Peek() -ge 0) {
-                $char = $process.StandardOutput.Read()
-                if ($char -ge 0) {
-                    $charValue = [char]$char
-                    if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $tabsAddedToLine) {
-                        [Console]::Write("`t`t")
-                        $atLineStart = $false
-                        $tabsAddedToLine = $true
-                    }
-                    [Console]::Write($charValue)
-                    if ($charValue -eq "`n") {
-                        $atLineStart = $true
-                        $tabsAddedToLine = $false
-                    } elseif ($charValue -eq "`r") {
-                        $atLineStart = $true
-                    }
-                }
-            }
-
-            while ($process.StandardError.Peek() -ge 0) {
-                $char = $process.StandardError.Read()
-                if ($char -ge 0) {
-                    $charValue = [char]$char
-                    if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $errorTabsAddedToLine) {
-                        [Console]::Write("`t`t")
-                        $errorAtLineStart = $false
-                        $errorTabsAddedToLine = $true
-                    }
-                    [Console]::Write($charValue)
-                    if ($charValue -eq "`n") {
-                        $errorAtLineStart = $true
-                        $errorTabsAddedToLine = $false
-                    } elseif ($charValue -eq "`r") {
-                        $errorAtLineStart = $true
-                    }
-                }
-            }
-
             $process.WaitForExit()
+
+            # Apply regex to replace 2+ consecutive whitespace with CRLF and add tabs
+            $formattedOutput = $allOutput -replace '\s{2,}', "`r`n"
+            $lines = $formattedOutput -split "`r`n|`n"
+            foreach ($line in $lines) {
+                if ($line.Trim()) {
+                    [Console]::WriteLine("`t`t$line")
+                } else {
+                    [Console]::WriteLine('')
+                }
+            }
         }
 
     } finally {
