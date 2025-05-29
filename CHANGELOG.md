@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.211] - 2025-05-28
+### Changed
+- try processstartinfo
+
 ## [5.0.210] - 2025-05-28
 ### Removed
 - remove write-host

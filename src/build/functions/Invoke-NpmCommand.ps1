@@ -27,24 +27,43 @@
         [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
         if ($PassThru) {
-            # For PassThru, we need to capture while preserving encoding
-            # chcp 65001 changes the Windows Command Prompt's code page to UTF-8 (code page 65001).
-            $output = @()
-            & cmd /c "chcp 65001 >nul && npm $Command" 2>&1 | ForEach-Object {
-                $output += $_
-                [Console]::Write("`t`t")
-                [Console]::WriteLine($_)
-            }
+            # For PassThru, we need to capture the raw output
+            $output = & cmd /c "chcp 65001 >nul && npm $Command" 2>&1
 
+            # Display the output with tab prefixes, preserving line breaks
+            $rawOutput = ($output -join "`n") -replace "`r`n", "`n" -replace "`r", "`n"
+            foreach ($line in $rawOutput -split "`n") {
+                if ($line.Trim()) {
+                    [Console]::WriteLine("`t`t$line")
+                } else {
+                    [Console]::WriteLine('')
+                }
+            }
         } else {
+            # For direct output, use Start-Process to preserve formatting better
+            $psi = New-Object System.Diagnostics.ProcessStartInfo
+            $psi.FileName = 'cmd'
+            $psi.Arguments = "/c chcp 65001 >nul && npm $Command"
+            $psi.UseShellExecute = $false
+            $psi.RedirectStandardOutput = $true
+            $psi.RedirectStandardError = $true
+            $psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+            $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
 
-            # Direct output with UTF-8 encoding
-            # chcp 65001 changes the Windows Command Prompt's code page to UTF-8 (code page 65001).
-            & cmd /c "chcp 65001 >nul && npm $Command" 2>&1 | ForEach-Object {
-                [Console]::Write("`t`t")
-                [Console]::WriteLine($_)
+            $process = [System.Diagnostics.Process]::Start($psi)
+
+            # Read and output with tabs, preserving original formatting
+            while (-not $process.StandardOutput.EndOfStream) {
+                $line = $process.StandardOutput.ReadLine()
+                [Console]::WriteLine("`t`t$line")
             }
 
+            while (-not $process.StandardError.EndOfStream) {
+                $line = $process.StandardError.ReadLine()
+                [Console]::WriteLine("`t`t$line")
+            }
+
+            $process.WaitForExit()
         }
 
     } finally {
