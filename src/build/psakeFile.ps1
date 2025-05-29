@@ -1067,7 +1067,25 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
     Write-Information "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
     Write-Information "`tInvoke-Pester -Configuration `$PesterConfiguration"
-    Invoke-Pester -Configuration $PesterConfiguration
+
+    # Capture Invoke-Pester output and prepend tabs while preserving colors
+    $originalOutputEncoding = [Console]::OutputEncoding
+    try {
+
+        # Redirect output streams and prepend tabs
+        Invoke-Pester -Configuration $PesterConfiguration 2>&1 | ForEach-Object {
+            $line = $_.ToString()
+            if ($line) {
+                # Preserve ANSI color codes and prepend tabs
+                Write-Host "`t`t$line"
+            }
+        }
+
+    } catch {
+        Write-Error "Pester execution failed: $_"
+    } finally {
+        [Console]::OutputEncoding = $originalOutputEncoding
+    }
 
 } -description 'Perform unit tests using Pester.'
 

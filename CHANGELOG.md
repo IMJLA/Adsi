@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.232] - 2025-05-28
+### Changed
+- improve console output
+
 ## [5.0.231] - 2025-05-28
 ### Fixed
 - fix manually deleted build dir
