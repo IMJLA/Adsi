@@ -32,9 +32,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Dot-source Write-InfoColor first so it's available to other functions
+$WriteInfoColorPath = [IO.Path]::Combine($PSScriptRoot, 'functions', 'Write-InfoColor.ps1')
+. $WriteInfoColorPath
+
 # Dynamically load all build functions
 $FunctionsPath = [IO.Path]::Combine($PSScriptRoot, 'functions', '*.ps1')
-Get-ChildItem -Path $FunctionsPath | ForEach-Object {
+# Exclude the Write-InfoColor since we already loaded it above
+Get-ChildItem -Path $FunctionsPath -Exclude 'Write-InfoColor.ps1' | ForEach-Object {
     Write-Verbose "Loading function from: $($_.Name)"
     . $_.FullName
 }

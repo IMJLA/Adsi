@@ -200,6 +200,8 @@ Properties {
 
     $InformationPreference = 'Continue'
 
+    # Write-InfoColor is now dot-sourced in build.ps1 so it's available to all functions
+
 }
 
 FormatTaskName {
