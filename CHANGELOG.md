@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.231] - 2025-05-28
+### Fixed
+- fix manually deleted build dir
+
 ## [5.0.230] - 2025-05-28
 ### Changed
 - update docusaurus
