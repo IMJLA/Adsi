@@ -1071,9 +1071,41 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
     # Capture Invoke-Pester output and prepend tabs while preserving colors
     $originalOutputEncoding = [Console]::OutputEncoding
     try {
+        # Store original stream handlers
+        $originalOut = $Host.UI.RawUI
+
+        # Create a custom host to intercept output
+        $customHost = New-Object PSObject -Property @{
+            UI = New-Object PSObject -Property @{
+                WriteLine        = {
+                    param($message)
+                    Write-Host "`t`t$message"
+                }
+                Write            = {
+                    param($message)
+                    Write-Host "`t`t$message" -NoNewline
+                }
+                WriteErrorLine   = {
+                    param($message)
+                    Write-Host "`t`t$message" -ForegroundColor Red
+                }
+                WriteWarningLine = {
+                    param($message)
+                    Write-Host "`t`t$message" -ForegroundColor Yellow
+                }
+                WriteVerboseLine = {
+                    param($message)
+                    Write-Host "`t`t$message" -ForegroundColor Cyan
+                }
+                WriteDebugLine   = {
+                    param($message)
+                    Write-Host "`t`t$message" -ForegroundColor Gray
+                }
+            }
+        }
 
         # Redirect output streams and prepend tabs
-        Invoke-Pester -Configuration $PesterConfiguration 2>&1 | ForEach-Object {
+        $pesterOutput = Invoke-Pester -Configuration $PesterConfiguration 2>&1 | ForEach-Object {
             $line = $_.ToString()
             if ($line) {
                 # Preserve ANSI color codes and prepend tabs
