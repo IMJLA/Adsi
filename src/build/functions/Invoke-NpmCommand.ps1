@@ -56,12 +56,12 @@
             # Read and output with tabs, preserving original formatting
             while (-not $process.StandardOutput.EndOfStream) {
                 $line = $process.StandardOutput.ReadLine()
-                [Console]::WriteLine("`t`t$line")
+                [Console]::WriteLine("`t`t$($line.Replace("`r", "`r`n"))")
             }
 
             while (-not $process.StandardError.EndOfStream) {
                 $line = $process.StandardError.ReadLine()
-                [Console]::WriteLine("`t`t$line")
+                [Console]::WriteLine("`t`t$($line.Replace("`r", "`r`n"))")
             }
 
             $process.WaitForExit()

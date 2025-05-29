@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.215] - 2025-05-28
+### Changed
+- troubleshoot line breaks
+
 ## [5.0.214] - 2025-05-28
 ### Changed
 - troubleshoot relative path stuff
