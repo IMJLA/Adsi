@@ -12,6 +12,7 @@
         [switch]$PassThru
     )
 
+    $InformationPreference = 'Continue'
     $originalLocation = Get-Location
     Write-Information "`t`tSet-Location -Path '$WorkingDirectory'"
     Set-Location $WorkingDirectory

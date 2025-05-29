@@ -13,6 +13,8 @@
         'Content-Type'  = 'application/octet-stream'
     }
 
+    $InformationPreference = 'Continue'
+
     $uploadUri = $UploadUrl -replace '\{\?name,label\}', "?name=$FileName"
     Write-InfoColor "`t`t`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile '$FilePath'"
 
@@ -24,4 +26,5 @@
             throw "Failed to upload asset $FileName : $($_.Exception.Message)"
         }
     }
+
 }

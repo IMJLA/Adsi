@@ -14,12 +14,14 @@
         [string]$ReleaseNotes = 'Automated release'
     )
 
+    $InformationPreference = 'Continue'
+    Write-InfoColor "`t`tGet-VersionFolder -DistPath '$DistPath'"
+    $versionFolder = Get-VersionFolder -DistPath $DistPath
+
     # Main script execution
     try {
 
         # Find the version folder
-        Write-InfoColor "`t`tGet-VersionFolder -DistPath '$DistPath'"
-        $versionFolder = Get-VersionFolder -DistPath $DistPath
         $version = $versionFolder.Name
         $versionFolderParentToReplace = $versionFolder.FullName | Split-Path -Parent
         $versionFolderPath = $versionFolder.FullName -replace [regex]::Escape($versionFolderParentToReplace), $DistPath

@@ -6,6 +6,7 @@
         throw "Dist folder not found at: $DistPath"
     }
 
+    $InformationPreference = 'Continue'
     Write-InfoColor "`t`t`tGet-ChildItem -Path '$DistPath' -Directory | Where-Object {`$_.Name -match '^\d+\.\d+\.\d+'}"
     $versionFolders = Get-ChildItem -Path $DistPath -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+' }
 

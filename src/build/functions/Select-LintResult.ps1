@@ -33,9 +33,11 @@
 
     )
 
+    $filteredOut = 0
     $filteredResult = ForEach ($result in $LintResult) {
         if ($ExcludeRulesByFile.ContainsKey($result.ScriptName)) {
             if ($ExcludeRulesByFile[$result.ScriptName] -contains $result.RuleName) {
+                $filteredOut = $filteredOut + 1
                 continue
             }
         }
@@ -44,14 +46,15 @@
     $errors = ($filteredResult.where({ $_Severity -eq 'Error' })).Count
     $warnings = ($filteredResult.where({ $_Severity -eq 'Warning' })).Count
     $infos = ($filteredResult.where({ $_Severity -eq 'Information' })).Count
+    $sum = $errors + $warnings + $infos
     $InformationPreference = 'Continue'
 
     if ($filteredResult) {
-        Write-InfoColor "`t# PSScriptAnalyzer results:" -ForegroundColor Cyan
+        Write-InfoColor "`t# $filteredCount excluded violations which leaves $sum remaining: $errors errors, $warnings warnings, and $infos informational" -ForegroundColor Cyan
         $formattedOutput = ($filteredResult | Format-Table -AutoSize | Out-String) -split "`n" | ForEach-Object { "`t$_" }
         Write-InfoColor ($formattedOutput -join "`n") -ForegroundColor Cyan
     } else {
-        Write-InfoColor "`t# No PSScriptAnalyzer issues found after exclusion filters ($($LintResult.Count) before filtering)." -ForegroundColor Cyan
+        Write-InfoColor "`t# No PSScriptAnalyzer rule violations found after exclusion filters ($($LintResult.Count) before filtering)." -ForegroundColor Cyan
     }
 
     switch ($SeverityThreshold) {

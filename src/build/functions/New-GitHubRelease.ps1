@@ -24,8 +24,8 @@
         prerelease       = $false
     } | ConvertTo-Json
 
+    $InformationPreference = 'Continue'
     $uri = "https://api.github.com/repos/$Repo/releases"
-
     Write-InfoColor "`t`t`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$headers -Body `$releaseData"
 
     if ($PSCmdlet.ShouldProcess("Repository: $Repo, Tag: $TagName", 'Create GitHub Release')) {

@@ -77,8 +77,7 @@ if ($IncrementMajorVersion) {
 # Execute psake task(s)
 $psakeFile = [IO.Path]::Combine('.', 'src', 'build', 'psakeFile.ps1')
 if ($PSCmdlet.ParameterSetName -eq 'Help') {
-    Get-PSakeScriptTasks -buildFile $psakeFile |
-    Format-Table -Property Name, Description, Alias, DependsOn
+    Get-PSakeScriptTasks -buildFile $psakeFile | Format-Table -Property Name, Description, Alias, DependsOn
 } else {
     Invoke-psake -buildFile $psakeFile -taskList $Task -properties $Properties -parameters $Parameters
     exit ([int](-not $psake.build_success))

@@ -13,9 +13,6 @@
     .PARAMETER SettingsPath
     Path to the PSScriptAnalyzer settings file.
 
-    .PARAMETER WhatIf
-    Show what files would be formatted without actually changing them.
-
     .EXAMPLE
     .\Format-SourceCode.ps1
 
@@ -27,9 +24,7 @@
     param(
         [string]$Path = (Join-Path $PSScriptRoot '..' ),
 
-        [string]$SettingsPath = (Join-Path $PSScriptRoot 'psscriptanalyzerSettings.psd1'),
-
-        [switch]$WhatIf
+        [string]$SettingsPath = (Join-Path $PSScriptRoot 'psscriptanalyzerSettings.psd1')
     )
 
     # Verify PSScriptAnalyzer is available
@@ -57,7 +52,7 @@
 
             # Check if content changed
             if ($FormattedContent -ne $OriginalContent) {
-                if ($WhatIf) {
+                if ($WhatIfPreference) {
                     Write-Information "`tSet-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"
                 } elseif ($PSCmdlet.ShouldProcess($File.FullName, 'Format PowerShell file')) {
                     Write-Verbose "`tSet-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"

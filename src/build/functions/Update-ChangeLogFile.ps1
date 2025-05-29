@@ -1,6 +1,6 @@
 ﻿function Update-ChangeLogFile {
     #requires -Module ChangelogManagement
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [version]$Version,
         [string]$CommitMessage,
@@ -20,8 +20,21 @@
         default { $Type = 'Changed' }
     }
 
-    Write-Verbose "`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
+    $cmdstr = "`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
+    $cmdstr2 = "`tUpdate-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path '$ChangeLog'"
+
+    if ($WhatIfPreference) {
+        Write-Information "`tWould run:$cmdstr"
+        Write-Information "`tWould run:$cmdstr2"
+        return
+    } elseif ($PSCmdlet.ShouldProcess($ChangeLog, 'Update ChangeLog File')) {
+        Write-Information "`tWould run:$cmdstr"
+        Write-Information "`tWould run:$cmdstr2"
+    }
+
+    Write-Verbose $cmdstr
     Add-ChangelogData -Type $Type -Data $CommitMessage -Path $ChangeLog
-    Write-Verbose "`tUpdate-Changelog -Version '$Version' -LinkMode 'None' -Path '$ChangeLog'"
+    Write-Verbose $cmdstr2
     Update-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path $ChangeLog
+
 }
