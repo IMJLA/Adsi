@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.214] - 2025-05-28
+### Changed
+- troubleshoot relative path stuff
+
+## [5.0.213] - 2025-05-28
+### Changed
+- weak processstartinfo cannot handle relative paths
+
+## [5.0.212] - 2025-05-28
+### Changed
+- troubleshoot processstartinfo
+
 ## [5.0.211] - 2025-05-28
 ### Changed
 - try processstartinfo

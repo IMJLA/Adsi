@@ -49,6 +49,7 @@
             $psi.RedirectStandardError = $true
             $psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
             $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
+            $psi.WorkingDirectory = [System.IO.Path]::GetFullPath($WorkingDirectory, $originalLocation.Path)
 
             $process = [System.Diagnostics.Process]::Start($psi)
 
