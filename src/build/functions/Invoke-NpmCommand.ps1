@@ -56,9 +56,14 @@
             $psi.EnvironmentVariables['NPM_CONFIG_COLOR'] = 'always'
             $psi.EnvironmentVariables['TERM'] = 'xterm-256color'
 
+            # Set a large console width for better formatting
+            # Maximum practical width is usually around 1000-2000 characters
+            $psi.EnvironmentVariables['COLUMNS'] = '200'
+            $psi.EnvironmentVariables['LINES'] = '50'
+
             $process = [System.Diagnostics.Process]::Start($psi)
 
-            # Read all output first, then process with regex
+            # Read all output first, then add tabs to each line
             $allOutput = ''
             while (-not $process.HasExited -or $process.StandardOutput.Peek() -ge 0 -or $process.StandardError.Peek() -ge 0) {
                 # Process stdout
@@ -83,9 +88,8 @@
 
             $process.WaitForExit()
 
-            # Apply regex to replace 2+ consecutive whitespace with CRLF and add tabs
-            $formattedOutput = $allOutput -replace '\s{2,}', "`r`n"
-            $lines = $formattedOutput -split "`r`n|`n"
+            # Split into lines and add tab prefixes
+            $lines = $allOutput -split "`r`n|`n"
             foreach ($line in $lines) {
                 if ($line.Trim()) {
                     [Console]::WriteLine("`t`t$line")
