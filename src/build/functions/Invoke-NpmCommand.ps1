@@ -3,7 +3,7 @@
     # Custom npm wrapper function
 
     [CmdletBinding()]
-
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from npm output')]
     param(
         # The npm command to execute
         [Parameter(Mandatory)]

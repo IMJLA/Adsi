@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.229] - 2025-05-28
+### Changed
+- build with new docusaurus version
+
 ## [5.0.228] - 2025-05-28
 ### Fixed
 - fix console width

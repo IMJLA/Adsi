@@ -1,4 +1,5 @@
 ﻿using namespace System.Management.Automation
+
 #TODO : Use Fixer 'Get-TextFilesList $pwd | ConvertTo-SpaceIndentation'.
 
 Properties {

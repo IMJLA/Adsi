@@ -24,6 +24,7 @@
         [string]$SeverityThreshold,
 
         [hashtable]$ExcludeRulesByFile = @{
+            # psake syntax does not support SupressMessageAttribute, so we need to exclude some rules.
             # Exclude the PSUseDeclaredVarsMoreThanAssignments rule for this file because psake variable scoping is not understood by PSScriptAnalyzer.
             # Exclude the PSUseCorrectCasing rule for this file due to a bug in PSScriptAnalyzer (wrongly sees the Task -name parameter as uppercase).
             'psakeFile.ps1' = @('PSUseDeclaredVarsMoreThanAssignments', 'PSUseCorrectCasing')
