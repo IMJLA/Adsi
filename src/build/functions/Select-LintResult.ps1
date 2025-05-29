@@ -44,6 +44,7 @@
     $errors = ($filteredResult.where({ $_Severity -eq 'Error' })).Count
     $warnings = ($filteredResult.where({ $_Severity -eq 'Warning' })).Count
     $infos = ($filteredResult.where({ $_Severity -eq 'Information' })).Count
+    $InformationPreference = 'Continue'
 
     if ($filteredResult) {
         Write-InfoColor "`t# PSScriptAnalyzer results:" -ForegroundColor Cyan
