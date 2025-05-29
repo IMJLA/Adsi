@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.202] - 2025-05-28
+### Fixed
+- fix changelog issue
+
 ## [5.0.201] - 2025-05-28
 ### Changed
 - resolve whatif issues and infopref issues

@@ -20,21 +20,19 @@
         default { $Type = 'Changed' }
     }
 
-    $cmdstr = "`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
-    $cmdstr2 = "`tUpdate-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path '$ChangeLog'"
+    $cmdstr = "`t`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
+    $cmdstr2 = "`t`tUpdate-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path '$ChangeLog'"
 
     if ($WhatIfPreference) {
         Write-Information "`tWould run:$cmdstr"
         Write-Information "`tWould run:$cmdstr2"
         return
     } elseif ($PSCmdlet.ShouldProcess($ChangeLog, 'Update ChangeLog File')) {
-        Write-Information "`tWould run:$cmdstr"
-        Write-Information "`tWould run:$cmdstr2"
+        Write-Information $cmdstr
+        Add-ChangelogData -Type $Type -Data $CommitMessage -Path $ChangeLog
+        Write-Information $cmdstr2
+        Update-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path $ChangeLog
     }
 
-    Write-Verbose $cmdstr
-    Add-ChangelogData -Type $Type -Data $CommitMessage -Path $ChangeLog
-    Write-Verbose $cmdstr2
-    Update-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path $ChangeLog
 
 }
