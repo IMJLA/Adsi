@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.225] - 2025-05-28
+### Fixed
+- fix carriage returns. return the virtual carriage!
+
 ## [5.0.224] - 2025-05-28
 ### Fixed
 - fix moar color

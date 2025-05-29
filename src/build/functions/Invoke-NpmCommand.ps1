@@ -75,6 +75,9 @@
                         [Console]::Write($charValue)
                         if ($charValue -eq "`n") {
                             $atLineStart = $true
+                        } elseif ($charValue -eq "`r") {
+                            # Carriage return should reset to line start for next non-CR/LF character
+                            $atLineStart = $true
                         }
                     }
                 }
@@ -90,6 +93,9 @@
                         }
                         [Console]::Write($charValue)
                         if ($charValue -eq "`n") {
+                            $errorAtLineStart = $true
+                        } elseif ($charValue -eq "`r") {
+                            # Carriage return should reset to line start for next non-CR/LF character
                             $errorAtLineStart = $true
                         }
                     }
@@ -111,6 +117,8 @@
                     [Console]::Write($charValue)
                     if ($charValue -eq "`n") {
                         $atLineStart = $true
+                    } elseif ($charValue -eq "`r") {
+                        $atLineStart = $true
                     }
                 }
             }
@@ -125,6 +133,8 @@
                     }
                     [Console]::Write($charValue)
                     if ($charValue -eq "`n") {
+                        $errorAtLineStart = $true
+                    } elseif ($charValue -eq "`r") {
                         $errorAtLineStart = $true
                     }
                 }
