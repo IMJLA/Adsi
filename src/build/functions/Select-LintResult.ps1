@@ -43,14 +43,14 @@
         }
         $result
     }
-    $errors = ($filteredResult.where({ $_Severity -eq 'Error' })).Count
-    $warnings = ($filteredResult.where({ $_Severity -eq 'Warning' })).Count
-    $infos = ($filteredResult.where({ $_Severity -eq 'Information' })).Count
+    $errors = ($filteredResult.where({ $_.Severity -eq 'Error' })).Count
+    $warnings = ($filteredResult.where({ $_.Severity -eq 'Warning' })).Count
+    $infos = ($filteredResult.where({ $_.Severity -eq 'Information' })).Count
     $sum = $errors + $warnings + $infos
     $InformationPreference = 'Continue'
 
     if ($filteredResult) {
-        Write-InfoColor "`t# $filteredCount excluded violations which leaves $sum remaining: $errors errors, $warnings warnings, and $infos informational" -ForegroundColor Cyan
+        Write-InfoColor "`t# $filteredOut excluded violations which leaves $sum remaining: $errors errors, $warnings warnings, and $infos informational" -ForegroundColor Cyan
         $formattedOutput = ($filteredResult | Format-Table -AutoSize | Out-String) -split "`n" | ForEach-Object { "`t$_" }
         Write-InfoColor ($formattedOutput -join "`n") -ForegroundColor Cyan
     } else {

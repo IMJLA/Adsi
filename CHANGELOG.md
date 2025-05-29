@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.223] - 2025-05-28
+### Changed
+- test build
+
+## [5.0.222] - 2025-05-28
+### Fixed
+- fix lintseveritythreshold
+
+## [5.0.220] - 2025-05-28
+### Changed
+- use current runspace
+
+## [5.0.219] - 2025-05-28
+### Fixed
+- fix specify delegate type
+
+## [5.0.218] - 2025-05-28
+### Removed
+- remove useless try/catch
+
+## [5.0.217] - 2025-05-28
+### Changed
+- retry interrupted build due to bsod
+
 ## [5.0.215] - 2025-05-28
 ### Changed
 - troubleshoot line breaks

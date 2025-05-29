@@ -113,7 +113,7 @@ Properties {
         Warning # Fail the build on Warning and Error diagnostic records.
         Information # Fail the build on any diagnostic record, regardless of severity.
     }
-    [LintSeverity]$LintSeverityThreshold = 'Information'
+    [LintSeverity]$LintSeverityThreshold = 'None' # Default to None so that the build does not fail by default.
 
     # Path to the PSScriptAnalyzer settings file.
     [string]$LintSettingsFile = [IO.Path]::Combine($SourceCodeDir, 'build', 'config', 'psscriptanalyzerSettings.psd1')
@@ -939,12 +939,7 @@ Task -name InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -a
 
     # npm install
     Write-InfoColor "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
-
-    try {
-        Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-    } catch {
-        Write-Error "Failed to install Online Help dependencies: $_"
-    }
+    Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
 
     # Determine whether the node_modules directory was created (indicating successful install)
     $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'node_modules')

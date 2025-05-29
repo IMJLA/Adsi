@@ -53,15 +53,76 @@
 
             $process = [System.Diagnostics.Process]::Start($psi)
 
-            # Read and output with tabs, preserving original formatting
-            while (-not $process.StandardOutput.EndOfStream) {
-                $line = $process.StandardOutput.ReadLine()
-                [Console]::WriteLine("`t`t$($line.Replace("`r", "`r`n"))")
+            # Read streams synchronously to preserve ANSI sequences
+            $atLineStart = $true
+            $errorAtLineStart = $true
+
+            while (-not $process.HasExited) {
+                # Process stdout
+                while ($process.StandardOutput.Peek() -ge 0) {
+                    $char = $process.StandardOutput.Read()
+                    if ($char -ge 0) {
+                        $charValue = [char]$char
+                        if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                            [Console]::Write("`t`t")
+                            $atLineStart = $false
+                        }
+                        [Console]::Write($charValue)
+                        if ($charValue -eq "`n") {
+                            $atLineStart = $true
+                        }
+                    }
+                }
+
+                # Process stderr
+                while ($process.StandardError.Peek() -ge 0) {
+                    $char = $process.StandardError.Read()
+                    if ($char -ge 0) {
+                        $charValue = [char]$char
+                        if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                            [Console]::Write("`t`t")
+                            $errorAtLineStart = $false
+                        }
+                        [Console]::Write($charValue)
+                        if ($charValue -eq "`n") {
+                            $errorAtLineStart = $true
+                        }
+                    }
+                }
+
+                # Small delay to prevent excessive CPU usage
+                Start-Sleep -Milliseconds 10
             }
 
-            while (-not $process.StandardError.EndOfStream) {
-                $line = $process.StandardError.ReadLine()
-                [Console]::WriteLine("`t`t$($line.Replace("`r", "`r`n"))")
+            # Process any remaining output
+            while ($process.StandardOutput.Peek() -ge 0) {
+                $char = $process.StandardOutput.Read()
+                if ($char -ge 0) {
+                    $charValue = [char]$char
+                    if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                        [Console]::Write("`t`t")
+                        $atLineStart = $false
+                    }
+                    [Console]::Write($charValue)
+                    if ($charValue -eq "`n") {
+                        $atLineStart = $true
+                    }
+                }
+            }
+
+            while ($process.StandardError.Peek() -ge 0) {
+                $char = $process.StandardError.Read()
+                if ($char -ge 0) {
+                    $charValue = [char]$char
+                    if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                        [Console]::Write("`t`t")
+                        $errorAtLineStart = $false
+                    }
+                    [Console]::Write($charValue)
+                    if ($charValue -eq "`n") {
+                        $errorAtLineStart = $true
+                    }
+                }
             }
 
             $process.WaitForExit()
