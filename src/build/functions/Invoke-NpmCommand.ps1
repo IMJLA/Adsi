@@ -61,6 +61,8 @@
             # Read streams synchronously to preserve ANSI sequences
             $atLineStart = $true
             $errorAtLineStart = $true
+            $tabsAddedToLine = $false
+            $errorTabsAddedToLine = $false
 
             while (-not $process.HasExited) {
                 # Process stdout
@@ -68,15 +70,17 @@
                     $char = $process.StandardOutput.Read()
                     if ($char -ge 0) {
                         $charValue = [char]$char
-                        if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                        if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $tabsAddedToLine) {
                             [Console]::Write("`t`t")
                             $atLineStart = $false
+                            $tabsAddedToLine = $true
                         }
                         [Console]::Write($charValue)
                         if ($charValue -eq "`n") {
                             $atLineStart = $true
+                            $tabsAddedToLine = $false
                         } elseif ($charValue -eq "`r") {
-                            # Carriage return should reset to line start for next non-CR/LF character
+                            # Carriage return - cursor goes to start but don't reset tab flag
                             $atLineStart = $true
                         }
                     }
@@ -87,15 +91,17 @@
                     $char = $process.StandardError.Read()
                     if ($char -ge 0) {
                         $charValue = [char]$char
-                        if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                        if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $errorTabsAddedToLine) {
                             [Console]::Write("`t`t")
                             $errorAtLineStart = $false
+                            $errorTabsAddedToLine = $true
                         }
                         [Console]::Write($charValue)
                         if ($charValue -eq "`n") {
                             $errorAtLineStart = $true
+                            $errorTabsAddedToLine = $false
                         } elseif ($charValue -eq "`r") {
-                            # Carriage return should reset to line start for next non-CR/LF character
+                            # Carriage return - cursor goes to start but don't reset tab flag
                             $errorAtLineStart = $true
                         }
                     }
@@ -110,13 +116,15 @@
                 $char = $process.StandardOutput.Read()
                 if ($char -ge 0) {
                     $charValue = [char]$char
-                    if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                    if ($atLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $tabsAddedToLine) {
                         [Console]::Write("`t`t")
                         $atLineStart = $false
+                        $tabsAddedToLine = $true
                     }
                     [Console]::Write($charValue)
                     if ($charValue -eq "`n") {
                         $atLineStart = $true
+                        $tabsAddedToLine = $false
                     } elseif ($charValue -eq "`r") {
                         $atLineStart = $true
                     }
@@ -127,13 +135,15 @@
                 $char = $process.StandardError.Read()
                 if ($char -ge 0) {
                     $charValue = [char]$char
-                    if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n") {
+                    if ($errorAtLineStart -and $charValue -ne "`r" -and $charValue -ne "`n" -and -not $errorTabsAddedToLine) {
                         [Console]::Write("`t`t")
                         $errorAtLineStart = $false
+                        $errorTabsAddedToLine = $true
                     }
                     [Console]::Write($charValue)
                     if ($charValue -eq "`n") {
                         $errorAtLineStart = $true
+                        $errorTabsAddedToLine = $false
                     } elseif ($charValue -eq "`r") {
                         $errorAtLineStart = $true
                     }
