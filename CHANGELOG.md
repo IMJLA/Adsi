@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.209] - 2025-05-28
+### Changed
+- test utf8 encoding
+
 ## [5.0.208] - 2025-05-28
 ### Changed
 - try console writeline

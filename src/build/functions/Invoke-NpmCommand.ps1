@@ -22,22 +22,31 @@
     Write-Information "`t`t& cmd /c `"npm $Command`""
 
     try {
+        # Set console to UTF-8 to handle npm's unicode output properly
+        $originalOutputEncoding = [Console]::OutputEncoding
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
         if ($PassThru) {
-            # Capture output for return value while also displaying with tabs
-            $output = & cmd /c "npm $Command" 2>&1
-            foreach ($line in $output) {
-                [Console]::Write("`t`t")
-                [Console]::WriteLine($line)
+            # For PassThru, we need to capture while preserving encoding
+            # chcp 65001 changes the Windows Command Prompt's code page to UTF-8 (code page 65001).
+            $output = @()
+            & cmd /c "chcp 65001 >nul && npm $Command" 2>&1 | ForEach-Object {
+                $output += $_
+                Write-Host "`t`t$_"
             }
         } else {
-            # Direct output with tab prefixing, preserving colors
-            & cmd /c "npm $Command" 2>&1 | ForEach-Object {
-                [Console]::Write("`t`t")
-                [Console]::WriteLine($_)
+            # Direct output with UTF-8 encoding
+            # chcp 65001 changes the Windows Command Prompt's code page to UTF-8 (code page 65001).
+            & cmd /c "chcp 65001 >nul && npm $Command" 2>&1 | ForEach-Object {
+                Write-Host "`t`t$_"
             }
         }
 
     } finally {
+        # Restore original encoding
+        if ($originalOutputEncoding) {
+            [Console]::OutputEncoding = $originalOutputEncoding
+        }
         Set-Location $originalLocation
     }
 
