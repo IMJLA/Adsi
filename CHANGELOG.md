@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.207] - 2025-05-28
+### Changed
+- simplify
+
+## [5.0.206] - 2025-05-28
+### Changed
+- test with write-host
+
 ## [5.0.205] - 2025-05-28
 ### Changed
 - improve npm output parsing
