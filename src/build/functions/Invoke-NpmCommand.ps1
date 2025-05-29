@@ -22,14 +22,18 @@
     Write-Information "`t`t& cmd /c `"npm $Command`""
 
     try {
-
-        # Direct output with tab prefixing, preserving colors
-        & cmd /c "npm $Command" 2>&1 | ForEach-Object {
-            if ($_ -is [System.Management.Automation.ErrorRecord]) {
-                Write-Host "`t`t" -NoNewline
-                Write-Host $_.Exception.Message
-            } else {
-                Write-Host "`t`t$_"
+        if ($PassThru) {
+            # Capture output for return value while also displaying with tabs
+            $output = & cmd /c "npm $Command" 2>&1
+            foreach ($line in $output) {
+                [Console]::Write("`t`t")
+                [Console]::WriteLine($line)
+            }
+        } else {
+            # Direct output with tab prefixing, preserving colors
+            & cmd /c "npm $Command" 2>&1 | ForEach-Object {
+                [Console]::Write("`t`t")
+                [Console]::WriteLine($_)
             }
         }
 
