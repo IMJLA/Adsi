@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.204] - 2025-05-28
+### Fixed
+- fix typo
+
 ## [5.0.203] - 2025-05-28
 ### Changed
 - set infopref
