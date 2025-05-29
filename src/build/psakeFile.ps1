@@ -200,7 +200,10 @@ Properties {
 
     $InformationPreference = 'Continue'
 
-    # Write-InfoColor is now dot-sourced in build.ps1 so it's available to all functions
+    # Dot-source the Write-InfoColor.ps1 script once to make the function available throughout the script
+    # This must be done in the psakeFile, or Write-InfoColor output to the information stream is invisible in the console
+    $WriteInfoColorPath = [IO.Path]::Combine($PSScriptRoot, 'functions', 'Write-InfoColor.ps1')
+    . $WriteInfoColorPath
 
 }
 

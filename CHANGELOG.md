@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.198] - 2025-05-28
+### Fixed
+- fix write-infocolor issue
+
 ## [5.0.197] - 2025-05-28
 ### Fixed
 - fix function loading sequence
