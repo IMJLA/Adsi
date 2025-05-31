@@ -7,6 +7,354 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.320] - 2025-05-31
+### Changed
+- retry build
+
+## [5.0.319] - 2025-05-31
+### Changed
+- test build after chkdisk
+
+## [5.0.318] - 2025-05-31
+### Changed
+- test build
+
+## [5.0.317] - 2025-05-31
+### Changed
+- repro error
+
+## [5.0.316] - 2025-05-31
+### Changed
+- test
+
+## [5.0.315] - 2025-05-31
+### Changed
+- retry
+
+## [5.0.314] - 2025-05-31
+### Changed
+- attempt self-healing
+
+## [5.0.313] - 2025-05-31
+### Fixed
+- fix indentation
+
+## [5.0.312] - 2025-05-31
+### Fixed
+- fix indentation
+
+## [5.0.311] - 2025-05-31
+### Changed
+- supress progress bars
+
+## [5.0.310] - 2025-05-31
+### Changed
+- test
+
+## [5.0.309] - 2025-05-31
+### Changed
+- retry
+
+## [5.0.308] - 2025-05-31
+### Changed
+- retry
+
+## [5.0.307] - 2025-05-31
+### Changed
+- test
+
+## [5.0.306] - 2025-05-31
+### Changed
+- simplify
+
+## [5.0.305] - 2025-05-31
+### Changed
+- cleanup
+
+## [5.0.304] - 2025-05-31
+### Changed
+- troubleshoot
+
+## [5.0.303] - 2025-05-31
+### Fixed
+- fix output
+
+## [5.0.302] - 2025-05-31
+### Changed
+- simplify
+
+## [5.0.301] - 2025-05-31
+### Changed
+- simplify
+
+## [5.0.300] - 2025-05-31
+### Changed
+- test clean version
+
+## [5.0.299] - 2025-05-31
+### Fixed
+- fix lines
+
+## [5.0.298] - 2025-05-31
+### Fixed
+- fix count
+
+## [5.0.297] - 2025-05-31
+### Changed
+- test
+
+## [5.0.296] - 2025-05-31
+### Changed
+- test
+
+## [5.0.295] - 2025-05-31
+### Changed
+- test
+
+## [5.0.294] - 2025-05-31
+### Changed
+- simplify
+
+## [5.0.293] - 2025-05-31
+### Changed
+- narrow it down
+
+## [5.0.292] - 2025-05-31
+### Changed
+- test
+
+## [5.0.291] - 2025-05-31
+### Changed
+- test
+
+## [5.0.290] - 2025-05-31
+### Changed
+- simplify
+
+## [5.0.289] - 2025-05-31
+### Changed
+- test combo
+
+## [5.0.288] - 2025-05-31
+### Added
+- add line numbers to debug output
+
+## [5.0.287] - 2025-05-31
+### Changed
+- test join/split method
+
+## [5.0.286] - 2025-05-31
+### Changed
+- try output split
+
+## [5.0.285] - 2025-05-31
+### Changed
+- debug build
+
+## [5.0.284] - 2025-05-31
+### Changed
+- letsgo
+
+## [5.0.283] - 2025-05-31
+### Fixed
+- fix regex
+
+## [5.0.282] - 2025-05-31
+### Changed
+- filter useless exception text
+
+## [5.0.281] - 2025-05-31
+### Changed
+- filter exceptions from output
+
+## [5.0.280] - 2025-05-31
+### Changed
+- he's here, he's there, he's every fing where roy kent
+
+## [5.0.279] - 2025-05-31
+### Changed
+- test debug output
+
+## [5.0.278] - 2025-05-31
+### Added
+- implement write-consoleoutput
+
+## [5.0.277] - 2025-05-31
+### Added
+- add debug output
+
+## [5.0.276] - 2025-05-31
+### Changed
+- experiment only
+
+## [5.0.275] - 2025-05-31
+### Fixed
+- fix output selection even though this way makes no sense
+
+## [5.0.274] - 2025-05-31
+### Changed
+- retry
+
+## [5.0.273] - 2025-05-31
+### Changed
+- let's get that last line of command output fixed
+
+## [5.0.272] - 2025-05-31
+### Changed
+- test again
+
+## [5.0.271] - 2025-05-31
+### Changed
+- test
+
+## [5.0.270] - 2025-05-31
+### Fixed
+- fix string comparison
+
+## [5.0.269] - 2025-05-31
+### Fixed
+- fix missing output
+
+## [5.0.268] - 2025-05-31
+### Changed
+- wait for job
+
+## [5.0.267] - 2025-05-31
+### Fixed
+- fix missing output
+
+## [5.0.266] - 2025-05-31
+### Fixed
+- fix duplicate output
+
+## [5.0.265] - 2025-05-31
+### Changed
+- capture mixing final output
+
+## [5.0.264] - 2025-05-31
+### Fixed
+- fix debug indentation
+
+## [5.0.263] - 2025-05-31
+### Fixed
+- fix debug output
+
+## [5.0.262] - 2025-05-31
+### Changed
+- improve debug output
+
+## [5.0.261] - 2025-05-31
+### Changed
+- improve debug output
+
+## [5.0.260] - 2025-05-31
+### Changed
+- troubleshoot
+
+## [5.0.259] - 2025-05-31
+### Changed
+- try jobs
+
+## [5.0.258] - 2025-05-31
+### Changed
+- try invoke-expression
+
+## [5.0.257] - 2025-05-31
+### Changed
+- retry
+
+## [5.0.256] - 2025-05-31
+### Changed
+- increase delay
+
+## [5.0.255] - 2025-05-31
+### Added
+- add delay for tmp file completion
+
+## [5.0.254] - 2025-05-31
+### Removed
+- remove excess debug output
+
+## [5.0.253] - 2025-05-31
+### Changed
+- retry
+
+## [5.0.252] - 2025-05-31
+### Changed
+- improve debug console output
+
+## [5.0.251] - 2025-05-31
+### Changed
+- try start-process, skeptically
+
+## [5.0.250] - 2025-05-31
+### Changed
+- retry with more debug output
+
+## [5.0.249] - 2025-05-31
+### Changed
+- shorter timeout
+
+## [5.0.248] - 2025-05-31
+### Changed
+- try new approach
+
+## [5.0.247] - 2025-05-31
+### Fixed
+- fix process output mods
+
+## [5.0.246] - 2025-05-31
+### Fixed
+- fix error handling
+
+## [5.0.245] - 2025-05-31
+### Fixed
+- fix error handling
+
+## [5.0.244] - 2025-05-31
+### Changed
+- test
+
+## [5.0.243] - 2025-05-31
+### Changed
+- retry build
+
+## [5.0.242] - 2025-05-31
+### Changed
+- simplified constructor was used
+
+## [5.0.241] - 2025-05-31
+### Changed
+- retry build
+
+## [5.0.240] - 2025-05-31
+### Changed
+- test build
+
+## [5.0.239] - 2025-05-31
+### Fixed
+- fix stuck npm build issue
+
+## [5.0.238] - 2025-05-31
+### Changed
+- test build
+
+## [5.0.237] - 2025-05-31
+### Changed
+- troubleshoot stuck npm command
+
+## [5.0.236] - 2025-05-31
+### Fixed
+- fix build console output
+
+## [5.0.235] - 2025-05-31
+### Changed
+- retry build
+
+## [5.0.234] - 2025-05-31
+### Added
+- implement invoke-commandwithoutputprefix
+
 ## [5.0.233] - 2025-05-28
 ### Changed
 - retry

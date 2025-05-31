@@ -407,9 +407,8 @@ Task -name LintAnalysis -depends Lint -action {
 Task -name DeleteOldBuilds -action {
 
     Write-Information "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop"
-    Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop
+    Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted old builds." -ForegroundColor Green
-    Write-Progress -Activity 'Deleting old builds' -Status 'Completed' -Completed
 
 } -description 'Delete old builds'
 
@@ -565,13 +564,12 @@ Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $D
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
     Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
-    Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
     if (Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction SilentlyContinue) {
         Write-Error 'Failed to delete existing Markdown help files.'
     } else {
         Write-InfoColor "`t# Successfully deleted existing Markdown help files." -ForegroundColor Green
     }
-    Write-Progress -Activity 'Deleting old Markdown docs' -Status 'Completed' -Completed
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 
@@ -677,7 +675,7 @@ Task -name RemoveModule -depends BuildMarkdownHelp -action {
 Task -Name UninstallTempModule -depends RemoveModule -action {
 
     Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
-    Remove-Item -Path $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop
+    Remove-Item -Path $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
 
     if (Test-Path -Path $script:ModuleInstallDir) {
         Write-Error 'Failed to remove the temporary module installation directory.'
@@ -711,9 +709,8 @@ Task -name CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 Task -name DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
-    Get-ChildItem -Path $DocsMamlDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $DocsMamlDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted existing MAML help files." -ForegroundColor Green
-    Write-Progress -Activity 'Deleting MAML docs' -Status 'Completed' -Completed
 
 } -description 'Delete existing MAML help files to prepare for PlatyPS to build new ones.'
 
@@ -756,10 +753,9 @@ Task -name CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 Task -name DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
-    Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted existing Updateable help files." -ForegroundColor Green
     $script:ReadyForUpdateableHelp = $true
-    Write-Progress -Activity 'Deleting old Updateable Help' -Status 'Completed' -Completed
 
 } -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
 
@@ -936,11 +932,20 @@ Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrere
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
-Task -name InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action {
+Task -name ClearNpmCache -depends CreateOnlineHelpScaffolding -action {
+
+    # Clear npm cache to ensure clean installation
+    Write-InfoColor "`tInvoke-NpmCommand -Command 'cache verify' -WorkingDirectory '$DocsOnlineHelpDir'"
+    Invoke-NpmCommand -Command 'cache verify' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
+    Write-InfoColor "`t# Successfully verified npm cache." -ForegroundColor Green
+
+} -description 'Clear npm cache to ensure clean dependency installation.'
+
+Task -name InstallOnlineHelpDependencies -depends ClearNpmCache -action {
 
     # npm install
-    Write-InfoColor "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
-    Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
+    Write-InfoColor "`tInvoke-NpmCommand -Command 'install --no-optional --legacy-peer-deps' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
+    Invoke-NpmCommand -Command 'install --no-optional --legacy-peer-deps' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
 
     # Determine whether the node_modules directory was created (indicating successful install)
     $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'node_modules')
@@ -999,7 +1004,6 @@ Task -name CopyArt -depends BuildArt -action {
 
     Write-Information "`tGet-ChildItem -Path '$DocsImageSourceCodeDir' -Filter '*.svg' -ErrorAction Stop |"
     Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
-
     Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop | Copy-Item -Destination $DocsOnlineStaticImageDir
 
     Write-InfoColor "`t# Successfully copied static SVG art files to the online help directory." -ForegroundColor Green
@@ -1023,9 +1027,14 @@ Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
     Write-InfoColor "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
 
     try {
-        Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir
+        Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
     } catch {
-        Write-Error "Failed to build online help website: $_"
+        Write-InfoColor "`t# Build failed, attempting to fix corrupted dependencies..." -ForegroundColor Yellow
+        Clear-NodeJSDependencySet -WorkingDirectory $DocsOnlineHelpDir
+
+        # Retry the build after clearing dependencies
+        Write-InfoColor "`tRetrying: Invoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
+        Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
     }
 
     # Determine whether the build directory was created (indicating successful build)
@@ -1067,57 +1076,7 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
     Write-Information "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
     Write-Information "`tInvoke-Pester -Configuration `$PesterConfiguration"
-
-    # Capture Invoke-Pester output and prepend tabs while preserving colors
-    $originalOutputEncoding = [Console]::OutputEncoding
-    try {
-        # Store original stream handlers
-        $originalOut = $Host.UI.RawUI
-
-        # Create a custom host to intercept output
-        $customHost = New-Object PSObject -Property @{
-            UI = New-Object PSObject -Property @{
-                WriteLine        = {
-                    param($message)
-                    Write-Host "`t`t$message"
-                }
-                Write            = {
-                    param($message)
-                    Write-Host "`t`t$message" -NoNewline
-                }
-                WriteErrorLine   = {
-                    param($message)
-                    Write-Host "`t`t$message" -ForegroundColor Red
-                }
-                WriteWarningLine = {
-                    param($message)
-                    Write-Host "`t`t$message" -ForegroundColor Yellow
-                }
-                WriteVerboseLine = {
-                    param($message)
-                    Write-Host "`t`t$message" -ForegroundColor Cyan
-                }
-                WriteDebugLine   = {
-                    param($message)
-                    Write-Host "`t`t$message" -ForegroundColor Gray
-                }
-            }
-        }
-
-        # Redirect output streams and prepend tabs
-        $pesterOutput = Invoke-Pester -Configuration $PesterConfiguration 2>&1 | ForEach-Object {
-            $line = $_.ToString()
-            if ($line) {
-                # Preserve ANSI color codes and prepend tabs
-                Write-Host "`t`t$line"
-            }
-        }
-
-    } catch {
-        Write-Error "Pester execution failed: $_"
-    } finally {
-        [Console]::OutputEncoding = $originalOutputEncoding
-    }
+    Invoke-Pester -Configuration $PesterConfiguration
 
 } -description 'Perform unit tests using Pester.'
 
@@ -1126,18 +1085,20 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
 Task -name SourceControl -action {
 
     # Find the current git branch
-    $CurrentBranch = git branch --show-current
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'branch --show-current' -PassThru"
+    $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -Arguments 'branch --show-current' -PassThru
 
     # Commit to Git
-    Write-Information "`tgit add ."
-    git add .
-    Write-Information "`tgit commit -m $CommitMessage"
-    git commit -m $CommitMessage
-    Write-Information "`tgit push origin $CurrentBranch"
-    git push origin $CurrentBranch
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'add .'"
+    Invoke-CommandWithOutputPrefix -Command 'git' -Arguments 'add .'
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'commit -m `"$CommitMessage`"'"
+    Invoke-CommandWithOutputPrefix -Command 'git' -Arguments "commit -m `"$CommitMessage`""
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'push origin $CurrentBranch' -PassThru"
+    Invoke-CommandWithOutputPrefix -Command 'git' -Arguments "push origin $CurrentBranch"
 
     # Test if commit was successful by checking git status
-    $gitStatus = git status --porcelain
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'status --porcelain' -PassThru"
+    $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -Arguments 'status --porcelain' -PassThru
     if (-not $gitStatus) {
         Write-InfoColor "`t# Successfully committed and pushed changes to source control." -ForegroundColor Green
     } else {
@@ -1231,7 +1192,8 @@ Task -name Uninstall -depends AwaitRepoUpdate -action {
             switch ("$ErrorMessage") {
                 "No match was found for the specified search criteria and module names '$ModuleName'." {
                     Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
-                    Remove-Item $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop
+                    Remove-Item $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
+
                 }
                 default {
                     Write-Error "An unexpected error occurred while uninstalling module $ModuleName`: $ErrorMessage"
