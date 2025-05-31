@@ -1093,8 +1093,8 @@ Task -name SourceControl -action {
     Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.')
     Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage)"
     Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"")
-    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', `"$CurrentBranch`")"
-    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', "`"$CurrentBranch`"")
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch')"
+    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch)
 
     # Test if commit was successful by checking git status
     Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -PassThru"

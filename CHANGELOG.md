@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.327] - 2025-05-31
+### Removed
+- remove quotes
+
 ## [5.0.326] - 2025-05-31
 ### Changed
 - retry git arg handling
