@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.326] - 2025-05-31
+### Changed
+- retry git arg handling
+
+## [5.0.325] - 2025-05-31
+### Changed
+- retry arg handling
+
+## [5.0.324] - 2025-05-31
+### Changed
+- retry arg handling
+
+## [5.0.323] - 2025-05-31
+### Fixed
+- fix escaping
+
+## [5.0.322] - 2025-05-31
+### Fixed
+- fix src ctrl
+
+## [5.0.321] - 2025-05-31
+### Fixed
+- fix src ctrl
+
 ## [5.0.320] - 2025-05-31
 ### Changed
 - retry build

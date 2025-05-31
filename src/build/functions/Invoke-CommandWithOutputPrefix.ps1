@@ -2,15 +2,20 @@
 
     # Generic command wrapper that adds prefixes to output lines
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ArgumentString')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from command output')]
     param(
         # The command to execute
         [Parameter(Mandatory)]
         [string]$Command,
 
-        # Arguments for the command
-        [string]$Arguments = '',
+        # Arguments as an array of strings
+        [Parameter(ParameterSetName = 'ArgumentArray')]
+        [string[]]$ArgumentArray = @(),
+
+        # Arguments as a single string
+        [Parameter(ParameterSetName = 'ArgumentString')]
+        [string]$ArgumentString = '',
 
         # Working directory for the command
         [string]$WorkingDirectory = (Get-Location).Path,
@@ -32,6 +37,15 @@
     $originalOutputEncoding = [Console]::OutputEncoding
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+    # Determine which parameter set was used and prepare both formats
+    if ($PSCmdlet.ParameterSetName -eq 'ArgumentArray') {
+        $FinalArgumentArray = $ArgumentArray
+        $FinalArgumentString = $ArgumentArray -join ' '
+    } else {
+        $FinalArgumentString = $ArgumentString
+        $FinalArgumentArray = if ($ArgumentString.Trim()) { @($ArgumentString) } else { @() }
+    }
+
     try {
 
         if ($PassThru) {
@@ -43,8 +57,12 @@
             Set-Location $WorkingDirectory
 
             # For PassThru, we need to capture the raw output
-            Write-Information "$OutputPrefix& $Command $Arguments"
-            $output = & $Command $Arguments.Split(' ') 2>&1
+            Write-Information "$OutputPrefix& $Command $FinalArgumentString"
+            if ($FinalArgumentArray.Count -gt 0) {
+                $output = & $Command $FinalArgumentArray 2>&1
+            } else {
+                $output = & $Command 2>&1
+            }
 
             # Display the output with prefixes, preserving line breaks
             Write-ConsoleOutput -Output $output -Prefix "`t$OutputPrefix"
@@ -52,15 +70,15 @@
         } else {
 
             # Non-PassThru mode, execute the command and handle output using a PowerShell job
-            Write-Information "$OutputPrefix`Start-Job -ScriptBlock {...} -ArgumentList '$Command', '$Arguments', '$WorkingDirectory', `$EnvironmentVariables"
+            Write-Information "$OutputPrefix`Start-Job -ScriptBlock {...} -ArgumentList '$Command', @('$($FinalArgumentArray -join "','")'), '$WorkingDirectory', `$EnvironmentVariables"
 
             # These take place inside the job, but we don't want this debug output mixed up in the output stream
             Write-Information "`t$OutputPrefix`Set-Location '$WorkingDirectory'"
-            Write-Information "`t$OutputPrefix`& $Command $Arguments"
+            Write-Information "`t$OutputPrefix`& $Command $FinalArgumentString"
 
             # Use Start-Job to run npm commands in isolation
             $job = Start-Job -ScriptBlock {
-                param($Command, $Arguments, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix)
+                param($Command, $ArgumentsArray, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix)
 
                 # Apply environment variables
                 foreach ($key in $EnvironmentVariables.Keys) {
@@ -71,10 +89,9 @@
 
                 try {
 
-
                     # Execute the command
-                    if ($Arguments.Trim()) {
-                        $output = & $Command $Arguments.Split(' ') 2>&1
+                    if ($ArgumentsArray.Count -gt 0) {
+                        $output = & $Command $ArgumentsArray 2>&1
                     } else {
                         $output = & $Command 2>&1
                     }
@@ -89,7 +106,7 @@
                     Write-Error $_.Exception.Message
                     Write-Output 'EXITCODE:1'
                 }
-            } -ArgumentList $Command, $Arguments, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix
+            } -ArgumentList $Command, $FinalArgumentArray, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix
 
             # Wait for job to complete
             Wait-Job $job | Out-Null

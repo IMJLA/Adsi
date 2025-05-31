@@ -944,8 +944,8 @@ Task -name ClearNpmCache -depends CreateOnlineHelpScaffolding -action {
 Task -name InstallOnlineHelpDependencies -depends ClearNpmCache -action {
 
     # npm install
-    Write-InfoColor "`tInvoke-NpmCommand -Command 'install --no-optional --legacy-peer-deps' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
-    Invoke-NpmCommand -Command 'install --no-optional --legacy-peer-deps' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
+    Write-InfoColor "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
+    Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
 
     # Determine whether the node_modules directory was created (indicating successful install)
     $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'node_modules')
@@ -1085,20 +1085,20 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
 Task -name SourceControl -action {
 
     # Find the current git branch
-    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'branch --show-current' -PassThru"
-    $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -Arguments 'branch --show-current' -PassThru
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -PassThru"
+    $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -PassThru
 
     # Commit to Git
-    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'add .'"
-    Invoke-CommandWithOutputPrefix -Command 'git' -Arguments 'add .'
-    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'commit -m `"$CommitMessage`"'"
-    Invoke-CommandWithOutputPrefix -Command 'git' -Arguments "commit -m `"$CommitMessage`""
-    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'push origin $CurrentBranch' -PassThru"
-    Invoke-CommandWithOutputPrefix -Command 'git' -Arguments "push origin $CurrentBranch"
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.')"
+    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.')
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage)"
+    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"")
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', `"$CurrentBranch`")"
+    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', "`"$CurrentBranch`"")
 
     # Test if commit was successful by checking git status
-    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -Arguments 'status --porcelain' -PassThru"
-    $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -Arguments 'status --porcelain' -PassThru
+    Write-Information "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -PassThru"
+    $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -PassThru
     if (-not $gitStatus) {
         Write-InfoColor "`t# Successfully committed and pushed changes to source control." -ForegroundColor Green
     } else {
