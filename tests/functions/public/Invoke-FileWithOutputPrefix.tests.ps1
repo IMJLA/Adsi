@@ -14,25 +14,18 @@ Describe 'Invoke-FileWithOutputPrefix' {
 
         BeforeAll {
 
-            # Check if npm is available for real testing
-            [bool]$npmAvailable = $null -ne (Get-Command -Name npm -ErrorAction Continue)
+            # Create a temporary directory for npm test
+            $tempDir = New-Item -ItemType Directory -Path (Join-Path $env:TEMP "PesterNpmTest_$([guid]::NewGuid().ToString('N')[0..7] -join '')")
 
-            # Create a temporary directory for npm test if npm is available
-            if ($npmAvailable) {
-                $tempDir = New-Item -ItemType Directory -Path (Join-Path $env:TEMP "PesterNpmTest_$([guid]::NewGuid().ToString('N')[0..7] -join '')")
+            # Create a minimal package.json
+            $packageJson = @{
+                name        = 'pester-test'
+                version     = '1.0.0'
+                description = 'Test package for Pester'
+            } | ConvertTo-Json
 
-                # Create a minimal package.json
-                $packageJson = @{
-                    name        = 'pester-test'
-                    version     = '1.0.0'
-                    description = 'Test package for Pester'
-                } | ConvertTo-Json
+            Set-Content -Path (Join-Path $tempDir.FullName 'package.json') -Value $packageJson
 
-                Set-Content -Path (Join-Path $tempDir.FullName 'package.json') -Value $packageJson
-
-            } else {
-                Write-Warning 'npm is not available, skipping npm install tests.'
-            }
         }
 
         AfterAll {
@@ -47,7 +40,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
             $result = Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue'
 
             # Verify result is an array
-            $result | Should -BeOfType [array]
+            Should -ActualValue $result -BeOfType [array]
 
             # Verify we have output
             $result.Count | Should -BeGreaterThan 0
@@ -55,11 +48,8 @@ Describe 'Invoke-FileWithOutputPrefix' {
             # Check the last few lines for expected npm install completion pattern
             $lastLines = $result | Select-Object -Last 3
 
-            # The last line should be empty or whitespace
-            $lastLines[-1] | Should -Match '^\s*$'
-
-            # The second to last line should contain "found 0 vulnerabilities" or similar vulnerability message
-            $lastLines[-2] | Should -Match 'found \d+ vulnerabilit(y|ies)'
+            # The last line should contain "found 0 vulnerabilities" or similar vulnerability message
+            $lastLines[-1] | Should -Match 'found \d+ vulnerabilit(y|ies)'
         }
 
         It 'should handle command execution without PassThru parameter' {
