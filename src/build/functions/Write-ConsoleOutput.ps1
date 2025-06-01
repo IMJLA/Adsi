@@ -30,7 +30,7 @@
         }
         if ($WriteToConsole) {
             #Write a blank line at the end for better readability
-            [Console]::WriteLine('')
+            [Console]::WriteLine()
         }
         if ($PassThru) {
             return $linesToOutput
