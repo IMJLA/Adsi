@@ -13,6 +13,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
     Context 'npm install output collection' {
 
         BeforeAll {
+
             # Check if npm is available for real testing
             [bool]$npmAvailable = $null -ne (Get-Command -Name npm -ErrorAction Continue)
 
@@ -28,6 +29,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
                 } | ConvertTo-Json
 
                 Set-Content -Path (Join-Path $tempDir.FullName 'package.json') -Value $packageJson
+
             } else {
                 Write-Warning 'npm is not available, skipping npm install tests.'
             }
@@ -42,7 +44,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
 
         It 'should collect npm install output with expected ending lines' {
             # Execute npm install using the function
-            $result = Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue' -NoConsoleOutput
+            $result = Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue'
 
             # Verify result is an array
             $result | Should -BeOfType [array]

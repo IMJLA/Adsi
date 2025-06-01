@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.367] - 2025-06-01
+### Fixed
+- fix test skips
+
 ## [5.0.366] - 2025-06-01
 ### Changed
 - debug
