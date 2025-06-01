@@ -29,6 +29,7 @@
             }
         }
         if ($WriteToConsole) {
+            #Write a blank line at the end for better readability
             [Console]::WriteLine('')
         }
         if ($PassThru) {
