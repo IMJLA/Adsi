@@ -37,7 +37,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
 
         It 'should collect npm install output with expected ending lines' {
             # Execute npm install using the function
-            $result = Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue'
+            $result = Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
             # Verify result is an array
             Should -ActualValue $result -BeOfType [array]

@@ -58,13 +58,13 @@ Describe "module manifest '$($ModuleName).psd1'" {
     }
 }
 
-Describe 'Git tagging' -Skip {
+Describe 'Git tagging' {
     BeforeAll {
         $gitTagVersion = $null
 
         if ($git = Get-Command git -CommandType Application -ErrorAction SilentlyContinue) {
             $thisCommit = & $git log --decorate --oneline HEAD~1..HEAD
-            if ($thisCommit -match 'tag:\s*(\d+(?:\.\d+)*)') { $gitTagVersion = $matches[1] }
+            if ($thisCommit -match 'tag:\s*v*(\d+(?:\.\d+)*)') { $gitTagVersion = $matches[1] }
         }
     }
 
