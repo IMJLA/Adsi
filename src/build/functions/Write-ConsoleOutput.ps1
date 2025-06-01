@@ -28,6 +28,9 @@
                 ''
             }
         }
+        if ($WriteToConsole) {
+            [Console]::WriteLine('')
+        }
         if ($PassThru) {
             return $linesToOutput
         }

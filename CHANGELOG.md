@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.337] - 2025-05-31
+### Added
+- add line to console output for clearer separation
+
 ## [5.0.336] - 2025-05-31
 ### Removed
 - remove extra line from output
