@@ -5,7 +5,8 @@
         [string]$Token,
         [string]$UploadUrl,
         [string]$FilePath,
-        [string]$FileName
+        [string]$FileName,
+        [string]$FileDisplayPath
     )
 
     $headers = @{
@@ -14,7 +15,7 @@
     }
 
     $uploadUri = $UploadUrl -replace '\{\?name,label\}', "?name=$FileName"
-    Write-Information "`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile '$FilePath'"
+    Write-Information "`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile `"$FileDisplayPath`""
 
     if ($PSCmdlet.ShouldProcess("File: $FileName", 'Upload Release Asset')) {
         try {
