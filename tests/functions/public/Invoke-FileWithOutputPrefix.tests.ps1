@@ -14,7 +14,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
 
         BeforeAll {
             # Check if npm is available for real testing
-            $npmAvailable = $null -ne (Get-Command npm -ErrorAction SilentlyContinue)
+            [bool]$npmAvailable = Get-Command -Name npm -ErrorAction SilentlyContinue
 
             # Create a temporary directory for npm test if npm is available
             if ($npmAvailable) {
@@ -28,6 +28,8 @@ Describe 'Invoke-FileWithOutputPrefix' {
                 } | ConvertTo-Json
 
                 Set-Content -Path (Join-Path $tempDir.FullName 'package.json') -Value $packageJson
+            } else {
+                Write-Warning 'npm is not available, skipping npm install tests.'
             }
         }
 

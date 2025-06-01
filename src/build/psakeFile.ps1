@@ -1074,7 +1074,7 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
     Write-Information "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
     Write-Information "`tInvoke-Pester -Configuration `$PesterConfiguration"
-    Invoke-Pester -Configuration $PesterConfiguration
+    $script:UnitTestResults = Invoke-Pester -Configuration $PesterConfiguration
 
 } -description 'Perform unit tests using Pester.'
 
