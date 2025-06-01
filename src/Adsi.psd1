@@ -12,7 +12,7 @@
     RootModule            = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion         = '5.0.376'
+    ModuleVersion         = '5.0.377'
 
     # Supported PSEditions
     CompatiblePSEditions  = @('Core', 'Desktop')

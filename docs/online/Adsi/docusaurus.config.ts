@@ -5,20 +5,22 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  title: 'Adsi',
+  tagline: 'Use Active Directory Service Interfaces to query LDAP and WinNT directories',
+  favicon: 'img/logo.svg',
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://imjla.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/Adsi/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'IMJLA', // Usually your GitHub org/user name.
+  projectName: 'Adsi',
+
+  trailingSlash: false, // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -31,6 +33,13 @@ const config: Config = {
     locales: ['en'],
   },
 
+  
+  // Enable MermaidJS
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   presets: [
     [
       'classic',
@@ -42,12 +51,7 @@ const config: Config = {
           editUrl:
             'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
+        blog: false,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -68,21 +72,15 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Adsi',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Adsi Logo',
         src: 'img/logo.svg',
       },
       items: [
+        { to: 'docs/en-US/Adsi', label: 'Docs', position: 'left' },
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
-          position: 'left',
-          label: 'Tutorial',
-        },
-        {to: '/blog', label: 'Blog', position: 'left'},
-        {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/IMJLA/Adsi',
           label: 'GitHub',
           position: 'right',
         },
@@ -95,8 +93,7 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'ReadMe', to: '/docs/en-US/Adsi',
             },
           ],
         },
@@ -104,17 +101,9 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
+              label: 'GitHub',
+              href: 'https://github.com/IMJLA/Adsi',
+            }
           ],
         },
         {
@@ -126,12 +115,12 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/IMJLA/Adsi',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © Jeremy La Camera. All rights reserved. Adsi Online Help and Documentation Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
@@ -141,3 +130,4 @@ const config: Config = {
 };
 
 export default config;
+

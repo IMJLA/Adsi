@@ -4,6 +4,9 @@
 
 Properties {
 
+    # GitHub (Source Control, Releases, and the Online Help and Documentation Website hosted on GitHub Pages)
+    $GitHubOrgName = 'IMJLA'
+
     # Whether or not this build is a new Major version
     [boolean]$IncrementMajorVersion = $false
 
@@ -233,8 +236,7 @@ FixModule, # Build the module.
 UpdateChangeLog, # Add an entry to the Change Log.
 DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
 BuildUpdatableHelp, # Create Updateable help documentation.
-CreateOnlineHelpFolder, # Create a folder for the Online help documentation.
-BuildOnlineHelpWebsite, # Create the Online help documentation website.
+FixOnlineHelpWebsite, # Fix the online help website configuration.
 UnitTests, # Perform unit testing.
 SourceControl, # Commit changes to source control.
 CreateGitHubRelease, # Create a GitHub release.
@@ -258,7 +260,7 @@ Task -name SetLocation -action {
 
 Task -name TestModuleManifest -action {
 
-    Write-Information "`tTest-ModuleManifest -Path '$ModuleManifestPath'"
+    Write-Information "`t`$script:ManifestTest = Test-ModuleManifest -Path '$ModuleManifestPath'"
     $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath -ErrorAction Stop
 
     if ($script:ManifestTest) {
@@ -272,7 +274,7 @@ Task -name TestModuleManifest -action {
 # Update the module source code.
 Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
-    Write-Information "`tGet-NewVersion -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version"
+    Write-Information "`tGet-NewVersion -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
     $script:NewModuleVersion = Get-NewVersion -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version
     $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
     $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
@@ -1045,6 +1047,14 @@ Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
+Task -name FixOnlineHelpWebsite -depends BuildOnlineHelpWebsite -action {
+
+    Write-Verbose "`tUpdate-TypescriptConfig -GitHubOrgName '$GitHubOrgName' -DocsOnlineHelpDir '$DocsOnlineHelpDir' -ModuleInfo `$script:ManifestTest"
+    Update-TypeScriptConfig -GitHubOrgName $GitHubOrgName -DocsOnlineHelpDir $DocsOnlineHelpDir -ModuleInfo $script:ManifestTest
+    Write-InfoColor "`t# Successfully fixed online help website configuration." -ForegroundColor Green
+
+} -description 'Fix the online help website configuration to use module-specific settings instead of default template.'
+
 
 # Perform unit testing.
 $UnitTestPrereq = {
@@ -1067,7 +1077,20 @@ $UnitTestPrereq = {
 
 }
 
-Task -name UnitTests -precondition $UnitTestPrereq -action {
+Task -name CreateUnitTestOutputDir -precondition $UnitTestPrereq -action {
+
+    Write-Information "`t`$UnitTestOutputDir = [IO.Path]::Combine('.', 'out', 'tests')"
+    Write-Information "`tNew-Item -Path '$UnitTestOutputDir' -ItemType Directory -ErrorAction SilentlyContinue"
+    $null = New-Item -Path $UnitTestOutputDir -ItemType Directory -ErrorAction SilentlyContinue
+    if (Test-Path -Path $UnitTestOutputDir) {
+        Write-InfoColor "`t# Unit test output directory exists." -ForegroundColor Green
+    } else {
+        Write-Error 'Failed to create the unit test output directory'
+    }
+
+} -description 'Create a folder for the unit test results.'
+
+Task -name UnitTests -action {
 
     Write-Information "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
@@ -1114,8 +1137,6 @@ Task -name SourceControl -action {
 
 # Create a GitHub release.
 Task -name CreateGitHubRelease -action {
-
-    $GitHubOrgName = 'IMJLA'
     $RepositoryPath = "$GitHubOrgName/$ModuleName"
     Write-Verbose "`tNew-BuildGitHubRelease -GitHubToken `$env:GHFGPATADSI -Repository '$RepositoryPath' -DistPath '$BuildOutDir' -ReleaseNotes '$CommitMessage' -InformationAction 'Continue'"
     $release = New-BuildGitHubRelease -GitHubToken $env:GHFGPATADSI -Repository $RepositoryPath -DistPath $BuildOutDir -ReleaseNotes $CommitMessage -InformationAction 'Continue'
