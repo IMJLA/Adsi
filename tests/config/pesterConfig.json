@@ -16,6 +16,6 @@
     "OutputFormat": "NUnitXml"
   },
   "Output": {
-    "Verbosity": "None"
+    "Verbosity": "Normal"
   }
 }
