@@ -13,8 +13,6 @@
 
     )
 
-    $InformationPreference = 'Continue'
-
     # Export public functions in the module
     $publicFunctions = $PublicFunctionFiles.BaseName
 
@@ -22,7 +20,7 @@
     $PublicFunctionsJoined = $publicFunctions -join "', '"
     $strPublicFunctions = "@('$publicFunctionsJoined')"
 
-    Write-Verbose "`t[string]`$ModuleContent = Get-Content -LiteralPath '$ModuleFilePath' -Raw"
+    Write-Verbose "`t`$ModuleContent = Get-Content -LiteralPath '$ModuleFilePath' -Raw"
     $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
     $NewExportStmt = "Export-ModuleMember -Function $strPublicFunctions"
 
@@ -31,7 +29,7 @@
         $OldExportStmt = 'Export-ModuleMember -Function .*'
         Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace '$OldExportStmt' , `"$NewExportStmt`""
         $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewExportStmt
-        Write-Information "`t`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
         Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 
     } else {
@@ -40,11 +38,11 @@
             $ModuleContent += "`r`n"
         }
         $ModuleContent += $NewExportStmt
-        Write-Information "`t`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
         Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
     }
 
     # Export public functions in the manifest
-    Write-Information "`t`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $strPublicFunctions"
+    Write-Information "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $strPublicFunctions"
     Update-Metadata -Path $ModuleManifestPath -PropertyName FunctionsToExport -Value $publicFunctions
 }

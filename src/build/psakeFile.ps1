@@ -304,8 +304,8 @@ Task -name FindPublicFunctionFiles -depends UpdateModuleVersion -action {
 
 Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
-    Write-Verbose "`tExport-PublicFunction -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
-    Export-PublicFunction -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath
+    Write-Verbose "`tExport-PublicFunction -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -InformationAction Continue"
+    Export-PublicFunction -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath -InformationAction Continue
     Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
 
 } -description 'Export all public functions in the module'
