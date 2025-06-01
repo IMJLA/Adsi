@@ -13,10 +13,8 @@
         'Content-Type'  = 'application/octet-stream'
     }
 
-    $InformationPreference = 'Continue'
-
     $uploadUri = $UploadUrl -replace '\{\?name,label\}', "?name=$FileName"
-    Write-InfoColor "`t`t`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile '$FilePath'"
+    Write-Information "`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile '$FilePath'"
 
     if ($PSCmdlet.ShouldProcess("File: $FileName", 'Upload Release Asset')) {
         try {

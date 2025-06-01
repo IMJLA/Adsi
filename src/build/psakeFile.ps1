@@ -507,8 +507,8 @@ Task -name FixModule -depends BuildModule -action {
 # Add an entry to the Change Log.
 Task -name UpdateChangeLog -action {
 
-    Write-Information "`tUpdate-ChangeLogFile -Version '$script:NewModuleVersion' -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog'"
-    Update-ChangeLogFile -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog
+    Write-Verbose "`tUpdate-ChangeLogFile -Version '$script:NewModuleVersion' -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog' -InformationAction 'Continue'"
+    Update-ChangeLogFile -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog -InformationAction 'Continue'
     Write-InfoColor "`t# Successfully updated the Change Log with the new version and commit message." -ForegroundColor Green
 
     <#
@@ -1119,8 +1119,8 @@ Task -name CreateGitHubRelease -action {
 
     $GitHubOrgName = 'IMJLA'
     $RepositoryPath = "$GitHubOrgName/$ModuleName"
-    Write-Information "`tNew-BuildGitHubRelease -GitHubToken `$env:GHFGPATADSI -Repository '$RepositoryPath' -DistPath '$BuildOutDir' -ReleaseNotes '$CommitMessage'"
-    $release = New-BuildGitHubRelease -GitHubToken $env:GHFGPATADSI -Repository $RepositoryPath -DistPath $BuildOutDir -ReleaseNotes $CommitMessage
+    Write-Verbose "`tNew-BuildGitHubRelease -GitHubToken `$env:GHFGPATADSI -Repository '$RepositoryPath' -DistPath '$BuildOutDir' -ReleaseNotes '$CommitMessage' -InformationAction 'Continue'"
+    $release = New-BuildGitHubRelease -GitHubToken $env:GHFGPATADSI -Repository $RepositoryPath -DistPath $BuildOutDir -ReleaseNotes $CommitMessage -InformationAction 'Continue'
 
     if ($release -and $release.html_url) {
         Write-InfoColor "$NewLine`tRelease URL: $($release.html_url)" -ForegroundColor Cyan

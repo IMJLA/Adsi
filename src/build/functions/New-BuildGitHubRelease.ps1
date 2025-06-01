@@ -14,8 +14,7 @@
         [string]$ReleaseNotes = 'Automated release'
     )
 
-    $InformationPreference = 'Continue'
-    Write-InfoColor "`t`tGet-VersionFolder -DistPath '$DistPath'"
+    Write-Verbose "`tGet-VersionFolder -DistPath '$DistPath'"
     $versionFolder = Get-VersionFolder -DistPath $DistPath
 
     # Main script execution
@@ -27,15 +26,15 @@
         $versionFolderPath = $versionFolder.FullName -replace [regex]::Escape($versionFolderParentToReplace), $DistPath
 
         # Create the release
-        Write-InfoColor "`t`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes'"
-        $release = New-GitHubRelease -Token $GitHubToken -Repo $Repository -TagName "v$version" -ReleaseName "Release $version" -Body $ReleaseNotes
+        Write-Verbose "`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes' -InformationAction 'Continue'"
+        $release = New-GitHubRelease -Token $GitHubToken -Repo $Repository -TagName "v$version" -ReleaseName "Release $version" -Body $ReleaseNotes -InformationAction 'Continue'
 
         # Create zip file from version folder contents
         $zipFileName = "$version.zip"
         $zipFilePath = Join-Path $env:TEMP $zipFileName
         $ZipFileDisplayPath = [IO.Path]::Combine('$env:TEMP', $zipFileName)
 
-        Write-InfoColor "`t`tCompress-Archive -Path '$versionFolderPath\*' -DestinationPath `"$ZipFileDisplayPath`" -Force"
+        Write-Information "`tCompress-Archive -Path '$versionFolderPath\*' -DestinationPath `"$ZipFileDisplayPath`" -Force"
 
         if ($PSCmdlet.ShouldProcess($zipFilePath, 'Create Archive')) {
             Compress-Archive -Path "$($versionFolder.FullName)\*" -DestinationPath $zipFilePath -Force
@@ -43,11 +42,11 @@
 
         # Check if zip file was created successfully
         if (Test-Path $zipFilePath) {
-            Write-InfoColor "`t`tAdd-GitHubReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath `"$ZipFileDisplayPath`" -FileName '$zipFileName'"
-            $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName
+            Write-Verbose "`tAdd-GitHubReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath `"$ZipFileDisplayPath`" -FileName '$zipFileName'"
+            $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName -InformationAction 'Continue'
 
             # Clean up temporary zip file
-            Write-Information "`t`tRemove-Item `"$ZipFileDisplayPath`" -Force"
+            Write-Information "`tRemove-Item `"$ZipFileDisplayPath`" -Force"
             if ($PSCmdlet.ShouldProcess($zipFilePath, 'Remove Temporary Zip File')) {
                 Remove-Item $zipFilePath -Force
             }

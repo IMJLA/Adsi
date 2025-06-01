@@ -20,9 +20,8 @@
         default { $Type = 'Changed' }
     }
 
-    $InformationPreference = 'Continue'
-    $cmdstr = "`t`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
-    $cmdstr2 = "`t`tUpdate-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path '$ChangeLog'"
+    $cmdstr = "`tAdd-ChangelogData -Type '$Type' -Path '$ChangeLog' -Data '$CommitMessage'"
+    $cmdstr2 = "`tUpdate-Changelog -ReleaseVersion $Version -LinkMode 'None' -Path '$ChangeLog'"
 
     if ($WhatIfPreference) {
         Write-Information "`tWould run:$cmdstr"
