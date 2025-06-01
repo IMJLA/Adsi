@@ -54,7 +54,7 @@
     $configContent = $configContent -replace "baseUrl: '/'", "baseUrl: '/$ModuleName/'"
 
     # Insert blank line after baseUrl comment for better formatting
-    $configContent = $configContent -replace "',\s*\/\/ Set the \/<baseUrl>\/", ",`r`n// Set the /<baseUrl>/"
+    $configContent = $configContent -replace "',\s*\/\/ Set the \/<baseUrl>\/", "',`r`n  // Set the /<baseUrl>/"
 
     # Update organization name only if it is still set to the default value
     $configContent = $configContent -replace "organizationName: 'facebook'", "organizationName: '$GitHubOrgName'"
