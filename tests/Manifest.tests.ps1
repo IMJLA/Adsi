@@ -162,9 +162,9 @@ Describe "module manifest '$ManifestName'" {
         }
 
         It 'has a valid tag for the module name' {
-            [string[]]$Tags = $sourceManifestData.Tags
-            Should -ActualValue $Tags -Contain $ModuleName
+            $sourceManifestData.Tags -contains $ModuleName | Should -Be $true
         }
+
     }
     Context '- Functions' {
 
