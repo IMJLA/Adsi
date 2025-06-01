@@ -1,7 +1,7 @@
 {
   "Run": {
     "Path": ".\\tests",
-    "PassTrue": true
+    "PassThru": true
   },
   "CodeCoverage": {
     "Enabled": false,

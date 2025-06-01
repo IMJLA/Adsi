@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.360] - 2025-06-01
+### Fixed
+- fix typo
+
+## [5.0.359] - 2025-06-01
+### Fixed
+- fix passthru not working
+
 ## [5.0.358] - 2025-06-01
 ### Fixed
 - fix console output
