@@ -34,7 +34,7 @@ Describe 'Invoke-CommandWithOutputPrefix' {
         AfterAll {
             # Clean up temp directory
             if ($tempDir -and (Test-Path $tempDir.FullName)) {
-                Remove-Item -Path $tempDir.FullName -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path $tempDir.FullName -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
             }
         }
 

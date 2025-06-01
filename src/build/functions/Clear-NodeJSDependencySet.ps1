@@ -29,7 +29,7 @@
 
     # More aggressive cleanup - retry removal if it fails initially
     if (Test-Path $NodeModulesPath) {
-        Write-Information "`tRemove-Item -Path '$NodeModulesPath' -Recurse -Force"
+        Write-Information "`tRemove-Item -Path '$NodeModulesPath' -Recurse -Force -ProgressAction SilentlyContinue"
         try {
             Remove-Item -Path $NodeModulesPath -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
         } catch {
@@ -46,8 +46,8 @@
     # Remove lock files
     @($PackageLockPath, $YarnLockPath) | ForEach-Object {
         if (Test-Path $_) {
-            Write-Information "`tRemove-Item -Path '$_' -Force"
-            Remove-Item -Path $_ -Force -ErrorAction SilentlyContinue
+            Write-Information "`tRemove-Item -Path '$_' -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
+            Remove-Item -Path $_ -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
         }
     }
 
@@ -90,10 +90,10 @@
                 Write-Information "`t# Strategy '$strategy' completed but @babel/types is still incomplete"
             }
         } catch {
-            Write-Information "`t# Strategy '$strategy' failed: $_"
             # Clean up partial installation before trying next strategy
             if (Test-Path $NodeModulesPath) {
-                Remove-Item -Path $NodeModulesPath -Recurse -Force -ErrorAction SilentlyContinue
+                Write-Information "`tRemove-Item -Path '$NodeModulesPath' -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
+                Remove-Item -Path $NodeModulesPath -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
             }
         }
     }

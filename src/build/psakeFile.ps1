@@ -406,7 +406,7 @@ Task -name LintAnalysis -depends Lint -action {
 # Build the module.
 Task -name DeleteOldBuilds -action {
 
-    Write-Information "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop"
+    Write-Information "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
     Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted old builds." -ForegroundColor Green
 
@@ -484,16 +484,16 @@ Task -name BuildModule -depends FindBuildCopyDirectories -precondition $FindBuil
 Task -name FixModule -depends BuildModule -action {
 
     $File = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
-    Write-Information "`tRemove-Item -Path '$File'"
-    Remove-Item -Path $File -ErrorAction SilentlyContinue
+    Write-Information "`tRemove-Item -Path '$File' -ProgressAction SilentlyContinue"
+    Remove-Item -Path $File -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
 
     if (Test-Path -Path $File) {
         Write-Error 'Failed to remove unnecessary file '$File' from the build output directory.'
     }
 
     $File = [IO.Path]::Combine($script:BuildOutputDir, 'psscriptanalyzerSettings.psd1')
-    Write-Information "`tRemove-Item -Path '$File'"
-    Remove-Item -Path $File -ErrorAction SilentlyContinue
+    Write-Information "`tRemove-Item -Path '$File' -ProgressAction SilentlyContinue"
+    Remove-Item -Path $File -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
 
     if ((Test-Path -Path $File)) {
         Write-Error 'Failed to remove unnecessary file '$File' from the build output directory.'
@@ -563,7 +563,7 @@ $DocsPrereq = {
 Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPrereq -action {
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
-    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
     Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
     if (Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction SilentlyContinue) {
         Write-Error 'Failed to delete existing Markdown help files.'
@@ -674,7 +674,7 @@ Task -name RemoveModule -depends BuildMarkdownHelp -action {
 
 Task -Name UninstallTempModule -depends RemoveModule -action {
 
-    Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
+    Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
     Remove-Item -Path $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
 
     if (Test-Path -Path $script:ModuleInstallDir) {
@@ -708,7 +708,7 @@ Task -name CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
 Task -name DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
 
-    Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
     Get-ChildItem -Path $DocsMamlDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted existing MAML help files." -ForegroundColor Green
 
@@ -752,7 +752,7 @@ Task -name CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
 Task -name DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
 
-    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
     Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
     Write-InfoColor "`t# Successfully deleted existing Updateable help files." -ForegroundColor Green
     $script:ReadyForUpdateableHelp = $true
@@ -1197,7 +1197,7 @@ Task -name Uninstall -depends AwaitRepoUpdate -action {
             $ErrorMessage = "$_"
             switch ("$ErrorMessage") {
                 "No match was found for the specified search criteria and module names '$ModuleName'." {
-                    Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
+                    Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
                     Remove-Item $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
 
                 }

@@ -46,9 +46,9 @@
             $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName -InformationAction 'Continue' -FileDisplayPath $ZipFileDisplayPath
 
             # Clean up temporary zip file
-            Write-Information "`tRemove-Item `"$ZipFileDisplayPath`" -Force"
+            Write-Information "`tRemove-Item `"$ZipFileDisplayPath`" -Force -ProgressAction 'SilentlyContinue'"
             if ($PSCmdlet.ShouldProcess($zipFilePath, 'Remove Temporary Zip File')) {
-                Remove-Item $zipFilePath -Force
+                Remove-Item $zipFilePath -Force -ProgressAction 'SilentlyContinue'
             }
         } else {
             throw "Failed to create zip file at: $zipFilePath"
