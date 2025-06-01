@@ -414,8 +414,8 @@ Task -name DeleteOldBuilds -action {
 
 Task -name FindBuildCopyDirectories -depends DeleteOldBuilds -action {
 
-    Write-Information "`tFind-BuildCopyDirectory -BuildCopyDirectory `$BuildCopyDirectories"
-    $Script:CopyDirectories = Find-BuildCopyDirectory -BuildCopyDirectory $BuildCopyDirectories
+    Write-Verbose "`tFind-BuildCopyDirectory -BuildCopyDirectory `$BuildCopyDirectories -InformationAction 'Continue'"
+    $Script:CopyDirectories = Find-BuildCopyDirectory -BuildCopyDirectory $BuildCopyDirectories -InformationAction 'Continue'
     Write-InfoColor "`t# Found $($Script:CopyDirectories.Count) directories to copy to the build output directory." -ForegroundColor Green
 
 } -description 'Find all directories to copy to the build output directory, excluding empty directories'

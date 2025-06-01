@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.353] - 2025-05-31
+### Changed
+- reduce build verbosity
+
 ## [5.0.352] - 2025-05-31
 ### Changed
 - use infoaction and reduce build verbosity

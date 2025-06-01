@@ -29,7 +29,7 @@
         $OldExportStmt = 'Export-ModuleMember -Function .*'
         Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace '$OldExportStmt' , `"$NewExportStmt`""
         $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewExportStmt
-        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$UpdatedModuleContent -Encoding UTF8BOM -NoNewline"
         Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
 
     } else {
@@ -38,7 +38,7 @@
             $ModuleContent += "`r`n"
         }
         $ModuleContent += $NewExportStmt
-        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$ModuleContent -Encoding UTF8BOM -NoNewline"
+        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$UpdatedModuleContent -Encoding UTF8BOM -NoNewline"
         Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
     }
 

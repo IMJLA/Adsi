@@ -1,12 +1,12 @@
 ﻿function Find-BuildCopyDirectory {
 
     [CmdletBinding()]
+
     param (
         [string[]]$BuildCopyDirectory
     )
 
-    $InformationPreference = 'Continue'
-    Write-Information "`t`tGet-ChildItem -Path '.' -Directory"
+    Write-Information "`tGet-ChildItem -Path '.' -Directory"
 
     $EmptyFolders = Get-ChildItem -Path . -Directory | ForEach-Object {
         $Files = Get-ChildItem -Path $_.FullName -File
