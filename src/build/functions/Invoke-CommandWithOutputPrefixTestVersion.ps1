@@ -42,33 +42,13 @@
         $FinalArgumentString = $ArgumentArray -join ' '
     } else {
         $FinalArgumentString = $ArgumentString
-        $FinalArgumentArray = if ($ArgumentString.Trim()) { @($ArgumentString) } else { @() }
+        $FinalArgumentArray = if ($ArgumentString) { $ArgumentString.Split(' ') } else { @() }
     }
 
     # Get original location before changing directory
     $originalLocation = Get-Location
 
     try {
-
-        <#
-        if ($PassThru) {
-
-            # Change to working directory
-            Set-Location $WorkingDirectory
-
-            # For PassThru, we need to capture the raw output
-            Write-Information "`t$OutputPrefix& $Command $FinalArgumentString"
-            if ($FinalArgumentArray.Count -gt 0) {
-                $output = & $Command $FinalArgumentArray 2>&1
-            } else {
-                $output = & $Command 2>&1
-            }
-
-            # Display the output with prefixes, preserving line breaks
-            Write-ConsoleOutput -Output $output -Prefix "`t$OutputPrefix"
-
-        } else {
-            #>
 
         # Non-PassThru mode, execute the command and handle output using a PowerShell job
         Write-Information "$OutputPrefix`Start-Job -ScriptBlock {...} -ArgumentList '$Command', @('$($FinalArgumentArray -join "','")'), '$WorkingDirectory', `$EnvironmentVariables"
