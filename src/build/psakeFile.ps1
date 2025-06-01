@@ -1086,7 +1086,7 @@ Task -name SourceControl -action {
 
     # Find the current git branch
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git branch --show-current$NewLine"
+    Write-Information "`t& git branch --show-current"
     $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''
 
     # Commit to Git

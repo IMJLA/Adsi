@@ -33,7 +33,7 @@
         Command              = 'cmd'
         ArgumentString       = $cmdArguments
         WorkingDirectory     = $WorkingDirectory
-        OutputPrefix         = "`t`t`t"
+        OutputPrefix         = ''
         EnvironmentVariables = $npmEnvironment
         InformationAction    = 'Continue'
     }
