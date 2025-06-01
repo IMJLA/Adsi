@@ -24,9 +24,6 @@
         # Prefix to add to each output line
         [string]$OutputPrefix = "`t",
 
-        # Return output instead of displaying it
-        [switch]$PassThru,
-
         # Environment variables to set for the command
         [hashtable]$EnvironmentVariables = @{},
 

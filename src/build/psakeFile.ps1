@@ -1085,20 +1085,20 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
 Task -name SourceControl -action {
 
     # Find the current git branch
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -PassThru -InformationAction 'Continue'"
-    $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -PassThru -InformationAction 'Continue'
+    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue'"
+    $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue'
 
     # Commit to Git
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue'"
-    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue'
+    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue'
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage) -InformationAction 'Continue'"
     $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue'
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue'"
-    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue'
+    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue'
 
     # Test if commit was successful by checking git status
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -PassThru -InformationAction 'Continue'"
-    $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -PassThru -InformationAction 'Continue'
+    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -InformationAction 'Continue'"
+    $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -InformationAction 'Continue'
 
     if (-not $gitStatus) {
         Write-InfoColor "`t# Successfully committed and pushed changes to source control." -ForegroundColor Green

@@ -40,7 +40,7 @@ Describe 'Invoke-CommandWithOutputPrefix' {
 
         It 'should collect npm install output with expected ending lines' -Skip:(-not $npmAvailable) {
             # Execute npm install using the function
-            $result = Invoke-CommandWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+            $result = Invoke-CommandWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
             # Verify result is an array
             $result | Should -BeOfType [array]
@@ -61,20 +61,20 @@ Describe 'Invoke-CommandWithOutputPrefix' {
         It 'should handle command execution without PassThru parameter' -Skip:(-not $npmAvailable) {
             # This test verifies the function doesn't throw when not using PassThru
             {
-                Invoke-CommandWithOutputPrefix -Command 'npm' -ArgumentArray @('--version') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue' -NoConsoleOutput
+                $null = Invoke-CommandWithOutputPrefix -Command 'npm' -ArgumentArray @('--version') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue' -NoConsoleOutput
             } | Should -Not -Throw
         }
 
         It 'should properly handle exit codes' {
             # Test with a command that should fail
             {
-                Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c exit 1' -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+                $null = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c exit 1' -InformationAction 'SilentlyContinue' -NoConsoleOutput
             } | Should -Throw -ExpectedMessage '*Command failed with exit code 1*'
         }
 
         It 'should return output when PassThru is specified' {
             # Test with a simple command that has predictable output
-            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo test' -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo test' -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
             $result | Should -Not -BeNullOrEmpty
             $result | Should -Contain 'test'
@@ -82,7 +82,7 @@ Describe 'Invoke-CommandWithOutputPrefix' {
 
         It 'should apply output prefixes correctly' {
             # Test that output prefixing doesn't interfere with PassThru results
-            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo hello' -OutputPrefix 'PREFIX: ' -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo hello' -OutputPrefix 'PREFIX: ' -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
             # The PassThru result should not contain the prefix (prefix is only for console display)
             $result | Should -Contain 'hello'
@@ -94,7 +94,7 @@ Describe 'Invoke-CommandWithOutputPrefix' {
                 'TEST_VAR' = 'TestValue'
             }
 
-            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo %TEST_VAR%' -EnvironmentVariables $envVars -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo %TEST_VAR%' -EnvironmentVariables $envVars -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
             $result | Should -Contain 'TestValue'
         }
@@ -111,13 +111,13 @@ Describe 'Invoke-CommandWithOutputPrefix' {
 
         It 'should accept ArgumentArray parameter' {
             {
-                Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentArray @('/c', 'echo', 'test') -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+                $null = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentArray @('/c', 'echo', 'test') -InformationAction 'SilentlyContinue' -NoConsoleOutput
             } | Should -Not -Throw
         }
 
         It 'should accept ArgumentString parameter' {
             {
-                Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo test' -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+                $null = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo test' -InformationAction 'SilentlyContinue' -NoConsoleOutput
             } | Should -Not -Throw
         }
 
@@ -127,7 +127,7 @@ Describe 'Invoke-CommandWithOutputPrefix' {
             # Mock Test-Path to verify the working directory is used
             Mock Test-Path { return $true } -Verifiable
 
-            Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo test' -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput -ErrorAction SilentlyContinue
+            $null = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c echo test' -InformationAction 'SilentlyContinue' -NoConsoleOutput -ErrorAction SilentlyContinue
 
         }
 
@@ -136,7 +136,7 @@ Describe 'Invoke-CommandWithOutputPrefix' {
     Context 'output handling edge cases' {
 
         It 'should handle commands with no output' {
-            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c rem silent command' -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c rem silent command' -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
             # Result might be empty array or contain empty strings
             if ($result) {
@@ -146,7 +146,7 @@ Describe 'Invoke-CommandWithOutputPrefix' {
 
         It 'should handle commands with large output' {
             # Generate a command that produces multiple lines of output
-            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c for /L %i in (1,1,5) do echo Line %i' -PassThru -InformationAction 'SilentlyContinue' -NoConsoleOutput
+            $result = Invoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '/c for /L %i in (1,1,5) do echo Line %i' -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
             $result | Should -Not -BeNullOrEmpty
             $result.Count | Should -BeGreaterThan 1

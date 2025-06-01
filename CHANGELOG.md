@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.345] - 2025-05-31
+### Changed
+- be explicit about what to do with output
+
 ## [5.0.344] - 2025-05-31
 ### Changed
 - test supress unexpected output
