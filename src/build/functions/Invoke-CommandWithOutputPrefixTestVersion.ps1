@@ -142,14 +142,14 @@
             $exitCodeLine = $allJobOutput | Where-Object { $_ -like 'EXITCODE:*' } | Select-Object -Last 1
             if ($exitCodeLine) {
                 $global:LASTEXITCODE = [int]($exitCodeLine -replace 'EXITCODE:', '')
-                $output = ($allJobOutput | Where-Object { $_ -notlike 'EXITCODE:*' })
+                $ExcessiveOutput = ($allJobOutput | Where-Object { $_ -notlike 'EXITCODE:*' })
             } else {
                 $global:LASTEXITCODE = 0
-                $output = $allJobOutput
+                $ExcessiveOutput = $allJobOutput
             }
 
             # Display the output with prefixes, preserving line breaks. Exclude the redundant second half of the output.
-            $CompleteOutput = Write-ConsoleOutput -Output $output -Prefix "`t`t$OutputPrefix" -First ($output.Count / 2 + 1) -PassThru
+            $output = Write-ConsoleOutput -Output $ExcessiveOutput -Prefix "`t`t$OutputPrefix" -First ($ExcessiveOutput.Count / 2 + 1) -PassThru
 
         }
 
