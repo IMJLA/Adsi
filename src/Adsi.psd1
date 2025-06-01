@@ -9,28 +9,31 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule        = 'Adsi'
+    RootModule            = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion     = '5.0.373'
+    ModuleVersion         = '5.0.361'
+
+    # Supported PSEditions
+    CompatiblePSEditions  = @('Core', 'Desktop')
 
     # ID used to uniquely identify this module
-    GUID              = '282a2aed-9567-49a1-901c-122b7831a805'
+    GUID                  = '282a2aed-9567-49a1-901c-122b7831a805'
 
     # Author of this module
-    Author            = 'Jeremy La Camera'
+    Author                = 'Jeremy La Camera'
 
     # Company or vendor of this module
-    CompanyName       = 'Unknown'
+    CompanyName           = 'Unknown'
 
     # Copyright statement for this module
-    Copyright         = '(c) Jeremy La Camera. All rights reserved.'
+    Copyright             = '(c) Jeremy La Camera. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'Use Active Directory Service Interfaces to query LDAP and WinNT directories'
+    Description           = 'Use Active Directory Service Interfaces to query LDAP and WinNT directories'
 
     # Minimum version of the PowerShell engine required by this module
-    # PowerShellVersion = ''
+    PowerShellVersion     = '5.1'
 
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
@@ -50,23 +53,23 @@
     #>
     # ClrVersion = ''
 
-    # Processor architecture (None, X86, Amd64) required by this module
-    # ProcessorArchitecture = ''
+    # Processor architecture (None, MSIL, X86, IA64, Amd64, Arm) required by this module
+    ProcessorArchitecture = 'None'
 
     # Modules that must be imported into the global environment prior to importing this module
-    # RequiredModules = @()
+    RequiredModules       = @()
 
     # Assemblies that must be loaded prior to importing this module
-    # RequiredAssemblies = @()
+    RequiredAssemblies    = @()
 
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
     # ScriptsToProcess = @()
 
     # Type files (.ps1xml) to be loaded when importing this module
-    # TypesToProcess = @()
+    TypesToProcess        = @('Adsi.types.ps1xml')
 
     # Format files (.ps1xml) to be loaded when importing this module
-    # FormatsToProcess = @()
+    FormatsToProcess      = @('Adsi.format.ps1xml')
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     # NestedModules = @()
@@ -76,21 +79,24 @@
     For best performance, do not use wildcards.
     For best performance, do not delete the entry if there are no Functions to export. Use an empty array.
     #>
-    FunctionsToExport = @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertFrom-ResolvedID', 'ConvertFrom-ResultPropertyValueCollectionToString', 'ConvertFrom-SearchResult', 'ConvertFrom-SidString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-FakeDirectoryEntry', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-WinNTGroupMember', 'Find-LocalAdsiServerSid', 'Get-AdsiGroup', 'Get-AdsiGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-KnownCaptionHashTable', 'Get-KnownSid', 'Get-KnownSidByName', 'Get-KnownSidHashTable', 'Get-ParentDomainDnsName', 'Get-TrustedDomain', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'Resolve-IdentityReference', 'Resolve-ServiceNameToSID', 'Search-Directory')
+    FunctionsToExport     = @('Add-DomainFqdnToLdapPath', 'Add-SidInfo', 'ConvertFrom-DirectoryEntry', 'ConvertFrom-PropertyValueCollectionToString', 'ConvertFrom-ResolvedID', 'ConvertFrom-ResultPropertyValueCollectionToString', 'ConvertFrom-SearchResult', 'ConvertFrom-SidString', 'ConvertTo-DecStringRepresentation', 'ConvertTo-DistinguishedName', 'ConvertTo-DomainNetBIOS', 'ConvertTo-DomainSidString', 'ConvertTo-FakeDirectoryEntry', 'ConvertTo-Fqdn', 'ConvertTo-HexStringRepresentation', 'ConvertTo-HexStringRepresentationForLDAPFilterString', 'ConvertTo-SidByteArray', 'Expand-AdsiGroupMember', 'Expand-WinNTGroupMember', 'Find-LocalAdsiServerSid', 'Get-AdsiGroup', 'Get-AdsiGroupMember', 'Get-AdsiServer', 'Get-CurrentDomain', 'Get-DirectoryEntry', 'Get-KnownCaptionHashTable', 'Get-KnownSid', 'Get-KnownSidByName', 'Get-KnownSidHashTable', 'Get-ParentDomainDnsName', 'Get-TrustedDomain', 'Get-WinNTGroupMember', 'Invoke-ComObject', 'Resolve-IdentityReference', 'Resolve-ServiceNameToSID', 'Search-Directory')
 
     <#
     Cmdlets to export from this module
     For best performance, do not use wildcards.
     For best performance, do not delete the entry if there are no Cmdlets to export. Use an empty array.
     #>
-    CmdletsToExport   = @()
+    CmdletsToExport       = @()
 
     <#
     Aliases to export from this module
     For best performance, do not use wildcards.
     For best performance, do not delete the entry if there are no Aliases to export. Use an empty array.
     #>
-    AliasesToExport   = @()
+    AliasesToExport       = @()
+
+    # Variables to export from this module
+    VariablesToExport     = @()
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -105,18 +111,18 @@
     Private data to pass to the module specified in RootModule/ModuleToProcess.
     This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     #>
-    PrivateData       = @{
+    PrivateData           = @{
 
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            # Tags = @()
+            Tags       = @( 'Adsi', 'Active Directory', 'ActiveDirectory', 'LDAP', 'WinNT', 'Directory Services' )
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/IMJLA/Adsi/blob/main/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri = 'https://github.com/IMJLA/Adsi'
 
             # A URL to an icon representing this module.
             # IconUri = ''

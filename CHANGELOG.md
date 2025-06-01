@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.361] - 2025-06-01
+### Changed
+- update mainfest tests, update copyright in license to match copyright in manifest
+
 ## [5.0.373] - 2025-06-01
 ### Changed
 - test source code rather than dist
