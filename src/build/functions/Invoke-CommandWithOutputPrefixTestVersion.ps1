@@ -1,4 +1,4 @@
-﻿function Invoke-CommandWithOutputPrefix {
+﻿function Invoke-CommandWithOutputPrefixTestVersion {
 
     # Generic command wrapper that adds prefixes to output lines
 
@@ -149,7 +149,7 @@
             }
 
             # Display the output with prefixes, preserving line breaks. Exclude the redundant second half of the output.
-            Write-ConsoleOutput -Output $output -Prefix "`t`t$OutputPrefix" -First ($output.Count / 2 + 1)
+            $CompleteOutput = Write-ConsoleOutput -Output $output -Prefix "`t`t$OutputPrefix" -First ($output.Count / 2 + 1) -PassThru
 
         }
 
