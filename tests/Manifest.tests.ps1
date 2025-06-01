@@ -1,11 +1,11 @@
 BeforeAll {
 
     [string]$SourceCodeDir = [IO.Path]::Combine('.', 'src')
-    $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Leaf
-    $ManifestName = "$ModuleName.psd1"
-    $sourceManifestPath = [IO.Path]::Combine($SourceCodeDir, $ManifestName)
-    $sourceManifestData = Test-ModuleManifest -Path $sourceManifestPath -Verbose:$false -ErrorAction Stop -WarningAction SilentlyContinue
-    $sourceManifestImportedDataFile = Import-PowerShellDataFile -Path $sourceManifestPath
+    $script:ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Leaf
+    $script:ManifestName = "$ModuleName.psd1"
+    $script:sourceManifestPath = [IO.Path]::Combine($SourceCodeDir, $ManifestName)
+    $script:sourceManifestData = Test-ModuleManifest -Path $sourceManifestPath -Verbose:$false -ErrorAction Stop -WarningAction SilentlyContinue
+    $script:sourceManifestImportedDataFile = Import-PowerShellDataFile -Path $sourceManifestPath
 
 }
 
@@ -57,7 +57,7 @@ Describe "module manifest '$ManifestName'" {
     Context '- Module Structure' {
 
         It 'has a valid RootModule setting which points to the main module file' {
-            $sourceManifestData.RootModule | Should -Be $moduleName
+            $sourceManifestData.RootModule | Should -Be $ModuleName
         }
 
     }
@@ -144,7 +144,7 @@ Describe "module manifest '$ManifestName'" {
 
             if (
                 $sourceManifestData.ProcessorArchitecture -eq 'None' -or
-                $null -eq $env:sourceManifestData.ProcessorArchitecture
+                $null -eq $sourceManifestData.ProcessorArchitecture
             ) {
                 $true | Should -Be $true
             } else {
@@ -169,7 +169,7 @@ Describe "module manifest '$ManifestName'" {
 
         It 'has a valid FunctionsToExport section' {
             $sourceManifestData.ExportedFunctions | Should -Not -BeNullOrEmpty
-            $sourceManifestData.ExportedFunctions | Should -BeOfType 'System.String[]'
+            $sourceManifestData.ExportedFunctions | Should -BeOfType 'System.Collections.Generic.Dictionary[string,System.Management.Automation.FunctionInfo]'
         }
 
         #It 'exports all public functions' {
@@ -186,7 +186,7 @@ Describe "module manifest '$ManifestName'" {
 
         It 'has a valid VariablesToExport setting which exports all public variables, or at least an empty array' {
             $sourceManifestData.ExportedVariables | Should -Not -BeNullOrEmpty
-            $sourceManifestData.ExportedVariables | Should -BeOfType 'System.String[]'
+            $sourceManifestData.ExportedVariables | Should -BeOfType 'System.Collections.Generic.Dictionary[string,psvariable]'
         }
 
         It 'does not export any private variables' {
@@ -199,7 +199,7 @@ Describe "module manifest '$ManifestName'" {
 
         It 'has a valid FormatsToProcess setting' {
             $sourceManifestData.ExportedFormatFiles | Should -Not -BeNullOrEmpty
-            $sourceManifestData.ExportedFormatFiles | Should -BeOfType 'System.String[]'
+            $sourceManifestData.ExportedFormatFiles | Should -BeOfType 'System.String'
 
             $ExportedFormatFileNames = $sourceManifestData.ExportedFormatFiles | ForEach-Object {
                 $_ | Split-Path -Leaf
@@ -209,7 +209,7 @@ Describe "module manifest '$ManifestName'" {
 
         It 'has a valid TypesToProcess setting' {
             $sourceManifestData.ExportedTypeFiles | Should -Not -BeNullOrEmpty
-            $sourceManifestData.ExportedTypeFiles | Should -BeOfType 'System.String[]'
+            $sourceManifestData.ExportedTypeFiles | Should -BeOfType 'System.String'
 
             $ExportedTypeFileNames = $sourceManifestData.ExportedTypeFiles | ForEach-Object {
                 $_ | Split-Path -Leaf
@@ -239,15 +239,12 @@ Describe 'Git tagging' {
 
     BeforeAll {
 
-        $gitTagVersion = $null
+        $thisCommit = & git log --decorate --oneline HEAD~1..HEAD
 
-        if ($git = Get-Command git -CommandType Application -ErrorAction SilentlyContinue) {
-
-            $thisCommit = & $git log --decorate --oneline HEAD~1..HEAD
-
-            if ($thisCommit -match 'tag:\s*v*(\d+(?:\.\d+)*)') {
-                $gitTagVersion = $matches[1]
-            }
+        if ($thisCommit -match 'tag:\s*v*(\d+(?:\.\d+)*)') {
+            $gitTagVersion = $matches[1]
+        } else {
+            $gitTagVersion = $null
         }
 
     }
