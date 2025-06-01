@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.334] - 2025-05-31
+### Changed
+- cleanup console output during tests
+
 ## [5.0.333] - 2025-05-31
 ### Changed
 - update argument logic

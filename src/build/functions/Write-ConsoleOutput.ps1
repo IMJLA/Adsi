@@ -1,10 +1,13 @@
 ﻿Function Write-ConsoleOutput {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Console output is the primary purpose of this function')]
     param (
         [string[]]$Output,
         [string]$Prefix,
         [int]$First,
-        [switch]$PassThru
+        [switch]$PassThru,
+        [switch]$NoConsoleOutput
     )
+    $WriteToConsole = -not $NoConsoleOutput
     if ($output) {
         $rawOutput = ($output -join "`n") -replace "`r`n", "`n" -replace "`r", "`n"
         $LineNumber = 0
@@ -14,10 +17,14 @@
                 return
             }
             if ($line.Trim()) {
-                [Console]::WriteLine("$Prefix$line")
+                if ($WriteToConsole) {
+                    [Console]::WriteLine("$Prefix$line")
+                }
                 $line
             } else {
-                [Console]::WriteLine('')
+                if ($WriteToConsole) {
+                    [Console]::WriteLine('')
+                }
                 ''
             }
         }
@@ -25,4 +32,5 @@
             return $linesToOutput
         }
     }
+
 }
