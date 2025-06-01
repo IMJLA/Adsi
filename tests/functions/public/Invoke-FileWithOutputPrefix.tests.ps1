@@ -40,7 +40,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
             }
         }
 
-        It 'should collect npm install output with expected ending lines' -Skip:(-not $npmAvailable) {
+        It 'should collect npm install output with expected ending lines' {
             # Execute npm install using the function
             $result = Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue' -NoConsoleOutput
 
@@ -60,7 +60,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
             $lastLines[-2] | Should -Match 'found \d+ vulnerabilit(y|ies)'
         }
 
-        It 'should handle command execution without PassThru parameter' -Skip:(-not $npmAvailable) {
+        It 'should handle command execution without PassThru parameter' {
             # This test verifies the function doesn't throw when not using PassThru
             {
                 $null = Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentArray @('--version') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue' -NoConsoleOutput
