@@ -935,7 +935,7 @@ Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrere
 Task -name ClearNpmCache -depends CreateOnlineHelpScaffolding -action {
 
     # Clear npm cache to ensure clean installation
-    Write-InfoColor "`tInvoke-NpmCommand -Command 'cache verify' -WorkingDirectory '$DocsOnlineHelpDir'"
+    Write-Verbose "`tInvoke-NpmCommand -Command 'cache verify' -WorkingDirectory '$DocsOnlineHelpDir'"
     Invoke-NpmCommand -Command 'cache verify' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
     Write-InfoColor "`t# Successfully verified npm cache." -ForegroundColor Green
 
@@ -944,7 +944,7 @@ Task -name ClearNpmCache -depends CreateOnlineHelpScaffolding -action {
 Task -name InstallOnlineHelpDependencies -depends ClearNpmCache -action {
 
     # npm install
-    Write-InfoColor "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
+    Write-Verbose "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
     Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
 
     # Determine whether the node_modules directory was created (indicating successful install)
@@ -1024,7 +1024,7 @@ Task -name ConvertArt -depends CopyArt -action {
 Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
 
     # & npm run build
-    Write-InfoColor "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
+    Write-Verbose "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
 
     try {
         Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
@@ -1033,7 +1033,7 @@ Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
         Clear-NodeJSDependencySet -WorkingDirectory $DocsOnlineHelpDir
 
         # Retry the build after clearing dependencies
-        Write-InfoColor "`tRetrying: Invoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
+        Write-Verbose "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
         Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
     }
 
@@ -1094,7 +1094,7 @@ Task -name SourceControl -action {
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage) -InformationAction 'Continue'"
     Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue'
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue'"
-    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue'
+    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue'
 
     # Test if commit was successful by checking git status
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -PassThru -InformationAction 'Continue'"
