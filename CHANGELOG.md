@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.340] - 2025-05-31
+### Fixed
+- fix blank line that was missing
+
 ## [5.0.339] - 2025-05-31
 ### Fixed
 - fix blank line

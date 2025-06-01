@@ -14,6 +14,10 @@
         $linesToOutput = foreach ($line in $rawOutput -split "`n") {
             $LineNumber++
             if ($PSBoundParameters.ContainsKey('First') -and $LineNumber -gt $First) {
+                if ($WriteToConsole) {
+                    #Write a blank line at the end for better readability
+                    [Console]::WriteLine()
+                }
                 return
             }
             if ($line.Trim()) {
@@ -27,10 +31,6 @@
                 }
                 ''
             }
-        }
-        if ($WriteToConsole) {
-            #Write a blank line at the end for better readability
-            [Console]::WriteLine()
         }
         if ($PassThru) {
             return $linesToOutput
