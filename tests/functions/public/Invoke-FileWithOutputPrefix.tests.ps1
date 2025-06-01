@@ -14,7 +14,7 @@ Describe 'Invoke-FileWithOutputPrefix' {
 
         BeforeAll {
             # Check if npm is available for real testing
-            [bool]$npmAvailable = Get-Command -Name npm -ErrorAction SilentlyContinue
+            [bool]$npmAvailable = $null -ne (Get-Command -Name npm -ErrorAction Continue)
 
             # Create a temporary directory for npm test if npm is available
             if ($npmAvailable) {
