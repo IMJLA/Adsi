@@ -3,7 +3,6 @@
     # Custom npm wrapper function
 
     [CmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from npm output')]
     param(
         # The npm command to execute
         [Parameter(Mandatory)]
@@ -45,7 +44,7 @@
 
     Write-Information "`t`t`$EnvironmentVariables = @{ 'FORCE_COLOR'='1'; 'NPM_CONFIG_COLOR'='always'; 'TERM'='xterm-256color'; 'COLUMNS'='200'; 'LINES'='50' }"
     Write-Information "`t`tInvoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '$cmdArguments' -WorkingDirectory '$WorkingDirectory' -OutputPrefix `"``t``t``t`" -PassThru:`$$PassThru -EnvironmentVariables `$EnvironmentVariables"
-    $output = Invoke-CommandWithOutputPrefixTestVersion @splat
+    $output = Invoke-CommandWithOutputPrefix @splat
 
     if ($PassThru) {
         return $output

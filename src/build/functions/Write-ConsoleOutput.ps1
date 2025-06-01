@@ -1,5 +1,5 @@
 ﻿Function Write-ConsoleOutput {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Console output is the primary purpose of this function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Console output is the primary purpose of this function, and Console.WriteLine preserves ANSI color codes')]
     param (
         [string[]]$Output,
         [string]$Prefix,
