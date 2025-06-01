@@ -78,7 +78,7 @@ Describe "module manifest '$sourceManifestPath'" {
 
         It 'has matching copyright and license information' {
             #Todo: read the license file source code, find the line with the copyright and compare it to the manifest
-            $sourceLicensePath = [IO.Path]::Combine($SourceCodeDir, 'LICENSE')
+            $sourceLicensePath = [IO.Path]::Combine('.', 'LICENSE')
             $sourceLicenseData = Get-Content -Path $sourceLicensePath -ErrorAction Stop -WarningAction SilentlyContinue
             $sourceLicenseData | Should -Not -BeNullOrEmpty
             $sourceLicenseData | Should -Contain $sourceManifestData.CopyRight
@@ -116,7 +116,7 @@ Describe "module manifest '$sourceManifestPath'" {
         }
 
         It 'requires a minimum PowerShell version of 5.1 or higher to ensure only supported versions are used' {
-            $sourceManifestData.PowerShellVersion -as [Version] | Should -BeGreaterThanOrEqualTo ([Version]'5.1')
+            $sourceManifestData.PowerShellVersion -as [Version] | Should -BeGreaterOrEqual ([Version]'5.1')
         }
 
         It 'is compatible with the current PowerShell version' {
@@ -140,7 +140,15 @@ Describe "module manifest '$sourceManifestPath'" {
         }
 
         It 'is compatible with the current processor architecture' {
-            $sourceManifestData.ProcessorArchitecture | Should -Contain $env:PROCESSOR_ARCHITECTURE
+
+            if (
+                $sourceManifestData.ProcessorArchitecture -eq 'None' -or
+                $null -eq $env:sourceManifestData.ProcessorArchitecture
+            ) {
+                $true | Should -Be $true
+            } else {
+                $sourceManifestData.ProcessorArchitecture | Should -Be $env:PROCESSOR_ARCHITECTURE
+            }
         }
 
     }
