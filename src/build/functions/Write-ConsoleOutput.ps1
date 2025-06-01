@@ -15,7 +15,7 @@
             }
             if ($line.Trim()) {
                 [Console]::WriteLine("$Prefix$line")
-                "$Prefix$line"
+                "$line"
             } else {
                 [Console]::WriteLine('')
                 ''
