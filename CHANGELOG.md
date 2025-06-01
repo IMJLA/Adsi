@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.347] - 2025-05-31
+### Fixed
+- fix indentation
+
 ## [5.0.346] - 2025-05-31
 ### Changed
 - keep info output in psake task, move detailed output to verbose stream in funct
