@@ -304,7 +304,7 @@ Task -name FindPublicFunctionFiles -depends UpdateModuleVersion -action {
 
 Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
-    Write-Information "`tExport-PublicFunction -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
+    Write-Verbose "`tExport-PublicFunction -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
     Export-PublicFunction -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath
     Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
 
@@ -1249,7 +1249,7 @@ Task -name RemoveScriptScopedVariables -action {
 Task -name ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
 
     $currentLocation = Get-Location -PSProvider FileSystem
-    $PartialRelativePath = [IO.Path]::GetRelativePath($CurrentDirectory.Path, $StartingLocation.Path)
+    $PartialRelativePath = [IO.Path]::GetRelativePath($currentLocation.Path, $StartingLocation.Path)
     $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
     Write-Information "`tSet-Location '$FullRelativePath'"
     Set-Location $StartingLocation
