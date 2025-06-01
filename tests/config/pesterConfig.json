@@ -7,11 +7,11 @@
     "OutputFormat": "JaCoCo",
     "CoveragePercentTarget": 0.75,
     "Path": "",
-    "OutputPath": ".\\tests\\out\\codeCoverage.xml"
+    "OutputPath": ".\\out\\tests\\UnitTestCodeCoverage.xml"
   },
   "TestResult": {
     "Enabled": true,
-    "OutputPath": ".\\tests\\out\\testResults.xml",
+    "OutputPath": ".\\out\\tests\\UnitTestResults.xml",
     "OutputFormat": "NUnitXml"
   },
   "Output": {

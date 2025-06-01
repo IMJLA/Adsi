@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.348] - 2025-05-31
+### Changed
+- centralize build artifact output dir
+
 ## [5.0.347] - 2025-05-31
 ### Fixed
 - fix indentation
