@@ -2,7 +2,7 @@
 
     # Generic command wrapper that adds prefixes to output lines
 
-    [CmdletBinding(DefaultParameterSetName = 'ArgumentString')]
+    [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from command output')]
     param(
 
@@ -10,13 +10,11 @@
         [Parameter(Mandatory)]
         [string]$Command,
 
-        # Arguments as an array of strings
-        [Parameter(ParameterSetName = 'ArgumentArray')]
-        [string[]]$ArgumentArray = @(),
+        # Arguments as an array of objects
+        [object[]]$ArgumentArray = @(),
 
-        # Arguments as a single string
-        [Parameter(ParameterSetName = 'ArgumentString')]
-        [string]$ArgumentString = '',
+        # Parameters as a hashtable (parameter names and values)
+        [hashtable]$Parameter = @{},
 
         # Working directory for the command
         [string]$WorkingDirectory = (Get-Location).Path,
@@ -36,30 +34,30 @@
     $originalOutputEncoding = [Console]::OutputEncoding
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-    # Determine which parameter set was used and prepare both formats
-    if ($PSCmdlet.ParameterSetName -eq 'ArgumentArray') {
-        $FinalArgumentArray = $ArgumentArray
-        $FinalArgumentString = $ArgumentArray -join ' '
-    } else {
-        $FinalArgumentString = $ArgumentString
-        $FinalArgumentArray = if ($ArgumentString) { $ArgumentString.Split(' ') } else { @() }
-    }
-
     # Get original location before changing directory
     $originalLocation = Get-Location
 
-    # Eecute the command and handle output using a PowerShell job
-    Write-Verbose "$OutputPrefix`Start-Job -ScriptBlock {...} -ArgumentList '$Command', @('$($FinalArgumentArray -join "','")'), '$WorkingDirectory', `$EnvironmentVariables"
+    # Execute the command and handle output using a PowerShell job
+    Write-Verbose "$OutputPrefix`Start-Job -ScriptBlock {...} -ArgumentList '$Command', `$ArgumentArray, `$Parameter, '$WorkingDirectory', `$EnvironmentVariables"
 
     # These take place inside the job, but we don't want this debug output mixed up in the output stream
     Write-Verbose "`t$OutputPrefix`Set-Location '$WorkingDirectory'"
-    Write-Verbose "`t$OutputPrefix`& $Command $FinalArgumentString"
+
+    if ($Parameter.Count -gt 0 -and $ArgumentArray.Count -gt 0) {
+        Write-Verbose "`t$OutputPrefix`& $Command @Parameters @ArgumentArray"
+    } elseif ($Parameter.Count -gt 0) {
+        Write-Verbose "`t$OutputPrefix`& $Command @Parameters"
+    } elseif ($ArgumentArray.Count -gt 0) {
+        Write-Verbose "`t$OutputPrefix`& $Command @ArgumentArray"
+    } else {
+        Write-Verbose "`t$OutputPrefix`& $Command"
+    }
 
     try {
 
-        # Use Start-Job to run npm commands in isolation
+        # Use Start-Job to run commands in isolation
         $job = Start-Job -ScriptBlock {
-            param($Command, $ArgumentsArray, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix)
+            param($Command, $ArgumentArray, $Parameter, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix)
 
             # Apply environment variables
             foreach ($key in $EnvironmentVariables.Keys) {
@@ -70,15 +68,16 @@
 
             try {
 
-                # Execute the command
-                if ($ArgumentsArray.Count -gt 0) {
-                    $output = & $Command $ArgumentsArray 2>&1
+                # Execute the PowerShell command with parameters and arguments
+                if ($Parameter.Count -gt 0 -and $ArgumentArray.Count -gt 0) {
+                    $output = & $Command @Parameter @ArgumentArray 2>&1
+                } elseif ($Parameter.Count -gt 0) {
+                    $output = & $Command @Parameter 2>&1
+                } elseif ($ArgumentArray.Count -gt 0) {
+                    $output = & $Command @ArgumentArray 2>&1
                 } else {
                     $output = & $Command 2>&1
                 }
-
-                # Give a moment for all output to be captured
-                Start-Sleep -Milliseconds 500
 
                 # Output the results and exit code separately
                 $output
@@ -90,49 +89,29 @@
                 Write-Output 'EXITCODE:1'
 
             }
-        } -ArgumentList $Command, $FinalArgumentArray, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix
+        } -ArgumentList $Command, $ArgumentArray, $Parameter, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix
 
         # Wait for job to complete
         Wait-Job $job | Out-Null
 
-        # Give additional time for job output to be fully available
-        Start-Sleep -Milliseconds 250
-
-        # Get output in two separate reads and combine them.  For some reason without this, the output is sometimes incomplete (missing its last line).
-        # This is especially important for npm commands which can produce a lot of output.
-        $keepOutput = Receive-Job -Job $job -Keep | Where-Object { $_ -notmatch 'System.Management.Automation.RemoteException' }
-        $finalOutput = Receive-Job -Job $job | Where-Object { $_ -notmatch 'System.Management.Automation.RemoteException' }
+        # Get job output - simplified for PowerShell commands
+        $allJobOutput = Receive-Job -Job $job | Where-Object { $_ -notmatch 'System.Management.Automation.RemoteException' }
 
         # Clean up job
         Remove-Job -Job $job
-
-        # Determine which output to use based on comparison
-        if ($finalOutput -and $keepOutput) {
-            # Both outputs have content, combine them
-            $allJobOutput = $keepOutput + $finalOutput
-        } elseif ($finalOutput) {
-            # Only final output has content
-            $allJobOutput = $finalOutput
-        } elseif ($keepOutput) {
-            # Only keep output has content
-            $allJobOutput = $keepOutput
-        } else {
-            # No output from either
-            $allJobOutput = @()
-        }
 
         # Separate exit code from output
         $exitCodeLine = $allJobOutput | Where-Object { $_ -like 'EXITCODE:*' } | Select-Object -Last 1
         if ($exitCodeLine) {
             $global:LASTEXITCODE = [int]($exitCodeLine -replace 'EXITCODE:', '')
-            $ExcessiveOutput = ($allJobOutput | Where-Object { $_ -notlike 'EXITCODE:*' })
+            $output = $allJobOutput | Where-Object { $_ -notlike 'EXITCODE:*' }
         } else {
             $global:LASTEXITCODE = 0
-            $ExcessiveOutput = $allJobOutput
+            $output = $allJobOutput
         }
 
-        # Display the output with prefixes, preserving line breaks. Exclude the redundant second half of the output.
-        $output = Write-ConsoleOutput -Output $ExcessiveOutput -Prefix "`t`t$OutputPrefix" -First ($ExcessiveOutput.Count / 2) -PassThru -NoConsoleOutput:$NoConsoleOutput
+        # Display the output with prefixes, preserving ANSI color codes
+        $result = Write-ConsoleOutput -Output $output -Prefix "`t`t$OutputPrefix" -PassThru -NoConsoleOutput:$NoConsoleOutput
 
     } finally {
 

@@ -1073,9 +1073,12 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
     Write-Information "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
+
+    $PesterParameters = @{
+        'Configuration' = $PesterConfiguration
+    }
     Write-Information "`tInvoke-Pester -Configuration `$PesterConfiguration"
-    $PesterResults = Invoke-Pester -Configuration $PesterConfiguration
-    Write-ConsoleOutput -Output $PesterResults -Prefix "`t"
+    $null = Invoke-CommandWithOutputPrefix -Command 'Invoke-Pester' -Parameter $PesterParameters -InformationAction 'Continue' -OutputPrefix ''
 
 } -description 'Perform unit tests using Pester.'
 
@@ -1084,25 +1087,25 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
 Task -name SourceControl -action {
 
     # Find the current git branch
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''"
+    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''"
     Write-Information "`t& git branch --show-current"
-    $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''
+    $CurrentBranch = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''
 
     # Commit to Git
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''"
+    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''"
     Write-Information "`t& git add ."
-    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage) -InformationAction 'Continue' -OutputPrefix ''"
+    $null = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''
+    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage) -InformationAction 'Continue' -OutputPrefix ''"
     Write-Information "`t& git commit -m `"$CommitMessage`""
-    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue' -OutputPrefix ''
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue' -OutputPrefix ''"
+    $null = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue' -OutputPrefix ''
+    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue' -OutputPrefix ''"
     Write-Information "`t& git push origin $CurrentBranch"
-    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue' -OutputPrefix ''
+    $null = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue' -OutputPrefix ''
 
     # Test if commit was successful by checking git status
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -InformationAction 'Continue' -OutputPrefix ''"
+    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -InformationAction 'Continue' -OutputPrefix ''"
     Write-Information "`t& git status --porcelain"
-    $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -InformationAction 'Continue' -OutputPrefix ''
+    $gitStatus = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -InformationAction 'Continue' -OutputPrefix ''
 
     if ($gitStatus) {
         Write-Error 'Failed to commit all changes to source control'
