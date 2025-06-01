@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.358] - 2025-06-01
+### Fixed
+- fix console output
+
+## [5.0.357] - 2025-06-01
+### Fixed
+- fix task names
+
 ## [5.0.356] - 2025-05-31
 ### Fixed
 - fix progress output

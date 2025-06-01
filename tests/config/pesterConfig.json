@@ -1,6 +1,7 @@
 {
   "Run": {
-    "Path": ".\\tests"
+    "Path": ".\\tests",
+    "PassTrue": true
   },
   "CodeCoverage": {
     "Enabled": false,
@@ -15,6 +16,6 @@
     "OutputFormat": "NUnitXml"
   },
   "Output": {
-    "Verbosity": "Normal"
+    "Verbosity": "None"
   }
 }

@@ -238,9 +238,7 @@ BuildOnlineHelpWebsite, # Create the Online help documentation website.
 UnitTests, # Perform unit testing.
 SourceControl, # Commit changes to source control.
 CreateGitHubRelease, # Create a GitHub release.
-Reinstall, # Publish the module to the a PowerShell repository.
-ReturnToStartingLocation # Reset the build environment to its starting state.
-
+Reinstall # Publish the module to the a PowerShell repository.
 
 # Prepare the build environment.
 Task -name SetLocation -action {
@@ -932,8 +930,8 @@ Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrere
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
-Task -name ClearNpmCache -depends CreateOnlineHelpScaffolding -action {
-
+Task -name VerifyNpmCache -action {
+    # This is not normally needed, but it can help if there are issues with npm dependencies. Task is disabled for now.
     # Clear npm cache to ensure clean installation
     Write-Verbose "`tInvoke-NpmCommand -Command 'cache verify' -WorkingDirectory '$DocsOnlineHelpDir'"
     Invoke-NpmCommand -Command 'cache verify' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
@@ -941,7 +939,7 @@ Task -name ClearNpmCache -depends CreateOnlineHelpScaffolding -action {
 
 } -description 'Clear npm cache to ensure clean dependency installation.'
 
-Task -name InstallOnlineHelpDependencies -depends ClearNpmCache -action {
+Task -name InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action {
 
     # npm install
     Write-Verbose "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
@@ -950,7 +948,7 @@ Task -name InstallOnlineHelpDependencies -depends ClearNpmCache -action {
     # Determine whether the node_modules directory was created (indicating successful install)
     $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'node_modules')
     if (Test-Path $TestPath) {
-        Write-InfoColor "`t# Successfully installed Online Help dependencies." -ForegroundColor Green
+        Write-InfoColor "`t# Successfully installed dependencies for the Online Help website" -ForegroundColor Green
     } else {
         Write-Error 'Failed to install Online Help dependencies. The node_modules directory was not created.'
     }
@@ -1076,7 +1074,8 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
     Write-Information "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
     Write-Information "`tInvoke-Pester -Configuration `$PesterConfiguration"
-    Invoke-Pester -Configuration $PesterConfiguration
+    $PesterResults = Invoke-Pester -Configuration $PesterConfiguration
+    Write-ConsoleOutput -Output $PesterResults -Prefix "`t"
 
 } -description 'Perform unit tests using Pester.'
 
@@ -1233,32 +1232,3 @@ Task -name Reinstall -depends Uninstall -action {
     }
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'
-
-
-# Reset the build environment to its starting state.
-
-Task -name RemoveScriptScopedVariables -action {
-
-    # Remove script-scoped variables to avoid their accidental re-use
-    Write-Information "`tRemove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue"
-    Remove-Variable -name ModuleOutDir -Scope Script -Force -ErrorAction SilentlyContinue
-    Write-InfoColor "`t# Successfully cleaned up script-scoped variables." -ForegroundColor Green
-
-} -description 'Remove script-scoped variables to clean up the environment.'
-
-Task -name ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
-
-    $currentLocation = Get-Location -PSProvider FileSystem
-    $PartialRelativePath = [IO.Path]::GetRelativePath($currentLocation.Path, $StartingLocation.Path)
-    $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
-    Write-Information "`tSet-Location '$FullRelativePath'"
-    Set-Location $StartingLocation
-
-    # Test if we're back at the starting location
-    $currentLocation = Get-Location
-    if ($currentLocation.Path -eq $StartingLocation.Path) {
-        Write-InfoColor "`t# Successfully returned to starting location: $FullRelativePath" -ForegroundColor Green
-    } else {
-        Write-Error "Failed to return to starting location. Current: $($currentLocation.Name), Expected: $FullRelativePath"
-    }
-} -description 'Return to the original working directory.'
