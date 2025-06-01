@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.336] - 2025-05-31
+### Removed
+- remove extra line from output
+
 ## [5.0.335] - 2025-05-31
 ### Changed
 - cleanup test function and merge chages to real function

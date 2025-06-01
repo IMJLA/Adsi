@@ -132,7 +132,7 @@
         }
 
         # Display the output with prefixes, preserving line breaks. Exclude the redundant second half of the output.
-        $output = Write-ConsoleOutput -Output $ExcessiveOutput -Prefix "`t`t$OutputPrefix" -First ($ExcessiveOutput.Count / 2 + 1) -PassThru -NoConsoleOutput:$NoConsoleOutput
+        $output = Write-ConsoleOutput -Output $ExcessiveOutput -Prefix "`t`t$OutputPrefix" -First ($ExcessiveOutput.Count / 2) -PassThru -NoConsoleOutput:$NoConsoleOutput
 
         ##}
 

@@ -11,7 +11,7 @@
   },
   "TestResult": {
     "Enabled": true,
-    "OutputPath": "out\\testResults.xml",
+    "OutputPath": ".\\tests\\out\\testResults.xml",
     "OutputFormat": "NUnitXml"
   },
   "Output": {
