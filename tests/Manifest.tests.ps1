@@ -158,11 +158,11 @@ Describe "module manifest '$ManifestName'" {
 
         It 'has a valid tags section' {
             $sourceManifestData.Tags | Should -Not -BeNullOrEmpty
-            Should -ActualValue $sourceManifestData.Tags -BeOfType 'System.String[]'
+            Should -ActualValue $sourceManifestData.Tags -BeOfType 'System.Collections.Generic.List[string]'
         }
 
         It 'has a valid tag for the module name' {
-            Should -ActualValue $sourceManifestData.Tags -Contain $ModuleName
+            Should -ActualValue [string[]]$sourceManifestData.Tags -Contain $ModuleName
         }
     }
     Context '- Functions' {
