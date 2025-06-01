@@ -162,14 +162,14 @@ Describe "module manifest '$ManifestName'" {
         }
 
         It 'has a valid tag for the module name' {
-            $sourceManifestData.Tags | Should -Contain $ModuleName
+            Should -ActualValue $sourceManifestData.Tags -Contain $ModuleName
         }
     }
     Context '- Functions' {
 
         It 'has a valid FunctionsToExport section' {
-            $sourceManifestData.FunctionsToExport | Should -Not -BeNullOrEmpty
-            $sourceManifestData.FunctionsToExport | Should -BeOfType 'System.String[]'
+            $sourceManifestData.ExportedFunctions | Should -Not -BeNullOrEmpty
+            $sourceManifestData.ExportedFunctions | Should -BeOfType 'System.String[]'
         }
 
         #It 'exports all public functions' {
@@ -185,8 +185,8 @@ Describe "module manifest '$ManifestName'" {
     Context '- Variables' {
 
         It 'has a valid VariablesToExport setting which exports all public variables, or at least an empty array' {
-            $sourceManifestData.VariablesToExport | Should -Not -BeNullOrEmpty
-            $sourceManifestData.VariablesToExport | Should -BeOfType 'System.String[]'
+            $sourceManifestData.ExportedVariables | Should -Not -BeNullOrEmpty
+            $sourceManifestData.ExportedVariables | Should -BeOfType 'System.String[]'
         }
 
         It 'does not export any private variables' {
@@ -198,15 +198,23 @@ Describe "module manifest '$ManifestName'" {
     Context '- Formats, Types, and Scripts' {
 
         It 'has a valid FormatsToProcess setting' {
-            $sourceManifestData.FormatsToProcess | Should -Not -BeNullOrEmpty
-            $sourceManifestData.FormatsToProcess | Should -BeOfType 'System.String[]'
-            $sourceManifestData.FormatsToProcess | Should -Contain "$ModuleName.format.ps1xml"
+            $sourceManifestData.ExportedFormatFiles | Should -Not -BeNullOrEmpty
+            $sourceManifestData.ExportedFormatFiles | Should -BeOfType 'System.String[]'
+
+            $ExportedFormatFileNames = $sourceManifestData.ExportedFormatFiles | ForEach-Object {
+                $_ | Split-Path -Leaf
+            }
+            Should -ActualValue $ExportedFormatFileNames -Contain "$ModuleName.format.ps1xml"
         }
 
         It 'has a valid TypesToProcess setting' {
-            $sourceManifestData.TypesToProcess | Should -Not -BeNullOrEmpty
-            $sourceManifestData.TypesToProcess | Should -BeOfType 'System.String[]'
-            $sourceManifestData.TypesToProcess | Should -Contain "$ModuleName.types.ps1xml"
+            $sourceManifestData.ExportedTypeFiles | Should -Not -BeNullOrEmpty
+            $sourceManifestData.ExportedTypeFiles | Should -BeOfType 'System.String[]'
+
+            $ExportedTypeFileNames = $sourceManifestData.ExportedTypeFiles | ForEach-Object {
+                $_ | Split-Path -Leaf
+            }
+            Should -ActualValue $ExportedTypeFileNames -Contain "$ModuleName.types.ps1xml"
         }
 
         It 'has a valid ScriptsToProcess setting' -Skip {
