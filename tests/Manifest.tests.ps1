@@ -158,7 +158,7 @@ Describe "module manifest '$ManifestName'" {
 
         It 'has a valid tags section' {
             $sourceManifestData.Tags | Should -Not -BeNullOrEmpty
-            $sourceManifestData.Tags | Should -BeOfType 'System.String[]'
+            Should -ActualValue $sourceManifestData.Tags -BeOfType 'System.String[]'
         }
 
         It 'has a valid tag for the module name' {
