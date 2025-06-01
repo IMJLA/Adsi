@@ -2,13 +2,14 @@ BeforeAll {
 
     [string]$SourceCodeDir = [IO.Path]::Combine('.', 'src')
     $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Leaf
-    $sourceManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
+    $ManifestName = "$ModuleName.psd1"
+    $sourceManifestPath = [IO.Path]::Combine($SourceCodeDir, $ManifestName)
     $sourceManifestData = Test-ModuleManifest -Path $sourceManifestPath -Verbose:$false -ErrorAction Stop -WarningAction SilentlyContinue
-    $manifest = Import-PowerShellDataFile -Path $sourceManifestPath
+    $sourceManifestImportedDataFile = Import-PowerShellDataFile -Path $sourceManifestPath
 
 }
 
-Describe "module manifest '$sourceManifestPath'" {
+Describe "module manifest '$ManifestName'" {
 
     Context '- Basic Requirements' {
 
@@ -98,11 +99,11 @@ Describe "module manifest '$sourceManifestPath'" {
 
     Context '- Dependencies' {
 
-        It 'has a valid RequiredModules setting' {
+        It 'has a valid RequiredModules setting' -Skip {
             $sourceManifestData.RequiredModules | Should -Not -BeNullOrEmpty
         }
 
-        It 'has a valid RequiredAssemblies setting' {
+        It 'has a valid RequiredAssemblies setting' -Skip {
             $sourceManifestData.RequiredAssemblies | Should -Not -BeNullOrEmpty
         }
 

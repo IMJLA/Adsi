@@ -12,7 +12,7 @@
     RootModule            = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion         = '5.0.362'
+    ModuleVersion         = '5.0.363'
 
     # Supported PSEditions
     CompatiblePSEditions  = @('Core', 'Desktop')
@@ -27,7 +27,7 @@
     CompanyName           = 'Unknown'
 
     # Copyright statement for this module
-    Copyright             = '(c) Jeremy La Camera. All rights reserved.'
+    Copyright             = 'Copyright (c) Jeremy La Camera. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description           = 'Use Active Directory Service Interfaces to query LDAP and WinNT directories'
