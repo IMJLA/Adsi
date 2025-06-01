@@ -53,7 +53,7 @@
 
     # These take place inside the job, but we don't want this debug output mixed up in the output stream
     Write-Verbose "`t$OutputPrefix`Set-Location '$WorkingDirectory'"
-    Write-Information "`t$OutputPrefix`& $Command $FinalArgumentString"
+    Write-Verbose "`t$OutputPrefix`& $Command $FinalArgumentString"
 
     try {
 

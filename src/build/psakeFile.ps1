@@ -1086,18 +1086,23 @@ Task -name SourceControl -action {
 
     # Find the current git branch
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue'"
+    Write-Information "`t& git branch --show-current"
     $CurrentBranch = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue'
 
     # Commit to Git
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue'"
+    Write-Information "`t& git branch --show-current"
     $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue'
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage) -InformationAction 'Continue'"
+    Write-Information "`t& git commit -m `"$CommitMessage`""
     $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue'
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue'"
+    Write-Information "`tgit push origin $CurrentBranch"
     $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue'
 
     # Test if commit was successful by checking git status
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -InformationAction 'Continue'"
+    Write-Information "`tgit status --porcelain"
     $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -InformationAction 'Continue'
 
     if (-not $gitStatus) {
