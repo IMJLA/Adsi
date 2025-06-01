@@ -40,7 +40,7 @@ Describe 'Invoke-CommandWithOutputPrefixTestVersion' {
 
         It 'should collect npm install output with expected ending lines' -Skip:(-not $npmAvailable) {
             # Execute npm install using the function
-            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -PassThru
+            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'npm' -ArgumentArray @('install') -WorkingDirectory $tempDir.FullName -PassThru -InformationAction 'SilentlyContinue'
 
             # Verify result is an array
             $result | Should -BeOfType [array]
@@ -61,20 +61,20 @@ Describe 'Invoke-CommandWithOutputPrefixTestVersion' {
         It 'should handle command execution without PassThru parameter' -Skip:(-not $npmAvailable) {
             # This test verifies the function doesn't throw when not using PassThru
             {
-                Invoke-CommandWithOutputPrefixTestVersion -Command 'npm' -ArgumentArray @('--version') -WorkingDirectory $tempDir.FullName
+                Invoke-CommandWithOutputPrefixTestVersion -Command 'npm' -ArgumentArray @('--version') -WorkingDirectory $tempDir.FullName -InformationAction 'SilentlyContinue'
             } | Should -Not -Throw
         }
 
         It 'should properly handle exit codes' {
             # Test with a command that should fail
             {
-                Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c exit 1' -PassThru
+                Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c exit 1' -PassThru -InformationAction 'SilentlyContinue'
             } | Should -Throw -ExpectedMessage '*Command failed with exit code 1*'
         }
 
         It 'should return output when PassThru is specified' {
             # Test with a simple command that has predictable output
-            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo test' -PassThru -OutputPrefix ''
+            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo test' -PassThru -InformationAction 'SilentlyContinue'
 
             $result | Should -Not -BeNullOrEmpty
             $result | Should -Contain 'test'
@@ -82,7 +82,7 @@ Describe 'Invoke-CommandWithOutputPrefixTestVersion' {
 
         It 'should apply output prefixes correctly' {
             # Test that output prefixing doesn't interfere with PassThru results
-            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo hello' -OutputPrefix 'PREFIX: ' -PassThru
+            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo hello' -OutputPrefix 'PREFIX: ' -PassThru -InformationAction 'SilentlyContinue'
 
             # The PassThru result should not contain the prefix (prefix is only for console display)
             $result | Should -Contain 'hello'
@@ -94,7 +94,7 @@ Describe 'Invoke-CommandWithOutputPrefixTestVersion' {
                 'TEST_VAR' = 'TestValue'
             }
 
-            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo %TEST_VAR%' -EnvironmentVariables $envVars -PassThru
+            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo %TEST_VAR%' -EnvironmentVariables $envVars -PassThru -InformationAction 'SilentlyContinue'
 
             $result | Should -Contain 'TestValue'
         }
@@ -111,13 +111,13 @@ Describe 'Invoke-CommandWithOutputPrefixTestVersion' {
 
         It 'should accept ArgumentArray parameter' {
             {
-                Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentArray @('/c', 'echo', 'test') -PassThru
+                Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentArray @('/c', 'echo', 'test') -PassThru -InformationAction 'SilentlyContinue'
             } | Should -Not -Throw
         }
 
         It 'should accept ArgumentString parameter' {
             {
-                Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo test' -PassThru
+                Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo test' -PassThru -InformationAction 'SilentlyContinue'
             } | Should -Not -Throw
         }
 
@@ -127,18 +127,16 @@ Describe 'Invoke-CommandWithOutputPrefixTestVersion' {
             # Mock Test-Path to verify the working directory is used
             Mock Test-Path { return $true } -Verifiable
 
-            try {
-                Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo test' -PassThru
-            } catch {
-                # We expect this might fail, but we're testing parameter handling
-            }
+            Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c echo test' -PassThru -InformationAction 'SilentlyContinue' -ErrorAction SilentlyContinue
+
         }
+
     }
 
     Context 'output handling edge cases' {
 
         It 'should handle commands with no output' {
-            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c rem silent command' -PassThru
+            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c rem silent command' -PassThru -InformationAction 'SilentlyContinue'
 
             # Result might be empty array or contain empty strings
             if ($result) {
@@ -148,10 +146,12 @@ Describe 'Invoke-CommandWithOutputPrefixTestVersion' {
 
         It 'should handle commands with large output' {
             # Generate a command that produces multiple lines of output
-            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c for /L %i in (1,1,5) do echo Line %i' -PassThru
+            $result = Invoke-CommandWithOutputPrefixTestVersion -Command 'cmd' -ArgumentString '/c for /L %i in (1,1,5) do echo Line %i' -PassThru -InformationAction 'SilentlyContinue'
 
             $result | Should -Not -BeNullOrEmpty
             $result.Count | Should -BeGreaterThan 1
         }
+
     }
+
 }

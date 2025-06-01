@@ -36,6 +36,7 @@
         WorkingDirectory     = $WorkingDirectory
         OutputPrefix         = "`t`t`t"
         EnvironmentVariables = $npmEnvironment
+        InformationAction    = 'Continue'
     }
 
     if ($PassThru) {

@@ -32,8 +32,6 @@
 
     )
 
-    $InformationPreference = 'Continue'
-
     # Set console to UTF-8 to handle unicode output properly
     $originalOutputEncoding = [Console]::OutputEncoding
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
