@@ -1073,12 +1073,8 @@ Task -name UnitTests -precondition $UnitTestPrereq -action {
     $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
     Write-Information "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
     $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
-
-    $PesterParameters = @{
-        'Configuration' = $PesterConfiguration
-    }
     Write-Information "`tInvoke-Pester -Configuration `$PesterConfiguration"
-    $null = Invoke-CommandWithOutputPrefix -Command 'Invoke-Pester' -Parameter $PesterParameters -InformationAction 'Continue' -OutputPrefix ''
+    Invoke-Pester -Configuration $PesterConfiguration
 
 } -description 'Perform unit tests using Pester.'
 
