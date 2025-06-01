@@ -53,8 +53,32 @@
     # Update baseUrl only if it is still set to the default value
     $configContent = $configContent -replace "baseUrl: '/'", "baseUrl: '/$ModuleName/'"
 
-    # Insert blank line after baseUrl comment for better formatting
-    $configContent = $configContent -replace "',\s*\/\/ Set the \/<baseUrl>\/", "',`r`n  // Set the /<baseUrl>/"
+    # Ensure double line spacing between top-level config elements
+    $topLevelElements = @(
+        'title:',
+        'tagline:',
+        'favicon:',
+        'url:',
+        'baseUrl:',
+        'organizationName:',
+        'projectName:',
+        'trailingSlash:',
+        'onBrokenLinks:',
+        'onBrokenMarkdownLinks:',
+        'i18n:',
+        'markdown:',
+        'themes:',
+        'presets:',
+        'themeConfig:'
+    )
+
+    foreach ($element in $topLevelElements) {
+        # Match the element followed by its value/block, then ensure double spacing before next element or comment
+        $configContent = $configContent -replace "($element[^,}]+[,}])\s*(?=\s*(?://|[a-zA-Z]+:|\}))", "`$1`r`n`r`n  "
+    }
+
+    # Clean up any triple or more line breaks that might have been created
+    $configContent = $configContent -replace '\r\n\r\n\r\n+', "`r`n`r`n"
 
     # Update organization name only if it is still set to the default value
     $configContent = $configContent -replace "organizationName: 'facebook'", "organizationName: '$GitHubOrgName'"
@@ -83,7 +107,7 @@
     $configContent = $configContent -replace "href: 'https://github.com/facebook/docusaurus'", "href: 'https://github.com/$GitHubOrgName/$ModuleName'"
 
     # Update editUrl only if it is still set to the default value
-    $configContent = $configContent -replace "editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/'", "editUrl: 'https://github.com/$GitHubOrgName/$ModuleName/tree/main/docs/online/$ModuleName/'"
+    $configContent = $configContent -replace "editUrl:\s*'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/'", "editUrl: 'https://github.com/$GitHubOrgName/$ModuleName/tree/main/docs/online/$ModuleName/'"
 
     # Update footer links
     $configContent = $configContent -replace "label: 'Tutorial',\s*to: '/docs/intro'", "label: 'ReadMe', to: '/docs/en-US/$ModuleName'"

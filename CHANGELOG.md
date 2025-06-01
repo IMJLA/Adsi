@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.380] - 2025-06-01
+### Added
+- add double line spacing
+
 ## [5.0.379] - 2025-06-01
 ### Changed
 - update docusaurus config
