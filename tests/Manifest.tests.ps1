@@ -246,6 +246,7 @@ Describe 'Git tagging' {
             $gitTagVersion = $matches[1]
         } else {
             $gitTagVersion = $null
+            pause
         }
 
     }
