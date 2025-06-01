@@ -1092,9 +1092,9 @@ Task -name SourceControl -action {
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue'"
     Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue'
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage) -InformationAction 'Continue'"
-    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue'
+    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue'
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue'"
-    $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue'
+    Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue'
 
     # Test if commit was successful by checking git status
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -PassThru -InformationAction 'Continue'"

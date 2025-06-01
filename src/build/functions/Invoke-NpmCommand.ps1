@@ -42,8 +42,8 @@
         $splat.PassThru = $true
     }
 
-    Write-Information "`t`t`$EnvironmentVariables = @{ 'FORCE_COLOR'='1'; 'NPM_CONFIG_COLOR'='always'; 'TERM'='xterm-256color'; 'COLUMNS'='200'; 'LINES'='50' }"
-    Write-Information "`t`tInvoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '$cmdArguments' -WorkingDirectory '$WorkingDirectory' -OutputPrefix `"``t``t``t`" -PassThru:`$$PassThru -EnvironmentVariables `$EnvironmentVariables"
+    Write-Verbose "`t`t`$EnvironmentVariables = @{ 'FORCE_COLOR'='1'; 'NPM_CONFIG_COLOR'='always'; 'TERM'='xterm-256color'; 'COLUMNS'='200'; 'LINES'='50' }"
+    Write-Verbose "`t`tInvoke-CommandWithOutputPrefix -Command 'cmd' -ArgumentString '$cmdArguments' -WorkingDirectory '$WorkingDirectory' -OutputPrefix `"``t``t``t`" -PassThru:`$$PassThru -EnvironmentVariables `$EnvironmentVariables"
     $output = Invoke-CommandWithOutputPrefix @splat
 
     if ($PassThru) {
