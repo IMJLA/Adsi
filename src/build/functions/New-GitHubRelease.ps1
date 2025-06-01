@@ -16,16 +16,18 @@
     }
 
     $releaseData = @{
-        tag_name         = $TagName
-        target_commitish = 'main'
-        name             = $ReleaseName
-        body             = $Body
-        draft            = $false
-        prerelease       = $false
+        'tag_name'         = $TagName
+        'target_commitish' = 'main'
+        'name'             = $ReleaseName
+        'body'             = $Body
+        'draft'            = $false
+        'prerelease'       = $false
     } | ConvertTo-Json
 
     $uri = "https://api.github.com/repos/$Repo/releases"
-    Write-Information "`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$headers -Body `$releaseData"
+    #Write-Information "`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$headers -Body `$releaseData"
+    Write-Information "`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers @{ 'Authorization' = `"Bearer $Token`" ; 'Accept' = 'application/vnd.github.v3+json' ; 'Content-Type' = 'application/json' } -Body `"$releaseData`""
+    pause
 
     if ($PSCmdlet.ShouldProcess("Repository: $Repo, Tag: $TagName", 'Create GitHub Release')) {
 
