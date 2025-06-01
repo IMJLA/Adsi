@@ -26,17 +26,12 @@
 
     $uri = "https://api.github.com/repos/$Repo/releases"
     Write-Information "`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers @{ 'Authorization' = `"Bearer `$Token`" ; 'Accept' = 'application/vnd.github.v3+json' ; 'Content-Type' = 'application/json' } -Body '$releaseData'"
-    pause
 
     if ($PSCmdlet.ShouldProcess("Repository: $Repo, Tag: $TagName", 'Create GitHub Release')) {
 
-        try {
-            $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $releaseData
-            Start-Sleep -Seconds 1 # wait for the API to process the request to avoid HTTP 422 Unprocessable Entity or other errors
-            return $response
-        } catch {
-            throw "Failed to create release: $($_.Exception.Message)"
-        }
+        $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $releaseData -ErrorAction Stop
+        Start-Sleep -Seconds 1 # wait for the API to process the request to avoid HTTP 422 Unprocessable Entity or other errors
+        return $response
 
     }
 

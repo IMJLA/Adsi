@@ -12,7 +12,7 @@
     RootModule            = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion         = '5.0.375'
+    ModuleVersion         = '5.0.376'
 
     # Supported PSEditions
     CompatiblePSEditions  = @('Core', 'Desktop')
@@ -57,10 +57,10 @@
     ProcessorArchitecture = 'None'
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules       = @()
+    # RequiredModules       = @()
 
     # Assemblies that must be loaded prior to importing this module
-    RequiredAssemblies    = @()
+    # RequiredAssemblies    = @()
 
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
     # ScriptsToProcess = @()
