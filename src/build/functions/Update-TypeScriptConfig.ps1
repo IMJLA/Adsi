@@ -53,6 +53,9 @@
     # Update baseUrl only if it is still set to the default value
     $configContent = $configContent -replace "baseUrl: '/'", "baseUrl: '/$ModuleName/'"
 
+    # Insert blank line after baseUrl comment for better formatting
+    $configContent = $configContent -replace "',\s*\/\/ Set the \/<baseUrl>\/", ",`r`n// Set the /<baseUrl>/"
+
     # Update organization name only if it is still set to the default value
     $configContent = $configContent -replace "organizationName: 'facebook'", "organizationName: '$GitHubOrgName'"
 
@@ -65,7 +68,7 @@
     }
 
     # Always disable the blog
-    $configContent = $configContent -replace 'blog: \{[^}]+\},', 'blog: false,'
+    $configContent = $configContent -replace 'blog: \{[\s\S]*?\}(?=,\s*theme: \{)', 'blog: false'
 
     # Always Remove blog navbar item
     $configContent = $configContent -replace "\{to: '/blog', label: 'Blog', position: 'left'\},?\s*", ''
@@ -78,6 +81,9 @@
 
     # Update GitHub link
     $configContent = $configContent -replace "href: 'https://github.com/facebook/docusaurus'", "href: 'https://github.com/$GitHubOrgName/$ModuleName'"
+
+    # Update editUrl only if it is still set to the default value
+    $configContent = $configContent -replace "editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/'", "editUrl: 'https://github.com/$GitHubOrgName/$ModuleName/tree/main/docs/online/$ModuleName/'"
 
     # Update footer links
     $configContent = $configContent -replace "label: 'Tutorial',\s*to: '/docs/intro'", "label: 'ReadMe', to: '/docs/en-US/$ModuleName'"
