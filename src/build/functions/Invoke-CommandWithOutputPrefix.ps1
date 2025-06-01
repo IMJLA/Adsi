@@ -51,14 +51,14 @@
     # Get original location before changing directory
     $originalLocation = Get-Location
 
+    # Eecute the command and handle output using a PowerShell job
+    Write-Verbose "$OutputPrefix`Start-Job -ScriptBlock {...} -ArgumentList '$Command', @('$($FinalArgumentArray -join "','")'), '$WorkingDirectory', `$EnvironmentVariables"
+
+    # These take place inside the job, but we don't want this debug output mixed up in the output stream
+    Write-Verbose "`t$OutputPrefix`Set-Location '$WorkingDirectory'"
+    Write-Information "`t$OutputPrefix`& $Command $FinalArgumentString"
+
     try {
-
-        # Non-PassThru mode, execute the command and handle output using a PowerShell job
-        Write-Information "$OutputPrefix`Start-Job -ScriptBlock {...} -ArgumentList '$Command', @('$($FinalArgumentArray -join "','")'), '$WorkingDirectory', `$EnvironmentVariables"
-
-        # These take place inside the job, but we don't want this debug output mixed up in the output stream
-        Write-Information "`t$OutputPrefix`Set-Location '$WorkingDirectory'"
-        Write-Information "`t$OutputPrefix`& $Command $FinalArgumentString"
 
         # Use Start-Job to run npm commands in isolation
         $job = Start-Job -ScriptBlock {
@@ -86,9 +86,12 @@
                 # Output the results and exit code separately
                 $output
                 Write-Output "EXITCODE:$LASTEXITCODE"
+
             } catch {
+
                 Write-Error $_.Exception.Message
                 Write-Output 'EXITCODE:1'
+
             }
         } -ArgumentList $Command, $FinalArgumentArray, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix
 
@@ -133,8 +136,6 @@
 
         # Display the output with prefixes, preserving line breaks. Exclude the redundant second half of the output.
         $output = Write-ConsoleOutput -Output $ExcessiveOutput -Prefix "`t`t$OutputPrefix" -First ($ExcessiveOutput.Count / 2) -PassThru -NoConsoleOutput:$NoConsoleOutput
-
-        ##}
 
     } finally {
 
