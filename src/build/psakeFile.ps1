@@ -1097,18 +1097,18 @@ Task -name SourceControl -action {
     Write-Information "`t& git commit -m `"$CommitMessage`""
     $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue' -OutputPrefix ''
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`tgit push origin $CurrentBranch"
+    Write-Information "`t& git push origin $CurrentBranch"
     $null = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue' -OutputPrefix ''
 
     # Test if commit was successful by checking git status
     Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`tgit status --porcelain"
+    Write-Information "`t& git status --porcelain"
     $gitStatus = Invoke-CommandWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -InformationAction 'Continue' -OutputPrefix ''
 
-    if (-not $gitStatus) {
-        Write-InfoColor "`t# Successfully committed and pushed changes to source control." -ForegroundColor Green
-    } else {
+    if ($gitStatus) {
         Write-Error 'Failed to commit all changes to source control'
+    } else {
+        Write-InfoColor "`t# Successfully committed and pushed changes to source control." -ForegroundColor Green
     }
 
 } -description 'git add, commit, and push'
@@ -1247,14 +1247,18 @@ Task -name RemoveScriptScopedVariables -action {
 } -description 'Remove script-scoped variables to clean up the environment.'
 
 Task -name ReturnToStartingLocation -depends RemoveScriptScopedVariables -action {
-    Write-Information "`tSet-Location '$($StartingLocation.Path)'"
+
+    $currentLocation = Get-Location -PSProvider FileSystem
+    $PartialRelativePath = [IO.Path]::GetRelativePath($CurrentDirectory.Path, $StartingLocation.Path)
+    $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
+    Write-Information "`tSet-Location '$FullRelativePath'"
     Set-Location $StartingLocation
 
     # Test if we're back at the starting location
     $currentLocation = Get-Location
     if ($currentLocation.Path -eq $StartingLocation.Path) {
-        Write-InfoColor "`t# Successfully returned to starting location: $($StartingLocation.Path)" -ForegroundColor Green
+        Write-InfoColor "`t# Successfully returned to starting location: $FullRelativePath" -ForegroundColor Green
     } else {
-        Write-Error "Failed to return to starting location. Current: $($currentLocation.Path), Expected: $($StartingLocation.Path)"
+        Write-Error "Failed to return to starting location. Current: $($currentLocation.Name), Expected: $FullRelativePath"
     }
 } -description 'Return to the original working directory.'

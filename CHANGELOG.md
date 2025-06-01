@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.350] - 2025-05-31
+### Changed
+- use relative paths
+
 ## [5.0.349] - 2025-05-31
 ### Fixed
 - fix indentation
