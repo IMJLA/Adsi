@@ -12,7 +12,7 @@
     RootModule            = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion         = '5.0.374'
+    ModuleVersion         = '5.0.375'
 
     # Supported PSEditions
     CompatiblePSEditions  = @('Core', 'Desktop')
@@ -116,7 +116,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags       = @( 'Adsi', 'Active Directory', 'ActiveDirectory', 'LDAP', 'WinNT', 'Directory Services' )
+            Tags       = @( 'Adsi', 'ActiveDirectory', 'LDAP', 'WinNT')
 
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/IMJLA/Adsi/blob/main/LICENSE'
