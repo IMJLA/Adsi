@@ -1047,7 +1047,26 @@ Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
-Task -name FixOnlineHelpWebsite -depends BuildOnlineHelpWebsite -action {
+Task -name InstallTypeScriptCompiler -depends BuildOnlineHelpWebsite -Action {
+
+    $TypeScriptPath = (Get-Command tsc -ErrorAction SilentlyContinue).Source
+
+    if (-not $TypeScriptPath) {
+        # Install TypeScript compiler globally using npm
+        Write-Information "`t& npm install -g typescript"
+        & npm install -g typescript
+    }
+
+    $TypeScriptPath = (Get-Command tsc -ErrorAction SilentlyContinue).Source
+    if ($TypeScriptPath) {
+        Write-InfoColor "`t# TypeScript compiler is installed" -ForegroundColor Green
+    } else {
+        Write-Error 'Failed to install TypeScript compiler'
+    }
+
+}
+
+Task -name FixOnlineHelpWebsite -depends InstallTypeScriptCompiler -action {
 
     Write-Verbose "`tUpdate-TypescriptConfig -GitHubOrgName '$GitHubOrgName' -DocsOnlineHelpDir '$DocsOnlineHelpDir' -ModuleInfo `$script:ManifestTest"
     Update-TypeScriptConfig -GitHubOrgName $GitHubOrgName -DocsOnlineHelpDir $DocsOnlineHelpDir -ModuleInfo $script:ManifestTest

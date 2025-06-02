@@ -5,8 +5,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Adsi',
 
+'  //Set the title of your site here
+  title: 'Adsi',
   tagline: 'Use Active Directory Service Interfaces to query LDAP and WinNT directories',
 
   favicon: 'img/logo.svg',
@@ -74,8 +75,7 @@ const config: Config = {
 
   navbar: {
       title: 'Adsi',
-
-  logo: {
+      logo: {
         alt: 'Adsi Logo',
         src: 'img/logo.svg',
       },
@@ -94,8 +94,7 @@ const config: Config = {
       links: [
         {
           title: 'Docs',
-
-  items: [
+          items: [
             {
               label: 'ReadMe', to: '/docs/en-US/Adsi',
             },
@@ -112,8 +111,7 @@ const config: Config = {
         },
         {
           title: 'More',
-
-  items: [
+          items: [
             {
               label: 'Blog',
               to: '/blog',
