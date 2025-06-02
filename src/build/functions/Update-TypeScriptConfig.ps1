@@ -58,6 +58,7 @@
     # Update baseUrl only if it is still set to the default value
     $configContent = $configContent -replace "baseUrl: '/'", "baseUrl: '/$ModuleName/'"
 
+    # Add a blank line and a comment before the title
     $configContent = $configContent -replace 'const config: Config = {\s*title:', "const config: Config = {`r`n`r`n  // Set the title of your site here`r`n  title:"
 
     # Ensure double line spacing between top-level config elements
@@ -81,7 +82,7 @@
 
     foreach ($element in $topLevelElements) {
         # Match the element followed by its value/block, optional whitespace, optional inline comments, then ensure double spacing before next element or comment
-        $configContent = $configContent -replace "($element[^,}]+[,}])([ ]*\/\/[^\r\n]*)?\s*(?=\s*(?:\/\/|[a-zA-Z]+:|\}))", "`$1`$2`r`n`r`n  "
+        #$configContent = $configContent -replace "($element[^,}]+[,}])([ ]*\/\/[^\r\n]*)?\s*(?=\s*(?:\/\/|[a-zA-Z]+:|\}))", "`$1`$2`r`n`r`n  "
     }
 
     # Clean up any triple or more line breaks that might have been created
@@ -147,7 +148,6 @@ title: 'Community',
     # Add MermaidJS support if not present
     if ($configContent -notmatch 'markdown:') {
         $mermaidConfig = @'
-
   // Enable MermaidJS
   markdown: {
     mermaid: true,
