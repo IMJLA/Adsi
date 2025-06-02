@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.388] - 2025-06-01
+### Fixed
+- fix docusaurus config
+
 ## [5.0.387] - 2025-06-01
 ### Changed
 - debug

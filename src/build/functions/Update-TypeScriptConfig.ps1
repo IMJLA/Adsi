@@ -73,7 +73,6 @@
         'trailingSlash:',
         'onBrokenLinks:',
         'onBrokenMarkdownLinks:',
-        'i18n:',
         'markdown:',
         'themes:',
         'presets:',
@@ -82,7 +81,7 @@
 
     foreach ($element in $topLevelElements) {
         # Match the element followed by its value/block, optional whitespace, optional inline comments, then ensure double spacing before next element or comment
-        #$configContent = $configContent -replace "($element[^,}]+[,}])([ ]*\/\/[^\r\n]*)?\s*(?=\s*(?:\/\/|[a-zA-Z]+:|\}))", "`$1`$2`r`n`r`n  "
+        $configContent = $configContent -replace "($element[^,}]+[,}])([ ]*\/\/[^\r\n]*)?\s*(?=\s*(?:\/\/|[a-zA-Z]+:|\}))", "`$1`$2`r`n`r`n  "
     }
 
     # Clean up any triple or more line breaks that might have been created

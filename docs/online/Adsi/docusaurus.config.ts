@@ -9,10 +9,12 @@ const config: Config = {
   // Set the title of your site here
   title: 'Adsi',
   tagline: 'Use Active Directory Service Interfaces to query LDAP and WinNT directories',
+
   favicon: 'img/logo.svg',
 
   // Set the production url of your site here
   url: 'https://imjla.github.io',
+
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/Adsi/',
@@ -20,9 +22,11 @@ const config: Config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'IMJLA', // Usually your GitHub org/user name.
+
   projectName: 'Adsi', // Usually your repo name.
 
   onBrokenLinks: 'throw',
+
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -48,7 +52,8 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/IMJLA/Adsi/tree/main/docs/online/Adsi/',
-        },
+
+  },
         blog: false,
         theme: {
           customCss: './src/css/custom.css',
@@ -60,7 +65,8 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
-    navbar: {
+
+  navbar: {
       title: 'Adsi',
       logo: {
         alt: 'Adsi Logo',
