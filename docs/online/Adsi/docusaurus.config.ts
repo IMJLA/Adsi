@@ -23,9 +23,7 @@ const config: Config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'IMJLA', // Usually your GitHub org/user name.
 
-  projectName: 'Adsi',
-
-  trailingSlash: false, // Usually your repo name.
+  projectName: 'Adsi', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 

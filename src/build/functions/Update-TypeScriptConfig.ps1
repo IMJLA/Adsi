@@ -36,6 +36,11 @@
     # Always update tagline to the latest module description
     $configContent = $configContent -replace "tagline: '[^']*'", "tagline: '$ModuleDescription'"
 
+    # Add trailingSlash configuration after projectName only if it is still set to the default value (missing)
+    if ($configContent -notmatch 'trailingSlash:') {
+        $configContent = $configContent -replace "(projectName: '$ModuleName',)([ ]*\/\/[^\r\n]*)?", "`$1`$2`r`n`r`n  trailingSlash: false,"
+    }
+
     # Update favicon only if the favicon is in SVG format in the img directory
     if (
         (
@@ -87,11 +92,6 @@
 
     # Update project name only if it is still set to the default value
     $configContent = $configContent -replace "projectName: 'docusaurus'", "projectName: '$ModuleName'"
-
-    # Add trailingSlash configuration after projectName only if it is still set to the default value (missing)
-    if ($configContent -notmatch 'trailingSlash:') {
-        $configContent = $configContent -replace "(projectName: '$ModuleName',)", "`$1`r`n`r`n  trailingSlash: false,"
-    }
 
     # Always disable the blog
     $configContent = $configContent -replace 'blog: \{[\s\S]*?\}(?=,\s*theme: \{)', 'blog: false'

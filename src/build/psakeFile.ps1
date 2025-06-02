@@ -1068,7 +1068,7 @@ Task -name InstallTypeScriptCompiler -depends BuildOnlineHelpWebsite -Action {
 
 Task -name FixOnlineHelpWebsite -depends InstallTypeScriptCompiler -action {
 
-    Write-Verbose "`tUpdate-TypescriptConfig -GitHubOrgName '$GitHubOrgName' -DocsOnlineHelpDir '$DocsOnlineHelpDir' -ModuleInfo `$script:ManifestTest"
+    Write-Information "`tUpdate-TypescriptConfig -GitHubOrgName '$GitHubOrgName' -DocsOnlineHelpDir '$DocsOnlineHelpDir' -ModuleInfo `$script:ManifestTest"
     Update-TypeScriptConfig -GitHubOrgName $GitHubOrgName -DocsOnlineHelpDir $DocsOnlineHelpDir -ModuleInfo $script:ManifestTest
     Write-InfoColor "`t# Successfully fixed online help website configuration." -ForegroundColor Green
 
