@@ -53,11 +53,11 @@
     # Update baseUrl only if it is still set to the default value
     $configContent = $configContent -replace "baseUrl: '/'", "baseUrl: '/$ModuleName/'"
 
-    $configContent = $configContent -replace 'const config: Config = {', "const config: Config = {`r`n`r`n'  //Set the title of your site here"
+    $configContent = $configContent -replace 'const config: Config = {\s*title:', "const config: Config = {`r`n`r`n  //Set the title of your site here`r`n  title:"
 
     # Ensure double line spacing between top-level config elements
     $topLevelElements = @(
-        'Config = {\s*title:',
+        '//Set the title of your site here\s*title:',
         'tagline:',
         'favicon:',
         'url:',

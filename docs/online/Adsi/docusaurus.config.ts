@@ -6,8 +6,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
 
-'  //Set the title of your site here
+  //Set the title of your site here
   title: 'Adsi',
+
   tagline: 'Use Active Directory Service Interfaces to query LDAP and WinNT directories',
 
   favicon: 'img/logo.svg',
