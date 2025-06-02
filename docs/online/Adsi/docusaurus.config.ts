@@ -6,36 +6,35 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
 
-  //Set the title of your site here
+  // Set the title of your site here
   title: 'Adsi',
-
   tagline: 'Use Active Directory Service Interfaces to query LDAP and WinNT directories',
 
   favicon: 'img/logo.svg',
 
   // Set the production url of your site here
-  url: 'https://imjla.github.io',
 
+  url: 'https://imjla.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
+
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/Adsi/',
 
   // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'IMJLA',
 
-  // Usually your GitHub org/user name.
+  // If you aren't using GitHub pages, you don't need these.
+  organizationName: 'IMJLA', // Usually your GitHub org/user name.
+
   projectName: 'Adsi',
 
-  trailingSlash: false,
-
-  // Usually your repo name.
+  trailingSlash: false, // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
+
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
