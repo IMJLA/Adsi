@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.403] - 2025-06-02
+### Changed
+- debug
+
+## [5.0.402] - 2025-06-02
+### Changed
+- simplify
+
+## [5.0.401] - 2025-06-02
+### Changed
+- debug
+
+## [5.0.400] - 2025-06-02
+### Changed
+- simplify
+
+## [5.0.399] - 2025-06-02
+### Changed
+- simplify yarn test
+
+## [5.0.398] - 2025-06-02
+### Changed
+- debug
+
+## [5.0.397] - 2025-06-02
+### Changed
+- debug
+
+## [5.0.396] - 2025-06-02
+### Changed
+- debug
+
+## [5.0.395] - 2025-06-02
+### Changed
+- debug
+
+## [5.0.394] - 2025-06-02
+### Changed
+- debug
+
+## [5.0.393] - 2025-06-02
+### Changed
+- retry with yarn installed
+
+## [5.0.392] - 2025-06-02
+### Added
+- add yarn prereqs
+
+## [5.0.391] - 2025-06-02
+### Changed
+- rebuild docusaurus site
+
+## [5.0.390] - 2025-06-02
+### Changed
+- retry docusaurus build
+
+## [5.0.389] - 2025-06-02
+### Changed
+- update docusaurus config
+
 ## [5.0.388] - 2025-06-01
 ### Fixed
 - fix docusaurus config

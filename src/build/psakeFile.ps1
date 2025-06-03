@@ -236,6 +236,9 @@ FixModule, # Build the module.
 UpdateChangeLog, # Add an entry to the Change Log.
 DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
 BuildUpdatableHelp, # Create Updateable help documentation.
+CreateOnlineHelpFolder, # Create a folder for the Online Help website.
+CreateOnlineHelpScaffolding, # Create the Online Help website scaffolding (Docusaurus).
+UpdateOnlineHelpDependencies, # Add Mermaid theme dependency to the Online Help website.
 FixOnlineHelpWebsite, # Fix the online help website configuration.
 UnitTests, # Perform unit testing.
 SourceControl, # Commit changes to source control.
@@ -860,7 +863,7 @@ Task -name CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
 
 
 # Create the Online help documentation website.
-$OnlineHelpScaffoldingPrereq = {
+$OnlineHelpScaffoldingMissing = {
 
     # Find prerequisites for creating updatable help files.
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
@@ -882,7 +885,7 @@ $OnlineHelpScaffoldingPrereq = {
 
 }
 
-Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrereq -action {
+Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingMissing -action {
 
     $Location = Get-Location
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
@@ -896,10 +899,8 @@ Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrere
         Write-InfoColor "`t# Docusaurus scaffolding already exists." -ForegroundColor Green
     } else {
 
-        # & cmd /c "npx create-docusaurus@latest $ModuleName classic --typescript"
-
+        Write-InfoColor "`t> npx create-docusaurus@latest $ModuleName classic --typescript" -ForegroundColor Cyan
         try {
-            Write-InfoColor "`t> npx create-docusaurus@latest $ModuleName classic --typescript" -ForegroundColor Cyan
 
             # Use Start-Process for better control over npx output
             $processArgs = @{
@@ -913,19 +914,21 @@ Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrere
 
             $process = Start-Process @processArgs
 
-            if ($process.ExitCode -eq 0) {
-                # Test if scaffolding was created successfully
-                if (Test-Path $PackageJsonPath) {
-                    Write-InfoColor "`t# Successfully created Docusaurus scaffolding." -ForegroundColor Green
-                } else {
-                    Write-Error 'Failed to create Docusaurus scaffolding - package.json not found'
-                }
-            } else {
-                Write-Error "Failed to create Docusaurus scaffolding - npx exited with code $($process.ExitCode)"
-            }
         } catch {
             Write-Error "Failed to create Docusaurus scaffolding: $_"
         }
+
+        if ($process.ExitCode -eq 0) {
+            # Test if scaffolding was created successfully
+            if (Test-Path $PackageJsonPath) {
+                Write-InfoColor "`t# Successfully created Docusaurus scaffolding." -ForegroundColor Green
+            } else {
+                Write-Error 'Failed to create Docusaurus scaffolding - package.json not found'
+            }
+        } else {
+            Write-Error "Failed to create Docusaurus scaffolding - npx exited with code $($process.ExitCode)"
+        }
+
     }
 
     Set-Location $Location
@@ -934,6 +937,7 @@ Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingPrere
 
 Task -name VerifyNpmCache -action {
     # This is not normally needed, but it can help if there are issues with npm dependencies. Task is disabled for now.
+
     # Clear npm cache to ensure clean installation
     Write-Verbose "`tInvoke-NpmCommand -Command 'cache verify' -WorkingDirectory '$DocsOnlineHelpDir'"
     Invoke-NpmCommand -Command 'cache verify' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
@@ -941,7 +945,17 @@ Task -name VerifyNpmCache -action {
 
 } -description 'Clear npm cache to ensure clean dependency installation.'
 
-Task -name InstallOnlineHelpDependencies -depends CreateOnlineHelpScaffolding -action {
+
+
+Task -name UpdateOnlineHelpDependencies -action {
+    Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
+    Write-Information "`t& yarn add @docusaurus/theme-mermaid"
+    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'yarn' -ArgumentArray @('add', '@docusaurus/theme-mermaid') -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
+    Invoke-CommandWithOutputPrefix -Command 'yarn' -ArgumentArray @('add', '@docusaurus/theme-mermaid') -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop -InformationAction 'Continue' -OutputPrefix ''
+    Write-InfoColor "`t# Successfully added Mermaid theme dependency to the Online Help website" -ForegroundColor Green
+} -description 'Add Mermaid theme dependency to the Online Help website using yarn.'
+
+Task -name InstallOnlineHelpDependencies -action {
 
     # npm install
     Write-Verbose "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
@@ -1047,29 +1061,10 @@ Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
-Task -name InstallTypeScriptCompiler -depends BuildOnlineHelpWebsite -Action {
+Task -name FixOnlineHelpWebsite -depends BuildOnlineHelpWebsite -action {
 
-    $TypeScriptPath = (Get-Command tsc -ErrorAction SilentlyContinue).Source
-
-    if (-not $TypeScriptPath) {
-        # Install TypeScript compiler globally using npm
-        Write-Information "`t& npm install -g typescript"
-        & npm install -g typescript
-    }
-
-    $TypeScriptPath = (Get-Command tsc -ErrorAction SilentlyContinue).Source
-    if ($TypeScriptPath) {
-        Write-InfoColor "`t# TypeScript compiler is installed" -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to install TypeScript compiler'
-    }
-
-}
-
-Task -name FixOnlineHelpWebsite -depends InstallTypeScriptCompiler -action {
-
-    Write-Information "`tUpdate-TypescriptConfig -GitHubOrgName '$GitHubOrgName' -DocsOnlineHelpDir '$DocsOnlineHelpDir' -ModuleInfo `$script:ManifestTest"
-    Update-TypeScriptConfig -GitHubOrgName $GitHubOrgName -DocsOnlineHelpDir $DocsOnlineHelpDir -ModuleInfo $script:ManifestTest
+    Write-Verbose "`tUpdate-DocusaurusConfig -GitHubOrgName '$GitHubOrgName' -DocsOnlineHelpDir '$DocsOnlineHelpDir' -ModuleInfo `$script:ManifestTest"
+    Update-DocusaurusConfig -GitHubOrgName $GitHubOrgName -DocsOnlineHelpDir $DocsOnlineHelpDir -ModuleInfo $script:ManifestTest -InformationAction 'Continue'
     Write-InfoColor "`t# Successfully fixed online help website configuration." -ForegroundColor Green
 
 } -description 'Fix the online help website configuration to use module-specific settings instead of default template.'
