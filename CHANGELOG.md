@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.407] - 2025-06-06
+### Changed
+- cleanup psakefile and update tsconfig.json
+
 ## [5.0.406] - 2025-06-06
 ### Fixed
 - fix tsconfig error
