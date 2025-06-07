@@ -949,11 +949,11 @@ Task -name VerifyNpmCache -action {
 
 Task -name UpdateOnlineHelpDependencies -action {
     Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
-    Write-Information "`t& yarn add @docusaurus/theme-mermaid"
-    Write-Verbose "`tInvoke-CommandWithOutputPrefix -Command 'yarn' -ArgumentArray @('add', '@docusaurus/theme-mermaid') -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
-    Invoke-CommandWithOutputPrefix -Command 'yarn' -ArgumentArray @('add', '@docusaurus/theme-mermaid') -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop -InformationAction 'Continue' -OutputPrefix ''
+    Write-Information "`t& npm install @docusaurus/theme-mermaid"
+    Write-Verbose "`tInvoke-NpmCommand -Command 'install @docusaurus/theme-mermaid' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
+    Invoke-NpmCommand -Command 'install @docusaurus/theme-mermaid' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
     Write-InfoColor "`t# Successfully added Mermaid theme dependency to the Online Help website" -ForegroundColor Green
-} -description 'Add Mermaid theme dependency to the Online Help website using yarn.'
+} -description 'Add Mermaid theme dependency to the Online Help website using npm.'
 
 Task -name InstallOnlineHelpDependencies -action {
 
