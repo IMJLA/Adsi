@@ -59,7 +59,7 @@
 
         # Use Start-Job to run npm commands in isolation
         $job = Start-Job -ScriptBlock {
-            param($Command, $ArgumentsArray, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix)
+            param($Command, $ArgumentsArray, $WorkingDirectory, $EnvironmentVariables)
 
             # Apply environment variables
             foreach ($key in $EnvironmentVariables.Keys) {
@@ -90,7 +90,7 @@
                 Write-Output 'EXITCODE:1'
 
             }
-        } -ArgumentList $Command, $FinalArgumentArray, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix
+        } -ArgumentList $Command, $FinalArgumentArray, $WorkingDirectory, $EnvironmentVariables
 
         # Wait for job to complete
         Wait-Job $job | Out-Null

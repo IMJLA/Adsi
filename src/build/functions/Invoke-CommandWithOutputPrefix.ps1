@@ -57,7 +57,7 @@
 
         # Use Start-Job to run commands in isolation
         $job = Start-Job -ScriptBlock {
-            param($Command, $ArgumentArray, $Parameter, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix)
+            param($Command, $ArgumentArray, $Parameter, $WorkingDirectory, $EnvironmentVariables)
 
             # Apply environment variables
             foreach ($key in $EnvironmentVariables.Keys) {
@@ -89,7 +89,7 @@
                 Write-Output 'EXITCODE:1'
 
             }
-        } -ArgumentList $Command, $ArgumentArray, $Parameter, $WorkingDirectory, $EnvironmentVariables, $OutputPrefix
+        } -ArgumentList $Command, $ArgumentArray, $Parameter, $WorkingDirectory, $EnvironmentVariables
 
         # Wait for job to complete
         Wait-Job $job | Out-Null
@@ -111,7 +111,7 @@
         }
 
         # Display the output with prefixes, preserving ANSI color codes
-        $result = Write-ConsoleOutput -Output $output -Prefix "`t`t$OutputPrefix" -PassThru -NoConsoleOutput:$NoConsoleOutput
+        $null = Write-ConsoleOutput -Output $output -Prefix "`t`t$OutputPrefix" -PassThru -NoConsoleOutput:$NoConsoleOutput
 
     } finally {
 

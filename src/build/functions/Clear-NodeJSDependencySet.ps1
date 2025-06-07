@@ -67,11 +67,11 @@
 
     # Try different installation strategies
     $installStrategies = @(
-        'install',
-        'install --no-package-lock --no-optional --legacy-peer-deps',
-        'install --force --no-optional --legacy-peer-deps',
-        'ci --legacy-peer-deps',
-        'install --prefer-offline --no-audit --legacy-peer-deps'
+        'install' #,
+        #'install --no-package-lock --no-optional --legacy-peer-deps',
+        #'install --force --no-optional --legacy-peer-deps',
+        #'ci --legacy-peer-deps',
+        #'install --prefer-offline --no-audit --legacy-peer-deps'
     )
 
     $installSuccess = $false
@@ -102,20 +102,6 @@
     if ($installSuccess -and (Test-Path $NodeModulesPath)) {
         Write-InfoColor "`t# Successfully cleared and reinstalled Node.js dependencies." -ForegroundColor Green
     } else {
-        # Last resort: try yarn if available
-        Write-Information "`t# Trying yarn as last resort"
-        try {
-            if (Get-Command yarn -ErrorAction SilentlyContinue) {
-                & yarn install --no-lockfile --legacy-peer-deps --cwd $WorkingDirectory
-                if (Test-Path $NodeModulesPath) {
-                    Write-InfoColor "`t# Successfully installed dependencies using yarn." -ForegroundColor Green
-                    return
-                }
-            }
-        } catch {
-            Write-Information "`t# Yarn installation also failed"
-        }
-
         throw 'Failed to reinstall Node.js dependencies after trying multiple strategies. Consider updating Node.js version or checking filesystem permissions.'
     }
 }

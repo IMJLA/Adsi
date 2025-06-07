@@ -2,7 +2,7 @@
 
     # ToDo: Use the TypeScript Compiler API or Bun to update the configuration file instead of string manipulation.
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
 
     param (
         # The directory containing the Docusaurus website
@@ -234,7 +234,8 @@ title: 'Community',
     # Remove any trailing blank lines at the end of the file
     $configContent = "$($configContent.Trim())"
 
-    Write-Information "`tSet-Content -LiteralPath '$configPath' -Value `$configContent -Encoding UTF8"
-    Set-Content -LiteralPath $configPath -Value $configContent -Encoding UTF8
-
+    if ($PSCmdlet.ShouldProcess($configPath, 'Update Docusaurus configuration')) {
+        Write-Information "`tSet-Content -LiteralPath '$configPath' -Value `$configContent -Encoding UTF8"
+        Set-Content -LiteralPath $configPath -Value $configContent -Encoding UTF8
+    }
 }

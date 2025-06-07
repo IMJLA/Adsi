@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.408] - 2025-06-07
+### Fixed
+- fix linting issues
+
 ## [5.0.407] - 2025-06-06
 ### Changed
 - cleanup psakefile and update tsconfig.json
