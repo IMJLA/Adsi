@@ -229,7 +229,7 @@ Properties {
     [hashtable]$findCopyDirSplat = $IO + @{ 'BuildCopyDirectoryPath' = $BuildCopyDirectories } # Splat for Find-BuildCopyDirectory
     [hashtable]$removeExtraBuildFileSplat = $IO # Splat for Remove-ExtraBuildFile
     [hashtable]$changeLogSplat = $IO + @{ 'ChangeLog' = $ChangeLog } # Splat for Update-BuildChangeLog
-    [hashtable]$installTempModuleSplat = $ModuleNameSplat + $IO # Splat for Install-TempModule
+    [hashtable]$installTempModuleSplat = $ModuleNameSplat + $IO + @{ 'ModulePath' = $BuildOutDir }# Splat for Install-TempModule
     [hashtable]$importModuleSplat = $ModuleNameSplat + $IO # Splat for Import-BuildModule
     [hashtable]$updateMarkdownHelpSplat = $IO + @{ 'DocsMarkdownDir' = $DocsMarkdownDir } # Splat for Update-BuildMarkdownHelp
     [hashtable]$removeModuleSplat = $ModuleNameSplat + $IO # Splat for Remove-BuildModule
@@ -309,8 +309,8 @@ Properties {
         'NoPublish'  = $NoPublish
     }
 
-    # Splat for Test-OnlineHelpScaffoldingMissing
-    [hashtable]$TestOnlineHelpScaffoldingParams = $ModuleNameSplat + $lineSplat + @{
+    # Splat for Test-OnlineHelpWebsite
+    [hashtable]$TestOnlineHelpWebsiteSplat = $ModuleNameSplat + $lineSplat + $IO + @{
         'DocsOnlineHelpRoot' = $DocsOnlineHelpRoot
         'Root'               = $PSScriptRoot
     }
@@ -570,7 +570,7 @@ Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $D
 
 Task -name InstallTempModule -depends DeleteMarkdownHelp -action {
 
-    $script:ModuleInstallDir = Install-TempModule -ModuleVersion $script:NewModuleVersion -Path $script:BuildOutputDir @installTempModuleSplat
+    $script:ModuleInstallDir = Install-TempModule @installTempModuleSplat
 
 } -description 'Install the module so it can be loaded by name for help generation.'
 
@@ -668,9 +668,9 @@ Task -name CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
 
 
 # Create the Online help documentation website.
-$OnlineHelpScaffoldingMissing = { -not (Test-OnlineHelpWebsite @TestOnlineHelpScaffoldingParams @IO) }
+$OnlineHelpWebsiteMissing = { -not (Test-OnlineHelpWebsite @TestOnlineHelpWebsiteSplat) }
 
-Task -name CreateOnlineHelpWebsite -precondition $OnlineHelpScaffoldingMissing -action {
+Task -name CreateOnlineHelpWebsite -precondition $OnlineHelpWebsiteMissing -action {
 
     New-OnlineHelpWebsite @onlineHelpScaffoldingSplat
 

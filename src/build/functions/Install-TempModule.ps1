@@ -10,14 +10,11 @@
     .PARAMETER ModuleName
     The name of the module to install.
 
-    .PARAMETER ModuleVersion
-    The version of the module to install.
-
-    .PARAMETER Path
+    .PARAMETER ModulePath
     The directory containing the built module files.
 
     .EXAMPLE
-    Install-TempModule -ModuleName 'MyModule' -ModuleVersion '1.0.0' -Path 'C:\Build\Output'
+    Install-TempModule -ModuleName 'MyModule' -Path 'C:\Build\Output'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -29,43 +26,18 @@
         [string]$ModuleName,
 
         [Parameter(Mandatory)]
-        [version]$ModuleVersion,
-
-        [Parameter(Mandatory)]
-        [string]$Path
+        [string]$ModulePath
     )
 
     $ModuleInstallDir = $env:PSModulePath -split ';' | Select-Object -First 1
-    $ModuleInstallDir = [IO.Path]::Combine($ModuleInstallDir, $ModuleName)
+    $Path = [IO.Path]::Combine($ModulePath, $ModuleName)
+    $InstalledPath = [IO.Path]::Combine($ModuleInstallDir, $ModuleName)
 
-    Write-Information "`tNew-Item -Path '$ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    if ($PSCmdlet.ShouldProcess($ModuleInstallDir, 'Create module installation directory')) {
-        $null = New-Item -Path $ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
-    }
-
-    if (Test-Path -Path $ModuleInstallDir) {
-        Write-Verbose "`t# Module installation directory exists."
-    } else {
-        Write-Error 'Failed to create the module installation directory.'
-    }
-
-    $ModuleInstallDir = [IO.Path]::Combine($ModuleInstallDir, $ModuleVersion)
-    Write-Information "`tNew-Item -Path '$ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    if ($PSCmdlet.ShouldProcess($ModuleInstallDir, 'Create module version installation directory')) {
-        $null = New-Item -Path $ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
-    }
-
-    if (Test-Path -Path $ModuleInstallDir) {
-        Write-Verbose "`t# Module version installation directory exists."
-    } else {
-        Write-Error 'Failed to create the module version installation directory.'
-    }
-
-    Write-Information "`tCopy-Item -Path '$Path\*' -Destination '$ModuleInstallDir' -Recurse -Force"
+    Write-Information "`tCopy-Item -Path '$Path' -Destination '$ModuleInstallDir' -Recurse -Force"
     if ($PSCmdlet.ShouldProcess($ModuleInstallDir, 'Copy module files to installation directory')) {
-        Copy-Item -Path "$Path\*" -Destination $ModuleInstallDir -Recurse -Force -ErrorAction Stop
+        Copy-Item -Path "$Path" -Destination $ModuleInstallDir -Recurse -Force -ErrorAction Stop
         Write-InfoColor "`t# Successfully copied the module files to the version installation directory." -ForegroundColor Green
     }
 
-    return $ModuleInstallDir
+    return $InstalledPath
 }

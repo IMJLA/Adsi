@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.422] - 2025-06-08
+### Changed
+- troubleshoot phantom file
+
+## [5.0.415] - 2025-06-08
+### Changed
+- enhance let copy-item do the heavy lifting
+
 ## [5.0.414] - 2025-06-08
 ### Fixed
 - fix manifest newline issue
