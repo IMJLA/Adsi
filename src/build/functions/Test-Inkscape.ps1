@@ -16,6 +16,7 @@
 
     [CmdletBinding()]
     [OutputType([bool])]
+
     param(
         [string]$NewLine = "`n"
     )
@@ -34,8 +35,10 @@
     }
 
     if ($LASTEXITCODE -eq 0) {
+        Write-InfoColor "$NewLine`t# Prerequisites met for static art conversion from SVG to PNG (inkscape is installed). Proceeding with ConvertArt task." -ForegroundColor Green
         return $true
     } else {
+        Write-InfoColor "$NewLine`t# Prerequisites missing for static art conversion from SVG to PNG (inkscape is missing). Skipping ConvertArt task." -ForegroundColor Yellow
         return $false
     }
 
