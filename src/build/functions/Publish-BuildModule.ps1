@@ -27,7 +27,7 @@
     .EXAMPLE
     Publish-BuildModule -Path "C:\Build\MyModule\1.0.0\MyModule" -Repository "PSGallery" -ApiKey $apiKey
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ApiKey')]
     param(
         [Parameter(Mandatory)]
         [string]$Path,
@@ -35,8 +35,10 @@
         [Parameter(Mandatory)]
         [string]$Repository,
 
+        [Parameter(ParameterSetName = 'ApiKey')]
         [string]$ApiKey,
 
+        [Parameter(ParameterSetName = 'Credential')]
         [pscredential]$Credential,
 
         [bool]$NoPublish = $false,
