@@ -8,11 +8,8 @@
         [string]$LintSettingsFile
     )
 
-    Write-Information "`tInvoke-Lint -SourceCodeDir '$SourceCodeDir' -LintSettingsFile '$LintSettingsFile'"
-
-    # Run PSScriptAnalyzer
+    Write-Information "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Recurse"
     $LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Recurse
-
     Write-InfoColor "`t# Successfully performed linting with PSScriptAnalyzer." -ForegroundColor Green
     return $LintResult
 }

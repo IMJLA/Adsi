@@ -30,15 +30,13 @@
         [string]$SettingsPath = (Join-Path $PSScriptRoot 'psscriptanalyzerSettings.psd1')
     )
 
-    Write-Information "`tFormat-SourceCode -Path '$Path' -SettingsPath '$SettingsPath'"
-
     # Verify PSScriptAnalyzer is available
     if (-not (Get-Module -Name PSScriptAnalyzer -ListAvailable)) {
         throw 'PSScriptAnalyzer module is required but not installed. Install with: Install-Module PSScriptAnalyzer'
     }
 
     # Get all PowerShell script files
-    Write-Information "`tGet-ChildItem -Path '$Path' -Filter '*.ps*1' -Recurse"
+    Write-Verbose "`tGet-ChildItem -Path '$Path' -Filter '*.ps*1' -Recurse"
     $ScriptFiles = Get-ChildItem -Path $Path -Filter '*.ps*1' -Recurse
 
     foreach ($File in $ScriptFiles) {
