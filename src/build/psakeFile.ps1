@@ -22,12 +22,22 @@ Properties {
     # The current working directory
     $StartingLocation = Get-Location
 
+    # Most of the tasks will use these parameters to control how they handle output
+    $IO = @{
+        'ErrorAction'       = [System.Management.Automation.ActionPreference]::Stop
+        'InformationAction' = [System.Management.Automation.ActionPreference]::Continue
+        #'ProgressAction'    = [System.Management.Automation.ActionPreference]::SilentlyContinue
+    }
+
 
 
     # PlatyPS (Markdown and Updateable help)
 
     # Whether or not to generate markdown documentation using PlatyPS
     [boolean]$DocumentationEnabled = $true
+
+    # Directory containing the source code for the markdown documentation
+    [string]$MarkdownSourceCode = [IO.Path]::Combine($SourceCodeDir, 'docs')
 
     # Directory PlatyPS markdown documentation will be saved to
     [string]$DocsRootDir = [IO.Path]::Combine('.', 'docs')
@@ -64,8 +74,11 @@ Properties {
     # Unit tests found here will be performed using Pester.
     [string]$TestRootDir = [IO.Path]::Combine('.', 'tests')
 
+    # Unit test results will be saved to this directory by Pester.
+    [string]$UnitTestOutputDir = [IO.Path]::Combine('.', 'out', 'tests')
+
     # Unit test results will be saved to this file by Pester.
-    [string]$TestResultsFile = [IO.Path]::Combine($TestsRootDir, 'out', 'testResults.xml')
+    [string]$TestResultsFile = [IO.Path]::Combine($UnitTestOutputDir, 'testResults.xml')
 
     <#
     Test results will be output in this format.
@@ -173,6 +186,7 @@ Properties {
 
     # Calculated Properties
 
+
     # Discover public function files so their help files can be fixed (multi-line default parameter values)
     $publicFunctionPath = [IO.Path]::Combine($SourceCodeDir, 'functions', 'public', '*.ps1')
 
@@ -201,6 +215,199 @@ Properties {
     $DocsOnlineStaticImageDir = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'img')
 
     $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
+
+
+
+    # Splatting Parameters
+
+    [hashtable]$ModuleNameSplat = @{ 'ModuleName' = $ModuleName } # Splat for functions that need the module name
+    [hashtable]$lineSplat = @{ 'NewLine' = $NewLine } # Splat for functions to handle line breaks in output
+    [hashtable]$buildLocationSplat = $ModuleNameSplat + $IO + @{ 'BuildScriptRoot' = $PSScriptRoot } # Splat for Set-BuildLocation
+    [hashtable]$testManifestSplat = $IO + @{ 'Path' = $ModuleManifestPath } # Splat for Test-BuildManifest
+    [hashtable]$buildOutDirSplat = $ModuleNameSplat + $IO + @{ 'BuildOutDir' = $BuildOutDir } # Splat for Update-BuildOutputDir
+    [hashtable]$metadataSplat = $IO + @{ 'ModuleManifestPath' = $ModuleManifestPath } # Splat for Test-BuildModuleMetadata
+    [hashtable]$findPublicFunctionsSplat = $IO + @{ 'PublicFunctionPath' = $publicFunctionPath } # Splat for Find-PublicFunction
+    [hashtable]$sourceControlSplat = $IO + @{ 'CommitMessage' = $CommitMessage } # Splat for Invoke-SourceControl
+    [hashtable]$lintAnalysisSplat = $IO + @{ 'SeverityThreshold' = $LintSeverityThreshold } # Splat for Select-LintResult
+    [hashtable]$removeOldBuildSplat = @{ 'BuildOutDir' = $BuildOutDir } # Splat for Remove-OldBuild
+    [hashtable]$findCopyDirSplat = $IO + @{ 'BuildCopyDirectoryPath' = $BuildCopyDirectories } # Splat for Find-BuildCopyDirectory
+    [hashtable]$removeExtraBuildFileSplat = $IO # Splat for Remove-ExtraBuildFile
+    [hashtable]$changeLogSplat = $IO + @{ 'ChangeLog' = $ChangeLog } # Splat for Update-BuildChangeLog
+    [hashtable]$installTempModuleSplat = $ModuleNameSplat + $IO # Splat for Install-TempModule
+    [hashtable]$importModuleSplat = $ModuleNameSplat + $IO # Splat for Import-BuildModule
+    [hashtable]$updateMarkdownHelpSplat = $IO + @{ 'DocsMarkdownDir' = $DocsMarkdownDir } # Splat for Update-BuildMarkdownHelp
+    [hashtable]$removeModuleSplat = $ModuleNameSplat + $IO # Splat for Remove-BuildModule
+    [hashtable]$removeMAMLHelpSplat = $IO + @{ 'DocsMamlDir' = $DocsMamlDir } # Splat for Remove-BuildMAMLHelp
+    [hashtable]$copyMAMLHelpSplat = $IO + @{ 'DocsMamlDir' = $DocsMamlDir } # Splat for Copy-BuildMAMLHelp
+    [hashtable]$npmCacheSplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Test-NpmCache
+    [hashtable]$addDependenciesSplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Add-OnlineHelpDependencies
+    [hashtable]$installDependenciesSplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Install-OnlineHelpDependencies
+    [hashtable]$convertArtSplat = @{ 'Path' = $DocsOnlineStaticImageDir } # Splat for ConvertTo-BuildArt
+    [hashtable]$buildWebsiteSplat = @{ 'DocsOnlineHelpDir' = $DocsOnlineHelpDir } # Splat for New-OnlineHelpWebsite
+    [hashtable]$uninstallBuildModuleSplat = $ModuleNameSplat + $IO # Splat for Uninstall-BuildModule
+    [hashtable]$installBuildModuleSplat = $ModuleNameSplat + $IO + @{ 'MaxAttempts' = 3 } # Splat for Install-BuildModule
+    [hashtable]$removeUpdateableHelpSplat = $IO + @{ 'DocsUpdateableDir' = $DocsUpdateableDir } # Splat for Remove-BuildUpdatableHelp
+
+    # Splat for Get-NewVersion
+    [hashtable]$versionSplat = $IO + @{
+        'IncrementMajorVersion' = $IncrementMajorVersion
+        'IncrementMinorVersion' = $IncrementMinorVersion
+    }
+
+    # Splat for Export-PublicBuildFunction
+    [hashtable]$exportPublicFunctionsSplat = $IO + @{
+        'ModuleFilePath'     = $ModuleFilePath
+        'ModuleManifestPath' = $ModuleManifestPath
+    }
+
+    # Splat for New-BuildModule
+    [hashtable]$buildModuleSplat = $IO + $ModuleNameSplat + @{
+        'SourceCodeDir'                = $SourceCodeDir
+        'BuildCompileModule'           = $BuildCompileModule
+        'BuildCompileDirectories'      = $BuildCompileDirectories
+        'DocsDefaultLocale'            = $DocsDefaultLocale
+        'BuildExclude'                 = $BuildExclude
+        'DocsConvertReadMeToAboutFile' = $DocsConvertReadMeToAboutFile
+        'DocsMarkdownReadMePath'       = $DocsMarkdownReadMeToAboutFile
+    }
+
+    # Splat for New-BuildMarkdownHelp
+    [hashtable]$MarkdownHelpParams = @{
+        'DocsDefaultLocale'            = $DocsDefaultLocale
+        'DocsMarkdownDefaultLocaleDir' = $DocsMarkdownDefaultLocaleDir
+    }
+
+    # Splat for Copy-MarkdownForOnlineHelp
+    [hashtable]$MarkdownCopyParams = @{
+        'DocsMarkdownDir'          = $DocsMarkdownDir
+        'OnlineHelpSourceMarkdown' = $OnlineHelpSourceMarkdown
+        'MarkdownSourceCodeDir'    = $MarkdownSourceCode
+    }
+
+    # Splat for New-BuildMAMLHelp
+    [hashtable]$UpdatableHelpParams = $ModuleNameSplat + @{
+        'DocsMarkdownDir'              = $DocsMarkdownDir
+        'DocsMarkdownDefaultLocaleDir' = $DocsMarkdownDefaultLocaleDir
+        'DocsUpdateableDir'            = $DocsUpdateableDir
+    }
+
+    # Splat for New-BuildGitHubRelease
+    [hashtable]$releaseSplat = $ModuleNameSplat + $IO + $lineSplat + @{
+        'GitHubToken'   = $env:GHFGPATADSI
+        'GitHubOrgName' = $GitHubOrgName
+        'DistPath'      = $BuildOutDir
+        'ReleaseNotes'  = $CommitMessage
+    }
+
+    # Splat for Wait-RepoUpdate
+    [hashtable]$waitRepoSplat = $IO + @{
+        Repository      = $PublishPSRepository
+        TimeoutSeconds  = 60
+        IntervalSeconds = 1
+    }
+
+    # Splat for Publish-BuildModule
+    [hashtable]$publishRepoSplat = $IO + @{
+        'ApiKey'     = $PublishPSRepositoryApiKey
+        'Credential' = $PublishPSRepositoryCredential
+        'Repository' = $PublishPSRepository
+        'NoPublish'  = $NoPublish
+    }
+
+    # Splat for Test-OnlineHelpScaffoldingMissing
+    [hashtable]$TestOnlineHelpScaffoldingParams = $ModuleNameSplat + $lineSplat + @{
+        'DocsOnlineHelpRoot' = $DocsOnlineHelpRoot
+        'Root'               = $PSScriptRoot
+    }
+
+    # Splat for Format-SourceCode
+    [hashtable]$formatSplat = $IO + @{
+        'Path'         = $SourceCodeDir
+        'SettingsPath' = $LintSettingsFile
+    }
+
+    # Splat for Invoke-Lint
+    [hashtable]$lintSplat = $IO + @{
+        'SourceCodeDir'    = $SourceCodeDir
+        'LintSettingsFile' = $LintSettingsFile
+    }
+
+    # Splat for New-BuildFolder (Markdown help)
+    [hashtable]$markdownFolderSplat = $IO + @{
+        'Path'        = $DocsMarkdownDir
+        'Description' = 'Markdown help'
+    }
+
+    # Splat for Remove-BuildMarkdownHelp
+    [hashtable]$removeMarkdownHelpSplat = $IO + @{
+        'DocsMarkdownDir'   = $DocsMarkdownDir
+        'DocsDefaultLocale' = $DocsDefaultLocale
+    }
+
+    # Splat for New-BuildFolder (MAML help)
+    [hashtable]$mamlFolderSplat = $IO + @{
+        'Path'        = $DocsMamlDir
+        'Description' = 'MAML help'
+    }
+
+
+    # Splat for New-BuildMAMLHelp
+    [hashtable]$buildMAMLHelpSplat = $IO + @{
+        'DocsMarkdownDir' = $DocsMarkdownDir
+        'DocsMamlDir'     = $DocsMamlDir
+    }
+
+    # Splat for New-BuildFolder (Updateable help)
+    [hashtable]$updateableFolderSplat = $IO + @{
+        'Path'        = $DocsUpdateableDir
+        'Description' = 'Updateable help'
+    }
+
+    # Splat for New-BuildFolder (Online help root)
+    [hashtable]$onlineHelpFolderSplat = $IO + @{
+        'Path'        = $DocsOnlineHelpRoot
+        'Description' = 'Online help root'
+    }
+
+    # Splat for New-OnlineHelpScaffolding
+    [hashtable]$onlineHelpScaffoldingSplat = $ModuleNameSplat + $IO + @{
+        'DocsOnlineHelpRoot' = $DocsOnlineHelpRoot
+        'DocsOnlineHelpDir'  = $DocsOnlineHelpDir
+    }
+
+    # Splat for New-BuildArt
+    [hashtable]$buildArtSplat = $IO + @{
+        'In'  = $DocsImageSourceCodeDir
+        'Out' = $DocsOnlineStaticImageDir
+    }
+
+    # Splat for Copy-BuildArt
+    [hashtable]$copyArtSplat = $IO + @{
+        'DocsImageSourceCodeDir'   = $DocsImageSourceCodeDir
+        'DocsOnlineStaticImageDir' = $DocsOnlineStaticImageDir
+    }
+
+    # Splat for Update-DocusaurusConfig
+    [hashtable]$fixWebsiteSplat = $IO + @{
+        'GitHubOrgName'     = $GitHubOrgName
+        'DocsOnlineHelpDir' = $DocsOnlineHelpDir
+    }
+
+    # Splat for New-BuildFolder (Unit test output)
+    [hashtable]$unitTestFolderSplat = $IO + @{
+        'Path'        = $UnitTestOutputDir
+        'Description' = 'Unit test output'
+    }
+
+    [hashtable]$copyMarkdownSplat = $MarkdownCopyParams + $IO # Splat for Copy-MarkdownForOnlineHelp
+    [hashtable]$MarkdownRepairParams = $lineSplat + $MarkdownHelpParams + $ModuleNameSplat # Splat for Repair-BuildMarkdownHelp
+    [hashtable]$buildMarkdownHelpSplat = $MarkdownHelpParams + $ModuleNameSplat + $IO # Splat for New-BuildMarkdownHelp
+    [hashtable]$fixMarkdownHelpSplat = $MarkdownRepairParams + $IO # Splat for Repair-BuildMarkdownHelp
+    [hashtable]$buildUpdateableHelpSplat = $UpdatableHelpParams + $IO # Splat for New-BuildUpdatableHelp
+
+
+
+    # Preparation for task execution
 
     $InformationPreference = 'Continue'
 
@@ -239,6 +446,7 @@ BuildUpdatableHelp, # Create Updateable help documentation.
 CreateOnlineHelpFolder, # Create a folder for the Online Help website.
 CreateOnlineHelpScaffolding, # Create the Online Help website scaffolding (Docusaurus).
 UpdateOnlineHelpDependencies, # Add Mermaid theme dependency to the Online Help website.
+ConvertArt, # Convert SVGs to PNG using Inkscape.
 FixOnlineHelpWebsite, # Fix the online help website configuration.
 UnitTests, # Perform unit testing.
 SourceControl, # Commit changes to source control.
@@ -248,160 +456,67 @@ Reinstall # Publish the module to the a PowerShell repository.
 # Prepare the build environment.
 Task -name SetLocation -action {
 
-    Write-InfoColor "`tSet-Location -Path '$ModuleName'"
-    Set-Location -Path $PSScriptRoot
-    [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
-    Set-Location -Path $ProjectRoot
-
-    if (((Get-Location -PSProvider FileSystem -ErrorAction Stop).Path | Split-Path -Leaf) -eq $ModuleName) {
-        Write-InfoColor "`t# Current Working Directory is now '$ModuleName'" -ForegroundColor Green
-    } else {
-        Write-Error "Failed to set Working Directory to '$ModuleName'."
-    }
+    Set-BuildLocation @buildLocationSplat
 
 } -description 'Set the working directory to the project root to ensure all relative paths are correct'
 
 Task -name TestModuleManifest -action {
 
-    Write-Information "`t`$script:ManifestTest = Test-ModuleManifest -Path '$ModuleManifestPath'"
-    $script:ManifestTest = Test-ModuleManifest -Path $ModuleManifestPath -ErrorAction Stop
-
-    if ($script:ManifestTest) {
-        Write-InfoColor "`t# Successfully validated the module manifest." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to validate the module manifest.'
-    }
+    $script:ManifestTest = Test-BuildManifest @testManifestSplat
 
 } -description 'Validate the module manifest'
+
 
 # Update the module source code.
 Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
-    Write-Information "`tGet-NewVersion -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion '$($script:ManifestTest.Version)'"
-    $script:NewModuleVersion = Get-NewVersion -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion $script:ManifestTest.Version
-    $script:BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $script:NewModuleVersion, $ModuleName)
-    $env:BHBuildOutput = $script:BuildOutputDir # still used by Module.tests.ps1
-    Write-InfoColor "`t# Successfully determined the new version number: $script:NewModuleVersion" -ForegroundColor Green
+    $script:NewModuleVersion = Get-NewVersion -OldVersion $script:ManifestTest.Version @versionSplat
 
 } -description 'Determine the new version number based on the build parameters'
 
-Task -name UpdateModuleVersion -depends DetermineNewVersionNumber -action {
+task -name UpdateBuildOutputDirVariable -depends DetermineNewVersionNumber -action {
 
-    Write-Information "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop"
-    Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $script:NewModuleVersion -ErrorAction Stop
-    Write-InfoColor "`t# Successfully updated the module manifest with the new version number." -ForegroundColor Green
+    $script:BuildOutputDir = Update-BuildOutputDir -ModuleVersion $script:NewModuleVersion @buildOutDirSplat
+
+} -description 'Update the build output directory environment variable'
+
+Task -name UpdateModuleVersion -depends UpdateBuildOutputDirVariable -action {
+
+    Update-BuildModuleMetadata -NewVersion $script:NewModuleVersion @metadataSplat
 
 } -description 'Update the module manifest with the new version number'
 
 Task -name FindPublicFunctionFiles -depends UpdateModuleVersion -action {
 
-    Write-Information "`t`$script:PublicFunctionFiles = Get-ChildItem -Path '$publicFunctionPath' -Recurse"
-    $script:PublicFunctionFiles = Get-ChildItem -Path $publicFunctionPath -Recurse
-    if ($script:PublicFunctionFiles.Count -eq 0) {
-        Write-InfoColor "`t# No public function files found." -ForegroundColor Yellow
-    } else {
-        Write-InfoColor "`t# Found $($script:PublicFunctionFiles.Count) public function files." -ForegroundColor Green
-    }
+    $script:PublicFunctionFiles = Find-PublicFunction @findPublicFunctionsSplat
 
 } -description 'Find all public function files'
 
 Task -name ExportPublicFunctions -depends FindPublicFunctionFiles -action {
 
-    Write-Verbose "`tExport-PublicFunction -PublicFunctionFiles `$script:PublicFunctionFiles -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath' -InformationAction Continue"
-    Export-PublicFunction -PublicFunctionFiles $script:PublicFunctionFiles -ModuleFilePath $ModuleFilePath -ModuleManifestPath $ModuleManifestPath -InformationAction Continue
-    Write-InfoColor "`t# Successfully exported public functions in the module." -ForegroundColor Green
+    Export-PublicFunction -PublicFunctionFile $script:PublicFunctionFiles @exportPublicFunctionsSplat
 
 } -description 'Export all public functions in the module'
 
 
 # Perform linting and analysis of the source code.
-$LintPrerequisite = {
-
-    # 'Find the PSScriptAnalyzer module for linting the source code.'
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindLintPrerequisites$NewLine" -ForegroundColor Blue
-
-    if ($LintEnabled) {
-
-        Write-Information "`tGet-Module -Name PSScriptAnalyzer -ListAvailable"
-
-        if (Get-Module -Name PSScriptAnalyzer -ListAvailable) {
-            Write-InfoColor "`t# 'PSScriptAnalyzer' PowerShell module is installed. Linting will be performed." -ForegroundColor Green
-            return $true
-        } else {
-            Write-InfoColor "`t# 'PSScriptAnalyzer' PowerShell module is not installed. Linting will be skipped." -ForegroundColor Yellow
-            return $false
-        }
-
-    } else {
-        Write-InfoColor "`t# Linting is disabled. Linting will be skipped." -ForegroundColor Cyan
-    }
-
-}
+$LintPrerequisite = { Test-LintPrereq -LintEnabled $LintEnabled @lineSplat @IO }
 
 Task -name Format -precondition $LintPrerequisite -action {
 
-    Write-Information "`tGet-ChildItem -Path '$SourceCodeDir' -Filter '*.ps*1' -Recurse"
-    $ScriptFiles = Get-ChildItem -Path $SourceCodeDir -Filter '*.ps*1' -Recurse
-
-    foreach ($File in $ScriptFiles) {
-
-        $CurrentDirectory = (Get-Location -PSProvider FileSystem).Path
-        $PartialRelativePath = [IO.Path]::GetRelativePath($CurrentDirectory, $File.FullName)
-        $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
-
-        # Read the original content of the file
-        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw -ErrorAction Stop"
-        $OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
-
-        # Check current file encoding
-        $FileBytes = [System.IO.File]::ReadAllBytes($File.FullName)
-        $HasBOM = $FileBytes.Length -ge 3 -and $FileBytes[0] -eq 0xEF -and $FileBytes[1] -eq 0xBB -and $FileBytes[2] -eq 0xBF
-
-        <#
-        Normalize line endings to Windows format (CRLF) before formatting
-        In addition to ensuring consistency this prevents the following error from Invoke-Formatter:
-
-            Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
-        #>
-        Write-Verbose "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
-        $NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
-
-        Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$LintSettingsFile' -ErrrorAction Stop"
-        $FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $LintSettingsFile -ErrorAction Stop
-
-        # Update file if content changed or encoding needs to be fixed
-        $ContentChanged = $FormattedContent -ne $OriginalContent
-        $EncodingNeedsUpdate = -not $HasBOM
-
-        if ($ContentChanged -or $EncodingNeedsUpdate) {
-
-            if ($ContentChanged -and $EncodingNeedsUpdate) {
-                Write-InfoColor "`tSet-Content -Path '$FullRelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
-                Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
-            }
-
-        }
-
-    }
-
-    Write-InfoColor "`t# Successfully formatted PowerShell script files and ensured UTF8 with BOM encoding." -ForegroundColor Green
+    Format-SourceCode @formatSplat
 
 } -description 'Format PowerShell script files using PSScriptAnalyzer rules and ensure UTF8 with BOM encoding.'
 
 Task -name Lint -depends Format -action {
 
-    Write-Information "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Recurse -ErrorAction Stop"
-    $script:LintResult = Invoke-ScriptAnalyzer -Path $SourceCodeDir -Settings $LintSettingsFile -Recurse -ErrorAction Stop
-    Write-InfoColor "`t# Completed linting successfully. Found '$($script:LintResult.Count)' rule violations" -ForegroundColor Green
+    $script:LintResult = Invoke-Lint @lintSplat
 
 } -description 'Perform linting with PSScriptAnalyzer.'
 
 Task -name LintAnalysis -depends Lint -action {
 
-    Write-Information "`tSelect-LintResult -SeverityThreshold '$LintSeverityThreshold' -LintResult `$script:LintResult"
-    Select-LintResult -SeverityThreshold $LintSeverityThreshold -LintResult $script:LintResult
-    Write-InfoColor "`t# Completed lint output analysis successfully." -ForegroundColor Green
+    Select-LintResult -LintResult $script:LintResult @lintAnalysisSplat
 
 } -description 'Analyze the linting results and determine if the build should fail.'
 
@@ -409,119 +524,35 @@ Task -name LintAnalysis -depends Lint -action {
 # Build the module.
 Task -name DeleteOldBuilds -action {
 
-    Write-Information "`tGet-ChildItem -Path '$BuildOutDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
-    Get-ChildItem -Path $BuildOutDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
-    Write-InfoColor "`t# Successfully deleted old builds." -ForegroundColor Green
+    Remove-OldBuild @removeOldBuildSplat
 
 } -description 'Delete old builds'
 
 Task -name FindBuildCopyDirectories -depends DeleteOldBuilds -action {
 
-    Write-Verbose "`tFind-BuildCopyDirectory -BuildCopyDirectory `$BuildCopyDirectories -InformationAction 'Continue'"
-    $Script:CopyDirectories = Find-BuildCopyDirectory -BuildCopyDirectory $BuildCopyDirectories -InformationAction 'Continue'
-    Write-InfoColor "`t# Found $($Script:CopyDirectories.Count) directories to copy to the build output directory." -ForegroundColor Green
+    $Script:CopyDirectories = Find-BuildCopyDirectory @findCopyDirSplat
 
 } -description 'Find all directories to copy to the build output directory, excluding empty directories'
 
-$FindBuildPrerequisite = {
-
-    # 'Find the PSScriptAnalyzer module for linting the source code.'
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindBuildPrerequisites$NewLine" -ForegroundColor Blue
-
-    if ($BuildCompileModule) {
-
-        Write-Information "`tGet-Module -Name PowerShellBuild -ListAvailable"
-
-        if (Get-Module -Name PowerShellBuild -ListAvailable) {
-            Write-InfoColor "`t# 'PowerShellBuild' PowerShell module is installed. Build will be performed." -ForegroundColor Green
-            return $true
-        } else {
-            Write-InfoColor "`t# 'PowerShellBuild' PowerShell module is not installed. Build will be skipped." -ForegroundColor Yellow
-            return $false
-        }
-
-    } else {
-        Write-InfoColor "`t# Building is disabled. Build will be skipped." -ForegroundColor Cyan
-    }
-
-}
+$FindBuildPrerequisite = { Test-BuildPrereq -BuildCompileModule $BuildCompileModule @lineSplat @IO }
 
 Task -name BuildModule -depends FindBuildCopyDirectories -precondition $FindBuildPrerequisite -action {
 
-    $buildParams = @{
-        Compile            = $BuildCompileModule
-        CompileDirectories = $BuildCompileDirectories
-        CopyDirectories    = $script:CopyDirectories
-        Culture            = $DocsDefaultLocale
-        DestinationPath    = $script:BuildOutputDir
-        ErrorAction        = 'Stop' # Stop on any error
-        Exclude            = $BuildExclude + "$ModuleName.psm1"
-        ModuleName         = $ModuleName
-        Path               = $SourceCodeDir
-    }
-
-    if ($DocsConvertReadMeToAboutFile) {
-        $buildParams.ReadMePath = $DocsMarkdownReadMePath
-    }
-
-    # only add these configuration values to the build parameters if they have been been set
-    $CompileParamStr = ''
-    'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
-        $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
-        if ($Val -ne '' -and $Val -ne $null) {
-            $buildParams.$_ = $Val
-            $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
-        }
-    }
-
-    $ExcludeJoined = $buildParams['Exclude'] -join "','"
-    $CompileDirectoriesJoined = $buildParams['CompileDirectories'] -join "','"
-    $CopyDirectoriesJoined = $buildParams['CopyDirectories'] -join "','"
-    Write-Information "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$script:BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$DocsMarkdownReadMePath' $CompileParamStr-ErrorAction 'Stop'"
-    Build-PSBuildModule @buildParams
-    Write-InfoColor "`t# Successfully built the module." -ForegroundColor Green
+    New-BuildModule -BuildOutputDir $script:BuildOutputDir -CopyDirectories $script:CopyDirectories @buildModuleSplat
 
 } -description 'Build a PowerShell script module based on the source directory'
 
 Task -name FixModule -depends BuildModule -action {
 
-    $File = [IO.Path]::Combine($script:BuildOutputDir, 'psdependRequirements.psd1')
-    Write-Information "`tRemove-Item -Path '$File' -ProgressAction SilentlyContinue"
-    Remove-Item -Path $File -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
+    Remove-ExtraBuildFile -BuildOutputDir $script:BuildOutputDir @removeExtraBuildFileSplat
 
-    if (Test-Path -Path $File) {
-        Write-Error 'Failed to remove unnecessary file '$File' from the build output directory.'
-    }
-
-    $File = [IO.Path]::Combine($script:BuildOutputDir, 'psscriptanalyzerSettings.psd1')
-    Write-Information "`tRemove-Item -Path '$File' -ProgressAction SilentlyContinue"
-    Remove-Item -Path $File -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
-
-    if ((Test-Path -Path $File)) {
-        Write-Error 'Failed to remove unnecessary file '$File' from the build output directory.'
-    } else {
-        Write-InfoColor "`t# Successfully removed unnecessary files from the build output directory." -ForegroundColor Green
-    }
-
-} -description 'Fix the module after building it by removing unnecessary files. This is a workaround until PowerShellBuild usage is replaced with custom build scripts.'
+} -description 'Fix the built module by removing unnecessary files. This is a workaround until PowerShellBuild usage is replaced with custom build scripts.'
 
 
 # Add an entry to the Change Log.
 Task -name UpdateChangeLog -action {
 
-    Write-Verbose "`tUpdate-ChangeLogFile -Version '$script:NewModuleVersion' -CommitMessage '$CommitMessage' -ChangeLog '$ChangeLog' -InformationAction 'Continue'"
-    Update-ChangeLogFile -Version $script:NewModuleVersion -CommitMessage $CommitMessage -ChangeLog $ChangeLog -InformationAction 'Continue'
-    Write-InfoColor "`t# Successfully updated the Change Log with the new version and commit message." -ForegroundColor Green
-
-    <#
-    TODO
-        This task runs before the Test task so that tests of the change log will pass
-        But I also need one that runs *after* the build to compare it against the previous build
-        The post-build UpdateChangeLog will automatically add to the change log any:
-            New/removed exported commands
-            New/removed files
-    #>
+    Update-BuildChangeLog -Version $script:NewModuleVersion -CommitMessage $CommitMessage @changeLogSplat
 
 } -description 'Add an entry to the the Change Log.'
 
@@ -529,419 +560,129 @@ Task -name UpdateChangeLog -action {
 # Create Markdown and MAML help documentation.
 Task -name CreateMarkdownHelpFolder -action {
 
-    Write-Information "`tNew-Item -Path '$DocsMarkdownDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $DocsMarkdownDir -ItemType Directory -ErrorAction SilentlyContinue
-    if (Test-Path -Path $DocsMarkdownDir) {
-        Write-InfoColor "`t# Markdown help directory exists." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create the Markdown help directory'
-    }
+    New-BuildFolder @markdownFolderSplat
 
 } -description 'Create a folder for the Markdown help documentation.'
 
-$DocsPrereq = {
-
-    # 'Find the PlatyPS module for generating Markdown help documentation.'
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindDocumentationPrerequisites$NewLine" -ForegroundColor Blue
-
-    if ($DocumentationEnabled) {
-
-        Write-Information "`tGet-Module -Name PlatyPS -ListAvailable"
-
-        if (Get-Module -Name PlatyPS -ListAvailable) {
-            Write-InfoColor "`t# 'PlatyPS' PowerShell module is installed. Documentation will be performed." -ForegroundColor Green
-            return $true
-        } else {
-            Write-InfoColor "`t# 'PlatyPS' PowerShell module is not installed. Documentation will be skipped." -ForegroundColor Yellow
-            return $false
-        }
-
-    } else {
-        Write-InfoColor "`tDocumentation is disabled. Documentation will be skipped." -ForegroundColor Cyan
-    }
-
-}
+$DocsPrereq = { Test-BuildDocumentationPrereq -DocumentationEnabled $DocumentationEnabled @lineSplat @IO }
 
 Task -name DeleteMarkdownHelp -depends CreateMarkdownHelpFolder -precondition $DocsPrereq -action {
 
-    $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
-    Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
-    Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
-    if (Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction SilentlyContinue) {
-        Write-Error 'Failed to delete existing Markdown help files.'
-    } else {
-        Write-InfoColor "`t# Successfully deleted existing Markdown help files." -ForegroundColor Green
-    }
+    Remove-BuildMarkdownHelp @removeMarkdownHelpSplat
 
 } -description 'Delete existing Markdown files to prepare for PlatyPS to build new ones.'
 
 Task -name InstallTempModule -depends DeleteMarkdownHelp -action {
 
-    $script:ModuleInstallDir = $env:PSModulePath -split ';' | Select-Object -First 1
-    $script:ModuleInstallDir = [IO.Path]::Combine($script:ModuleInstallDir, $ModuleName)
-    Write-Information "`tNew-Item -Path '$script:ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $script:ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
-    if (Test-Path -Path $script:ModuleInstallDir) {
-        Write-InfoColor "`t# Module installation directory exists." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create the module installation directory.'
-    }
-    $script:ModuleInstallDir = [IO.Path]::Combine($script:ModuleInstallDir, $script:NewModuleVersion)
-    Write-Information "`tNew-Item -Path '$script:ModuleInstallDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $script:ModuleInstallDir -ItemType Directory -ErrorAction SilentlyContinue
-    if (Test-Path -Path $script:ModuleInstallDir) {
-        Write-InfoColor "`t# Module version installation directory exists." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create the module version installation directory.'
-    }
-
-    Write-Information "`tCopy-Item -Path '$script:BuildOutputDir\*' -Destination '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
-    Copy-Item -Path "$script:BuildOutputDir\*" -Destination $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop
-    Write-InfoColor "`t# Successfully copied the module files to the version installation directory." -ForegroundColor Green
+    $script:ModuleInstallDir = Install-TempModule -ModuleVersion $script:NewModuleVersion -Path $script:BuildOutputDir @installTempModuleSplat
 
 } -description 'Install the module so it can be loaded by name for help generation.'
 
 Task -name ImportModule -depends InstallTempModule -action {
 
-    Write-Information "`tImport-Module -Name '$ModuleName' -Force -ErrorAction Stop"
-    Import-Module -Name $ModuleName -Force -ErrorAction Stop
-    Write-Information "`tGet-Module -Name '$ModuleName' -ErrorAction Stop"
-    $Result = Get-Module -Name $ModuleName -ErrorAction Stop
-
-    if ($Result) {
-        if ($Result.Count -gt 1) {
-            Write-Error "`t# Multiple versions of the module '$ModuleName' are loaded: $($Result.Version -join ' & ')."
-        } else {
-            Write-InfoColor "`t# Successfully imported the '$($Result.Name)' module (version $($Result.Version))" -ForegroundColor Green
-        }
-    } else {
-        Write-Error "Failed to import the module '$ModuleName'."
-    }
+    Import-BuildModule @importModuleSplat
 
 } -description 'Import the module to ensure it is loaded for help generation.'
 
 Task -name UpdateMarkDownHelp -depends ImportModule -action {
 
-    Write-Information "`tGet-ChildItem -LiteralPath '$DocsMarkdownDir' -Filter *.md -Recurse"
+    Update-BuildMarkdownHelp @updateMarkdownHelpSplat
 
-    if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
-
-        Write-Information "`tGet-ChildItem -LiteralPath '$DocsMarkdownDir' -Directory"
-        Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
-
-            $DirName = $_.FullName
-            Write-Information "`tUpdate-MarkdownHelp -Path '$($_.FullName)'"
-            Update-MarkdownHelp -Path $_.FullName -ErrorAction Stop
-
-        }
-
-        Write-InfoColor "`t# Successfully updated existing Markdown help files." -ForegroundColor Green
-
-    } else {
-        Write-InfoColor "`t# No existing Markdown help files found to update." -ForegroundColor Green
-    }
 } -description 'Update existing Markdown help files using PlatyPS.'
 
 Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
-    $VerbosePreference = 'Continue'
+    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion @buildMarkdownHelpSplat
 
-    $newMDParams = @{
-        AlphabeticParamsOrder = $true
-        Locale                = $DocsDefaultLocale
-        ErrorAction           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
-        HelpVersion           = $script:NewModuleVersion
-        Module                = $ModuleName
-        # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
-        # OnlineVersionUrl = $GitHubPagesLinkForThisModule
-        OutputFolder          = $DocsMarkdownDefaultLocaleDir
-        UseFullTypeName       = $true
-        WithModulePage        = $true
-    }
-
-    Write-Information "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$($Result.Version)' -Locale '$DocsDefaultLocale' -Module '$($Result.Name)' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
-    $null = New-MarkdownHelp @newMDParams
-    Write-InfoColor "`t# Successfully generated Markdown help files." -ForegroundColor Green
-    $VerbosePreference = 'SilentlyContinue'
-
-} -description 'Generate markdown files from the module help'
+} -description 'Generate markdown files from the module help using PlatyPS'
 
 Task -name RemoveModule -depends BuildMarkdownHelp -action {
 
-    Write-Information "`tRemove-Module -Name '$ModuleName' -Force -ErrorAction Stop"
-    Remove-Module -Name $ModuleName -Force -ErrorAction Stop
-    Write-InfoColor "`t# Successfully removed the module." -ForegroundColor Green
+    Remove-BuildModule @removeModuleSplat
 
 } -description 'Remove the module from the current PowerShell session now that help generation is complete.'
 
 Task -Name UninstallTempModule -depends RemoveModule -action {
 
-    Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
-    Remove-Item -Path $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
-
-    if (Test-Path -Path $script:ModuleInstallDir) {
-        Write-Error 'Failed to remove the temporary module installation directory.'
-    } else {
-        Write-InfoColor "`t# Successfully removed the temporary module installation directory." -ForegroundColor Green
-    }
+    Uninstall-TempModule -ModuleInstallDir $script:ModuleInstallDir @IO
 
 } -description 'Uninstall the temporary module used for help generation.'
 
 Task -name FixMarkdownHelp -depends UninstallTempModule -action {
 
-    Write-Information "`tRepair-MarkdownHelp -BuildOutputDir '$script:BuildOutputDir' -ModuleName '$ModuleName' -DocsMarkdownDefaultLocaleDir '$DocsMarkdownDefaultLocaleDir' -NewLine '``r``n' -DocsDefaultLocale '$DocsDefaultLocale' -PublicFunctionFiles `$script:PublicFunctionFiles"
-    Repair-MarkdownHelp -BuildOutputDir $script:BuildOutputDir -ModuleName $ModuleName -DocsMarkdownDefaultLocaleDir $DocsMarkdownDefaultLocaleDir -NewLine $NewLine -DocsDefaultLocale $DocsDefaultLocale -PublicFunctionFiles $script:PublicFunctionFiles
-    Write-InfoColor "`t# Successfully fixed Markdown help files for proper formatting and parameter documentation." -ForegroundColor Green
+    Repair-BuildMarkdownHelp -BuildOutputDir $script:BuildOutputDir -PublicFunctionFiles $script:PublicFunctionFiles @fixMarkdownHelpSplat
 
 } -description 'Fix Markdown help files for proper formatting and parameter documentation.'
 
 Task -name CreateMAMLHelpFolder -depends FixMarkdownHelp -action {
 
-    Write-Information "`tNew-Item -Path '$DocsMamlDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $DocsMamlDir -ItemType Directory -ErrorAction SilentlyContinue
-
-    if (Test-Path -Path $DocsMamlDir) {
-        Write-InfoColor "`t# MAML help folder exists." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create the MAML help folder'
-    }
+    New-BuildFolder @mamlFolderSplat
 
 } -description 'Create a folder for the MAML help files.'
 
 Task -name DeleteMAMLHelp -depends CreateMAMLHelpFolder -action {
 
-    Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
-    Get-ChildItem -Path $DocsMamlDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
-    Write-InfoColor "`t# Successfully deleted existing MAML help files." -ForegroundColor Green
+    Remove-BuildMAMLHelp @removeMAMLHelpSplat
 
 } -description 'Delete existing MAML help files to prepare for PlatyPS to build new ones.'
 
 Task -name BuildMAMLHelp -depends DeleteMAMLHelp -action {
 
-    Write-Information "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$DocsMamlDir' -ErrorAction Stop"
-    Build-PSBuildMAMLHelp -Path $DocsMarkdownDir -DestinationPath $DocsMamlDir -ErrorAction Stop
-    Write-InfoColor "`t# Successfully built MAML help files from the Markdown files." -ForegroundColor Green
+    New-BuildMAMLHelp @buildMAMLHelpSplat
 
 } -description 'Build MAML help files from the Markdown files by using PlatyPS invoked by PowerShellBuild.'
 
 Task -name CopyMAMLHelp -depends BuildMAMLHelp -action {
 
-    Write-Information "`tCopy-Item -Path '$DocsMamlDir\*' -Destination '$script:BuildOutputDir' -Recurse -ErrorAction SilentlyContinue"
-    Copy-Item -Path "$DocsMamlDir\*" -Destination $script:BuildOutputDir -Recurse -ErrorAction SilentlyContinue
-
-    # Test if MAML help files were copied successfully
-    $copiedFiles = Get-ChildItem -Path $script:BuildOutputDir -Filter '*.xml' -Recurse -ErrorAction SilentlyContinue
-    if ($copiedFiles) {
-        Write-InfoColor "`t# Successfully copied MAML help files to the build output directory." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to copy MAML help files to the build output directory.'
-    }
+    Copy-BuildMAMLHelp -BuildOutputDir $script:BuildOutputDir @copyMAMLHelpSplat
 
 } -description 'Copy MAML help files to the build output directory.'
 
 Task -name CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
 
-    Write-Information "`tNew-Item -Path '$DocsUpdateableDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $DocsUpdateableDir -ItemType Directory -ErrorAction SilentlyContinue
-
-    if (Test-Path -Path $DocsUpdateableDir) {
-        Write-InfoColor "`t# Updateable help directory exists." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create the Updateable help directory'
-    }
+    New-BuildFolder @updateableFolderSplat
 
 } -description 'Create a folder for the Updateable help files.'
 
 Task -name DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
 
-    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
-    Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
-    Write-InfoColor "`t# Successfully deleted existing Updateable help files." -ForegroundColor Green
-    $script:ReadyForUpdateableHelp = $true
+    $script:ReadyForUpdateableHelp = Remove-BuildUpdatableHelp @removeUpdateableHelpSplat
 
 } -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
 
 
 # Create Updateable help documentation.
-$UpdateableHelpPrereq = {
-
-    # Find prerequisites for creating updatable help files.
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindUpdateableHelpPrerequisites$NewLine" -ForegroundColor Blue
-
-    if ($script:ReadyForUpdateableHelp) {
-
-        Write-InfoColor "`tGet-CimInstance -ClassName CIM_OperatingSystem"
-        $OS = (Get-CimInstance -ClassName CIM_OperatingSystem).Caption
-
-        if ($OS -match 'Windows') {
-
-            Write-InfoColor "`tGet-Command -Name MakeCab.exe"
-            if (Get-Command -Name MakeCab.exe) {
-                Write-InfoColor "`t# MakeCab.exe is available on this operating system. Updateable Help will be generated." -ForegroundColor Green
-                return $true
-            } else {
-                Write-InfoColor "`t# MakeCab.exe is not available on this operating system. Updateable Help generation will be skipped." -ForegroundColor Yellow
-                return $false
-            }
-
-        } else {
-            Write-InfoColor "`t# MakeCab.exe is not available on this operating system. Skipping Updateable Help generation." -ForegroundColor Yellow
-            return $false
-        }
-
-    } else {
-        Write-InfoColor "`tMAML Help files are not avaialable. Updateable Help generation will be skipped." -ForegroundColor Cyan
-        return $false
-    }
-
-}
+$UpdateableHelpPrereq = { Test-BuildUpdateableHelpPrereq -ReadyForUpdateableHelp $script:ReadyForUpdateableHelp @lineSplat @IO }
 
 Task -name BuildUpdatableHelp -precondition $UpdateableHelpPrereq -action {
 
-    $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
+    New-BuildUpdatableHelp -BuildOutputDir $script:BuildOutputDir @buildUpdateableHelpSplat
 
-    # Generate updatable help files.  Note: this will currently update the version number in the module's MD
-    # file in the metadata.
-    foreach ($locale in $helpLocales) {
-        $cabParams = @{
-            CabFilesFolder  = [IO.Path]::Combine($script:BuildOutputDir, $locale)
-            LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
-            OutputFolder    = $DocsUpdateableDir
-            ErrorAction     = 'Stop' # Stop on any error
-        }
-        Write-Information "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)' -ErrorAction 'Stop'"
-        $null = New-ExternalHelpCab @cabParams
-    }
-    Write-InfoColor "`t# Successfully created updatable help .cab files." -ForegroundColor Green
-
-} -description 'Create updatable help .cab file based on PlatyPS markdown help.'
+} -description 'Create updatable help .cab files based on PlatyPS markdown help.'
 
 
 # Create a folder for the Online help documentation.
-$OnlineHelpPrereqs = {
-
-    # Find Node.js installation.
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindOnlineHelpPrerequisites$NewLine" -ForegroundColor Blue
-    Write-Information "`tGet-Command -Name node -ErrorAction SilentlyContinue"
-    $NodeCommand = Get-Command -Name node -ErrorAction SilentlyContinue
-
-    if ($NodeCommand) {
-
-        Write-InfoColor "`t& node -v 2>`$null"
-        $NodeJsVersion = & node -v 2>$null
-
-        if ($NodeJsVersion -and [version]($NodeJsVersion.Replace('v', '')) -lt [version]'18.0.0') {
-            Write-InfoColor "`t# Node.js is installed but version 18 or newer is required (detected version: $NodeJsVersion). Online Help generation will be skipped." -ForegroundColor Yellow
-            return $false
-        } else {
-            Write-InfoColor "`t# Node.js is installed (version: $NodeJsVersion). Online Help will be generated." -ForegroundColor Green
-            return $true
-        }
-
-    } else {
-        Write-InfoColor "`tNode.js is not installed or not found in the PATH. Online Help generation will be skipped." -ForegroundColor Yellow
-        return $false
-    }
-
-}
+$OnlineHelpPrereqs = { Test-BuildOnlineHelpPrereq @lineSplat @IO }
 
 Task -name CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
 
-    Write-Information "`tNew-Item -Path '$DocsOnlineHelpRoot' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $DocsOnlineHelpRoot -ItemType Directory -ErrorAction SilentlyContinue
-
-    if (Test-Path -Path $DocsOnlineHelpRoot) {
-        Write-InfoColor "`t# Online help root directory exists." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create the Online help root directory'
-    }
+    New-BuildFolder @onlineHelpFolderSplat
 
 } -description 'Create a folder for the Online Help website.'
 
 
 # Create the Online help documentation website.
-$OnlineHelpScaffoldingMissing = {
-
-    # Find prerequisites for creating updatable help files.
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindOnlineHelpScaffoldingPrerequisites$NewLine" -ForegroundColor Blue
-    Write-InfoColor "`tSet-Location -Path '$ModuleName'"
-    Set-Location -Path $PSScriptRoot
-    [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
-    Set-Location -Path $ProjectRoot
-
-    # Determine whether the Online Help scaffolding already exists.
-    Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { `$_.Name -eq '$ModuleName' }"
-    if (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction Stop | Where-Object { $_.Name -eq $ModuleName }) {
-        Write-InfoColor "`t# Online Help scaffolding already exists. It will be updated.$NewLine" -ForegroundColor Green
-        return $false
-    } else {
-        Write-InfoColor "`t# Online Help scaffolding does not exist. It will be created." -ForegroundColor Green
-        return $true
-    }
-
-}
+$OnlineHelpScaffoldingMissing = { Test-OnlineHelpScaffoldingMissing @TestOnlineHelpScaffoldingParams @IO }
 
 Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingMissing -action {
 
-    $Location = Get-Location
-    Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
-    Set-Location $DocsOnlineHelpRoot
-
-    # Check if package.json exists (indicating Docusaurus is already initialized)
-    $PackageJsonPath = Join-Path $DocsOnlineHelpDir 'package.json'
-
-    if (Test-Path $PackageJsonPath) {
-        Write-Information "`tDocusaurus website already exists, skipping initialization"
-        Write-InfoColor "`t# Docusaurus scaffolding already exists." -ForegroundColor Green
-    } else {
-
-        Write-InfoColor "`t> npx create-docusaurus@latest $ModuleName classic --typescript" -ForegroundColor Cyan
-        try {
-
-            # Use Start-Process for better control over npx output
-            $processArgs = @{
-                FilePath         = 'npx'
-                ArgumentList     = @('create-docusaurus@latest', $ModuleName, 'classic', '--typescript')
-                WorkingDirectory = $DocsOnlineHelpRoot
-                Wait             = $true
-                NoNewWindow      = $true
-                PassThru         = $true
-            }
-
-            $process = Start-Process @processArgs
-
-        } catch {
-            Write-Error "Failed to create Docusaurus scaffolding: $_"
-        }
-
-        if ($process.ExitCode -eq 0) {
-            # Test if scaffolding was created successfully
-            if (Test-Path $PackageJsonPath) {
-                Write-InfoColor "`t# Successfully created Docusaurus scaffolding." -ForegroundColor Green
-            } else {
-                Write-Error 'Failed to create Docusaurus scaffolding - package.json not found'
-            }
-        } else {
-            Write-Error "Failed to create Docusaurus scaffolding - npx exited with code $($process.ExitCode)"
-        }
-
-    }
-
-    Set-Location $Location
+    New-OnlineHelpScaffolding @onlineHelpScaffoldingSplat
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
 Task -name VerifyNpmCache -action {
-    # This is not normally needed, but it can help if there are issues with npm dependencies. Task is disabled for now.
 
-    # Clear npm cache to ensure clean installation
-    Write-Verbose "`tInvoke-NpmCommand -Command 'cache verify' -WorkingDirectory '$DocsOnlineHelpDir'"
-    Invoke-NpmCommand -Command 'cache verify' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-    Write-InfoColor "`t# Successfully verified npm cache." -ForegroundColor Green
+    Test-NpmCache @npmCacheSplat
 
 } -description 'Clear npm cache to ensure clean dependency installation.'
 
@@ -949,173 +690,67 @@ Task -name VerifyNpmCache -action {
 
 Task -name UpdateOnlineHelpDependencies -action {
 
-    Write-Information "`tSet-Location -Path '$DocsOnlineHelpDir'"
-    Write-Verbose "`tInvoke-NpmCommand -Command 'install @docusaurus/theme-mermaid' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
-    Invoke-NpmCommand -Command 'install @docusaurus/theme-mermaid' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-
-    Write-Verbose "`tInvoke-NpmCommand -Command 'install @docusaurus/tsconfig' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
-    Invoke-NpmCommand -Command 'install @docusaurus/tsconfig' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-    Write-InfoColor "`t# Successfully added Mermaid theme dependency to the Online Help website" -ForegroundColor Green
+    Add-OnlineHelpDependencies @addDependenciesSplat
 
 } -description 'Add Mermaid theme dependency to the Online Help website using npm.'
 
 Task -name InstallOnlineHelpDependencies -action {
 
-    # npm install
-    Write-Verbose "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$DocsOnlineHelpDir' -ErrorAction Stop"
-    Invoke-NpmCommand -Command 'install' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-
-    # Determine whether the node_modules directory was created (indicating successful install)
-    $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'node_modules')
-    if (Test-Path $TestPath) {
-        Write-InfoColor "`t# Successfully installed dependencies for the Online Help website" -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to install Online Help dependencies. The node_modules directory was not created.'
-    }
+    Install-OnlineHelpDependencies @installDependenciesSplat
 
 } -description 'Install the dependencies for the Online Help website.'
 
 Task -name CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependencies -action {
 
-    $MarkdownSourceCode = [IO.Path]::Combine($SourceCodeDir, 'docs')
-    $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory -Exclude 'UpdatableHelp').Name
-
-    ForEach ($Locale in $helpLocales) {
-        Write-Information "`tCopy-Item -Path '$DocsMarkdownDir\*' -Destination '$OnlineHelpSourceMarkdown' -Recurse -Force"
-        Copy-Item -Path "$DocsMarkdownDir\*" -Destination $OnlineHelpSourceMarkdown -Recurse -Force
-        Write-Information "`tCopy-Item -Path '$MarkdownSourceCode\*' -Destination '$OnlineHelpSourceMarkdown\$Locale' -Recurse -Force"
-        Copy-Item -Path "$MarkdownSourceCode\*" -Destination "$OnlineHelpSourceMarkdown\$Locale" -Recurse -Force
-    }
-
-    # Test if markdown files were copied successfully
-    $copiedMarkdown = Get-ChildItem -Path $OnlineHelpSourceMarkdown -Filter '*.md' -Recurse -ErrorAction SilentlyContinue
-    if ($copiedMarkdown) {
-        Write-InfoColor "`t# Successfully copied Markdown files for online help." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to copy Markdown files for online help'
-    }
+    Copy-MarkdownForOnlineHelp @copyMarkdownSplat
 
 } -description 'Copy Markdown help files as source for online help website.'
 
 Task -name BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
 
-    $null = New-Item -ItemType Directory -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
-    $SourceArtFiles = Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.ps1'
+    [bool]$script:ArtExists = New-BuildArt @buildArtSplat
 
-    ForEach ($ScriptToRun in $SourceArtFiles) {
-        $ThisPath = [IO.Path]::Combine($DocsImageSourceCodeDir, $ScriptToRun.Name)
-        Write-Information "`t. $ThisPath -OutputDir '$DocsOnlineStaticImageDir'"
-        . $ThisPath -OutputDir $DocsOnlineStaticImageDir
-    }
-
-    # Test if art files were created
-    $artFiles = Get-ChildItem -Path $DocsOnlineStaticImageDir -ErrorAction SilentlyContinue
-    if ($artFiles.Count -eq $SourceArtFiles.Count) {
-        Write-InfoColor "`t# Successfully built dynamic art files." -ForegroundColor Green
-    } else {
-        Write-InfoColor "`t# No art files were generated (this may be expected if no art scripts exist)." -ForegroundColor Green
-    }
-
-} -description 'Build dynamic SVG art using PSSVG.'
+} -description 'Build static SVG art using PSSVG.'
 
 Task -name CopyArt -depends BuildArt -action {
 
-    Write-Information "`tGet-ChildItem -Path '$DocsImageSourceCodeDir' -Filter '*.svg' -ErrorAction Stop |"
-    Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
-    Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop | Copy-Item -Destination $DocsOnlineStaticImageDir
-
-    Write-InfoColor "`t# Successfully copied static SVG art files to the online help directory." -ForegroundColor Green
+    Copy-BuildArt @copyArtSplat
 
 } -description 'Copy static SVG art to the online help website.'
 
-Task -name ConvertArt -depends CopyArt -action {
+$InkscapePrereq = { Test-Inkscape }
 
-    #$ScriptToRun = [IO.Path]::Combine('.', 'ConvertFrom-SVG.ps1')
-    #$sourceSVG = [IO.Path]::Combine($DocsOnlineStaticImageDir, 'logo.svg')
-    #Write-Information "`t. $ScriptToRun -Path '$sourceSVG' -ExportWidth 512"
-    #. $ScriptToRun -Path $sourceSVG -ExportWidth 512
+Task -name ConvertArt -depends CopyArt -precondition $InkscapePrereq -action {
 
-    Write-InfoColor "`t# Art conversion task completed (currently commented out)." -ForegroundColor Green
+    ConvertTo-BuildArt @convertArtSplat
 
 } -description 'Convert SVGs to PNG using Inkscape.'
 
-Task -name BuildOnlineHelpWebsite -depends ConvertArt -action {
+Task -name BuildOnlineHelpWebsite -action {
 
-    # & npm run build
-    Write-Verbose "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
-
-    try {
-        Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-    } catch {
-        Write-InfoColor "`t# Build failed, attempting to fix corrupted dependencies..." -ForegroundColor Yellow
-        Clear-NodeJSDependencySet -WorkingDirectory $DocsOnlineHelpDir
-
-        # Retry the build after clearing dependencies
-        Write-Verbose "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
-        Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
-    }
-
-    # Determine whether the build directory was created (indicating successful build)
-    $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'build')
-    if (Test-Path $TestPath) {
-        Write-InfoColor "`t# Successfully built online help website." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to build online help website'
-    }
+    New-OnlineHelpWebsite @buildWebsiteSplat
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
 Task -name FixOnlineHelpWebsite -depends BuildOnlineHelpWebsite -action {
 
-    Write-Verbose "`tUpdate-DocusaurusConfig -GitHubOrgName '$GitHubOrgName' -DocsOnlineHelpDir '$DocsOnlineHelpDir' -ModuleInfo `$script:ManifestTest"
-    Update-DocusaurusConfig -GitHubOrgName $GitHubOrgName -DocsOnlineHelpDir $DocsOnlineHelpDir -ModuleInfo $script:ManifestTest -InformationAction 'Continue'
-    Write-InfoColor "`t# Successfully fixed online help website configuration." -ForegroundColor Green
+    Update-DocusaurusConfig -ModuleInfo $script:ManifestTest @fixWebsiteSplat
 
 } -description 'Fix the online help website configuration to use module-specific settings instead of default template.'
 
 
 # Perform unit testing.
-$UnitTestPrereq = {
-
-    Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
-    Write-InfoColor "FindUnitTestingPrerequisites$NewLine" -ForegroundColor Blue
-
-    if ($TestEnabled) {
-        Write-Information "`tGet-Module -Name Pester -ListAvailable"
-        if (Get-Module -Name Pester -ListAvailable) {
-            Write-InfoColor "`t# 'Pester' PowerShell module is installed. Unit testing will be performed." -ForegroundColor Green
-            return $true
-        } else {
-            Write-InfoColor "`t# 'Pester' PowerShell module is not installed. Unit testing will be skipped." -ForegroundColor Cyan
-            return $false
-        }
-    } else {
-        Write-InfoColor "`t# Unit testing is disabled. Unit testing will be skipped." -ForegroundColor Cyan
-    }
-
-}
+$UnitTestPrereq = { Test-BuildUnitTestPrereq -TestEnabled $TestEnabled @lineSplat @IO }
 
 Task -name CreateUnitTestOutputDir -precondition $UnitTestPrereq -action {
 
-    Write-Information "`t`$UnitTestOutputDir = [IO.Path]::Combine('.', 'out', 'tests')"
-    Write-Information "`tNew-Item -Path '$UnitTestOutputDir' -ItemType Directory -ErrorAction SilentlyContinue"
-    $null = New-Item -Path $UnitTestOutputDir -ItemType Directory -ErrorAction SilentlyContinue
-    if (Test-Path -Path $UnitTestOutputDir) {
-        Write-InfoColor "`t# Unit test output directory exists." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create the unit test output directory'
-    }
+    New-BuildFolder @unitTestFolderSplat
 
 } -description 'Create a folder for the unit test results.'
 
 Task -name UnitTests -action {
 
-    Write-Information "`t`$PesterConfigParams  = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable"
-    $PesterConfigParams = Get-Content -Path '.\tests\config\pesterConfig.json' | ConvertFrom-Json -AsHashtable
-    Write-Information "`t`$PesterConfiguration = New-PesterConfiguration -Hashtable `$PesterConfigParams"
-    $PesterConfiguration = New-PesterConfiguration -Hashtable $PesterConfigParams
-    Write-Information "`tInvoke-Pester -Configuration `$PesterConfiguration"
-    $script:UnitTestResults = Invoke-Pester -Configuration $PesterConfiguration
+    $script:UnitTestResults = Test-UnitTests @IO
 
 } -description 'Perform unit tests using Pester.'
 
@@ -1123,48 +758,17 @@ Task -name UnitTests -action {
 # Commit changes to source control.
 Task -name SourceControl -action {
 
-    # Find the current git branch
-    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git branch --show-current"
-    $CurrentBranch = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''
-
-    # Commit to Git
-    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git add ."
-    $null = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''
-    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', `$CommitMessage) -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git commit -m `"$CommitMessage`""
-    $null = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('commit', '-m', "`"$CommitMessage`"") -InformationAction 'Continue' -OutputPrefix ''
-    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', '$CurrentBranch') -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git push origin $CurrentBranch"
-    $null = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('push', 'origin', $CurrentBranch) -InformationAction 'Continue' -OutputPrefix ''
-
-    # Test if commit was successful by checking git status
-    Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git status --porcelain"
-    $gitStatus = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -InformationAction 'Continue' -OutputPrefix ''
-
-    if ($gitStatus) {
-        Write-Error 'Failed to commit all changes to source control'
-    } else {
-        Write-InfoColor "`t# Successfully committed and pushed changes to source control." -ForegroundColor Green
-    }
+    Invoke-SourceControl @sourceControlSplat
 
 } -description 'git add, commit, and push'
 
 
 # Create a GitHub release.
 Task -name CreateGitHubRelease -action {
-    $RepositoryPath = "$GitHubOrgName/$ModuleName"
-    Write-Verbose "`tNew-BuildGitHubRelease -GitHubToken `$env:GHFGPATADSI -Repository '$RepositoryPath' -DistPath '$BuildOutDir' -ReleaseNotes '$CommitMessage' -InformationAction 'Continue'"
-    $release = New-BuildGitHubRelease -GitHubToken $env:GHFGPATADSI -Repository $RepositoryPath -DistPath $BuildOutDir -ReleaseNotes $CommitMessage -InformationAction 'Continue'
 
-    if ($release -and $release.html_url) {
-        Write-InfoColor "$NewLine`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
-        Write-InfoColor "`t# Successfully created GitHub release." -ForegroundColor Green
-    } else {
-        Write-Error 'Failed to create GitHub release'
-    }
+    Assert -conditionToCheck $env:GHFGPATADSI -failureMessage 'GitHub Personal Access Token was not defined.'
+
+    $null = New-BuildGitHubRelease @releaseSplat
 
 } -description 'Create a GitHub release and upload the module files to it'
 
@@ -1172,101 +776,28 @@ Task -name CreateGitHubRelease -action {
 # Publish the module to a PowerShell repository.
 Task -name Publish -action {
 
-    Assert -conditionToCheck ($PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
+    Assert -conditionToCheck (
+        $PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential
+    ) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
 
-    $publishParams = @{
-        Path       = $script:BuildOutputDir
-        Repository = $PublishPSRepository
-        Verbose    = $VerbosePreference
-    }
-    if ($PublishPSRepositoryApiKey) {
-        $publishParams.NuGetApiKey = $PublishPSRepositoryApiKey
-    }
+    Publish-BuildModule -Path $script:BuildOutputDir @publishRepoSplat
 
-    if ($PublishPSRepositoryCredential) {
-        $publishParams.Credential = $PublishPSRepositoryCredential
-    }
-
-    # Only publish a release if we are working on the main branch
-    $CurrentBranch = git branch --show-current
-    if ($NoPublish -ne $true -and $CurrentBranch -eq 'main') {
-        Write-Information "`tPublish-Module -Path '$script:BuildOutputDir' -Repository 'PSGallery'"
-        # Publish to PSGallery
-        Publish-Module @publishParams
-        Write-InfoColor "`t# Successfully published module to $PublishPSRepository." -ForegroundColor Green
-    } else {
-        Write-Verbose 'Skipping publishing. NoPublish is $NoPublish and current git branch is $CurrentBranch'
-        Write-InfoColor "`t# Skipped publishing (NoPublish: $NoPublish, Branch: $CurrentBranch)." -ForegroundColor Green
-    }
 } -description 'Publish module to the defined PowerShell repository'
 
 Task -name AwaitRepoUpdate -depends Publish -action {
-    $timer = 30
-    $timeout = 60
-    do {
-        Start-Sleep -Seconds 1
-        $timer++
-        Write-Information "`tFind-Module -Name '$ModuleName' -Repository '$PublishPSRepository'"
-        $VersionInGallery = Find-Module -Name $ModuleName -Repository $PublishPSRepository
-    } while (
-        $VersionInGallery.Version -lt $script:NewModuleVersion -and
-        $timer -lt $timeout
-    )
 
-    if ($timer -eq $timeout) {
-        Write-Warning "Cannot retrieve version '$script:NewModuleVersion' of module '$ModuleName' from repo '$PublishPSRepository'"
-        Write-Error "Timeout waiting for module version $script:NewModuleVersion to appear in $PublishPSRepository"
-    } else {
-        Write-InfoColor "`t# Successfully confirmed module version $script:NewModuleVersion is available in $PublishPSRepository." -ForegroundColor Green
-    }
+    $null = Wait-RepoUpdate -ExpectedVersion $script:NewModuleVersion @waitRepoSplat
+
 } -description 'Await the new version in the defined PowerShell repository'
 
 Task -name Uninstall -depends AwaitRepoUpdate -action {
 
-    Write-Information "`tGet-Module -Name '$ModuleName' -ListAvailable"
-    $Result = Get-Module -Name $ModuleName -ListAvailable
-
-    if ($Result) {
-        Write-Information "`tGet-Module -Name '$ModuleName' -ListAvailable | Uninstall-Module -ErrorAction Stop"
-        try {
-            $Result | Uninstall-Module -ErrorAction Stop
-        } catch {
-            $ErrorMessage = "$_"
-            switch ("$ErrorMessage") {
-                "No match was found for the specified search criteria and module names '$ModuleName'." {
-                    Write-Information "`tRemove-Item -Path '$script:ModuleInstallDir' -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
-                    Remove-Item $script:ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
-
-                }
-                default {
-                    Write-Error "An unexpected error occurred while uninstalling module $ModuleName`: $ErrorMessage"
-                }
-            }
-        }
-        Write-InfoColor "`t# Successfully uninstalled all versions of module $ModuleName." -ForegroundColor Green
-    } else {
-        Write-InfoColor "`t# No versions of module $ModuleName found to uninstall." -ForegroundColor Green
-    }
+    Uninstall-BuildModule -ModuleInstallDir $script:ModuleInstallDir @uninstallBuildModuleSplat
 
 } -description 'Uninstall all versions of the module'
 
 Task -name Reinstall -depends Uninstall -action {
 
-    [int]$attempts = 0
-
-    do {
-        $attempts++
-        Write-Information "`tInstall-Module -Name '$ModuleName' -Force"
-        Install-Module -Name $ModuleName -Force -ErrorAction Continue
-        Start-Sleep -Seconds 1
-        $ModuleStatus = Get-Module -Name $ModuleName -ListAvailable | Where-Object { $_.Version -eq $script:NewModuleVersion }
-    } while ((-not $ModuleStatus) -and ($attempts -lt 3))
-
-    # Test if reinstall was successful
-    if ($ModuleStatus) {
-        Write-InfoColor "`t# Successfully reinstalled module $ModuleName (version: $($ModuleStatus.Version))." -ForegroundColor Green
-    } else {
-        Write-Error "Failed to reinstall module $ModuleName after $attempts attempts"
-    }
+    $null = Install-BuildModule -ExpectedVersion $script:NewModuleVersion @installBuildModuleSplat
 
 } -description 'Reinstall the latest version of the module from the defined PowerShell repository'

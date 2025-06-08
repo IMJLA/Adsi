@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.414] - 2025-06-08
+### Changed
+- extract logic from psakefile to dedicated function files
+
+## [5.0.413] - 2025-06-08
+### Changed
+- extract logic from psakefile tasks into dedicated function files
+
+## [5.0.412] - 2025-06-08
+### Changed
+- extract logic from psakefile tasks into dedicated function files
+
+## [5.0.411] - 2025-06-08
+### Changed
+- extract logic from psakefile tasks into dedicated function files
+
+## [5.0.410] - 2025-06-08
+### Changed
+- extract logic from psakefile tasks into dedicated function files
+
 ## [5.0.408] - 2025-06-07
 ### Fixed
 - fix linting issues

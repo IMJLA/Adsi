@@ -5,13 +5,19 @@
         [string]$GitHubToken,
 
         [Parameter(Mandatory = $true)]
-        [string]$Repository,
+        [string]$GitHubOrgName,
+
+        [Parameter(Mandatory = $true)]
+        [string]$ModuleName,
 
         [Parameter(Mandatory = $false)]
         [string]$DistPath = '.\Dist',
 
         [Parameter(Mandatory = $false)]
-        [string]$ReleaseNotes = 'Automated release'
+        [string]$ReleaseNotes = 'Automated release',
+
+        [Parameter(Mandatory = $false)]
+        [string]$NewLine = [System.Environment]::NewLine
     )
 
     Write-Verbose "`tGet-VersionFolder -DistPath '$DistPath'"
@@ -24,6 +30,9 @@
         $version = $versionFolder.Name
         $versionFolderParentToReplace = $versionFolder.FullName | Split-Path -Parent
         $versionFolderPath = $versionFolder.FullName -replace [regex]::Escape($versionFolderParentToReplace), $DistPath
+
+        # Construct repository path
+        $Repository = "$GitHubOrgName/$ModuleName"
 
         # Create the release
         Write-Verbose "`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes' -InformationAction 'Continue'"
@@ -52,6 +61,14 @@
             }
         } else {
             throw "Failed to create zip file at: $zipFilePath"
+        }
+
+        # Validate release creation and provide output
+        if ($release -and $release.html_url) {
+            Write-InfoColor "$NewLine`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
+            Write-InfoColor "`t# Successfully created GitHub release." -ForegroundColor Green
+        } else {
+            Write-Error 'Failed to create GitHub release'
         }
 
         return $release

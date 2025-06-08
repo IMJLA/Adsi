@@ -16,10 +16,10 @@
     Path to the PSScriptAnalyzer settings file.
 
     .EXAMPLE
-    .\Format-SourceCode.ps1
+    Format-SourceCode
 
     .EXAMPLE
-    .\Format-SourceCode.ps1 -Path "C:\MyProject\src" -WhatIf
+    Format-SourceCode -Path "C:\MyProject\src" -WhatIf
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -30,36 +30,58 @@
         [string]$SettingsPath = (Join-Path $PSScriptRoot 'psscriptanalyzerSettings.psd1')
     )
 
+    Write-Information "`tFormat-SourceCode -Path '$Path' -SettingsPath '$SettingsPath'"
+
     # Verify PSScriptAnalyzer is available
     if (-not (Get-Module -Name PSScriptAnalyzer -ListAvailable)) {
         throw 'PSScriptAnalyzer module is required but not installed. Install with: Install-Module PSScriptAnalyzer'
     }
 
     # Get all PowerShell script files
-    Write-Verbose "`tGet-ChildItem -Path '$Path' -Include '*.ps1', '*.psm1', '*.psd1' -Recurse"
-    $ScriptFiles = Get-ChildItem -Path $Path -Include '*.ps1', '*.psm1', '*.psd1' -Recurse
+    Write-Information "`tGet-ChildItem -Path '$Path' -Filter '*.ps*1' -Recurse"
+    $ScriptFiles = Get-ChildItem -Path $Path -Filter '*.ps*1' -Recurse
 
     foreach ($File in $ScriptFiles) {
 
-        $RelativePath = $File.FullName.Substring($Path.Length).TrimStart('\')
-        Write-Verbose "`tGet-Content -Path '$RelativePath' -Raw"
-        $OriginalContent = Get-Content $File.FullName -Raw
-        # Format the content
-        Write-Verbose "`tInvoke-Formatter -ScriptDefinition '$RelativePath' -Settings '$SettingsPath' -ErrorAction Stop"
-        $FormattedContent = Invoke-Formatter -ScriptDefinition $OriginalContent -Settings $SettingsPath -ErrorAction Stop
+        $CurrentDirectory = (Get-Location -PSProvider FileSystem).Path
+        $PartialRelativePath = [IO.Path]::GetRelativePath($CurrentDirectory, $File.FullName)
+        $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
 
-        # Check if content changed
-        if ($FormattedContent -ne $OriginalContent) {
+        # Read the original content of the file
+        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw -ErrorAction Stop"
+        $OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
 
-            if ($WhatIfPreference) {
-                Write-Information "`t`twould run: Set-Content -Path '$($File.FullName)' -Value `'$FormattedContent' -NoNewline"
-            } elseif ($PSCmdlet.ShouldProcess($File.FullName, 'Format PowerShell file')) {
-                Write-Information "`t`tSet-Content -Path '$($File.FullName)' -Value '`$FormattedContent' -NoNewline"
-                Set-Content -Path $File.FullName -Value $FormattedContent -NoNewline
+        # Check current file encoding
+        $FileBytes = [System.IO.File]::ReadAllBytes($File.FullName)
+        $HasBOM = $FileBytes.Length -ge 3 -and $FileBytes[0] -eq 0xEF -and $FileBytes[1] -eq 0xBB -and $FileBytes[2] -eq 0xBF
+
+        <#
+        Normalize line endings to Windows format (CRLF) before formatting
+        In addition to ensuring consistency this prevents the following error from Invoke-Formatter:
+
+            Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
+        #>
+        Write-Verbose "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
+        $NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
+
+        Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$SettingsPath' -ErrorAction Stop"
+        $FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $SettingsPath -ErrorAction Stop
+
+        # Update file if content changed or encoding needs to be fixed
+        $ContentChanged = $FormattedContent -ne $OriginalContent
+        $EncodingNeedsUpdate = -not $HasBOM
+
+        if ($ContentChanged -or $EncodingNeedsUpdate) {
+
+            if ($PSCmdlet.ShouldProcess($FullRelativePath, 'Format PowerShell file and update encoding')) {
+                Write-Information "`tSet-Content -Path '$FullRelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine -ErrorAction Stop"
+                Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
             }
 
         }
 
     }
+
+    Write-InfoColor "`t# Successfully formatted PowerShell script files and ensured UTF8 with BOM encoding." -ForegroundColor Green
 
 }

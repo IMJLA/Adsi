@@ -1,4 +1,4 @@
-﻿function Repair-MarkdownHelp {
+﻿function Repair-BuildMarkdownHelp {
     [CmdletBinding()]
     param (
         # The directory where build output is stored
@@ -193,5 +193,7 @@
     $readMePath = Get-ChildItem -Path '.' -Include 'readme.md', 'readme.markdown', 'readme.txt' -Depth 1 | Select-Object -First 1
     Write-Verbose "`tSet-Content -LiteralPath '$($ReadMePath.FullName)' -Value `$ReadMeContents"
     Set-Content -Path $ReadMePath.FullName -Value $ReadMeContents
+
+    Write-InfoColor "`t# Successfully fixed Markdown help files for proper formatting and parameter documentation." -ForegroundColor Green
 
 }

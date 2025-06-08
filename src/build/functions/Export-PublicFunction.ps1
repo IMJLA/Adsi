@@ -1,48 +1,34 @@
 ﻿function Export-PublicFunction {
     [CmdletBinding()]
-    param (
+    param(
+        [Parameter(Mandatory)]
+        [System.IO.FileInfo[]]$PublicFunctionFile,
 
-        # The collection of files containing public functions
-        [System.IO.FileInfo[]]$PublicFunctionFiles,
-
-        # Path to the module file (.psm1)
+        [Parameter(Mandatory)]
         [string]$ModuleFilePath,
 
-        # Path to the module manifest file (.psd1)
+        [Parameter(Mandatory)]
         [string]$ModuleManifestPath
-
     )
 
-    # Export public functions in the module
-    $publicFunctions = $PublicFunctionFiles.BaseName
+    Write-Information "`tExport-PublicFunction -PublicFunctionFile `$PublicFunctionFile -ModuleFilePath '$ModuleFilePath' -ModuleManifestPath '$ModuleManifestPath'"
 
-    # Create a string representation of the public functions array
-    $PublicFunctionsJoined = $publicFunctions -join "', '"
-    $strPublicFunctions = "@('$publicFunctionsJoined')"
-
-    Write-Verbose "`t`$ModuleContent = Get-Content -LiteralPath '$ModuleFilePath' -Raw"
-    $ModuleContent = Get-Content -Path $ModuleFilePath -Raw
-    $NewExportStmt = "Export-ModuleMember -Function $strPublicFunctions"
-
-    if ($ModuleContent -match 'Export-ModuleMember -Function') {
-
-        $OldExportStmt = 'Export-ModuleMember -Function .*'
-        Write-Verbose "`t`$ModuleContent = `$ModuleContent -replace '$OldExportStmt' , `"$NewExportStmt`""
-        $ModuleContent = $ModuleContent -replace 'Export-ModuleMember -Function.*' , $NewExportStmt
-        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$UpdatedModuleContent -Encoding UTF8BOM -NoNewline"
-        Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
-
-    } else {
-        # Ensure the module content doesn't end with a newline before appending
-        if (-not $ModuleContent.EndsWith("`r`n") -and -not $ModuleContent.EndsWith("`n")) {
-            $ModuleContent += "`r`n"
+    # Extract function names from files
+    $FunctionNames = $PublicFunctionFile | ForEach-Object {
+        $Content = Get-Content -Path $_.FullName -Raw
+        if ($Content -match 'function\s+([A-Za-z0-9-_]+)') {
+            $Matches[1]
         }
-        $ModuleContent += $NewExportStmt
-        Write-Information "`tSet-Content -Path '$ModuleFilePath' -Value `$UpdatedModuleContent -Encoding UTF8BOM -NoNewline"
-        Set-Content -Path $ModuleFilePath -Value $ModuleContent -Encoding UTF8BOM -NoNewline
     }
 
-    # Export public functions in the manifest
-    Write-Information "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName FunctionsToExport -Value $strPublicFunctions"
-    Update-Metadata -Path $ModuleManifestPath -PropertyName FunctionsToExport -Value $publicFunctions
+    # Update module manifest with exported functions
+    if ($FunctionNames) {
+        $ManifestContent = Get-Content -Path $ModuleManifestPath -Raw
+        $UpdatedContent = $ManifestContent -replace '(FunctionsToExport\s*=\s*)@\([^)]*\)', "`$1@('$($FunctionNames -join "', '")')"
+        Set-Content -Path $ModuleManifestPath -Value $UpdatedContent -Encoding UTF8
+
+        Write-InfoColor "`t# Successfully exported $($FunctionNames.Count) public functions in the module." -ForegroundColor Green
+    } else {
+        Write-InfoColor "`t# No public functions found to export." -ForegroundColor Yellow
+    }
 }

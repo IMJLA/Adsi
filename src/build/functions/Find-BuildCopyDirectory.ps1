@@ -3,9 +3,10 @@
     [CmdletBinding()]
 
     param (
-        [string[]]$BuildCopyDirectory
+        [string[]]$BuildCopyDirectoryPath
     )
 
+    Write-Information "`tFind-BuildCopyDirectory -BuildCopyDirectoryPath `$BuildCopyDirectoryPath"
     Write-Information "`tGet-ChildItem -Path '.' -Directory"
 
     $EmptyFolders = Get-ChildItem -Path . -Directory | ForEach-Object {
@@ -15,8 +16,11 @@
         }
     }
 
-    $BuildCopyDirectory | Where-Object -FilterScript {
+    $CopyDirectories = $BuildCopyDirectoryPath | Where-Object -FilterScript {
         $EmptyFolders -notcontains $_
     }
+
+    Write-InfoColor "`t# Found $($CopyDirectories.Count) directories to copy to the build output directory." -ForegroundColor Green
+    return $CopyDirectories
 
 }

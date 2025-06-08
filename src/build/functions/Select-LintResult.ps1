@@ -23,7 +23,7 @@
         [ValidateSet('None', 'Error', 'Warning', 'Information')]
         [string]$SeverityThreshold,
 
-        [hashtable]$ExcludeRulesByFile = @{
+        [hashtable]$ExcludeRuleByFile = @{
             # psake syntax does not support SupressMessageAttribute, so we need to exclude some rules.
             # Exclude the PSUseDeclaredVarsMoreThanAssignments rule for this file because psake variable scoping is not understood by PSScriptAnalyzer.
             # Exclude the PSUseCorrectCasing rule for this file due to a bug in PSScriptAnalyzer (wrongly sees the Task -name parameter as uppercase).
@@ -34,10 +34,12 @@
 
     )
 
+    Write-Information "`tSelect-LintResult -SeverityThreshold '$SeverityThreshold' -LintResult `$LintResult"
+
     $filteredOut = 0
     $filteredResult = ForEach ($result in $LintResult) {
-        if ($ExcludeRulesByFile.ContainsKey($result.ScriptName)) {
-            if ($ExcludeRulesByFile[$result.ScriptName] -contains $result.RuleName) {
+        if ($ExcludeRuleByFile.ContainsKey($result.ScriptName)) {
+            if ($ExcludeRuleByFile[$result.ScriptName] -contains $result.RuleName) {
                 $filteredOut = $filteredOut + 1
                 continue
             }
@@ -83,4 +85,6 @@
             }
         }
     }
+
+    Write-InfoColor "`t# Completed lint output analysis successfully." -ForegroundColor Green
 }

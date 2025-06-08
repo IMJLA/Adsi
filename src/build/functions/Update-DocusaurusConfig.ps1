@@ -17,7 +17,7 @@
         [PSModuleInfo]$ModuleInfo,
 
         # Comments to add to the configuration file
-        [hashtable]$ElementComments = @{
+        [hashtable]$ElementComment = @{
             'title'                 = @(
                 'Set the title of your site here',
                 'The title appears in the browser tab and is used across various parts of your documentation'
@@ -128,9 +128,9 @@
     }
 
     # Add comments above specified elements
-    foreach ($elementKey in $ElementComments.Keys) {
+    foreach ($elementKey in $ElementComment.Keys) {
 
-        $comments = $ElementComments[$elementKey]
+        $comments = $ElementComment[$elementKey]
 
         # Build the comment block
         $commentBlock = ''
@@ -236,6 +236,7 @@ title: 'Community',
 
     if ($PSCmdlet.ShouldProcess($configPath, 'Update Docusaurus configuration')) {
         Write-Information "`tSet-Content -LiteralPath '$configPath' -Value `$configContent -Encoding UTF8"
-        Set-Content -LiteralPath $configPath -Value $configContent -Encoding UTF8
+        Set-Content -LiteralPath $configPath -Value $configContent -Encoding UTF8 -ErrorAction Stop
+        Write-InfoColor "`t# Successfully fixed online help website configuration." -ForegroundColor Green
     }
 }
