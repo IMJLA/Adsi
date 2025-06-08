@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.437] - 2025-06-08
+### Fixed
+- fix function export task
+
 ## [5.0.436] - 2025-06-08
 ### Changed
 - improve build console output

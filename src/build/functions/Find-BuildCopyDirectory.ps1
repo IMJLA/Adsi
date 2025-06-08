@@ -11,7 +11,7 @@
     $EmptyFolders = Get-ChildItem -Path . -Directory | ForEach-Object {
 
         $JoinedPath = [io.path]::Combine('.', $_.Name)
-        Write-Information "`tGet-ChildItem -Path '$JoinedPath' -Directory"
+        Write-Information "`tGet-ChildItem -Path '$JoinedPath' -File"
         $Files = Get-ChildItem -Path $_.FullName -File
 
         if ($Files.Count -eq 0 -or ($Files.Count -eq 1 -and $Files.Name -eq '.gitkeep')) {

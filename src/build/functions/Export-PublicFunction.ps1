@@ -4,10 +4,11 @@
 
     param(
 
+        # Path to the public function files (.ps1)
         [Parameter(Mandatory)]
         [System.IO.FileInfo[]]$PublicFunctionFile,
 
-        [Parameter(Mandatory)]
+        # Path to the module file (.psm1)
         [string]$ModuleFilePath,
 
         [Parameter(Mandatory)]
@@ -26,11 +27,9 @@
     # Update module manifest with exported functions
     if ($FunctionNames) {
 
-        $ManifestContent = Get-Content -Path $ModuleManifestPath -Raw
-        $UpdatedContent = $ManifestContent -replace '(FunctionsToExport\s*=\s*)@\([^)]*\)', "`$1@('$($FunctionNames -join "', '")')"
-        Write-Information "`tSet-Content -Path '$ModuleManifestPath' -Value `$UpdatedContent -Encoding UTF8"
-        Set-Content -Path $ModuleManifestPath -Value $UpdatedContent -Encoding UTF8
-        Write-InfoColor "`t# Successfully exported $($FunctionNames.Count) public functions in the module." -ForegroundColor Green
+        Export-BuildModuleFileFunction -ModuleFilePath $ModuleFilePath -FunctionName $FunctionNames -ErrorAction Stop -InformationAction Continue
+        Export-BuildModuleManifestFunction -ModuleManifestPath $ModuleManifestPath -FunctionName $FunctionNames -ErrorAction Stop -InformationAction Continue
+        Write-InfoColor "`t# Successfully exported $($FunctionNames.Count) public functions in the module file and module manifest." -ForegroundColor Green
 
     } else {
         Write-InfoColor "`t# No public functions found to export." -ForegroundColor Yellow
