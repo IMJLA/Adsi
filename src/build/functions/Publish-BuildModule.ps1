@@ -39,7 +39,7 @@
         [string]$ApiKey,
 
         [Parameter(ParameterSetName = 'Credential')]
-        [pscredential]$Credential,
+        $Credential,
 
         [bool]$NoPublish = $false,
 
