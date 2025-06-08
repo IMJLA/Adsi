@@ -23,7 +23,7 @@
     )
 
     if ($PSCmdlet.ShouldProcess($ModuleName, 'Remove module from current PowerShell session')) {
-        Write-Information "`tRemove-Module -Name '$ModuleName' -Force -ErrorAction Stop"
+        Write-Information "`tRemove-Module -Name '$ModuleName' -Force"
         Remove-Module -Name $ModuleName -Force -ErrorAction Stop
         Write-InfoColor "`t# Successfully removed the module." -ForegroundColor Green
     }

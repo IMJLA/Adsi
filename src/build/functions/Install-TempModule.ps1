@@ -61,7 +61,7 @@
         Write-Error 'Failed to create the module version installation directory.'
     }
 
-    Write-Information "`tCopy-Item -Path '$Path\*' -Destination '$ModuleInstallDir' -Recurse -Force -ErrorAction Stop"
+    Write-Information "`tCopy-Item -Path '$Path\*' -Destination '$ModuleInstallDir' -Recurse -Force"
     if ($PSCmdlet.ShouldProcess($ModuleInstallDir, 'Copy module files to installation directory')) {
         Copy-Item -Path "$Path\*" -Destination $ModuleInstallDir -Recurse -Force -ErrorAction Stop
         Write-InfoColor "`t# Successfully copied the module files to the version installation directory." -ForegroundColor Green

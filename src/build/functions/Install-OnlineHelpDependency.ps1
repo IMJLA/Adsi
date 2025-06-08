@@ -25,7 +25,7 @@
     if ($PSCmdlet.ShouldProcess($WorkingDirectory, "Install all npm dependencies, plus: $($Dependency -join ', ')")) {
 
         $installCommand = "install $($Dependency -join ' ')"
-        Write-Verbose "`tInvoke-NpmCommand -Command '$installCommand' -WorkingDirectory '$WorkingDirectory' -ErrorAction Stop"
+        Write-Verbose "`tInvoke-NpmCommand -Command '$installCommand' -WorkingDirectory '$WorkingDirectory'"
         Invoke-NpmCommand -Command $installCommand -WorkingDirectory $WorkingDirectory -ErrorAction Stop
 
         # Determine whether the node_modules directory was created (indicating successful install)

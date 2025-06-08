@@ -22,10 +22,10 @@
     )
 
     if ($PSCmdlet.ShouldProcess($ModuleName, 'Import Module')) {
-        Write-Information "`tImport-Module -Name '$ModuleName' -Force -ErrorAction Stop"
+        Write-Information "`tImport-Module -Name '$ModuleName' -Force"
         Import-Module -Name $ModuleName -Force -ErrorAction Stop
 
-        Write-Information "`tGet-Module -Name '$ModuleName' -ErrorAction Stop"
+        Write-Information "`tGet-Module -Name '$ModuleName'"
         $Result = Get-Module -Name $ModuleName -ErrorAction Stop
 
         if ($Result) {

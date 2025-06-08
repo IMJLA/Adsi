@@ -26,7 +26,7 @@
 
     if ($PSCmdlet.ShouldProcess($ModuleManifestPath, "Update module version to $NewVersion")) {
 
-        Write-Information "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $NewVersion -ErrorAction Stop"
+        Write-Information "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $NewVersion"
         Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $NewVersion -ErrorAction Stop
         Write-InfoColor "`t# Successfully updated the module manifest with the new version number." -ForegroundColor Green
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.443] - 2025-06-08
+### Fixed
+- fix relative paths only in console output
+
 ## [5.0.442] - 2025-06-08
 ### Fixed
 - fix encoding and console output

@@ -18,7 +18,7 @@ function New-BuildMAMLHelp {
     )
 
     if ($PSCmdlet.ShouldProcess('MAML help files', "Build from Markdown files in '$DocsMarkdownDir' to '$DocsMamlDir'")) {
-        Write-Information "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$DocsMamlDir' -ErrorAction Stop"
+        Write-Information "`tBuild-PSBuildMAMLHelp -Path '$DocsMarkdownDir' -DestinationPath '$DocsMamlDir'"
         Build-PSBuildMAMLHelp -Path $DocsMarkdownDir -DestinationPath $DocsMamlDir -ErrorAction Stop
         Write-InfoColor "`t# Successfully built MAML help files from the Markdown files." -ForegroundColor Green
     }

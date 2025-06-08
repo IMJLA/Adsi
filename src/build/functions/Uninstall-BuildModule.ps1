@@ -29,7 +29,7 @@
     $Result = Get-Module -Name $ModuleName -ListAvailable
 
     if ($Result) {
-        Write-Information "`tGet-Module -Name '$ModuleName' -ListAvailable | Uninstall-Module -ErrorAction Stop"
+        Write-Information "`tGet-Module -Name '$ModuleName' -ListAvailable | Uninstall-Module"
         try {
             $Result | Uninstall-Module -ErrorAction Stop
         } catch {
