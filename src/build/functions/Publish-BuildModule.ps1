@@ -35,10 +35,8 @@
         [Parameter(Mandatory)]
         [string]$Repository,
 
-        [Parameter(ParameterSetName = 'ApiKey')]
         [string]$ApiKey,
 
-        [Parameter(ParameterSetName = 'Credential')]
         $Credential,
 
         [bool]$NoPublish = $false,
