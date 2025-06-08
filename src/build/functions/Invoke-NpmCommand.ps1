@@ -44,6 +44,10 @@
 
     Write-Verbose "`t`t`$EnvironmentVariables = @{ 'FORCE_COLOR'='1'; 'NPM_CONFIG_COLOR'='always'; 'TERM'='xterm-256color'; 'COLUMNS'='200'; 'LINES'='50' }"
     Write-Verbose "`t`tInvoke-FileWithOutputPrefix -Command 'cmd' -ArgumentString '$cmdArguments' -WorkingDirectory '$WorkingDirectory' -OutputPrefix `"``t``t``t`" -PassThru:`$$PassThru -EnvironmentVariables `$EnvironmentVariables"
+    $CurrentDirectory = (Get-Location -PSProvider FileSystem).Path
+    $PartialRelativePath = [IO.Path]::GetRelativePath($CurrentDirectory, $WorkingDirectory)
+    $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
+    Write-Information "`tSet-Location '$FullRelativePath'"
     Write-Information "`t& npm $Command"
     $output = Invoke-FileWithOutputPrefix @splat
 
