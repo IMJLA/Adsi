@@ -21,6 +21,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([string])]
     param(
         [Parameter(Mandatory)]
         [string]$ModuleName,
