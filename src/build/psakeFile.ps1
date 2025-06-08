@@ -482,7 +482,7 @@ task -name UpdateBuildOutputDirVariable -depends DetermineNewVersionNumber -acti
 
 Task -name UpdateModuleVersion -depends UpdateBuildOutputDirVariable -action {
 
-    Update-BuildModuleMetadata -NewVersion $script:NewModuleVersion @metadataSplat
+    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion @metadataSplat
 
 } -description 'Update the module manifest with the new version number'
 

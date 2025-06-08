@@ -15,10 +15,10 @@
         Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
 
             $DirName = $_.FullName
-            Write-Information "`tUpdate-MarkdownHelp -Path '$($_.FullName)'" @IO
+            Write-Information "`tUpdate-MarkdownHelp -Path '$DirName'" @IO
 
-            if ($PSCmdlet.ShouldProcess($_.FullName, "Update-MarkdownHelp")) {
-                Update-MarkdownHelp -Path $_.FullName -ErrorAction Stop
+            if ($PSCmdlet.ShouldProcess($DirName, 'Update-MarkdownHelp')) {
+                Update-MarkdownHelp -Path $DirName -ErrorAction Stop
             }
         }
 
