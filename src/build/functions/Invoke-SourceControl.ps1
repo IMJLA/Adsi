@@ -17,7 +17,10 @@
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
-        [string]$CommitMessage
+        [string]$CommitMessage,
+
+        # The newline character(s) to use in output messages
+        [string]$NewLine = [System.Environment]::NewLine
     )
 
     # Find the current git branch
@@ -28,7 +31,7 @@
     # Add all changes
     if ($PSCmdlet.ShouldProcess('.', 'git add all changes')) {
         Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''"
-        Write-Information "`t& git add ."
+        Write-Information "`t& git add .$NewLine"
         $null = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('add', '.') -InformationAction 'Continue' -OutputPrefix ''
     }
 

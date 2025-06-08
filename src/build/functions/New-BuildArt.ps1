@@ -22,7 +22,10 @@
 
         # The destination directory for the generated art files
         [Parameter(Mandatory)]
-        [string]$Out
+        [string]$Out,
+
+        # The newline character(s) to use in output messages
+        [string]$NewLine = [System.Environment]::NewLine
 
     )
 
@@ -32,7 +35,7 @@
         $SourceArtFiles = Get-ChildItem -Path $In -Filter '*.ps1'
 
         if ($SourceArtFiles.Count -eq 0) {
-            Write-InfoColor "`t# No source art files found in '$In' (this may be expected if no art scripts exist)." -ForegroundColor Green
+            Write-InfoColor "`t# No source art files found in '$In' (this may be expected if no art scripts exist).$NewLine" -ForegroundColor Green
             return
         }
 

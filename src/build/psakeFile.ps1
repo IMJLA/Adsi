@@ -227,7 +227,7 @@ Properties {
     [hashtable]$buildOutDirSplat = $ModuleNameSplat + $IO + @{ 'BuildOutDir' = $BuildOutDir } # Splat for Update-BuildOutputDir
     [hashtable]$metadataSplat = $IO + @{ 'ModuleManifestPath' = $ModuleManifestPath } # Splat for Test-BuildModuleMetadata
     [hashtable]$findPublicFunctionsSplat = $IO + @{ 'PublicFunctionPath' = $publicFunctionPath } # Splat for Find-PublicFunction
-    [hashtable]$sourceControlSplat = $IO + @{ 'CommitMessage' = $CommitMessage } # Splat for Invoke-SourceControl
+    [hashtable]$sourceControlSplat = $IO + $lineSplat + @{ 'CommitMessage' = $CommitMessage } # Splat for Invoke-SourceControl
     [hashtable]$lintAnalysisSplat = $IO + @{ 'SeverityThreshold' = $LintSeverityThreshold } # Splat for Select-LintResult
     [hashtable]$removeOldBuildSplat = @{ 'BuildOutDir' = $BuildOutDir } # Splat for Remove-OldBuild
     [hashtable]$findCopyDirSplat = $IO + @{ 'BuildCopyDirectoryPath' = $BuildCopyDirectories } # Splat for Find-BuildCopyDirectory
@@ -376,7 +376,7 @@ Properties {
     }
 
     # Splat for New-BuildArt
-    [hashtable]$buildArtSplat = $IO + @{
+    [hashtable]$buildArtSplat = $IO + $lineSplat + @{
         'In'  = $DocsImageSourceCodeDir
         'Out' = $DocsOnlineStaticImageDir
     }

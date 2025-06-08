@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.418] - 2025-06-08
+### Fixed
+- fix console output
+
 ## [5.0.417] - 2025-06-08
 ### Fixed
 - fix bool casting
