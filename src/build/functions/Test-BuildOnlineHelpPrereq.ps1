@@ -1,5 +1,6 @@
 ﻿function Test-BuildOnlineHelpPrereq {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [string]$NewLine
     )

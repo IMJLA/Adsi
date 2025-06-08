@@ -1,5 +1,6 @@
 ﻿function Test-BuildUnitTestPrereq {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [bool]$TestEnabled,
         [string]$NewLine

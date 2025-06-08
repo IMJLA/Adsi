@@ -1,5 +1,6 @@
 ﻿function Test-BuildPrereq {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [bool]$BuildCompileModule,
         [string]$NewLine

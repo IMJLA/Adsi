@@ -16,9 +16,12 @@
 
     .EXAMPLE
     Remove-ExtraBuildFile -BuildOutputDir 'C:\Build\Output'
+
+    .EXAMPLE
+    Remove-ExtraBuildFile -BuildOutputDir 'C:\Build\Output' -WhatIf
     #>
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
         [string]$BuildOutputDir,
@@ -33,16 +36,21 @@
 
     foreach ($fileName in $FilesToRemove) {
         $filePath = [IO.Path]::Combine($BuildOutputDir, $fileName)
-        Write-Information "`tRemove-Item -Path '$filePath' -ProgressAction SilentlyContinue"
-        Remove-Item -Path $filePath -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
 
         if (Test-Path -Path $filePath) {
-            Write-Error "Failed to remove unnecessary file '$filePath' from the build output directory."
-            $anyErrors = $true
+            if ($PSCmdlet.ShouldProcess($filePath, 'Remove file')) {
+                Write-Information "`tRemove-Item -Path '$filePath' -ProgressAction SilentlyContinue"
+                Remove-Item -Path $filePath -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
+
+                if (Test-Path -Path $filePath) {
+                    Write-Error "Failed to remove unnecessary file '$filePath' from the build output directory."
+                    $anyErrors = $true
+                }
+            }
         }
     }
 
-    if (-not $anyErrors) {
+    if (-not $anyErrors -and -not $WhatIfPreference) {
         Write-InfoColor "`t# Successfully removed unnecessary files from the build output directory." -ForegroundColor Green
     }
 }

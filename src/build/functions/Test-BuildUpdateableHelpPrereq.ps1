@@ -1,5 +1,6 @@
 ﻿function Test-BuildUpdateableHelpPrereq {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [bool]$ReadyForUpdateableHelp,
         [string]$NewLine

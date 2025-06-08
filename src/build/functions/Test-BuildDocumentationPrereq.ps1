@@ -1,5 +1,6 @@
 ﻿function Test-BuildDocumentationPrereq {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [bool]$DocumentationEnabled,
         [string]$NewLine

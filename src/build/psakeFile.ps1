@@ -742,7 +742,7 @@ Task -name CreateUnitTestOutputDir -precondition $UnitTestPrereq -action {
 
 Task -name UnitTests -action {
 
-    $script:UnitTestResults = Test-UnitTests @IO
+    $script:UnitTestResults = Test-Unit @IO
 
 } -description 'Perform unit tests using Pester.'
 

@@ -17,8 +17,12 @@
 
     .EXAMPLE
         Update-BuildOutputDir -BuildOutDir './dist' -ModuleVersion '1.0.0' -ModuleName 'MyModule'
+
+    .EXAMPLE
+        Update-BuildOutputDir -BuildOutDir './dist' -ModuleVersion '1.0.0' -ModuleName 'MyModule' -WhatIf
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([string])]
     param(
         [string]$BuildOutDir,
         [version]$ModuleVersion,
@@ -26,8 +30,11 @@
     )
 
     $BuildOutputDir = [IO.Path]::Combine($BuildOutDir, $ModuleVersion.ToString(), $ModuleName)
-    $env:BHBuildOutput = $BuildOutputDir # still used by Module.tests.ps1
 
-    Write-InfoColor "`t# Successfully updated the build output directory variable: $BuildOutputDir" -ForegroundColor Green
+    if ($PSCmdlet.ShouldProcess('BHBuildOutput environment variable', "Set to '$BuildOutputDir'")) {
+        $env:BHBuildOutput = $BuildOutputDir # still used by Module.tests.ps1
+        Write-InfoColor "`t# Successfully updated the build output directory variable: $BuildOutputDir" -ForegroundColor Green
+    }
+
     return $BuildOutputDir
 }

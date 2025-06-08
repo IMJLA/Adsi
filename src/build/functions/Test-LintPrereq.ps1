@@ -1,5 +1,6 @@
 ﻿function Test-LintPrereq {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [bool]$LintEnabled,
         [string]$NewLine

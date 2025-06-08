@@ -40,7 +40,7 @@
             'onBrokenMarkdownLinks' = @(
                 'Determines how the site handles broken links within Markdown files during the build process.',
                 'This setting is useful for catching incorrect references to Markdown files early in the process, ensuring documentation integrity.',
-                'It runs before the broader onBrokenLinks check, which validates all internal links across the site.'
+                'It runs before the broader onBrokenLinks check, which validates all internal links across the site.',
                 'If a Markdown file contains a link to a non-existent path, this setting dictates whether the build should fail, warn, or ignore.',
                 'Accepted values:',
                 '	"throw" (which stops the build)',

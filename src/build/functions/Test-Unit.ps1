@@ -10,13 +10,14 @@
     Returns the Pester test results object.
 
 .EXAMPLE
-    $TestResults = Test-UnitTests
+    $TestResults = Test-Unit
 
     Runs unit tests and stores the results in $TestResults variable.
 #>
-function Test-UnitTests {
+function Test-Unit {
 
     [CmdletBinding()]
+    [OutputType([object])]
     param(
         # Path to the Pester configuration JSON file
         [string]$ConfigPath = '.\tests\config\pesterConfig.json',
