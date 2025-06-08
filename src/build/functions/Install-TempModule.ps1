@@ -44,7 +44,7 @@
     }
 
     if (Test-Path -Path $ModuleInstallDir) {
-        Write-InfoColor "`t# Module installation directory exists." -ForegroundColor Green
+        Write-Verbose "`t# Module installation directory exists."
     } else {
         Write-Error 'Failed to create the module installation directory.'
     }
@@ -56,7 +56,7 @@
     }
 
     if (Test-Path -Path $ModuleInstallDir) {
-        Write-InfoColor "`t# Module version installation directory exists." -ForegroundColor Green
+        Write-Verbose "`t# Module version installation directory exists."
     } else {
         Write-Error 'Failed to create the module version installation directory.'
     }

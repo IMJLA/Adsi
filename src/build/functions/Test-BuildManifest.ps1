@@ -24,7 +24,7 @@
         [string]$Path
     )
 
-    Write-Information "`t`$ManifestTest = Test-ModuleManifest -Path '$Path'"
+    Write-Information "`tTest-ModuleManifest -Path '$Path'"
     $ManifestTest = Test-ModuleManifest -Path $Path -ErrorAction Stop
     Write-InfoColor "`t# Successfully validated the module manifest." -ForegroundColor Green
 
