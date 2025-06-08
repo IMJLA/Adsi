@@ -1,34 +1,88 @@
 ﻿function New-OnlineHelpWebsite {
     <#
     .SYNOPSIS
-    Builds the online help website using Docusaurus.
+    Create Docusaurus scaffolding for the online help website.
 
     .DESCRIPTION
-    This function uses npm to build the Docusaurus-based online help website and verifies
-    that the build was successful by checking for the build directory.
+    Scaffolds the skeleton of the Online Help website with Docusaurus which is written
+    in TypeScript and uses React.js.
+
+    .PARAMETER ModuleName
+    The name of the module for which to create the scaffolding.
+
+    .PARAMETER DocsOnlineHelpRoot
+    The root directory where the online help will be created.
+
+    .PARAMETER DocsOnlineHelpDir
+    The directory where the online help website will be created.
 
     .EXAMPLE
-    New-OnlineHelpWebsite -DocsOnlineHelpDir 'C:\MyProject\docs\online\MyModule'
+    New-OnlineHelpWebsite -ModuleName 'MyModule' -DocsOnlineHelpRoot 'C:\docs\online' -DocsOnlineHelpDir 'C:\docs\online\MyModule'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        # The working directory containing the Docusaurus project
+        [Parameter(Mandatory)]
+        [string]$ModuleName,
+
+        [Parameter(Mandatory)]
+        [string]$DocsOnlineHelpRoot,
+
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir
     )
 
-    if ($PSCmdlet.ShouldProcess($DocsOnlineHelpDir, 'Build online help website')) {
-        Write-Verbose "`tInvoke-NpmCommand -Command 'run build' -WorkingDirectory '$DocsOnlineHelpDir'"
+    $Location = Get-Location
+    Write-Information "`tSet-Location -Path '$DocsOnlineHelpRoot'"
 
-        Invoke-NpmCommand -Command 'run build' -WorkingDirectory $DocsOnlineHelpDir -ErrorAction Stop
+    if ($PSCmdlet.ShouldProcess($DocsOnlineHelpRoot, 'Change location')) {
+        Set-Location $DocsOnlineHelpRoot
+    }
 
-        # Determine whether the build directory was created (indicating successful build)
-        $TestPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'build')
-        if (Test-Path $TestPath) {
-            Write-InfoColor "`t# Successfully built online help website." -ForegroundColor Green
-        } else {
-            Write-Error 'Failed to build online help website'
+    # Check if package.json exists (indicating Docusaurus is already initialized)
+    $PackageJsonPath = Join-Path $DocsOnlineHelpDir 'package.json'
+
+    if (Test-Path $PackageJsonPath) {
+        Write-Information "`tDocusaurus website already exists, skipping initialization"
+        Write-InfoColor "`t# Docusaurus scaffolding already exists." -ForegroundColor Green
+    } else {
+
+        Write-InfoColor "`t> npx create-docusaurus@latest $ModuleName classic --typescript" -ForegroundColor Cyan
+
+        if ($PSCmdlet.ShouldProcess("npx create-docusaurus@latest $ModuleName classic --typescript", 'Create Docusaurus scaffolding')) {
+            try {
+
+                # Use Start-Process for better control over npx output
+                $processArgs = @{
+                    FilePath         = 'npx'
+                    ArgumentList     = @('create-docusaurus@latest', $ModuleName, 'classic', '--typescript')
+                    WorkingDirectory = $DocsOnlineHelpRoot
+                    Wait             = $true
+                    NoNewWindow      = $true
+                    PassThru         = $true
+                }
+
+                $process = Start-Process @processArgs
+
+            } catch {
+                Write-Error "Failed to create Docusaurus scaffolding: $_"
+            }
+
+            if ($process.ExitCode -eq 0) {
+                # Test if scaffolding was created successfully
+                if (Test-Path $PackageJsonPath) {
+                    Write-InfoColor "`t# Successfully created the scaffolding for the Online Help website using Docusaurus." -ForegroundColor Green
+                } else {
+                    Write-Error 'Failed to create Docusaurus scaffolding - package.json not found'
+                }
+            } else {
+                Write-Error "Failed to create Docusaurus scaffolding - npx exited with code $($process.ExitCode)"
+            }
         }
+
+    }
+
+    if ($PSCmdlet.ShouldProcess($Location, 'Restore location')) {
+        Set-Location $Location
     }
 }

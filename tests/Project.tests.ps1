@@ -5,9 +5,9 @@ BeforeAll {
     $ModuleManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
     $manifest = Import-PowerShellDataFile -Path $ModuleManifestPath
     [string]$outputDir = [IO.Path]::Combine('.', 'dist')
-    $outputModVerDir = Join-Path -Path $outputDir -ChildPath $manifest.ModuleVersion
-    $outputModDir = Join-Path -Path $outputModVerDir -ChildPath $ModuleName
-    $outputManifestPath = Join-Path -Path $outputModDir -ChildPath "$($ModuleName).psd1"
+    $outputModDir = Join-Path -Path $outputDir -ChildPath $ModuleName
+    $outputModVerDir = Join-Path -Path $outputModDir -ChildPath $manifest.ModuleVersion
+    $outputManifestPath = Join-Path -Path $outputModVerDir -ChildPath "$ModuleName.psd1"
     $manifestData = Test-ModuleManifest -Path $outputManifestPath -Verbose:$false -ErrorAction Stop -WarningAction SilentlyContinue
     $changelogPath = [IO.Path]::Combine('.', 'CHANGELOG.md')
     Get-Content $changelogPath | ForEach-Object {

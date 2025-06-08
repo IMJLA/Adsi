@@ -26,7 +26,7 @@
         [version]$OldVersion
     )
 
-    Write-Information "`tGet-NewVersion -IncrementMajorVersion:$IncrementMajorVersion -IncrementMinorVersion:$IncrementMinorVersion -OldVersion '$OldVersion'"
+    Write-Verbose "`tGet-NewVersion -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$OldVersion'"
 
     # Version increment logic here
     if ($IncrementMajorVersion) {

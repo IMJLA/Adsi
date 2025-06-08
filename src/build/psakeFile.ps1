@@ -239,7 +239,7 @@ Properties {
     [hashtable]$addDependenciesSplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Add-OnlineHelpDependencies
     [hashtable]$installDependencySplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Install-OnlineHelpDependency
     [hashtable]$convertArtSplat = @{ 'Path' = $DocsOnlineStaticImageDir } # Splat for ConvertTo-BuildArt
-    [hashtable]$buildWebsiteSplat = @{ 'DocsOnlineHelpDir' = $DocsOnlineHelpDir } # Splat for New-OnlineHelpWebsite
+    [hashtable]$buildWebsiteSplat = @{ 'DocsOnlineHelpDir' = $DocsOnlineHelpDir } # Splat for Update-OnlineHelpWebsite
     [hashtable]$uninstallBuildModuleSplat = $ModuleNameSplat + $IO # Splat for Uninstall-BuildModule
     [hashtable]$installBuildModuleSplat = $ModuleNameSplat + $IO + @{ 'MaxAttempts' = 3 } # Splat for Install-BuildModule
     [hashtable]$removeUpdateableHelpSplat = $IO + @{ 'DocsUpdateableDir' = $DocsUpdateableDir } # Splat for Remove-BuildUpdatableHelp
@@ -439,7 +439,7 @@ UpdateChangeLog, # Add an entry to the Change Log.
 DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
 BuildUpdatableHelp, # Create Updateable help documentation.
 CreateOnlineHelpFolder, # Create a folder for the Online Help website.
-CreateOnlineHelpScaffolding, # Create the Online Help website scaffolding (Docusaurus).
+CreateOnlineHelpWebsite, # Create the Online Help website scaffolding (Docusaurus).
 BuildArt, # Build dynamic SVG art files for the Online Help website.
 CopyArt, # Build and copy static SVG art files to the Online Help website.
 ConvertArt, # Convert SVGs to PNG using Inkscape.
@@ -668,11 +668,11 @@ Task -name CreateOnlineHelpFolder -precondition $OnlineHelpPrereqs -action {
 
 
 # Create the Online help documentation website.
-$OnlineHelpScaffoldingMissing = { Test-OnlineHelpScaffoldingMissing @TestOnlineHelpScaffoldingParams @IO }
+$OnlineHelpScaffoldingMissing = { -not (Test-OnlineHelpWebsite @TestOnlineHelpScaffoldingParams @IO) }
 
-Task -name CreateOnlineHelpScaffolding -precondition $OnlineHelpScaffoldingMissing -action {
+Task -name CreateOnlineHelpWebsite -precondition $OnlineHelpScaffoldingMissing -action {
 
-    New-OnlineHelpScaffolding @onlineHelpScaffoldingSplat
+    New-OnlineHelpWebsite @onlineHelpScaffoldingSplat
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
@@ -716,7 +716,7 @@ Task -name ConvertArt -precondition $InkscapePrereq -action {
 
 Task -name BuildOnlineHelpWebsite -action {
 
-    New-OnlineHelpWebsite @buildWebsiteSplat
+    Update-OnlineHelpWebsite @buildWebsiteSplat
 
 } -description 'Build an Online help website based on the Markdown help files by using Docusaurus.'
 
