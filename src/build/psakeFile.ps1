@@ -225,7 +225,7 @@ Properties {
     [hashtable]$findPublicFunctionsSplat = $IO + @{ 'PublicFunctionPath' = $publicFunctionPath } # Splat for Find-PublicFunction
     [hashtable]$sourceControlSplat = $IO + $lineSplat + @{ 'CommitMessage' = $CommitMessage } # Splat for Invoke-SourceControl
     [hashtable]$lintAnalysisSplat = $IO + @{ 'SeverityThreshold' = $LintSeverityThreshold } # Splat for Select-LintResult
-    [hashtable]$removeOldBuildSplat = @{ 'BuildOutDir' = $BuildOutDir } # Splat for Remove-OldBuild
+    [hashtable]$removeOldBuildSplat = $IO + @{ 'BuildOutDir' = $BuildOutDir } # Splat for Remove-OldBuild
     [hashtable]$findCopyDirSplat = $IO + @{ 'BuildCopyDirectoryPath' = $BuildCopyDirectories } # Splat for Find-BuildCopyDirectory
     [hashtable]$removeExtraBuildFileSplat = $IO # Splat for Remove-ExtraBuildFile
     [hashtable]$changeLogSplat = $IO + @{ 'ChangeLog' = $ChangeLog } # Splat for Update-BuildChangeLog
