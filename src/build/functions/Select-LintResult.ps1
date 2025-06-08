@@ -34,8 +34,6 @@
 
     )
 
-    Write-Information "`tSelect-LintResult -SeverityThreshold '$SeverityThreshold' -LintResult `$LintResult"
-
     $filteredOut = 0
     $filteredResult = ForEach ($result in $LintResult) {
         if ($ExcludeRuleByFile.ContainsKey($result.ScriptName)) {
