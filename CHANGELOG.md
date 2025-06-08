@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.448] - 2025-06-08
+### Fixed
+- fix version skip
+
 ## [5.0.423] - 2025-06-08
 ### Removed
 - remove pauses and verbose output
