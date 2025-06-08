@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.449] - 2025-06-08
+### Changed
+- try to pass git tagging test
+
 ## [5.0.448] - 2025-06-08
 ### Fixed
 - fix version skip
