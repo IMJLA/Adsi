@@ -4,7 +4,7 @@
     Publishes a PowerShell module to a specified repository.
 
     .DESCRIPTION
-    Publishes a built PowerShell module to a PowerShell repository using either an API key or credential for authentication.
+    Publishes a built PowerShell module to a PowerShell repository using an API key for authentication.
 
     .PARAMETER Path
     The path to the built module directory to publish.
@@ -15,9 +15,6 @@
     .PARAMETER ApiKey
     The API key to authenticate with the repository.
 
-    .PARAMETER Credential
-    The credential to authenticate with the repository.
-
     .PARAMETER NoPublish
     Skip publishing if true.
 
@@ -27,7 +24,7 @@
     .EXAMPLE
     Publish-BuildModule -Path "C:\Build\MyModule\1.0.0\MyModule" -Repository "PSGallery" -ApiKey $apiKey
     #>
-    [CmdletBinding(DefaultParameterSetName = 'ApiKey')]
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
         [string]$Path,
@@ -36,8 +33,6 @@
         [string]$Repository,
 
         [string]$ApiKey,
-
-        $Credential,
 
         [bool]$NoPublish = $false,
 
@@ -52,10 +47,6 @@
 
     if ($ApiKey) {
         $publishParams.NuGetApiKey = $ApiKey
-    }
-
-    if ($Credential) {
-        $publishParams.Credential = $Credential
     }
 
     # Only publish a release if we are working on the required branch

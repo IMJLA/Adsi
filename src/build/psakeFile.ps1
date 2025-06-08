@@ -177,9 +177,6 @@ Properties {
     # API key to authenticate to PowerShell repository with
     [string]$PublishPSRepositoryApiKey = $env:PSGALLERY_API_KEY
 
-    # Credential to authenticate to PowerShell repository with
-    [string]$PublishPSRepositoryCredential = $null
-
 
 
 
@@ -308,7 +305,6 @@ Properties {
     # Splat for Publish-BuildModule
     [hashtable]$publishRepoSplat = $IO + @{
         'ApiKey'     = $PublishPSRepositoryApiKey
-        'Credential' = $PublishPSRepositoryCredential
         'Repository' = $PublishPSRepository
         'NoPublish'  = $NoPublish
     }
@@ -768,9 +764,7 @@ Task -name CreateGitHubRelease -action {
 # Publish the module to a PowerShell repository.
 Task -name Publish -action {
 
-    Assert -conditionToCheck (
-        $PublishPSRepositoryApiKey -or $PublishPSRepositoryCredential
-    ) -failureMessage "API key or credential not defined to authenticate with [$PublishPSRepository)] with."
+    Assert -conditionToCheck $PublishPSRepositoryApiKey -failureMessage "API key not defined to authenticate with [$PublishPSRepository]."
 
     Publish-BuildModule -Path $script:BuildOutputDir @publishRepoSplat
 
