@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.424] - 2025-06-08
+### Fixed
+- fix splat
+
 ## [5.0.423] - 2025-06-08
 ### Removed
 - remove param sets

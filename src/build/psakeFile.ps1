@@ -26,7 +26,6 @@ Properties {
     $IO = @{
         'ErrorAction'       = [System.Management.Automation.ActionPreference]::Stop
         'InformationAction' = [System.Management.Automation.ActionPreference]::Continue
-        #'ProgressAction'    = [System.Management.Automation.ActionPreference]::SilentlyContinue
     }
 
 
@@ -300,10 +299,10 @@ Properties {
     }
 
     # Splat for Wait-RepoUpdate
-    [hashtable]$waitRepoSplat = $IO + @{
-        Repository      = $PublishPSRepository
-        TimeoutSeconds  = 60
-        IntervalSeconds = 1
+    [hashtable]$waitRepoSplat = $IO + $ModuleNameSplat + @{
+        'Repository'      = $PublishPSRepository
+        'TimeoutSeconds'  = 60
+        'IntervalSeconds' = 1
     }
 
     # Splat for Publish-BuildModule
