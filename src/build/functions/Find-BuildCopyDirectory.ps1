@@ -6,14 +6,18 @@
         [string[]]$BuildCopyDirectoryPath
     )
 
-    Write-Information "`tFind-BuildCopyDirectory -BuildCopyDirectoryPath `$BuildCopyDirectoryPath"
     Write-Information "`tGet-ChildItem -Path '.' -Directory"
 
     $EmptyFolders = Get-ChildItem -Path . -Directory | ForEach-Object {
+
+        $JoinedPath = [io.path]::Combine('.', $_.Name)
+        Write-Information "`tGet-ChildItem -Path '$JoinedPath' -Directory"
         $Files = Get-ChildItem -Path $_.FullName -File
+
         if ($Files.Count -eq 0 -or ($Files.Count -eq 1 -and $Files.Name -eq '.gitkeep')) {
             [io.path]::Combine('..', $_.Name)
         }
+
     }
 
     $CopyDirectories = $BuildCopyDirectoryPath | Where-Object -FilterScript {

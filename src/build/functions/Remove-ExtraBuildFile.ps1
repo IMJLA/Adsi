@@ -35,10 +35,13 @@
     $anyErrors = $false
 
     foreach ($fileName in $FilesToRemove) {
+
         $filePath = [IO.Path]::Combine($BuildOutputDir, $fileName)
 
         if (Test-Path -Path $filePath) {
+
             if ($PSCmdlet.ShouldProcess($filePath, 'Remove file')) {
+
                 Write-Information "`tRemove-Item -Path '$filePath' -ProgressAction SilentlyContinue"
                 Remove-Item -Path $filePath -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
 
@@ -46,11 +49,15 @@
                     Write-Error "Failed to remove unnecessary file '$filePath' from the build output directory."
                     $anyErrors = $true
                 }
+
             }
+
         }
+
     }
 
     if (-not $anyErrors -and -not $WhatIfPreference) {
         Write-InfoColor "`t# Successfully removed unnecessary files from the build output directory." -ForegroundColor Green
     }
+
 }
