@@ -12,22 +12,31 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
-        # The working directory where npm install should be performed
+        # The working directory where npm dependencies should be installed
         [Parameter(Mandatory)]
-        [string]$WorkingDirectory
+        [string]$WorkingDirectory,
+
+        # Array of npm packages to install (in addition to what is already in package.json)
+        [string[]]$Dependency = @('@docusaurus/theme-mermaid', '@docusaurus/tsconfig')
     )
 
-    if ($PSCmdlet.ShouldProcess($WorkingDirectory, 'Install all npm dependencies')) {
-        Write-Verbose "`tInvoke-NpmCommand -Command 'install' -WorkingDirectory '$WorkingDirectory' -ErrorAction Stop"
-        Invoke-NpmCommand -Command 'install' -WorkingDirectory $WorkingDirectory -ErrorAction Stop
+    if ($PSCmdlet.ShouldProcess($WorkingDirectory, "Install all npm dependencies, plus: $($Dependency -join ', ')")) {
+
+        $installCommand = "install $($Dependency -join ' ')"
+        Write-Verbose "`tInvoke-NpmCommand -Command '$installCommand' -WorkingDirectory '$WorkingDirectory' -ErrorAction Stop"
+        Invoke-NpmCommand -Command $installCommand -WorkingDirectory $WorkingDirectory -ErrorAction Stop
 
         # Determine whether the node_modules directory was created (indicating successful install)
         $TestPath = [IO.Path]::Combine($WorkingDirectory, 'node_modules')
+
         if (Test-Path $TestPath) {
-            Write-InfoColor "`t# Successfully installed dependencies for the Online Help website" -ForegroundColor Green
+            Write-InfoColor "`t# Successfully added dependencies to the Online Help website: $($Dependency -join ', ')" -ForegroundColor Green
         } else {
             Write-Error 'Failed to install Online Help dependencies. The node_modules directory was not created.'
         }
+
     }
+
 }

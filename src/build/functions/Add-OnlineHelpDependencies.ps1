@@ -1,30 +1,34 @@
 ﻿function Add-OnlineHelpDependencies {
     <#
     .SYNOPSIS
-    Adds Mermaid theme and TypeScript configuration dependencies to the Online Help website.
+    Adds npm dependencies to the Online Help website.
 
     .DESCRIPTION
-    This function installs the required npm dependencies for the Docusaurus-based online help website,
-    specifically the Mermaid theme and TypeScript configuration packages.
+    This function installs the required npm dependencies for the Docusaurus-based online help website
+    in a single npm install command for improved efficiency.
 
     .EXAMPLE
-    Add-OnlineHelpDependencies -WorkingDirectory 'C:\MyProject\docs\online\MyModule'
+    Add-OnlineHelpDependencies -WorkingDirectory 'C:\MyProject\docs\online\MyModule' -Dependency '@docusaurus/theme-mermaid', '@docusaurus/tsconfig'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # The working directory where npm dependencies should be installed
         [Parameter(Mandatory)]
-        [string]$WorkingDirectory
+        [string]$WorkingDirectory,
+
+        # Array of npm packages to install (in addition to what is already in package.json)
+        [string[]]$Dependency = @('@docusaurus/theme-mermaid', '@docusaurus/tsconfig')
     )
 
-    if ($PSCmdlet.ShouldProcess($WorkingDirectory, 'Install npm dependencies')) {
-        Write-Verbose "`tInvoke-NpmCommand -Command 'install @docusaurus/theme-mermaid' -WorkingDirectory '$WorkingDirectory' -ErrorAction Stop"
-        Invoke-NpmCommand -Command 'install @docusaurus/theme-mermaid' -WorkingDirectory $WorkingDirectory -ErrorAction Stop
+    if ($PSCmdlet.ShouldProcess($WorkingDirectory, "Install npm dependencies: $($Dependency -join ', ')")) {
 
-        Write-Verbose "`tInvoke-NpmCommand -Command 'install @docusaurus/tsconfig' -WorkingDirectory '$WorkingDirectory' -ErrorAction Stop"
-        Invoke-NpmCommand -Command 'install @docusaurus/tsconfig' -WorkingDirectory $WorkingDirectory -ErrorAction Stop
+        $installCommand = "install $($Dependency -join ' ')"
+        Write-Verbose "`tInvoke-NpmCommand -Command '$installCommand' -WorkingDirectory '$WorkingDirectory' -ErrorAction Stop"
+        Invoke-NpmCommand -Command $installCommand -WorkingDirectory $WorkingDirectory -ErrorAction Stop
+        Write-InfoColor "`t# Successfully added dependencies to the Online Help website: $($Dependency -join ', ')" -ForegroundColor Green
 
-        Write-InfoColor "`t# Successfully added Mermaid theme and tsconfig dependencies to the Online Help website" -ForegroundColor Green
     }
+
 }

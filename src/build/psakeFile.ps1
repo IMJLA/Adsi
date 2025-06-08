@@ -445,7 +445,6 @@ DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
 BuildUpdatableHelp, # Create Updateable help documentation.
 CreateOnlineHelpFolder, # Create a folder for the Online Help website.
 CreateOnlineHelpScaffolding, # Create the Online Help website scaffolding (Docusaurus).
-UpdateOnlineHelpDependencies, # Add Mermaid theme dependency to the Online Help website.
 BuildArt, # Build dynamic SVG art files for the Online Help website.
 CopyArt, # Build and copy static SVG art files to the Online Help website.
 ConvertArt, # Convert SVGs to PNG using Inkscape.
@@ -687,14 +686,6 @@ Task -name VerifyNpmCache -action {
     Test-NpmCache @npmCacheSplat
 
 } -description 'Clear npm cache to ensure clean dependency installation.'
-
-
-
-Task -name UpdateOnlineHelpDependencies -action {
-
-    Add-OnlineHelpDependencies @addDependenciesSplat
-
-} -description 'Add Mermaid theme dependency to the Online Help website using npm.'
 
 Task -name InstallOnlineHelpDependencies -action {
 

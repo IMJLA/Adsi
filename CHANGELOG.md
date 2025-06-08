@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.419] - 2025-06-08
+### Removed
+- remove redundant npm builds
+
 ## [5.0.418] - 2025-06-08
 ### Fixed
 - fix console output
