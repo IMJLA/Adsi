@@ -32,7 +32,7 @@
         $SourceArtFiles = Get-ChildItem -Path $In -Filter '*.ps1'
 
         if ($SourceArtFiles.Count -eq 0) {
-            Write-InfoColor "`t# No source art files found in '$In' (this may be expected if no art scripts exist)." -ForegroundColor Yellow
+            Write-InfoColor "`t# No source art files found in '$In' (this may be expected if no art scripts exist)." -ForegroundColor Green
             return
         }
 
@@ -48,6 +48,9 @@
         if ($artFiles.Count -eq $SourceArtFiles.Count) {
             Write-InfoColor "`t# Successfully built all dynamic art files." -ForegroundColor Green
             return $artFiles
+        } else {
+            Write-InfoColor "`t# Warning: Not all dynamic art files were built successfully." -ForegroundColor Yellow
+            return
         }
 
     }

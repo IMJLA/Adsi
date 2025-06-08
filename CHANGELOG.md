@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.417] - 2025-06-08
+### Fixed
+- fix bool casting
+
+## [5.0.416] - 2025-06-08
+### Fixed
+- fix bool casting
+
+## [5.0.415] - 2025-06-08
+### Changed
+- update build console output
+
 ## [5.0.414] - 2025-06-08
 ### Changed
 - extract logic from psakefile to dedicated function files

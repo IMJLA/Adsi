@@ -26,7 +26,7 @@
     if ($PSCmdlet.ShouldProcess($DocsOnlineStaticImageDir, 'Copy static SVG art files')) {
         Write-Information "`tGet-ChildItem -Path '$DocsImageSourceCodeDir' -Filter '*.svg' -ErrorAction Stop |"
         Write-Information "`tCopy-Item -Destination '$DocsOnlineStaticImageDir'"
-        Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop | Copy-Item -Destination $DocsOnlineStaticImageDir
+        Get-ChildItem -Path $DocsImageSourceCodeDir -Filter '*.svg' -ErrorAction Stop | Copy-Item -Destination $DocsOnlineStaticImageDir -PassThru
 
         Write-InfoColor "`t# Successfully copied static SVG art files to the online help directory." -ForegroundColor Green
     }

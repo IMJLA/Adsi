@@ -446,6 +446,8 @@ BuildUpdatableHelp, # Create Updateable help documentation.
 CreateOnlineHelpFolder, # Create a folder for the Online Help website.
 CreateOnlineHelpScaffolding, # Create the Online Help website scaffolding (Docusaurus).
 UpdateOnlineHelpDependencies, # Add Mermaid theme dependency to the Online Help website.
+BuildArt, # Build dynamic SVG art files for the Online Help website.
+CopyArt, # Build and copy static SVG art files to the Online Help website.
 ConvertArt, # Convert SVGs to PNG using Inkscape.
 FixOnlineHelpWebsite, # Fix the online help website configuration.
 UnitTests, # Perform unit testing.
@@ -708,19 +710,19 @@ Task -name CopyMarkdownAsSourceForOnlineHelp -depends InstallOnlineHelpDependenc
 
 Task -name BuildArt -depends CopyMarkdownAsSourceForOnlineHelp -action {
 
-    [bool]$script:ArtExists = New-BuildArt @buildArtSplat
+    $script:ArtExists = [bool]( New-BuildArt @buildArtSplat )
 
 } -description 'Build static SVG art using PSSVG.'
 
-Task -name CopyArt -depends BuildArt -action {
+Task -name CopyArt -precondition { $script:ArtExists } -action {
 
-    Copy-BuildArt @copyArtSplat
+    $script:ArtCopied = [bool]( Copy-BuildArt @copyArtSplat )
 
 } -description 'Copy static SVG art to the online help website.'
 
-$InkscapePrereq = { Test-Inkscape }
+$InkscapePrereq = { (Test-Inkscape) -and $script:ArtCopied }
 
-Task -name ConvertArt -depends CopyArt -precondition $InkscapePrereq -action {
+Task -name ConvertArt -precondition $InkscapePrereq -action {
 
     ConvertTo-BuildArt @convertArtSplat
 
