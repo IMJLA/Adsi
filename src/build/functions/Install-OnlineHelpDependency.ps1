@@ -1,4 +1,4 @@
-﻿function Install-OnlineHelpDependencies {
+﻿function Install-OnlineHelpDependency {
     <#
     .SYNOPSIS
     Installs all npm dependencies for the Online Help website.
@@ -8,7 +8,7 @@
     and verifies that the node_modules directory was created successfully.
 
     .EXAMPLE
-    Install-OnlineHelpDependencies -WorkingDirectory 'C:\MyProject\docs\online\MyModule'
+    Install-OnlineHelpDependency -WorkingDirectory 'C:\MyProject\docs\online\MyModule'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]

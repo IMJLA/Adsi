@@ -19,6 +19,7 @@
         Get-NewVersion -IncrementMajorVersion:$false -IncrementMinorVersion:$true -OldVersion '1.0.0'
     #>
     [CmdletBinding()]
+    [OutputType([System.Version])]
     param(
         [bool]$IncrementMajorVersion,
         [bool]$IncrementMinorVersion,

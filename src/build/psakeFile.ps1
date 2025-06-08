@@ -240,7 +240,7 @@ Properties {
     [hashtable]$copyMAMLHelpSplat = $IO + @{ 'DocsMamlDir' = $DocsMamlDir } # Splat for Copy-BuildMAMLHelp
     [hashtable]$npmCacheSplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Test-NpmCache
     [hashtable]$addDependenciesSplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Add-OnlineHelpDependencies
-    [hashtable]$installDependenciesSplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Install-OnlineHelpDependencies
+    [hashtable]$installDependencySplat = @{ 'WorkingDirectory' = $DocsOnlineHelpDir } # Splat for Install-OnlineHelpDependency
     [hashtable]$convertArtSplat = @{ 'Path' = $DocsOnlineStaticImageDir } # Splat for ConvertTo-BuildArt
     [hashtable]$buildWebsiteSplat = @{ 'DocsOnlineHelpDir' = $DocsOnlineHelpDir } # Splat for New-OnlineHelpWebsite
     [hashtable]$uninstallBuildModuleSplat = $ModuleNameSplat + $IO # Splat for Uninstall-BuildModule
@@ -688,7 +688,7 @@ Task -name VerifyNpmCache -action {
 
 Task -name InstallOnlineHelpDependencies -action {
 
-    Install-OnlineHelpDependencies @installDependenciesSplat
+    Install-OnlineHelpDependency @installDependencySplat
 
 } -description 'Install the dependencies for the Online Help website.'
 
