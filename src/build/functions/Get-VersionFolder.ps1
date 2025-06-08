@@ -7,8 +7,11 @@
     }
 
     $InformationPreference = 'Continue'
-    Write-InfoColor "`tGet-ChildItem -Path '$DistPath' -Directory | Where-Object {`$_.Name -match '^\d+\.\d+\.\d+'}"
-    $versionFolders = Get-ChildItem -Path $DistPath -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+' }
+    Write-InfoColor "`tGet-ChildItem -Path '$DistPath' -Directory"
+    $ModuleFolder = Get-ChildItem -Path $DistPath -Directory
+    $ModuleFolderPath = [io.path]::Combine($DistPath, $ModuleFolder.Name)
+    Write-InfoColor "`tGet-ChildItem -Path '$ModuleFolderPath' -Directory | Where-Object {`$_.Name -match '^\d+\.\d+\.\d+'}"
+    $versionFolders = Get-ChildItem -Path $ModuleFolderPath -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+' }
 
     if ($versionFolders.Count -eq 0) {
         throw "No version folder found in: $DistPath"
