@@ -69,7 +69,7 @@
         $CompileParamStr = ''
         'CompileHeader', 'CompileFooter', 'CompileScriptHeader', 'CompileScriptFooter' | ForEach-Object {
             $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
-            if ($Val -ne '' -and $Val -ne $null) {
+            if ($Val -ne '' -and $null -ne $Val) {
                 $buildParams.$_ = $Val
                 $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
             }

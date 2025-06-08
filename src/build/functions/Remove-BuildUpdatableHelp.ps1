@@ -7,6 +7,7 @@ This function removes all existing updateable help files from the specified dire
 #>
 function Remove-BuildUpdatableHelp {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param(
         # Path to the updateable help directory
         [Parameter(Mandatory)]

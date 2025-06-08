@@ -5,6 +5,7 @@
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from command output')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'Variables are passed to ScriptBlock via ArgumentList parameter and PSScriptAnalyzer cannot figure this out')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseUsingScopeModifierInNewRunspaces', '', Justification = 'Variables are passed to ScriptBlock via ArgumentList parameter and PSScriptAnalyzer cannot figure this out')]
     param(
 
         # The command to execute

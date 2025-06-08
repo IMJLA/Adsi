@@ -22,7 +22,7 @@
     .PARAMETER ModuleName
     Name of the module for which help is being generated.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDir,
@@ -40,24 +40,25 @@
         [string]$ModuleName
     )
 
-    $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
+    if ($PSCmdlet.ShouldProcess('Updatable help .cab files', "Create for module '$ModuleName' in '$DocsUpdateableDir'")) {
+        $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
-    # Generate updatable help files.  Note: this will currently update the version number in the module's MD
-    # file in the metadata.
+        # Generate updatable help files.  Note: this will currently update the version number in the module's MD
+        # file in the metadata.
 
-    foreach ($locale in $helpLocales) {
+        foreach ($locale in $helpLocales) {
 
-        $cabParams = @{
-            CabFilesFolder  = [IO.Path]::Combine($BuildOutputDir, $locale)
-            LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
-            OutputFolder    = $DocsUpdateableDir
-            ErrorAction     = 'Stop'
+            $cabParams = @{
+                CabFilesFolder  = [IO.Path]::Combine($BuildOutputDir, $locale)
+                LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
+                OutputFolder    = $DocsUpdateableDir
+                ErrorAction     = 'Stop'
+            }
+            Write-Information "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)' -ErrorAction 'Stop'"
+            $null = New-ExternalHelpCab @cabParams
+
         }
-        Write-Information "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)' -ErrorAction 'Stop'"
-        $null = New-ExternalHelpCab @cabParams
 
+        Write-InfoColor "`t# Successfully created updatable help .cab files for each locale." -ForegroundColor Green
     }
-
-    Write-InfoColor "`t# Successfully created updatable help .cab files for each locale." -ForegroundColor Green
-
 }
