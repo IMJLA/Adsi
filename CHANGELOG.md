@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.477] - 2025-06-09
+### Added
+- add gh pages
+
 ## [5.0.476] - 2025-06-09
 ### Changed
 - use github pages for updateable help
