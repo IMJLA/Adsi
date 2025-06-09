@@ -394,6 +394,12 @@ Properties {
         'Description' = 'Unit test output'
     }
 
+    # Splat for Copy-BuildUpdateableHelp
+    [hashtable]$copyUpdateableHelpSplat = $IO + $ModuleNameSplat + @{
+        'DocsUpdateableDir' = $DocsUpdateableDir
+        'DocsOnlineHelpDir' = $DocsOnlineHelpDir
+    }
+
     [hashtable]$copyMarkdownSplat = $MarkdownCopyParams + $IO # Splat for Copy-MarkdownForOnlineHelp
     [hashtable]$MarkdownRepairParams = $lineSplat + $MarkdownHelpParams + $ModuleNameSplat # Splat for Repair-BuildMarkdownHelp
     [hashtable]$buildMarkdownHelpSplat = $MarkdownHelpParams + $ModuleNameSplat + $IO # Splat for New-BuildMarkdownHelp
@@ -440,6 +446,7 @@ DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
 BuildUpdatableHelp, # Create Updateable help documentation.
 CreateOnlineHelpFolder, # Create a folder for the Online Help website.
 CreateOnlineHelpWebsite, # Create the Online Help website scaffolding (Docusaurus).
+CopyUpdateableHelp, # Copy updateable help files to online help website.
 BuildArt, # Build dynamic SVG art files for the Online Help website.
 CopyArt, # Build and copy static SVG art files to the Online Help website.
 ConvertArt, # Convert SVGs to PNG using Inkscape.
@@ -467,7 +474,7 @@ Task -name TestModuleManifest -action {
 Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
     $script:NewModuleVersion = Get-NewVersion -OldVersion $script:ManifestTest.Version @versionSplat
-    $script:HelpInfoUri = "https://github.com/$GitHubOrgName/$ModuleName/releases/download/v$script:NewModuleVersion/"
+    $script:HelpInfoUri = "https://$GitHubOrgName.github.io/$ModuleName/UpdateableHelp/"
 
 } -description 'Determine the new version number based on the build parameters'
 
@@ -676,6 +683,12 @@ Task -name CreateOnlineHelpWebsite -precondition $OnlineHelpWebsiteMissing -acti
     New-OnlineHelpWebsite @onlineHelpScaffoldingSplat
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
+
+Task -name CopyUpdateableHelp -action {
+
+    $script:UpdateableHelpCopied = Copy-BuildUpdateableHelp @copyUpdateableHelpSplat
+
+} -description 'Copy updatable help files to the online help website static directory.'
 
 Task -name VerifyNpmCache -action {
 
