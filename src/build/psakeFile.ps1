@@ -467,7 +467,7 @@ Task -name TestModuleManifest -action {
 Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
     $script:NewModuleVersion = Get-NewVersion -OldVersion $script:ManifestTest.Version @versionSplat
-    $script:HelpInfoUri = "https://github.com/$GitHubOrgName/$ModuleName/releases/download/$script:NewModuleVersion"
+    $script:HelpInfoUri = "https://github.com/$GitHubOrgName/$ModuleName/releases/tag/$script:NewModuleVersion"
 
 } -description 'Determine the new version number based on the build parameters'
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.472] - 2025-06-09
+### Fixed
+- fix helpinfouri
+
 ## [5.0.471] - 2025-06-09
 ### Fixed
 - fix helpinfo detection
