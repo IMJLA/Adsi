@@ -227,7 +227,7 @@ Describe "module manifest '$ManifestName'" {
 
     Context '- Help' {
 
-        It 'has a valid help section' -Skip {
+        It 'has a valid help section' {
             $sourceManifestData.HelpInfoUri | Should -Not -BeNullOrEmpty
             $sourceManifestData.HelpInfoUri | Should -Match '^https?://'
         }

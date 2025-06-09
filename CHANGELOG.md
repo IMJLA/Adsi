@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.464] - 2025-06-08
+### Added
+- add helpinfouri
+
 ## [5.0.463] - 2025-06-08
 ### Fixed
 - fix quotes

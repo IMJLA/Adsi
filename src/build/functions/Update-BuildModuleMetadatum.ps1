@@ -21,13 +21,16 @@
         [string]$ModuleManifestPath,
 
         [Parameter(Mandatory)]
-        [version]$NewVersion
+        [version]$NewVersion,
+
+        [Parameter(Mandatory)]
+        [string]$HelpInfoUri
     )
 
     if ($PSCmdlet.ShouldProcess($ModuleManifestPath, "Update module version to $NewVersion")) {
 
-        Write-Information "`tUpdate-Metadata -Path '$ModuleManifestPath' -PropertyName ModuleVersion -Value $NewVersion"
-        Update-Metadata -Path $ModuleManifestPath -PropertyName ModuleVersion -Value $NewVersion -ErrorAction Stop
+        Write-Information "`tUpdate-PSModuleManifest -Path '$ModuleManifestPath' -ModuleVersion $NewVersion -HelpInfoUri $HelpInfoUri"
+        Update-PSModuleManifest -Path $ModuleManifestPath -ModuleVersion $NewVersion -HelpInfoUri $HelpInfoUri -ErrorAction Stop
         Write-InfoColor "`t# Successfully updated the module manifest with the new version number." -ForegroundColor Green
 
     }

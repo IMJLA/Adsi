@@ -189,6 +189,9 @@ Properties {
     # Name of the module being built
     $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Leaf
 
+    # Uri for the module's online help
+    [string]$OnlineHelpUri = "https://$GitHubOrgName.github.io/$ModuleName"
+
     # Path to the module script file
     $ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
 
@@ -221,7 +224,10 @@ Properties {
     [hashtable]$buildLocationSplat = $ModuleNameSplat + $IO + @{ 'BuildScriptRoot' = $PSScriptRoot } # Splat for Set-BuildLocation
     [hashtable]$testManifestSplat = $IO + @{ 'Path' = $ModuleManifestPath } # Splat for Test-BuildManifest
     [hashtable]$buildOutDirSplat = $ModuleNameSplat + $IO + @{ 'BuildOutDir' = $BuildOutDir } # Splat for Update-BuildOutputDir
-    [hashtable]$metadataSplat = $IO + @{ 'ModuleManifestPath' = $ModuleManifestPath } # Splat for Test-BuildModuleMetadata
+    [hashtable]$metadataSplat = $IO + @{
+        'ModuleManifestPath' = $ModuleManifestPath
+        'HelpInfoUri'        = $OnlineHelpUri
+    } # Splat for Test-BuildModuleMetadata
     [hashtable]$findPublicFunctionsSplat = $IO + @{ 'PublicFunctionPath' = $publicFunctionPath } # Splat for Find-PublicFunction
     [hashtable]$sourceControlSplat = $IO + $lineSplat + @{ 'CommitMessage' = $CommitMessage } # Splat for Invoke-SourceControl
     [hashtable]$lintAnalysisSplat = $IO + @{ 'SeverityThreshold' = $LintSeverityThreshold } # Splat for Select-LintResult
