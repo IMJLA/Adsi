@@ -14,10 +14,7 @@
         [string]$DistPath = '.\Dist',
 
         [Parameter(Mandatory = $false)]
-        [string]$ReleaseNotes = 'Automated release',
-
-        [Parameter(Mandatory = $false)]
-        [string]$NewLine = [System.Environment]::NewLine
+        [string]$ReleaseNotes = 'Automated release'
     )
 
     # Main script execution
@@ -66,7 +63,7 @@
 
         # Validate release creation and provide output
         if ($release -and $release.html_url) {
-            Write-InfoColor "# Successfully created GitHub release: $($release.html_url)" -ForegroundColor Green
+            Write-InfoColor "`t# Successfully created GitHub release: $($release.html_url)" -ForegroundColor Green
         } else {
             Write-Error 'Failed to create GitHub release'
         }

@@ -288,7 +288,7 @@ Properties {
     }
 
     # Splat for New-BuildGitHubRelease
-    [hashtable]$releaseSplat = $ModuleNameSplat + $IO + $lineSplat + @{
+    [hashtable]$releaseSplat = $ModuleNameSplat + $IO + @{
         'GitHubToken'   = $env:GHFGPATADSI
         'GitHubOrgName' = $GitHubOrgName
         'DistPath'      = $BuildOutDir
@@ -447,7 +447,7 @@ FixOnlineHelpWebsite, # Fix the online help website configuration.
 UnitTests, # Perform unit testing.
 SourceControl, # Commit changes to source control.
 CreateGitHubRelease, # Create a GitHub release.
-Reinstall # Publish the module to the a PowerShell repository.
+Publish # Publish the module to the a PowerShell repository.
 
 # Prepare the build environment.
 Task -name SetLocation -action {
