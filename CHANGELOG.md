@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.461] - 2025-06-08
+### Changed
+- always include single blank line at end
+
 ## [5.0.460] - 2025-06-08
 ### Changed
 - trim trailing whitespace from end of file

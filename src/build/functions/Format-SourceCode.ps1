@@ -65,7 +65,7 @@
 
         # Explicitly trim trailing whitespace from the end of the file
         $strings += "`t`$TrimmedContent = `$NormalizedContent.Trim()"
-        [string]$TrimmedContent = $NormalizedContent.Trim()
+        [string]$TrimmedContent = "$($NormalizedContent.Trim())`r`n"
 
         $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$TrimmedContent -Settings '$SettingsPath'"
         [string]$FormattedContent = Invoke-Formatter -ScriptDefinition $TrimmedContent -Settings $SettingsPath -ErrorAction Stop
