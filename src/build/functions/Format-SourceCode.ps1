@@ -63,8 +63,12 @@
         $strings += "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
         [string]$NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
 
-        $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$SettingsPath'"
-        [string]$FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $SettingsPath -ErrorAction Stop
+        # Explicitly trim trailing whitespace from the end of the file
+        $strings += "`t`$TrimmedContent = `$NormalizedContent.Trim()"
+        [string]$TrimmedContent = $NormalizedContent.Trim()
+
+        $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$TrimmedContent -Settings '$SettingsPath'"
+        [string]$FormattedContent = Invoke-Formatter -ScriptDefinition $TrimmedContent -Settings $SettingsPath -ErrorAction Stop
 
         # Update file if content changed or encoding needs to be fixed
         $ContentChanged = $FormattedContent -ne $OriginalContent

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.460] - 2025-06-08
+### Changed
+- trim trailing whitespace from end of file
+
 ## [5.0.459] - 2025-06-08
 ### Changed
 - improve console output
