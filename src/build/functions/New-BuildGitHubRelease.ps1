@@ -20,17 +20,19 @@
         [string]$NewLine = [System.Environment]::NewLine
     )
 
+    # Main script execution
+
     Write-Verbose "`tGet-VersionFolder -DistPath '$DistPath'"
     $versionFolder = Get-VersionFolder -DistPath $DistPath
 
-    # Main script execution
+    # Find the version folder
+    $version = $versionFolder.Name
+
+    # Construct repository path
+    $Repository = "$GitHubOrgName/$ModuleName"
+
+
     try {
-
-        # Find the version folder
-        $version = $versionFolder.Name
-
-        # Construct repository path
-        $Repository = "$GitHubOrgName/$ModuleName"
 
         # Create the release
         Write-Verbose "`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes' -InformationAction 'Continue'"
@@ -64,8 +66,7 @@
 
         # Validate release creation and provide output
         if ($release -and $release.html_url) {
-            Write-InfoColor "$NewLine`tRelease URL: $($release.html_url)" -ForegroundColor Cyan
-            Write-InfoColor "`t# Successfully created GitHub release." -ForegroundColor Green
+            Write-InfoColor "# Successfully created GitHub release: $($release.html_url)" -ForegroundColor Green
         } else {
             Write-Error 'Failed to create GitHub release'
         }
