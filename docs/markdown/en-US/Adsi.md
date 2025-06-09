@@ -1,8 +1,8 @@
 ---
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
-Download Help Link: https://github.com/IMJLA/Adsi/releases/tag/5.0.472
-Help Version: 5.0.472
+Download Help Link: https://github.com/IMJLA/Adsi/releases/downloads/v5.0.473
+Help Version: 5.0.473
 Locale: en-US
 ---
 
