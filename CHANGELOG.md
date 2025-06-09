@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.452] - 2025-06-08
+### Removed
+- remove debug and fix relative paths in console output
+
 ## [5.0.451] - 2025-06-08
 ### Changed
 - debug location
