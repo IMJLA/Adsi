@@ -46,7 +46,8 @@
         $FullRelativePath = [IO.Path]::Combine('.', $PartialRelativePath)
 
         # Read the original content of the file
-        Write-Verbose "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw"
+        $strings = @()
+        $strings += "`t`$OriginalContent = Get-Content -Path '$FullRelativePath' -Raw"
         [string]$OriginalContent = Get-Content $File.FullName -Raw -ErrorAction Stop
 
         # Check current file encoding
@@ -59,10 +60,10 @@
 
             Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
         #>
-        Write-Verbose "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
+        $strings += "`t`$NormalizedContent = `$OriginalContent -replace '``r``n|``n|``r', '``r``n'"
         [string]$NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
 
-        Write-Verbose "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$SettingsPath'"
+        $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$SettingsPath'"
         [string]$FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $SettingsPath -ErrorAction Stop
 
         # Update file if content changed or encoding needs to be fixed
@@ -72,6 +73,7 @@
         if ($ContentChanged -or $EncodingNeedsUpdate) {
 
             if ($PSCmdlet.ShouldProcess($FullRelativePath, 'Format PowerShell file and update encoding')) {
+                $strings | ForEach-Object { Write-Information $_ }
                 Write-Information "`tSet-Content -Path '$FullRelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine"
                 Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
             }
