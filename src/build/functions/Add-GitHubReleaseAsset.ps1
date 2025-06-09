@@ -1,5 +1,7 @@
 ﻿function Add-GitHubReleaseAsset {
+
     # Function to upload release asset
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [string]$Token,
@@ -9,18 +11,18 @@
         [string]$FileDisplayPath
     )
 
-    $headers = @{
+    $Headers = @{
         'Authorization' = "Bearer $Token"
         'Content-Type'  = 'application/octet-stream'
     }
 
     $uploadUri = $UploadUrl -replace '\{\?name,label\}', "?name=$FileName"
-    Write-Information "`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$headers -InFile `"$FileDisplayPath`""
+    Write-Information "`t`$Headers = @{ 'Authorization'=`"Bearer `$Token`" ; 'Content-Type'='application/octet-stream' }"
+    Write-Information "`tInvoke-RestMethod -Uri '$uploadUri' -Method Post -Headers `$Headers -InFile `"$FileDisplayPath`""
 
     if ($PSCmdlet.ShouldProcess("File: $FileName", 'Upload Release Asset')) {
         try {
-            $response = Invoke-RestMethod -Uri $uploadUri -Method Post -Headers $headers -InFile $FilePath
-            return $response
+            Invoke-RestMethod -Uri $uploadUri -Method Post -Headers $Headers -InFile $FilePath -ErrorAction Stop
         } catch {
             throw "Failed to upload asset $FileName : $($_.Exception.Message)"
         }

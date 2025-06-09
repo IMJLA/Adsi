@@ -28,8 +28,6 @@
 
         # Find the version folder
         $version = $versionFolder.Name
-        $versionFolderParentToReplace = $versionFolder.FullName | Split-Path -Parent | Split-Path -Parent
-        $versionFolderPath = $versionFolder.FullName -replace [regex]::Escape($versionFolderParentToReplace), $DistPath
 
         # Construct repository path
         $Repository = "$GitHubOrgName/$ModuleName"
@@ -43,14 +41,15 @@
         $zipFilePath = Join-Path $env:TEMP $zipFileName
         $ZipFileDisplayPath = [IO.Path]::Combine('$env:TEMP', $zipFileName)
 
-        Write-Information "`tCompress-Archive -Path '$versionFolderPath\*' -DestinationPath `"$ZipFileDisplayPath`" -Force"
+        Write-Information "`tCompress-Archive -Path '$DistPath\*' -DestinationPath `"$ZipFileDisplayPath`" -Force"
 
         if ($PSCmdlet.ShouldProcess($zipFilePath, 'Create Archive')) {
-            Compress-Archive -Path "$($versionFolder.FullName)\*" -DestinationPath $zipFilePath -Force
+            Compress-Archive -Path "$DistPath\*" -DestinationPath $zipFilePath -Force
         }
 
         # Check if zip file was created successfully
         if (Test-Path $zipFilePath) {
+
             Write-Verbose "`tAdd-GitHubReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath `"$ZipFileDisplayPath`" -FileName '$zipFileName' -FileDisplayPath $ZipFileDisplayPath"
             $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName -InformationAction 'Continue' -FileDisplayPath $ZipFileDisplayPath
 
