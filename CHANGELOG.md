@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.469] - 2025-06-09
+### Changed
+- debug release
+
 ## [5.0.468] - 2025-06-09
 ### Added
 - add fwlink

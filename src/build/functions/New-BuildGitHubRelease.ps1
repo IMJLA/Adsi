@@ -55,17 +55,6 @@
             Write-Verbose "`tAdd-GitHubReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath `"$ZipFileDisplayPath`" -FileName '$zipFileName' -FileDisplayPath $ZipFileDisplayPath"
             $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName -InformationAction 'Continue' -FileDisplayPath $ZipFileDisplayPath
 
-            # Add the Updateable Help files (.cab files and HelpInfo.xml file) to the release.
-            $UpdateableHelpFiles = Get-ChildItem -Path $UpdateableHelpPath -Include '*.cab', '*_HelpInfo.xml' -File
-            foreach ($helpFile in $UpdateableHelpFiles) {
-
-                if ($PSCmdlet.ShouldProcess($helpFile.Name, 'Upload Help File to Release')) {
-                    Write-Verbose "`tAdd-GitHubReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath '$($helpFile.FullName)' -FileName '$($helpFile.Name)'"
-                    $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $helpFile.FullName -FileName $helpFile.Name -InformationAction 'Continue' -FileDisplayPath $helpFile.FullName
-                }
-
-            }
-
             # Clean up temporary zip file
             Write-Information "`tRemove-Item `"$ZipFileDisplayPath`" -Force -ProgressAction 'SilentlyContinue'"
             if ($PSCmdlet.ShouldProcess($zipFilePath, 'Remove Temporary Zip File')) {
@@ -73,6 +62,19 @@
             }
         } else {
             throw "Failed to create zip file at: $zipFilePath"
+        }
+
+        # Add the Updateable Help files (.cab files and HelpInfo.xml file) to the release.
+        Write-Information "`tGet-ChildItem -Path '$UpdateableHelpPath' -Include '*.cab', '*_HelpInfo.xml' -File"
+        $UpdateableHelpFiles = Get-ChildItem -Path $UpdateableHelpPath -Include '*.cab', '*_HelpInfo.xml' -File
+
+        foreach ($helpFile in $UpdateableHelpFiles) {
+
+            if ($PSCmdlet.ShouldProcess($helpFile.Name, 'Upload Help File to Release')) {
+                Write-Information "`tAdd-GitHubReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath '$($helpFile.FullName)' -FileName '$($helpFile.Name)'"
+                $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $helpFile.FullName -FileName $helpFile.Name -InformationAction 'Continue' -FileDisplayPath $helpFile.FullName
+            }
+
         }
 
         # Validate release creation and provide output
