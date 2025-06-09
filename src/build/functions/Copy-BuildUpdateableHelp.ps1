@@ -23,7 +23,7 @@
 
     # Get the Updateable Help files (.cab files and HelpInfo.xml file) but exclude .zip files
     Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Exclude '*.zip'"
-    $UpdateableHelpFiles = Get-ChildItem -Path $DocsUpdateableDir -File -Exclude '*.zip'
+    $UpdateableHelpFiles = Get-ChildItem -Path $DocsUpdateableDir -Exclude '*.zip'
 
     if ($UpdateableHelpFiles.Count -eq 0) {
         Write-Warning "No updatable help files found in '$DocsUpdateableDir'"
