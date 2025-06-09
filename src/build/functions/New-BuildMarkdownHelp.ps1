@@ -33,13 +33,17 @@
 
         # Output directory for markdown help files
         [Parameter(Mandatory)]
-        [string]$DocsMarkdownDefaultLocaleDir
+        [string]$DocsMarkdownDefaultLocaleDir,
+
+        [Parameter(Mandatory)]
+        [string]$HelpInfoUri
 
     )
 
     $markdownHelpParams = @{
         'AlphabeticParamsOrder' = $true
         'ErrorAction'           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
+        'FwLink'                = $HelpInfoUri
         'HelpVersion'           = $HelpVersion
         'Locale'                = $DocsDefaultLocale
         'Module'                = $ModuleName

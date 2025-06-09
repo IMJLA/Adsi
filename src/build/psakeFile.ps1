@@ -589,7 +589,7 @@ Task -name UpdateMarkDownHelp -depends ImportModule -action {
 
 Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
-    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion @buildMarkdownHelpSplat
+    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $script:HelpInfoUri @buildMarkdownHelpSplat
 
 } -description 'Generate markdown files from the module help using PlatyPS'
 
