@@ -189,9 +189,6 @@ Properties {
     # Name of the module being built
     $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Leaf
 
-    # Uri for the module's online help
-    [string]$OnlineHelpUri = "https://$GitHubOrgName.github.io/$ModuleName"
-
     # Path to the module script file
     $ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
 
@@ -224,10 +221,7 @@ Properties {
     [hashtable]$buildLocationSplat = $ModuleNameSplat + $IO + @{ 'BuildScriptRoot' = $PSScriptRoot } # Splat for Set-BuildLocation
     [hashtable]$testManifestSplat = $IO + @{ 'Path' = $ModuleManifestPath } # Splat for Test-BuildManifest
     [hashtable]$buildOutDirSplat = $ModuleNameSplat + $IO + @{ 'BuildOutDir' = $BuildOutDir } # Splat for Update-BuildOutputDir
-    [hashtable]$metadataSplat = $IO + @{
-        'ModuleManifestPath' = $ModuleManifestPath
-        'HelpInfoUri'        = $OnlineHelpUri
-    } # Splat for Test-BuildModuleMetadata
+    [hashtable]$metadataSplat = $IO + @{ 'ModuleManifestPath' = $ModuleManifestPath } # Splat for Test-BuildModuleMetadata
     [hashtable]$findPublicFunctionsSplat = $IO + @{ 'PublicFunctionPath' = $publicFunctionPath } # Splat for Find-PublicFunction
     [hashtable]$sourceControlSplat = $IO + $lineSplat + @{ 'CommitMessage' = $CommitMessage } # Splat for Invoke-SourceControl
     [hashtable]$lintAnalysisSplat = $IO + @{ 'SeverityThreshold' = $LintSeverityThreshold } # Splat for Select-LintResult
@@ -473,6 +467,7 @@ Task -name TestModuleManifest -action {
 Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
     $script:NewModuleVersion = Get-NewVersion -OldVersion $script:ManifestTest.Version @versionSplat
+    $script:HelpInfoUri = "https://github.com/$GitHubOrgName/$ModuleName/releases/download/$script:NewModuleVersion"
 
 } -description 'Determine the new version number based on the build parameters'
 
@@ -484,7 +479,7 @@ task -name UpdateBuildOutputDirVariable -depends DetermineNewVersionNumber -acti
 
 Task -name UpdateModuleVersion -depends UpdateBuildOutputDirVariable -action {
 
-    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion @metadataSplat
+    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion -HelpInfoUri $script:HelpInfoUri @metadataSplat
 
 } -description 'Update the module manifest with the new version number'
 

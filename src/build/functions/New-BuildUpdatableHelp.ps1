@@ -49,16 +49,24 @@
         foreach ($locale in $helpLocales) {
 
             $cabParams = @{
-                CabFilesFolder  = [IO.Path]::Combine($BuildOutputDir, $locale)
-                LandingPagePath = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
-                OutputFolder    = $DocsUpdateableDir
-                ErrorAction     = 'Stop'
+                'CabFilesFolder'  = [IO.Path]::Combine($BuildOutputDir, $locale)
+                'LandingPagePath' = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
+                'OutputFolder'    = $DocsUpdateableDir
+                'ErrorAction'     = 'Stop'
             }
-            Write-Information "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)' -ErrorAction 'Stop'"
+
+            Write-Information "`tNew-ExternalHelpCab -CabFilesFolder '$($cabParams.CabFilesFolder)' -LandingPagePath '$($cabParams.LandingPagePath)' -OutputFolder '$($cabParams.OutputFolder)'"
             $null = New-ExternalHelpCab @cabParams
 
         }
-
+        # Copy HelpInfo.xml to module root
+        $HelpInfoXml = Get-Item -Path $DocsUpdateableDir -Filter '*_HelpInfo.xml' -ErrorAction 'Stop'
+        $XmlPath = [IO.Path]::Combine($DocsUpdateableDir, $HelpInfoXml.Name)
+        $ModuleRootHelpInfoPath = [IO.Path]::Combine($BuildOutputDir, 'HelpInfo.xml')
+        Write-Information "`tCopy-Item -Path '$XmlPath' -Destination '$ModuleRootHelpInfoPath' -Force"
+        Copy-Item -Path $HelpInfoXml.FullName -Destination $ModuleRootHelpInfoPath -Force -ErrorAction 'Stop'
         Write-InfoColor "`t# Successfully created updatable help .cab files for each locale." -ForegroundColor Green
+
     }
+
 }
