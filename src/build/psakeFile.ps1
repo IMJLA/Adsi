@@ -686,6 +686,7 @@ Task -name CreateOnlineHelpWebsite -precondition $OnlineHelpWebsiteMissing -acti
 
 Task -name CopyUpdateableHelp -action {
 
+    Set-BuildLocation @buildLocationSplat
     $script:UpdateableHelpCopied = Copy-BuildUpdateableHelp @copyUpdateableHelpSplat
 
 } -description 'Copy updatable help files to the online help website static directory.'

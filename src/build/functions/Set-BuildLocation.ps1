@@ -33,7 +33,7 @@
 
         Set-Location -Path $BuildScriptRoot
         [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
-        Write-InfoColor "`tSet-Location -Path '$ModuleName'"
+        Write-Information "`tSet-Location -Path '$ModuleName'"
         Set-Location -Path $ProjectRoot
 
         if (((Get-Location -PSProvider FileSystem -ErrorAction Stop).Path | Split-Path -Leaf) -eq $ModuleName) {
