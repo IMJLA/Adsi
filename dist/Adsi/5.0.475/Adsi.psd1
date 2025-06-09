@@ -12,7 +12,7 @@
     RootModule            = 'Adsi'
 
     # Version number of this module.
-    ModuleVersion         = '5.0.474'
+    ModuleVersion         = '5.0.475'
 
     # Supported PSEditions
     CompatiblePSEditions  = 'Core', 'Desktop'
@@ -143,7 +143,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    HelpInfoURI           = 'https://github.com/IMJLA/Adsi/releases/download/v5.0.474'
+    HelpInfoURI           = 'https://github.com/IMJLA/Adsi/releases/download/v5.0.475/'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
