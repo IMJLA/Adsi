@@ -28,7 +28,7 @@
 
         # Find the version folder
         $version = $versionFolder.Name
-        $versionFolderParentToReplace = $versionFolder.FullName | Split-Path -Parent
+        $versionFolderParentToReplace = $versionFolder.FullName | Split-Path -Parent | Split-Path -Parent
         $versionFolderPath = $versionFolder.FullName -replace [regex]::Escape($versionFolderParentToReplace), $DistPath
 
         # Construct repository path

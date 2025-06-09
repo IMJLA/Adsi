@@ -27,7 +27,7 @@
     $uri = "https://api.github.com/repos/$Repo/releases"
     Write-Information "`t`$Headers = @{ 'Authorization'=`"Bearer `$Token`" ; 'Accept'='application/vnd.github.v3+json' ; 'Content-Type'='application/json' }"
     Write-Information "`t`$Body = @{ 'tag_name'='$TagName'; 'target_commitish'='main'; 'name'='$ReleaseName'; 'body'='$Body'; 'draft'=`$false; 'prerelease'=`$false } | ConvertTo-Json"
-    Write-Information "`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$Headers -Body '`$Body'"
+    Write-Information "`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$Headers -Body `$Body"
 
     if ($PSCmdlet.ShouldProcess("Repository: $Repo, Tag: $TagName", 'Create GitHub Release')) {
 
