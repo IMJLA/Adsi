@@ -59,8 +59,9 @@
             $null = New-ExternalHelpCab @cabParams
 
         }
+
         # Copy HelpInfo.xml to module root
-        $HelpInfoXml = Get-Item -Path $DocsUpdateableDir -Filter '*_HelpInfo.xml' -ErrorAction 'Stop'
+        $HelpInfoXml = Get-ChildItem -Path $DocsUpdateableDir -Filter '*_HelpInfo.xml' -File -ErrorAction 'Stop'
         $XmlPath = [IO.Path]::Combine($DocsUpdateableDir, $HelpInfoXml.Name)
         $ModuleRootHelpInfoPath = [IO.Path]::Combine($BuildOutputDir, 'HelpInfo.xml')
         Write-Information "`tCopy-Item -Path '$XmlPath' -Destination '$ModuleRootHelpInfoPath' -Force"
