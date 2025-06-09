@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.454] - 2025-06-08
+### Changed
+- update console output
+
 ## [5.0.453] - 2025-06-08
 ### Changed
 - update debug output

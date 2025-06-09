@@ -7,10 +7,10 @@
     }
 
     $InformationPreference = 'Continue'
-    Write-InfoColor "`tGet-ChildItem -Path '$DistPath' -Directory"
+    Write-Verbose "`tGet-ChildItem -Path '$DistPath' -Directory"
     $ModuleFolder = Get-ChildItem -Path $DistPath -Directory
     $ModuleFolderPath = [io.path]::Combine($DistPath, $ModuleFolder.Name)
-    Write-InfoColor "`tGet-ChildItem -Path '$ModuleFolderPath' -Directory | Where-Object {`$_.Name -match '^\d+\.\d+\.\d+'}"
+    Write-Verbose "`tGet-ChildItem -Path '$ModuleFolderPath' -Directory | Where-Object {`$_.Name -match '^\d+\.\d+\.\d+'}"
     $versionFolders = Get-ChildItem -Path $ModuleFolderPath -Directory | Where-Object { $_.Name -match '^\d+\.\d+\.\d+' }
 
     if ($versionFolders.Count -eq 0) {
