@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.462] - 2025-06-08
+### Changed
+- ensure every file isn't updated every time
+
 ## [5.0.461] - 2025-06-08
 ### Changed
 - always include single blank line at end
