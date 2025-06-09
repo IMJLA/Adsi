@@ -39,20 +39,20 @@
 
     $markdownHelpParams = @{
         'AlphabeticParamsOrder' = $true
-        'Locale'                = $DocsDefaultLocale
         'ErrorAction'           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
+        'HelpVersion'           = $HelpVersion
+        'Locale'                = $DocsDefaultLocale
         'Module'                = $ModuleName
-        # TODO: Using GitHub pages as a container for PowerShell Updatable Help https://gist.github.com/TheFreeman193/fde11aee6998ad4c40a314667c2a3005
-        # OnlineVersionUrl = $GitHubPagesLinkForThisModule
         'OutputFolder'          = $DocsMarkdownDefaultLocaleDir
         'UseFullTypeName'       = $true
         'WithModulePage'        = $true
-        'HelpVersion'           = $HelpVersion
     }
 
     if ($PSCmdlet.ShouldProcess("Module '$ModuleName'", 'Generate markdown help files')) {
+
         Write-Information "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$HelpVersion' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
         $null = New-MarkdownHelp @markdownHelpParams
         Write-InfoColor "`t# Successfully generated Markdown help files." -ForegroundColor Green
     }
+
 }
