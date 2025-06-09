@@ -1,6 +1,8 @@
 ﻿function New-GitHubRelease {
+
     # Function to create GitHub release
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         [string]$Token,
         [string]$Repo,
@@ -26,7 +28,7 @@
 
     $uri = "https://api.github.com/repos/$Repo/releases"
     Write-Information "`t`$Headers = @{'Authorization'=`"Bearer `$Token`";'Accept'='application/vnd.github.v3+json';'Content-Type'='application/json'}"
-    Write-Information "`t`$BodyFields = @{'tag_name'='$TagName';'target_commitish'='main';'name'='$ReleaseName';'body'='$Body';'draft'=`$false;'prerelease'=`$false}"
+    Write-Information "`t`$BodyFields = @{'tag_name'='$TagName';'target_commitish'='main';'name'='$ReleaseName';'body'=`"$Body`";'draft'=`$false;'prerelease'=`$false}"
     Write-Information "`t`$Body = `$BodyFields | ConvertTo-Json"
     Write-Information "`tInvoke-RestMethod -Uri '$uri' -Method Post -Headers `$Headers -Body `$Body"
 

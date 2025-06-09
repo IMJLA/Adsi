@@ -77,9 +77,11 @@
         if ($ContentChanged -or $EncodingNeedsUpdate) {
 
             if ($PSCmdlet.ShouldProcess($FullRelativePath, 'Format PowerShell file and update encoding')) {
+
                 $strings | ForEach-Object { Write-Information $_ }
-                Write-Information "`tSet-Content -Path '$FullRelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine"
+                Write-Information "`tSet-Content -Path '$FullRelativePath' -Value `$FormattedContent -Encoding UTF8BOM -NoNewLine`r`n"
                 Set-Content -Path $File.FullName -Value $FormattedContent -Encoding UTF8BOM -NoNewline -ErrorAction Stop
+
             }
 
         }

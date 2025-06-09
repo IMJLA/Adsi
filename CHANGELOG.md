@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.463] - 2025-06-08
+### Fixed
+- fix quotes
+
 ## [5.0.462] - 2025-06-08
 ### Changed
 - ensure every file isn't updated every time
