@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.470] - 2025-06-09
+### Fixed
+- fix release console output and updateable help file detection
+
 ## [5.0.469] - 2025-06-09
 ### Changed
 - debug release
