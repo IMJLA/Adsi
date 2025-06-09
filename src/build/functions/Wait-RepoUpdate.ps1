@@ -47,7 +47,7 @@
     do {
         Start-Sleep -Seconds $IntervalSeconds
         $timer += $IntervalSeconds
-        Write-Information "Find-Module -Name '$ModuleName' -Repository '$Repository'"
+        Write-Information "`tFind-Module -Name '$ModuleName' -Repository '$Repository'"
         $VersionInGallery = Find-Module -Name $ModuleName -Repository $Repository -ErrorAction SilentlyContinue
     } while (
         ($null -eq $VersionInGallery -or $VersionInGallery.Version -lt $ExpectedVersion) -and
@@ -59,7 +59,7 @@
         Write-Error "Timeout waiting for module version $ExpectedVersion to appear in $Repository"
         return $false
     } else {
-        Write-InfoColor "# Successfully confirmed module version $ExpectedVersion is available in $Repository." -ForegroundColor Green
+        Write-InfoColor "`t# Successfully confirmed module version $ExpectedVersion is available in $Repository." -ForegroundColor Green
         return $true
     }
 }
