@@ -1,5 +1,5 @@
 ﻿function ConvertTo-ServiceSID {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-ServiceSID')]
+
     <#
     .SYNOPSIS
     This script calculates the SID of a Virtual Service Account.
@@ -23,6 +23,9 @@
     .PARAMETER ServiceName
     The name of the service to calculate the sid for (case insensitive)
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-ServiceSID')]
+    [OutputType([string])]
 
     Param (
         [Parameter(position = 0, mandatory = $true)]

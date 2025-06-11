@@ -1,5 +1,4 @@
 ﻿function Split-DirectoryPath {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Split-DirectoryPath')]
 
     <#
     .EXAMPLE
@@ -10,6 +9,9 @@
         Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/COMPUTER/Administrator'
         Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/OU2/COMPUTER/Administrator'
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Split-DirectoryPath')]
+    [OutputType([System.Collections.Hashtable])]
 
     param (
         [string]$DirectoryPath

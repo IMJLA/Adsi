@@ -1,5 +1,4 @@
 ﻿function ConvertTo-DomainNetBIOS {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainNetBIOS')]
 
     <#
     .SYNOPSIS
@@ -30,6 +29,9 @@
     .OUTPUTS
     System.String. The NetBIOS name of the domain.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainNetBIOS')]
+    [OutputType([string])]
 
     param (
 

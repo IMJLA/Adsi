@@ -1,6 +1,5 @@
 ﻿function Get-SidTypeMap {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-SidTypeMap')]
-    param()
+
     <#
     .SYNOPSIS
     Returns a mapping of SID type numbers to their string representations.
@@ -20,6 +19,11 @@
     .OUTPUTS
     [System.Collections.Hashtable] A hashtable mapping SID type numbers to string representations.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-SidTypeMap')]
+    [OutputType([System.Collections.Hashtable])]
+
+    param()
 
     return @{
         1 = 'user' #'SidTypeUser'

@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: https://IMJLA.github.io/Adsi/UpdateableHelp/
-Help Version: 5.0.488
+Help Version: 5.0.490
 Locale: en-US
 ---
 
@@ -42,7 +42,9 @@ Description for ConvertTo-DecStringRepresentation
 Description for ConvertTo-DistinguishedName
 
 ### [ConvertTo-DomainNetBIOS](docs\en-US/ConvertTo-DomainNetBIOS.md)
-Description for ConvertTo-DomainNetBIOS
+Converts a domain FQDN to its NetBIOS name.
+
+
 
 ### [ConvertTo-DomainSidString](docs\en-US/ConvertTo-DomainSidString.md)
 Description for ConvertTo-DomainSidString
@@ -88,16 +90,22 @@ Use Active Directory Service Interfaces to retrieve an object from a directory
 
 
 ### [Get-KnownCaptionHashTable](docs\en-US/Get-KnownCaptionHashTable.md)
-Description for Get-KnownCaptionHashTable
+Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
+
 
 ### [Get-KnownSid](docs\en-US/Get-KnownSid.md)
-Description for Get-KnownSid
+Retrieves information about well-known security identifiers (SIDs).
+
+
 
 ### [Get-KnownSidByName](docs\en-US/Get-KnownSidByName.md)
-Description for Get-KnownSidByName
+Creates a hashtable of well-known SIDs indexed by their friendly names.
+
 
 ### [Get-KnownSidHashTable](docs\en-US/Get-KnownSidHashTable.md)
-Description for Get-KnownSidHashTable
+Returns a hashtable of known security identifiers (SIDs) with detailed information.
+
+
 
 ### [Get-ParentDomainDnsName](docs\en-US/Get-ParentDomainDnsName.md)
 Description for Get-ParentDomainDnsName
@@ -118,6 +126,7 @@ Description for Resolve-IdentityReference
 Description for Resolve-ServiceNameToSID
 
 ### [Search-Directory](docs\en-US/Search-Directory.md)
-Description for Search-Directory
+Use Active Directory Service Interfaces to search an LDAP directory
+
 
 

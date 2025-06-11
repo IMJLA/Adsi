@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID
 schema: 2.0.0
 ---
 
 # Search-Directory
 
 ## SYNOPSIS
-Fill in the Synopsis
+Use Active Directory Service Interfaces to search an LDAP directory
 
 ## SYNTAX
 
@@ -19,21 +19,24 @@ Search-Directory [[-DirectoryPath] <String>] [[-Filter] <String>] [[-PageSize] <
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching)
+Provides a wrapper around the \[System.DirectoryServices.DirectorySearcher\] class
+Supports filtering, paging, and customizing which properties to return.
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache
 ```
 
-Add example description here
+Searches the contoso.com domain for all user objects, retrieving results in pages of 1000 objects at a time.
+This is useful for efficiently retrieving large sets of directory objects without overwhelming memory resources.
 
 ## PARAMETERS
 
 ### -Cache
-Fill Cache Description
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -41,14 +44,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 6
+Position: 7
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Credential
-Fill Credential Description
+Credentials to use
 
 ```yaml
 Type: System.Management.Automation.PSCredential
@@ -56,29 +59,15 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DirectoryPath
-Fill DirectoryPath Description
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 0
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Filter
-Fill Filter Description
+Path to the directory object to retrieve
+Defaults to the root of the current domain
 
 ```yaml
 Type: System.String
@@ -87,16 +76,16 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: None
+Default value: (([adsisearcher]'').SearchRoot.Path)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PageSize
-Fill PageSize Description
+### -Filter
+Filter for the LDAP search
 
 ```yaml
-Type: System.Int32
+Type: System.String
 Parameter Sets: (All)
 Aliases:
 
@@ -107,8 +96,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -PageSize
+Number of results to return in each page
+
+```yaml
+Type: System.Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: 1000
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -PropertiesToLoad
-Fill PropertiesToLoad Description
+Additional properties to return
 
 ```yaml
 Type: System.String[]
@@ -116,14 +120,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -SearchScope
-Fill SearchScope Description
+Search scope (Base, OneLevel, or Subtree)
 
 ```yaml
 Type: System.DirectoryServices.SearchScope
@@ -132,8 +136,8 @@ Aliases:
 Accepted values: Base, OneLevel, Subtree
 
 Required: False
-Position: 3
-Default value: None
+Position: 4
+Default value: Subtree
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -143,15 +147,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Object
+### System.DirectoryServices.SearchResult collection representing the matching directory objects.
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory](https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory)
-
 

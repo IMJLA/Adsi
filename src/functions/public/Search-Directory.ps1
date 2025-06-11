@@ -1,5 +1,4 @@
 ﻿function Search-Directory {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory')]
 
     <#
     .SYNOPSIS
@@ -18,6 +17,9 @@
     .OUTPUTS
     System.DirectoryServices.SearchResult collection representing the matching directory objects.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory')]
+    [OutputType([System.DirectoryServices.SearchResult[]])]
 
     param (
 

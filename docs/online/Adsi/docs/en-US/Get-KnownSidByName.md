@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain
 schema: 2.0.0
 ---
 
 # Get-KnownSidByName
 
 ## SYNOPSIS
-Fill in the Synopsis
+Creates a hashtable of well-known SIDs indexed by their friendly names.
 
 ## SYNTAX
 
@@ -17,21 +17,30 @@ Get-KnownSidByName [[-WellKnownSIDBySID] <Hashtable>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Fill in the Description
+This function takes a hashtable of well-known SIDs (indexed by SID) and
+transforms it into a new hashtable where the keys are the friendly names
+of the SIDs.
+This makes it easier to look up SID information when you
+know the name but not the SID itself.
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+$sidBySid = Get-KnownSidHashTable
+$sidByName = Get-KnownSidByName -WellKnownSIDBySID $sidBySid
+$administratorsInfo = $sidByName['Administrators']
 ```
 
-Add example description here
+Creates a hashtable of well-known SIDs indexed by their friendly names and retrieves
+information about the Administrators group.
+This is useful when you need to look up
+SID information by name rather than by SID string.
 
 ## PARAMETERS
 
 ### -WellKnownSIDBySID
-Fill WellKnownSIDBySID Description
+Hashtable containing well-known SIDs as keys with their properties as values
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -39,7 +48,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -50,15 +59,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### System.Collections.Hashtable
+### A hashtable containing SID strings as keys and information objects as values.
 ## OUTPUTS
 
-### System.Object
+### System.Collections.Hashtable
+### Returns a hashtable with friendly names as keys and SID information objects as values.
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName](https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName)
-
 

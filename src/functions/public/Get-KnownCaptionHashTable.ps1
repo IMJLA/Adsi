@@ -1,5 +1,5 @@
 ﻿function Get-KnownCaptionHashTable {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable')]
+
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
@@ -25,6 +25,9 @@
         information about the SYSTEM account. This is useful when you need to look up SID
         information by NT Account name rather than by SID string.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable')]
+    [OutputType([System.Collections.Hashtable])]
 
     param (
         # Hashtable of well-known Security Identifiers (SIDs) with their properties

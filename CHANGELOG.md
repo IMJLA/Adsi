@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.490] - 2025-06-10
+### Changed
+- retry build
+
+## [5.0.489] - 2025-06-10
+### Fixed
+- fix lint issues
+
 ## [5.0.488] - 2025-06-10
 ### Changed
 - retry build

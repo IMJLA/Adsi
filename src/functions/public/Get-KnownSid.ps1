@@ -1,5 +1,4 @@
 ﻿function Get-KnownSid {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSid')]
 
     <#
     .SYNOPSIS
@@ -29,6 +28,9 @@
 
     Returns information about the Local System account.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSid')]
+    [OutputType([System.Collections.Hashtable])]
 
     param (
 

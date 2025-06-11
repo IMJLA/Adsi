@@ -1,6 +1,5 @@
 ﻿function Get-KnownSidHashTable {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable')]
-    param()
+
     <#
     .SYNOPSIS
     Returns a hashtable of known security identifiers (SIDs) with detailed information.
@@ -31,6 +30,10 @@
     .LINK
     https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable')]
+    [OutputType([System.Collections.Hashtable])]
+    param()
 
     return @{
 

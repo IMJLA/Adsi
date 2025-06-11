@@ -844,7 +844,7 @@ None. This function populates the PrincipalById cache with permission principal 
 
 }
 function ConvertTo-ServiceSID {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-ServiceSID')]
+
     <#
     .SYNOPSIS
     This script calculates the SID of a Virtual Service Account.
@@ -868,6 +868,9 @@ function ConvertTo-ServiceSID {
     .PARAMETER ServiceName
     The name of the service to calculate the sid for (case insensitive)
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-ServiceSID')]
+    [OutputType([string])]
 
     Param (
         [Parameter(position = 0, mandatory = $true)]
@@ -1312,8 +1315,7 @@ function Get-DirectoryEntryParentName {
 
 }
 function Get-SidTypeMap {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-SidTypeMap')]
-    param()
+
     <#
     .SYNOPSIS
     Returns a mapping of SID type numbers to their string representations.
@@ -1333,6 +1335,11 @@ function Get-SidTypeMap {
     .OUTPUTS
     [System.Collections.Hashtable] A hashtable mapping SID type numbers to string representations.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-SidTypeMap')]
+    [OutputType([System.Collections.Hashtable])]
+
+    param()
 
     return @{
         1 = 'user' #'SidTypeUser'
@@ -2055,7 +2062,6 @@ function Resolve-SidAuthority {
 
 }
 function Split-DirectoryPath {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Split-DirectoryPath')]
 
     <#
     .EXAMPLE
@@ -2066,6 +2072,9 @@ function Split-DirectoryPath {
         Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/COMPUTER/Administrator'
         Split-DirectoryPath -DirectoryPath 'WinNT://DOMAIN/OU1/OU2/COMPUTER/Administrator'
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Split-DirectoryPath')]
+    [OutputType([System.Collections.Hashtable])]
 
     param (
         [string]$DirectoryPath
@@ -2898,7 +2907,6 @@ function ConvertTo-DistinguishedName {
 
 }
 function ConvertTo-DomainNetBIOS {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainNetBIOS')]
 
     <#
     .SYNOPSIS
@@ -2929,6 +2937,9 @@ function ConvertTo-DomainNetBIOS {
     .OUTPUTS
     System.String. The NetBIOS name of the domain.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainNetBIOS')]
+    [OutputType([string])]
 
     param (
 
@@ -4539,7 +4550,7 @@ function Get-DirectoryEntry {
 
 }
 function Get-KnownCaptionHashTable {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable')]
+
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
@@ -4566,6 +4577,9 @@ function Get-KnownCaptionHashTable {
         information by NT Account name rather than by SID string.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable')]
+    [OutputType([System.Collections.Hashtable])]
+
     param (
         # Hashtable of well-known Security Identifiers (SIDs) with their properties
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable)
@@ -4584,7 +4598,6 @@ function Get-KnownCaptionHashTable {
 
 }
 function Get-KnownSid {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSid')]
 
     <#
     .SYNOPSIS
@@ -4614,6 +4627,9 @@ function Get-KnownSid {
 
     Returns information about the Local System account.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSid')]
+    [OutputType([System.Collections.Hashtable])]
 
     param (
 
@@ -5039,7 +5055,7 @@ COMPUTER-SPECIFIC SIDs
 
             #>
 function Get-KnownSidByName {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName')]
+
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their friendly names.
@@ -5066,6 +5082,9 @@ function Get-KnownSidByName {
         SID information by name rather than by SID string.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName')]
+    [OutputType([System.Collections.Hashtable])]
+
     param (
         # Hashtable containing well-known SIDs as keys with their properties as values
         [hashtable]$WellKnownSIDBySID
@@ -5084,8 +5103,7 @@ function Get-KnownSidByName {
 
 }
 function Get-KnownSidHashTable {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable')]
-    param()
+
     <#
     .SYNOPSIS
     Returns a hashtable of known security identifiers (SIDs) with detailed information.
@@ -5116,6 +5134,10 @@ function Get-KnownSidHashTable {
     .LINK
     https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable')]
+    [OutputType([System.Collections.Hashtable])]
+    param()
 
     return @{
 
@@ -6814,7 +6836,6 @@ function Resolve-ServiceNameToSID {
 
 }
 function Search-Directory {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory')]
 
     <#
     .SYNOPSIS
@@ -6833,6 +6854,9 @@ function Search-Directory {
     .OUTPUTS
     System.DirectoryServices.SearchResult collection representing the matching directory objects.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory')]
+    [OutputType([System.DirectoryServices.SearchResult[]])]
 
     param (
 

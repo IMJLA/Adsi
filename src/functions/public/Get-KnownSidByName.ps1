@@ -1,5 +1,5 @@
 ﻿function Get-KnownSidByName {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName')]
+
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their friendly names.
@@ -25,6 +25,9 @@
         information about the Administrators group. This is useful when you need to look up
         SID information by name rather than by SID string.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName')]
+    [OutputType([System.Collections.Hashtable])]
 
     param (
         # Hashtable containing well-known SIDs as keys with their properties as values

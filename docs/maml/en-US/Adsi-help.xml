@@ -1204,19 +1204,19 @@
       <command:verb>ConvertTo</command:verb>
       <command:noun>DomainNetBIOS</command:noun>
       <maml:description>
-        <maml:para>Fill in the Synopsis</maml:para>
+        <maml:para>Converts a domain FQDN to its NetBIOS name.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Fill in the Description</maml:para>
+      <maml:para>Retrieves the NetBIOS name for a specified domain FQDN by checking the cache or querying the directory service. For LDAP providers, it retrieves domain information from the directory. For non-LDAP providers, it extracts the first part of the FQDN before the first period.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertTo-DomainNetBIOS</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DomainFQDN</maml:name>
           <maml:description>
-            <maml:para>Fill DomainFQDN Description</maml:para>
+            <maml:para>Fully Qualified Domain Name (FQDN) to convert to NetBIOS name</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -1225,10 +1225,10 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>AdsiProvider</maml:name>
           <maml:description>
-            <maml:para>Fill AdsiProvider Description</maml:para>
+            <maml:para>ADSI provider to use (LDAP or WinNT)</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -1237,10 +1237,10 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>Cache</maml:name>
           <maml:description>
-            <maml:para>Fill Cache Description</maml:para>
+            <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
           <dev:type>
@@ -1252,10 +1252,10 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>AdsiProvider</maml:name>
         <maml:description>
-          <maml:para>Fill AdsiProvider Description</maml:para>
+          <maml:para>ADSI provider to use (LDAP or WinNT)</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1264,10 +1264,10 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
-          <maml:para>Fill Cache Description</maml:para>
+          <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
         <dev:type>
@@ -1276,10 +1276,10 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DomainFQDN</maml:name>
         <maml:description>
-          <maml:para>Fill DomainFQDN Description</maml:para>
+          <maml:para>Fully Qualified Domain Name (FQDN) to convert to NetBIOS name</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -1292,7 +1292,7 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1302,7 +1302,7 @@
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.String. The NetBIOS name of the domain.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -1316,17 +1316,24 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Add example code here</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Add example description here</maml:para>
+          <maml:para>Converts the fully qualified domain name 'contoso.com' to its NetBIOS name by automatically determining the appropriate method based on available information. The function will check the cache first to avoid unnecessary directory queries.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>ConvertTo-DomainNetBIOS -DomainFQDN 'contoso.com' -AdsiProvider 'LDAP' -Cache $Cache</dev:code>
+        <dev:remarks>
+          <maml:para>Converts the fully qualified domain name 'contoso.com' to its NetBIOS name using the LDAP provider specifically, which provides more accurate results in an Active Directory environment by querying the domain controller directly.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
     <command:relatedLinks>
       <maml:navigationLink>
-        <maml:linkText>https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainNetBIOS</maml:linkText>
-        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainNetBIOS</maml:uri>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
@@ -3239,47 +3246,55 @@ Path : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>KnownCaptionHashTable</command:noun>
       <maml:description>
-        <maml:para>Fill in the Synopsis</maml:para>
+        <maml:para>Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Fill in the Description</maml:para>
+      <maml:para>This function takes a hashtable of well-known SIDs (indexed by SID) and transforms it into a new hashtable where the keys are the NT Account names (captions) of the SIDs. This makes it easier to look up SID information when you have the account name representation rather than the SID itself.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-KnownCaptionHashTable</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>WellKnownSidBySid</maml:name>
           <maml:description>
-            <maml:para>Fill WellKnownSidBySid Description</maml:para>
+            <maml:para>Hashtable of well-known Security Identifiers (SIDs) with their properties</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
             <maml:name>System.Collections.Hashtable</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>(Get-KnownSidHashTable)</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>WellKnownSidBySid</maml:name>
         <maml:description>
-          <maml:para>Fill WellKnownSidBySid Description</maml:para>
+          <maml:para>Hashtable of well-known Security Identifiers (SIDs) with their properties</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
           <maml:name>System.Collections.Hashtable</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>(Get-KnownSidHashTable)</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+      <command:inputType>
+        <dev:type>
+          <maml:name>A hashtable containing SID strings as keys and information objects as values.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3289,7 +3304,15 @@ Path : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Returns a hashtable with NT Account names as keys and SID information objects as values.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3303,17 +3326,19 @@ Path : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Add example code here</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$sidBySid = Get-KnownSidHashTable
+$sidByCaption = Get-KnownCaptionHashTable -WellKnownSidBySid $sidBySid
+$systemInfo = $sidByCaption['NT AUTHORITY\SYSTEM']</dev:code>
         <dev:remarks>
-          <maml:para>Add example description here</maml:para>
+          <maml:para>Creates a hashtable of well-known SIDs indexed by their NT Account names and retrieves information about the SYSTEM account. This is useful when you need to look up SID information by NT Account name rather than by SID string.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
     <command:relatedLinks>
       <maml:navigationLink>
-        <maml:linkText>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable</maml:linkText>
-        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable</maml:uri>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
@@ -3323,19 +3348,20 @@ Path : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>KnownSid</command:noun>
       <maml:description>
-        <maml:para>Fill in the Synopsis</maml:para>
+        <maml:para>Retrieves information about well-known security identifiers (SIDs).</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Fill in the Description</maml:para>
+      <maml:para>Gets information about well-known security identifiers (SIDs) based on patterns and common formats. Uses Microsoft documentation references for SID information: - https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/81d92bba-d22b-4a8c-908a-554ab29148ab</maml:para>
+      <maml:para>- https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-KnownSid</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SID</maml:name>
           <maml:description>
-            <maml:para>Fill SID Description</maml:para>
+            <maml:para>Security Identifier (SID) string to retrieve information for</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
@@ -3347,10 +3373,10 @@ Path : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SID</maml:name>
         <maml:description>
-          <maml:para>Fill SID Description</maml:para>
+          <maml:para>Security Identifier (SID) string to retrieve information for</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
@@ -3363,7 +3389,15 @@ Path : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>System.String</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+      <command:inputType>
+        <dev:type>
+          <maml:name>A SID string that identifies a well-known security principal.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3373,7 +3407,7 @@ Path : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>PSCustomObject with properties such as Description, DisplayName, Name, NTAccount, SamAccountName, SchemaClassName, and SID.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3387,17 +3421,24 @@ Path : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Add example code here</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-KnownSid -SID 'S-1-5-32-544'</dev:code>
         <dev:remarks>
-          <maml:para>Add example description here</maml:para>
+          <maml:para>Returns information about the built-in Administrators group.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
+        <dev:code>Get-KnownSid -SID 'S-1-5-18'</dev:code>
+        <dev:remarks>
+          <maml:para>Returns information about the Local System account.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
     <command:relatedLinks>
       <maml:navigationLink>
-        <maml:linkText>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSid</maml:linkText>
-        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSid</maml:uri>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
@@ -3407,19 +3448,19 @@ Path : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>KnownSidByName</command:noun>
       <maml:description>
-        <maml:para>Fill in the Synopsis</maml:para>
+        <maml:para>Creates a hashtable of well-known SIDs indexed by their friendly names.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Fill in the Description</maml:para>
+      <maml:para>This function takes a hashtable of well-known SIDs (indexed by SID) and transforms it into a new hashtable where the keys are the friendly names of the SIDs. This makes it easier to look up SID information when you know the name but not the SID itself.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-KnownSidByName</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>WellKnownSIDBySID</maml:name>
           <maml:description>
-            <maml:para>Fill WellKnownSIDBySID Description</maml:para>
+            <maml:para>Hashtable containing well-known SIDs as keys with their properties as values</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
           <dev:type>
@@ -3431,10 +3472,10 @@ Path : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>WellKnownSIDBySID</maml:name>
         <maml:description>
-          <maml:para>Fill WellKnownSIDBySID Description</maml:para>
+          <maml:para>Hashtable containing well-known SIDs as keys with their properties as values</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Collections.Hashtable</command:parameterValue>
         <dev:type>
@@ -3447,7 +3488,15 @@ Path : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:inputType>
+      <command:inputType>
+        <dev:type>
+          <maml:name>A hashtable containing SID strings as keys and information objects as values.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3457,7 +3506,15 @@ Path : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.Collections.Hashtable</maml:name>
+        </dev:type>
+        <maml:description>
+          <maml:para></maml:para>
+        </maml:description>
+      </command:returnValue>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Returns a hashtable with friendly names as keys and SID information objects as values.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3471,17 +3528,19 @@ Path : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Add example code here</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$sidBySid = Get-KnownSidHashTable
+$sidByName = Get-KnownSidByName -WellKnownSIDBySID $sidBySid
+$administratorsInfo = $sidByName['Administrators']</dev:code>
         <dev:remarks>
-          <maml:para>Add example description here</maml:para>
+          <maml:para>Creates a hashtable of well-known SIDs indexed by their friendly names and retrieves information about the Administrators group. This is useful when you need to look up SID information by name rather than by SID string.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
     <command:relatedLinks>
       <maml:navigationLink>
-        <maml:linkText>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName</maml:linkText>
-        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName</maml:uri>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
@@ -3491,11 +3550,11 @@ Path : WinNT://ComputerName</dev:code>
       <command:verb>Get</command:verb>
       <command:noun>KnownSidHashTable</command:noun>
       <maml:description>
-        <maml:para>Fill in the Synopsis</maml:para>
+        <maml:para>Returns a hashtable of known security identifiers (SIDs) with detailed information.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Fill in the Description</maml:para>
+      <maml:para>Returns a hashtable of known SIDs which can be used to avoid errors and delays due to unnecessary directory queries. Some SIDs cannot be translated using the [SecurityIdentifier]::Translate or [NTAccount]::Translate methods. Some SIDs cannot be retrieved using CIM or ADSI. Hardcoding them here allows avoiding queries that we know will fail. Hardcoding them also improves performance by avoiding unnecessary directory queries with predictable results.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3506,7 +3565,7 @@ Path : WinNT://ComputerName</dev:code>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. This function does not accept pipeline input.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3516,7 +3575,7 @@ Path : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.Collections.Hashtable. Contains SIDs as keys and PSCustomObjects with SID information as values.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -3530,17 +3589,21 @@ Path : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Add example code here</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>$knownSids = Get-KnownSidHashTable</dev:code>
         <dev:remarks>
-          <maml:para>Add example description here</maml:para>
+          <maml:para>This hashtable can be used to look up information about well-known SIDs: $knownSids['S-1-5-18'].DisplayName # Returns 'LocalSystem' $knownSids['S-1-5-32-544'].Description # Returns description of the Administrators group</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
     <command:relatedLinks>
       <maml:navigationLink>
-        <maml:linkText>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable</maml:linkText>
-        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable</maml:uri>
+        <maml:linkText>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34</maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids</maml:linkText>
+        <maml:uri>https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
@@ -4316,55 +4379,55 @@ Path : WinNT://ComputerName</dev:code>
       <command:verb>Search</command:verb>
       <command:noun>Directory</command:noun>
       <maml:description>
-        <maml:para>Fill in the Synopsis</maml:para>
+        <maml:para>Use Active Directory Service Interfaces to search an LDAP directory</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Fill in the Description</maml:para>
+      <maml:para>Find directory entries using the LDAP provider for ADSI (the WinNT provider does not support searching) Provides a wrapper around the [System.DirectoryServices.DirectorySearcher] class Supports filtering, paging, and customizing which properties to return.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Search-Directory</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>DirectoryPath</maml:name>
           <maml:description>
-            <maml:para>Fill DirectoryPath Description</maml:para>
+            <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
           <dev:type>
             <maml:name>System.String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
-        </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-          <maml:name>Filter</maml:name>
-          <maml:description>
-            <maml:para>Fill Filter Description</maml:para>
-          </maml:description>
-          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-          <dev:type>
-            <maml:name>System.String</maml:name>
-            <maml:uri />
-          </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>Filter</maml:name>
+          <maml:description>
+            <maml:para>Filter for the LDAP search</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>PageSize</maml:name>
           <maml:description>
-            <maml:para>Fill PageSize Description</maml:para>
+            <maml:para>Number of results to return in each page</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Int32</command:parameterValue>
           <dev:type>
             <maml:name>System.Int32</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>1000</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>SearchScope</maml:name>
           <maml:description>
-            <maml:para>Fill SearchScope Description</maml:para>
+            <maml:para>Search scope (Base, OneLevel, or Subtree)</maml:para>
           </maml:description>
           <command:parameterValueGroup>
             <command:parameterValue required="false" command:variableLength="false">Base</command:parameterValue>
@@ -4376,12 +4439,12 @@ Path : WinNT://ComputerName</dev:code>
             <maml:name>System.DirectoryServices.SearchScope</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>Subtree</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
           <maml:name>PropertiesToLoad</maml:name>
           <maml:description>
-            <maml:para>Fill PropertiesToLoad Description</maml:para>
+            <maml:para>Additional properties to return</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
           <dev:type>
@@ -4390,10 +4453,10 @@ Path : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
           <maml:name>Credential</maml:name>
           <maml:description>
-            <maml:para>Fill Credential Description</maml:para>
+            <maml:para>Credentials to use</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSCredential</command:parameterValue>
           <dev:type>
@@ -4402,10 +4465,10 @@ Path : WinNT://ComputerName</dev:code>
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
           <maml:name>Cache</maml:name>
           <maml:description>
-            <maml:para>Fill Cache Description</maml:para>
+            <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
           <dev:type>
@@ -4417,10 +4480,10 @@ Path : WinNT://ComputerName</dev:code>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="7" aliases="none">
         <maml:name>Cache</maml:name>
         <maml:description>
-          <maml:para>Fill Cache Description</maml:para>
+          <maml:para>In-process cache to reduce calls to other processes or to disk</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSReference</command:parameterValue>
         <dev:type>
@@ -4429,10 +4492,10 @@ Path : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="6" aliases="none">
         <maml:name>Credential</maml:name>
         <maml:description>
-          <maml:para>Fill Credential Description</maml:para>
+          <maml:para>Credentials to use</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Management.Automation.PSCredential</command:parameterValue>
         <dev:type>
@@ -4441,46 +4504,46 @@ Path : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>DirectoryPath</maml:name>
         <maml:description>
-          <maml:para>Fill DirectoryPath Description</maml:para>
+          <maml:para>Path to the directory object to retrieve Defaults to the root of the current domain</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
         <dev:type>
           <maml:name>System.String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
-      </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
-        <maml:name>Filter</maml:name>
-        <maml:description>
-          <maml:para>Fill Filter Description</maml:para>
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-          <maml:uri />
-        </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>(([adsisearcher]'').SearchRoot.Path)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>Filter</maml:name>
+        <maml:description>
+          <maml:para>Filter for the LDAP search</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">System.String</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>PageSize</maml:name>
         <maml:description>
-          <maml:para>Fill PageSize Description</maml:para>
+          <maml:para>Number of results to return in each page</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Int32</command:parameterValue>
         <dev:type>
           <maml:name>System.Int32</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>1000</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="5" aliases="none">
         <maml:name>PropertiesToLoad</maml:name>
         <maml:description>
-          <maml:para>Fill PropertiesToLoad Description</maml:para>
+          <maml:para>Additional properties to return</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.String[]</command:parameterValue>
         <dev:type>
@@ -4489,23 +4552,23 @@ Path : WinNT://ComputerName</dev:code>
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>SearchScope</maml:name>
         <maml:description>
-          <maml:para>Fill SearchScope Description</maml:para>
+          <maml:para>Search scope (Base, OneLevel, or Subtree)</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.DirectoryServices.SearchScope</command:parameterValue>
         <dev:type>
           <maml:name>System.DirectoryServices.SearchScope</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>Subtree</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>None</maml:name>
+          <maml:name>None. Pipeline input is not accepted.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -4515,7 +4578,7 @@ Path : WinNT://ComputerName</dev:code>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>System.Object</maml:name>
+          <maml:name>System.DirectoryServices.SearchResult collection representing the matching directory objects.</maml:name>
         </dev:type>
         <maml:description>
           <maml:para></maml:para>
@@ -4529,17 +4592,17 @@ Path : WinNT://ComputerName</dev:code>
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Add example code here</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Search-Directory -DirectoryPath "LDAP://DC=contoso,DC=com" -Filter "(objectClass=user)" -PageSize 1000 -Cache $Cache</dev:code>
         <dev:remarks>
-          <maml:para>Add example description here</maml:para>
+          <maml:para>Searches the contoso.com domain for all user objects, retrieving results in pages of 1000 objects at a time. This is useful for efficiently retrieving large sets of directory objects without overwhelming memory resources.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
     <command:relatedLinks>
       <maml:navigationLink>
-        <maml:linkText>https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory</maml:linkText>
-        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory</maml:uri>
+        <maml:linkText>Online Version:</maml:linkText>
+        <maml:uri>https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID</maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>
