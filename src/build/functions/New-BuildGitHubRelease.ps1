@@ -1,5 +1,7 @@
 ﻿function New-BuildGitHubRelease {
+
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         [Parameter(Mandatory = $true)]
         [string]$GitHubToken,
@@ -14,9 +16,7 @@
         [string]$DistPath = '.\dist',
 
         [Parameter(Mandatory = $false)]
-        [string]$ReleaseNotes = 'Automated release',
-
-        [string]$UpdateableHelpPath = '.\docs\updateable'
+        [string]$ReleaseNotes = 'Automated release'
     )
 
     # Main script execution
@@ -37,11 +37,11 @@
         Write-Verbose "`tNew-GitHubRelease -Token `$GitHubToken -Repo '$Repository' -TagName 'v$version' -ReleaseName 'Release $version' -Body '$ReleaseNotes' -InformationAction 'Continue'"
         $release = New-GitHubRelease -Token $GitHubToken -Repo $Repository -TagName "v$version" -ReleaseName "Release $version" -Body $ReleaseNotes -InformationAction 'Continue'
         Write-Information ''
+
         # Create zip file from version folder contents
         $zipFileName = "$version.zip"
         $zipFilePath = Join-Path $env:TEMP $zipFileName
         $ZipFileDisplayPath = [IO.Path]::Combine('$env:TEMP', $zipFileName)
-
         Write-Information "`tCompress-Archive -Path '$DistPath\*' -DestinationPath `"$ZipFileDisplayPath`" -Force"
 
         if ($PSCmdlet.ShouldProcess($zipFilePath, 'Create Archive')) {
@@ -61,6 +61,7 @@
             if ($PSCmdlet.ShouldProcess($zipFilePath, 'Remove Temporary Zip File')) {
                 Remove-Item $zipFilePath -Force -ProgressAction 'SilentlyContinue'
             }
+
         } else {
             throw "Failed to create zip file at: $zipFilePath"
         }
@@ -80,4 +81,5 @@
         exit 1
 
     }
+
 }

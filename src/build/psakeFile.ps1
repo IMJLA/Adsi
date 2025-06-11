@@ -395,10 +395,13 @@ Properties {
     }
 
     # Splat for Copy-BuildUpdateableHelp
-    [hashtable]$copyUpdateableHelpSplat = $IO + $ModuleNameSplat + @{
+    [hashtable]$copyUpdateableHelpSplat = $IO + @{
         'DocsUpdateableDir' = $DocsUpdateableDir
         'DocsOnlineHelpDir' = $DocsOnlineHelpDir
     }
+
+    # Splat for Update-BuildGitHubActionsWorkflow
+    [hashtable]$updateGitHubActionsSplat = $ModuleNameSplat + $IO
 
     [hashtable]$copyMarkdownSplat = $MarkdownCopyParams + $IO # Splat for Copy-MarkdownForOnlineHelp
     [hashtable]$MarkdownRepairParams = $lineSplat + $MarkdownHelpParams + $ModuleNameSplat # Splat for Repair-BuildMarkdownHelp
@@ -452,6 +455,7 @@ CopyArt, # Build and copy static SVG art files to the Online Help website.
 ConvertArt, # Convert SVGs to PNG using Inkscape.
 FixOnlineHelpWebsite, # Fix the online help website configuration.
 UnitTests, # Perform unit testing.
+UpdateGitHubActionsWorkflows, # Update GitHub Actions workflow files with module name.
 SourceControl, # Commit changes to source control.
 CreateGitHubRelease, # Create a GitHub release.
 Publish # Publish the module to the a PowerShell repository.
@@ -686,7 +690,6 @@ Task -name CreateOnlineHelpWebsite -precondition $OnlineHelpWebsiteMissing -acti
 
 Task -name CopyUpdateableHelp -action {
 
-    Set-BuildLocation @buildLocationSplat
     $script:UpdateableHelpCopied = Copy-BuildUpdateableHelp @copyUpdateableHelpSplat
 
 } -description 'Copy updatable help files to the online help website static directory.'
@@ -756,6 +759,14 @@ Task -name UnitTests -action {
     $script:UnitTestResults = Test-Unit @IO
 
 } -description 'Perform unit tests using Pester.'
+
+
+# Update GitHub Actions workflow files.
+Task -name UpdateGitHubActionsWorkflows -action {
+
+    Update-BuildGitHubActionsWorkflow @updateGitHubActionsSplat
+
+} -description 'Update GitHub Actions workflow files to use the correct module name'
 
 
 # Commit changes to source control.

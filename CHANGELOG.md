@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.483] - 2025-06-10
+### Changed
+- death to OneDrive!
+
+## [5.0.482] - 2025-06-10
+### Added
+- add UpdateGitHubActionsWorkflows task
+
+## [5.0.481] - 2025-06-10
+### Changed
+- retry build
+
+## [5.0.480] - 2025-06-10
+### Added
+- add task to configure github actions workflows
+
 ## [5.0.479] - 2025-06-09
 ### Fixed
 - fix updateable help file copy

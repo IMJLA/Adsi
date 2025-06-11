@@ -1,14 +1,12 @@
 ﻿function Copy-BuildUpdateableHelp {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory)]
         [string]$DocsUpdateableDir,
 
         [Parameter(Mandatory)]
-        [string]$DocsOnlineHelpDir,
-
-        [Parameter(Mandatory)]
-        [string]$ModuleName
+        [string]$DocsOnlineHelpDir
     )
 
     $destinationPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'UpdateableHelp')
