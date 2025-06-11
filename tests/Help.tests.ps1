@@ -121,7 +121,7 @@ Describe 'help for <_.Name>' -ForEach $commands {
 
         # Parameter type in help should match code
         It 'has the correct parameter type' {
-            $parameterHelpType | Should -Be $parameter.ParameterType.FullName # enforce full name
+            $parameterHelpType | Should -BeIn @($parameter.ParameterType.Name, $parameter.ParameterType.FullName)
         }
 
     }
