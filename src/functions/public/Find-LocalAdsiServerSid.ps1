@@ -1,4 +1,5 @@
 ﻿function Find-LocalAdsiServerSid {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
     <#
     .SYNOPSIS
         Finds the SID prefix of the local server by querying the built-in administrator account.

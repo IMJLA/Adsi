@@ -108,6 +108,7 @@ class FakeDirectoryEntry {
 
 }
 function ConvertFrom-AppCapabilitySid {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-AppCapabilitySid')]
 
     <#
     .SYNOPSIS
@@ -334,6 +335,7 @@ function ConvertFrom-AppCapabilitySid {
     }
 }
 function ConvertFrom-ScShowSidResult {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ScShowSidResult')]
     # Convert the results from sc.exe into an object
     param (
         [string[]]$Result
@@ -359,6 +361,7 @@ function ConvertFrom-ScShowSidResult {
     }
 }
 function ConvertTo-AccountCache {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-AccountCache')]
 
     param (
         $Account,
@@ -373,6 +376,7 @@ function ConvertTo-AccountCache {
 
 }
 function ConvertTo-DirectoryEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DirectoryEntry')]
 
     <#
 .SYNOPSIS
@@ -640,6 +644,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
 }
 function ConvertTo-PermissionPrincipal {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
 
     <#
 .SYNOPSIS
@@ -839,6 +844,7 @@ None. This function populates the PrincipalById cache with permission principal 
 
 }
 function ConvertTo-ServiceSID {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-ServiceSID')]
     <#
     .SYNOPSIS
     This script calculates the SID of a Virtual Service Account.
@@ -900,6 +906,7 @@ function ConvertTo-ServiceSID {
 
 }
 function ConvertTo-SidString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidString')]
 
     <#
 .SYNOPSIS
@@ -943,6 +950,7 @@ System.Security.Principal.SecurityIdentifier
 
 }
 function Find-AdsiProvider {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
 
     <#
         .SYNOPSIS
@@ -1006,6 +1014,7 @@ function Find-AdsiProvider {
 
 }
 function Find-CachedWellKnownSID {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-CachedWellKnownSID')]
 
     param (
 
@@ -1060,6 +1069,7 @@ function Find-CachedWellKnownSID {
 
 }
 function Find-WinNTGroupMember {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-WinNTGroupMember')]
 
     # Find LDAP and WinNT group members to retrieve from their directories.
     # Convert COM objects from the IADsGroup::Members method into strings.
@@ -1135,6 +1145,7 @@ function Find-WinNTGroupMember {
 
 }
 function Get-CachedDirectoryEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CachedDirectoryEntry')]
 
     # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
 
@@ -1279,6 +1290,7 @@ function Get-CachedDirectoryEntry {
 
 }
 function Get-DirectoryEntryParentName {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntryParentName')]
 
     # Possibly a debugging issue, not sure whether I need to prepare for both here.
     # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
@@ -1300,7 +1312,8 @@ function Get-DirectoryEntryParentName {
 
 }
 function Get-SidTypeMap {
-
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-SidTypeMap')]
+    param()
     <#
     .SYNOPSIS
     Returns a mapping of SID type numbers to their string representations.
@@ -1334,6 +1347,7 @@ function Get-SidTypeMap {
     }
 }
 function Invoke-IADsGroupMembersMethod {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
     <#
         .SYNOPSIS
         Get members of a group from the WinNT provider
@@ -1391,6 +1405,7 @@ function Invoke-IADsGroupMembersMethod {
 
 }
 function Invoke-ScShowSid {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
 
     # Invoke sc.exe showsid
 
@@ -1421,6 +1436,7 @@ function Invoke-ScShowSid {
 
 }
 function Resolve-IdRefAppPkgAuth {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefAppPkgAuth')]
 
     [OutputType([PSCustomObject])]
 
@@ -1516,6 +1532,7 @@ function Resolve-IdRefAppPkgAuth {
 
 }
 function Resolve-IdRefBuiltIn {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefBuiltIn')]
 
     [OutputType([PSCustomObject])]
 
@@ -1587,6 +1604,7 @@ function Resolve-IdRefBuiltIn {
 
 }
 function Resolve-IdRefCached {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefCached')]
 
     [OutputType([PSCustomObject])]
 
@@ -1635,6 +1653,7 @@ function Resolve-IdRefCached {
 
 }
 function Resolve-IdRefGetDirEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefGetDirEntry')]
 
     [OutputType([string])]
 
@@ -1661,6 +1680,7 @@ function Resolve-IdRefGetDirEntry {
 
 }
 function Resolve-IdRefSearchDir {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSearchDir')]
 
     [OutputType([string])]
 
@@ -1705,6 +1725,7 @@ function Resolve-IdRefSearchDir {
 
 }
 function Resolve-IdRefSID {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
 
     [OutputType([PSCustomObject])]
 
@@ -1904,6 +1925,7 @@ function Resolve-IdRefSID {
 
 }
 function Resolve-IdRefSvc {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSvc')]
 
     [OutputType([PSCustomObject])]
 
@@ -1969,6 +1991,7 @@ function Resolve-IdRefSvc {
 
 }
 function Resolve-SidAuthority {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
 
     <#
     .SYNOPSIS
@@ -2032,6 +2055,7 @@ function Resolve-SidAuthority {
 
 }
 function Split-DirectoryPath {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Split-DirectoryPath')]
 
     <#
     .EXAMPLE
@@ -2074,6 +2098,7 @@ function Split-DirectoryPath {
 
 }
 function Test-AdsiProvider {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
 
     <#
     .SYNOPSIS
@@ -2131,6 +2156,7 @@ function Test-AdsiProvider {
 
 }
 function Add-DomainFqdnToLdapPath {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
 
     <#
     .SYNOPSIS
@@ -2217,6 +2243,7 @@ function Add-DomainFqdnToLdapPath {
 
 }
 function Add-SidInfo {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
 
     <#
     .SYNOPSIS
@@ -2332,6 +2359,7 @@ function Add-SidInfo {
 
 }
 function ConvertFrom-DirectoryEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
 
     <#
     .SYNOPSIS
@@ -2378,6 +2406,7 @@ function ConvertFrom-DirectoryEntry {
 
 }
 function ConvertFrom-PropertyValueCollectionToString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString')]
 
     <#
     .SYNOPSIS
@@ -2418,6 +2447,7 @@ function ConvertFrom-PropertyValueCollectionToString {
 
 }
 function ConvertFrom-ResolvedID {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
 
     <#
     .SYNOPSIS
@@ -2514,6 +2544,7 @@ function ConvertFrom-ResolvedID {
 
 }
 function ConvertFrom-ResultPropertyValueCollectionToString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString')]
 
     <#
     .SYNOPSIS
@@ -2550,6 +2581,7 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
 
 }
 function ConvertFrom-SearchResult {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult')]
 
     <#
     .SYNOPSIS
@@ -2614,6 +2646,7 @@ function ConvertFrom-SearchResult {
 
 }
 function ConvertFrom-SidString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
     <#
     .SYNOPSIS
@@ -2660,6 +2693,7 @@ function ConvertFrom-SidString {
 
 }
 function ConvertTo-DecStringRepresentation {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
 
     <#
     .SYNOPSIS
@@ -2692,6 +2726,7 @@ function ConvertTo-DecStringRepresentation {
 
 }
 function ConvertTo-DistinguishedName {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
 
     <#
     .SYNOPSIS
@@ -2863,6 +2898,7 @@ function ConvertTo-DistinguishedName {
 
 }
 function ConvertTo-DomainNetBIOS {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainNetBIOS')]
 
     <#
     .SYNOPSIS
@@ -2953,6 +2989,7 @@ function ConvertTo-DomainNetBIOS {
 
 }
 function ConvertTo-DomainSidString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainSidString')]
 
     <#
     .SYNOPSIS
@@ -3075,6 +3112,7 @@ function ConvertTo-DomainSidString {
 
 }
 function ConvertTo-FakeDirectoryEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
 
     <#
     .SYNOPSIS
@@ -3233,6 +3271,7 @@ function ConvertTo-FakeDirectoryEntry {
 
 }
 function ConvertTo-Fqdn {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
 
     <#
     .SYNOPSIS
@@ -3307,6 +3346,7 @@ function ConvertTo-Fqdn {
 
 }
 function ConvertTo-HexStringRepresentation {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation')]
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format
@@ -3334,6 +3374,7 @@ function ConvertTo-HexStringRepresentation {
     return $SIDHexString
 }
 function ConvertTo-HexStringRepresentationForLDAPFilterString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString')]
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
@@ -3367,6 +3408,7 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
     "\$($Hexes -join '\')"
 }
 function ConvertTo-SidByteArray {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
     <#
     .SYNOPSIS
     Convert a SID from a string to binary format (byte array)
@@ -3398,6 +3440,7 @@ function ConvertTo-SidByteArray {
     }
 }
 function Expand-AdsiGroupMember {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
     <#
     .SYNOPSIS
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
@@ -3543,6 +3586,7 @@ function Expand-AdsiGroupMember {
 
 }
 function Expand-WinNTGroupMember {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
 
     <#
     .SYNOPSIS
@@ -3660,6 +3704,7 @@ function Expand-WinNTGroupMember {
 
 }
 function Find-LocalAdsiServerSid {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
     <#
     .SYNOPSIS
         Finds the SID prefix of the local server by querying the built-in administrator account.
@@ -3713,6 +3758,7 @@ function Find-LocalAdsiServerSid {
 
 }
 function Get-AdsiGroup {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
 
     <#
     .SYNOPSIS
@@ -3828,6 +3874,7 @@ function Get-AdsiGroup {
 
 }
 function Get-AdsiGroupMember {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
 
     <#
     .SYNOPSIS
@@ -4034,6 +4081,7 @@ function Get-AdsiGroupMember {
 
 }
 function Get-AdsiServer {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer')]
 
     <#
     .SYNOPSIS
@@ -4271,6 +4319,7 @@ function Get-AdsiServer {
 
 }
 function Get-CurrentDomain {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
 
     <#
     .SYNOPSIS
@@ -4348,7 +4397,7 @@ function Get-DirectoryEntry {
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
 
     param (
 
@@ -4490,6 +4539,7 @@ function Get-DirectoryEntry {
 
 }
 function Get-KnownCaptionHashTable {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable')]
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
@@ -4534,6 +4584,7 @@ function Get-KnownCaptionHashTable {
 
 }
 function Get-KnownSid {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSid')]
 
     <#
     .SYNOPSIS
@@ -4988,6 +5039,7 @@ COMPUTER-SPECIFIC SIDs
 
             #>
 function Get-KnownSidByName {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidByName')]
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their friendly names.
@@ -5032,7 +5084,8 @@ function Get-KnownSidByName {
 
 }
 function Get-KnownSidHashTable {
-
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable')]
+    param()
     <#
     .SYNOPSIS
     Returns a hashtable of known security identifiers (SIDs) with detailed information.
@@ -6241,6 +6294,7 @@ function Get-KnownSidHashTable {
 
 }
 function Get-ParentDomainDnsName {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
     <#
     .SYNOPSIS
         Gets the DNS name of the parent domain for a given computer or domain.
@@ -6299,6 +6353,7 @@ function Get-ParentDomainDnsName {
     return $ParentDomainDnsName
 }
 function Get-TrustedDomain {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
     <#
     .SYNOPSIS
     Returns a dictionary of trusted domains by the current computer
@@ -6365,6 +6420,7 @@ function Get-TrustedDomain {
 
 }
 function Get-WinNTGroupMember {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
 
     <#
     .SYNOPSIS
@@ -6479,6 +6535,7 @@ function Get-WinNTGroupMember {
 
 }
 function Invoke-ComObject {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
 
     <#
     .SYNOPSIS
@@ -6541,6 +6598,7 @@ function Invoke-ComObject {
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
 }
 function Resolve-IdentityReference {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference')]
 
     <#
     .SYNOPSIS
@@ -6709,6 +6767,7 @@ function Resolve-IdentityReference {
 
 }
 function Resolve-ServiceNameToSID {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
     <#
     .SYNOPSIS
         Resolves Windows service names to their corresponding security identifiers (SIDs).
@@ -6755,6 +6814,7 @@ function Resolve-ServiceNameToSID {
 
 }
 function Search-Directory {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory')]
 
     <#
     .SYNOPSIS

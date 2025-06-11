@@ -1,4 +1,5 @@
 ﻿function ConvertFrom-SidString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
     <#
     .SYNOPSIS

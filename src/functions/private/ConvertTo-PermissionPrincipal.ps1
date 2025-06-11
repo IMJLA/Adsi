@@ -1,4 +1,5 @@
 ﻿function ConvertTo-PermissionPrincipal {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
 
     <#
 .SYNOPSIS

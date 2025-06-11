@@ -5,16 +5,16 @@
 Properties {
 
     # GitHub (Source Control, Releases, and the Online Help and Documentation Website hosted on GitHub Pages)
-    $GitHubOrgName = 'IMJLA'
+    [string]$GitHubOrgName = 'IMJLA'
+
+    # Name of the module being built
+    [string]$ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Leaf
 
     # Whether or not this build is a new Major version
     [boolean]$IncrementMajorVersion = $false
 
     # Whether or not this build is a new Minor version
     [boolean]$IncrementMinorVersion = $false
-
-    # Folder containing the source code
-    [string]$SourceCodeDir = [IO.Path]::Combine('.', 'src')
 
     # This character sequence will be used to separate lines in the console output
     [string]$NewLine = [System.Environment]::NewLine
@@ -28,6 +28,9 @@ Properties {
         'InformationAction' = [System.Management.Automation.ActionPreference]::Continue
     }
 
+    # Folder containing the source code
+    [string]$SourceCodeDir = [IO.Path]::Combine('.', 'src')
+
 
 
     # PlatyPS (Markdown and Updateable help)
@@ -35,11 +38,8 @@ Properties {
     # Whether or not to generate markdown documentation using PlatyPS
     [boolean]$DocumentationEnabled = $true
 
-    # Directory containing the source code for the markdown documentation
-    [string]$MarkdownSourceCode = [IO.Path]::Combine($SourceCodeDir, 'docs')
-
-    # Directory PlatyPS markdown documentation will be saved to
-    [string]$DocsRootDir = [IO.Path]::Combine('.', 'docs')
+    # Convert project readme into the module 'about file'
+    [boolean]$DocsConvertReadMeToAboutFile = $true
 
     # Culture of the current UI thread
     [cultureinfo]$DocsUICulture = Get-UICulture
@@ -48,20 +48,14 @@ Properties {
     # Get-UICulture doesn't return a name on Linux so default to en-US
     [string]$DocsDefaultLocale = if (-not $DocsUICulture.Name) { 'en-US' } else { $DocsUICulture.Name }
 
-    # Convert project readme into the module 'about file'
-    [boolean]$DocsConvertReadMeToAboutFile = $true
+    # Directory PlatyPS markdown documentation will be saved to
+    [string]$DocsRootDir = [IO.Path]::Combine('.', 'docs')
 
-    # Markdown-formatted Help will be created in this folder
-    [string]$DocsMamlDir = [IO.Path]::Combine($DocsRootDir, 'maml')
+    # Path to the ReadMe file
+    [string]$DocsMarkdownReadMePath = [IO.Path]::Combine('.', 'README.md')
 
-    # Markdown-formatted Help will be created in this folder
-    [string]$DocsMarkdownDir = [IO.Path]::Combine($DocsRootDir, 'markdown')
-
-    # .CAB-formatted Updatable Help will be created in this folder
-    [string]$DocsUpdateableDir = [IO.Path]::Combine($DocsRootDir, 'updateable')
-
-    # Directory where the markdown help files will be copied to
-    [string]$DocsMarkdownDefaultLocaleDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
+    # Path to the Change Log file
+    [string]$DocsMarkdownChangeLogPath = [IO.Path]::Combine('.', 'CHANGELOG.md')
 
 
 
@@ -69,15 +63,6 @@ Properties {
 
     # Whether or not to perform unit tests using Pester.
     [boolean]$TestEnabled = $true
-
-    # Unit tests found here will be performed using Pester.
-    [string]$TestRootDir = [IO.Path]::Combine('.', 'tests')
-
-    # Unit test results will be saved to this directory by Pester.
-    [string]$UnitTestOutputDir = [IO.Path]::Combine('.', 'out', 'tests')
-
-    # Unit test results will be saved to this file by Pester.
-    [string]$TestResultsFile = [IO.Path]::Combine($UnitTestOutputDir, 'testResults.xml')
 
     <#
     Test results will be output in this format.
@@ -103,15 +88,18 @@ Properties {
     # like the ones found here: https://pester.dev/docs/usage/code-coverage.
     [System.IO.FileInfo[]]$TestCodeCoverageFiles = @()
 
-    # Path to write code coverage report to
-    [System.IO.FileInfo]$TestCodeCoverageOutputFile = [IO.Path]::Combine($TestRootDir, 'out', 'codeCoverage.xml')
-
     # Format to use for code coverage report
     enum TestCodeCoverageOutputFormat {
         JaCoCo
         CoverageGutters
     }
     [TestCodeCoverageOutputFormat]$TestCodeCoverageOutputFormat = 'JaCoCo'
+
+    # Unit tests found here will be performed using Pester.
+    [string]$TestRootDir = [IO.Path]::Combine('.', 'tests')
+
+    # Unit test results will be saved to this directory by Pester.
+    [string]$UnitTestOutputDir = [IO.Path]::Combine('.', 'out', 'tests')
 
 
 
@@ -131,18 +119,15 @@ Properties {
     }
     [LintSeverity]$LintSeverityThreshold = 'None' # Default to None so that the build does not fail by default.
 
-    # Path to the PSScriptAnalyzer settings file.
-    [string]$LintSettingsFile = [IO.Path]::Combine($SourceCodeDir, 'build', 'config', 'psscriptanalyzerSettings.psd1')
-
 
 
     # PowerShellBuild (Compilation, Build Processes, and MAML help)
 
-    # The PowerShell module will be created in this folder
-    [string]$BuildOutDir = [IO.Path]::Combine('.', 'dist')
-
     # Controls whether to "compile" module into single PSM1 or not
     [boolean]$BuildCompileModule = $true
+
+    # The PowerShell module will be created in this folder
+    [string]$BuildOutDir = [IO.Path]::Combine('.', 'dist')
 
     # List of directories that if BuildCompileModule is $true, will be concatenated into the PSM1
     [string[]]$BuildCompileDirectories = @(
@@ -183,22 +168,37 @@ Properties {
     # Calculated Properties
 
 
-    # Discover public function files so their help files can be fixed (multi-line default parameter values)
-    $publicFunctionPath = [IO.Path]::Combine($SourceCodeDir, 'functions', 'public', '*.ps1')
+    # Markdown-formatted Help will be created in this folder
+    [string]$DocsMamlDir = [IO.Path]::Combine($DocsRootDir, 'maml')
 
-    # Name of the module being built
-    $ModuleName = $PSScriptRoot | Split-Path -Parent | Split-Path -Parent | Split-Path -Leaf
+    # Markdown-formatted Help will be created in this folder
+    [string]$DocsMarkdownDir = [IO.Path]::Combine($DocsRootDir, 'markdown')
+
+    # .CAB-formatted Updatable Help will be created in this folder
+    [string]$DocsUpdateableDir = [IO.Path]::Combine($DocsRootDir, 'updateable')
+
+    # Directory where the markdown help files will be copied to
+    [string]$DocsMarkdownDefaultLocaleDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
+
+    # Directory containing the source code for the markdown documentation
+    [string]$DocsMarkdownSourceCode = [IO.Path]::Combine($SourceCodeDir, 'docs')
+
+    # Discover public function files so their help files can be fixed (multi-line default parameter values)
+    [string]$publicFunctionPath = [IO.Path]::Combine($SourceCodeDir, 'functions', 'public', '*.ps1')
+
+    # URL of the hosted online help website
+    [string]$DocsOnlineHelpUrl = "https://$GitHubOrgName.github.io/$ModuleName/"
+
+    # URL of the hosted updateable help files for download by Update-Help
+    [string]$DocsUpdateableHelpInfoUri = "$DocsOnlineHelpUrl`UpdateableHelp/"
 
     # Path to the module script file
-    $ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
+    [string]$ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
 
     # Path to the module manifest file
-    $ModuleManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
+    [string]$ModuleManifestPath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psd1")
 
-    # Path to the ReadMe file
-    $DocsMarkdownReadMePath = [IO.Path]::Combine('.', 'README.md')
-
-    $DocsImageSourceCodeDir = [IO.Path]::Combine($SourceCodeDir, 'img')
+    [string]$DocsImageSourceCodeDir = [IO.Path]::Combine($SourceCodeDir, 'img')
 
     # Online help website will be created in this folder.
     [string]$DocsOnlineHelpRoot = [IO.Path]::Combine($DocsRootDir, 'online')
@@ -206,11 +206,18 @@ Properties {
     # Online help website will be created in this folder.
     [string]$DocsOnlineHelpDir = [IO.Path]::Combine($DocsOnlineHelpRoot, $ModuleName)
 
-    $OnlineHelpSourceMarkdown = [IO.Path]::Combine($DocsOnlineHelpDir, 'docs')
+    [string]$OnlineHelpSourceMarkdown = [IO.Path]::Combine($DocsOnlineHelpDir, 'docs')
 
-    $DocsOnlineStaticImageDir = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'img')
+    [string]$DocsOnlineStaticImageDir = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'img')
 
-    $ChangeLog = [IO.Path]::Combine('.', 'CHANGELOG.md')
+    # Path to the PSScriptAnalyzer settings file.
+    [string]$LintSettingsFile = [IO.Path]::Combine($SourceCodeDir, 'build', 'config', 'psscriptanalyzerSettings.psd1')
+
+    # Unit test results will be saved to this file by Pester.
+    [string]$TestResultsFile = [IO.Path]::Combine($UnitTestOutputDir, 'testResults.xml')
+
+    # Path to write code coverage report to
+    [System.IO.FileInfo]$TestCodeCoverageOutputFile = [IO.Path]::Combine($TestRootDir, 'out', 'codeCoverage.xml')
 
 
 
@@ -228,7 +235,7 @@ Properties {
     [hashtable]$removeOldBuildSplat = $IO + @{ 'BuildOutDir' = $BuildOutDir } # Splat for Remove-OldBuild
     [hashtable]$findCopyDirSplat = $IO + @{ 'BuildCopyDirectoryPath' = $BuildCopyDirectories } # Splat for Find-BuildCopyDirectory
     [hashtable]$removeExtraBuildFileSplat = $IO # Splat for Remove-ExtraBuildFile
-    [hashtable]$changeLogSplat = $IO + @{ 'ChangeLog' = $ChangeLog } # Splat for Update-BuildChangeLog
+    [hashtable]$changeLogSplat = $IO + @{ 'ChangeLog' = $DocsMarkdownChangeLogPath } # Splat for Update-BuildChangeLog
     [hashtable]$installTempModuleSplat = $ModuleNameSplat + $IO + @{ 'ModulePath' = $BuildOutDir }# Splat for Install-TempModule
     [hashtable]$importModuleSplat = $ModuleNameSplat + $IO # Splat for Import-BuildModule
     [hashtable]$updateMarkdownHelpSplat = $IO + @{ 'DocsMarkdownDir' = $DocsMarkdownDir } # Splat for Update-BuildMarkdownHelp
@@ -277,7 +284,7 @@ Properties {
     [hashtable]$MarkdownCopyParams = @{
         'DocsMarkdownDir'          = $DocsMarkdownDir
         'OnlineHelpSourceMarkdown' = $OnlineHelpSourceMarkdown
-        'MarkdownSourceCodeDir'    = $MarkdownSourceCode
+        'MarkdownSourceCodeDir'    = $DocsMarkdownSourceCode
     }
 
     # Splat for New-BuildMAMLHelp
@@ -403,6 +410,13 @@ Properties {
     # Splat for Update-BuildGitHubActionsWorkflow
     [hashtable]$updateGitHubActionsSplat = $ModuleNameSplat + $IO
 
+    # Splat for Update-BuildFunction
+    [hashtable]$updateFunctionsSplat = $IO + @{
+        'SourceCodeDir'     = $SourceCodeDir
+        'DocsOnlineHelpUrl' = $DocsOnlineHelpUrl
+        'DocsDefaultLocale' = $DocsDefaultLocale
+    }
+
     [hashtable]$copyMarkdownSplat = $MarkdownCopyParams + $IO # Splat for Copy-MarkdownForOnlineHelp
     [hashtable]$MarkdownRepairParams = $lineSplat + $MarkdownHelpParams + $ModuleNameSplat # Splat for Repair-BuildMarkdownHelp
     [hashtable]$buildMarkdownHelpSplat = $MarkdownHelpParams + $ModuleNameSplat + $IO # Splat for New-BuildMarkdownHelp
@@ -478,7 +492,6 @@ Task -name TestModuleManifest -action {
 Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
     $script:NewModuleVersion = Get-NewVersion -OldVersion $script:ManifestTest.Version @versionSplat
-    $script:HelpInfoUri = "https://$GitHubOrgName.github.io/$ModuleName/UpdateableHelp/"
 
 } -description 'Determine the new version number based on the build parameters'
 
@@ -490,11 +503,17 @@ task -name UpdateBuildOutputDirVariable -depends DetermineNewVersionNumber -acti
 
 Task -name UpdateModuleVersion -depends UpdateBuildOutputDirVariable -action {
 
-    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion -HelpInfoUri $script:HelpInfoUri @metadataSplat
+    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion -HelpInfoUri $DocsUpdateableHelpInfoUri @metadataSplat
 
 } -description 'Update the module manifest with the new version number'
 
-Task -name FindPublicFunctionFiles -depends UpdateModuleVersion -action {
+Task -name UpdateFunctions -depends UpdateModuleVersion -action {
+
+    Update-BuildFunction @updateFunctionsSplat
+
+} -description 'Update PowerShell functions to include HelpUri attributes in their CmdletBinding for Online Help'
+
+Task -name FindPublicFunctionFiles -depends UpdateFunctions -action {
 
     $script:PublicFunctionFiles = Find-PublicFunction @findPublicFunctionsSplat
 
@@ -600,7 +619,7 @@ Task -name UpdateMarkDownHelp -depends ImportModule -action {
 
 Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
-    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $script:HelpInfoUri @buildMarkdownHelpSplat
+    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $DocsUpdateableHelpInfoUri @buildMarkdownHelpSplat
 
 } -description 'Generate markdown files from the module help using PlatyPS'
 

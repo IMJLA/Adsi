@@ -1,4 +1,5 @@
 ﻿function ConvertTo-HexStringRepresentation {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation')]
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format

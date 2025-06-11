@@ -1,4 +1,5 @@
 ﻿function Get-CachedDirectoryEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CachedDirectoryEntry')]
 
     # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
 

@@ -1,4 +1,5 @@
 ﻿function ConvertTo-SidByteArray {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
     <#
     .SYNOPSIS
     Convert a SID from a string to binary format (byte array)

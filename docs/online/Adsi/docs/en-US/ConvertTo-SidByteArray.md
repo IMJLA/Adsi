@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray
 schema: 2.0.0
 ---
 
 # ConvertTo-SidByteArray
 
 ## SYNOPSIS
-Convert a SID from a string to binary format (byte array)
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -17,22 +17,21 @@ ConvertTo-SidByteArray [[-SidString] <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses the GetBinaryForm method of the \[System.Security.Principal.SecurityIdentifier\] class
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-ConvertTo-SidByteArray -SidString 'S-1-5-32-544'
+PS C:\> Add example code here
 ```
 
-Converts the SID string for the built-in Administrators group ('S-1-5-32-544') to a byte array
-representation, which is required when working with directory services that expect SIDs in binary format.
+Add example description here
 
 ## PARAMETERS
 
 ### -SidString
-SID to convert to binary
+Fill SidString Description
 
 ```yaml
 Type: System.String[]
@@ -40,7 +39,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -51,11 +50,16 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String]$SidString
+### System.String[]
+
 ## OUTPUTS
 
-### [System.Byte] SID a a byte array
+### System.Byte[]
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray](https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray)
+
 

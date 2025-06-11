@@ -1,46 +1,38 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable
 schema: 2.0.0
 ---
 
 # Get-KnownCaptionHashTable
 
 ## SYNOPSIS
-Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
+Fill in the Synopsis
 
 ## SYNTAX
 
 ```powershell
-Get-KnownCaptionHashTable [[-WellKnownSidBySid] <Hashtable>]
+Get-KnownCaptionHashTable [[-WellKnownSidBySid] <Hashtable>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-This function takes a hashtable of well-known SIDs (indexed by SID) and
-transforms it into a new hashtable where the keys are the NT Account names
-(captions) of the SIDs.
-This makes it easier to look up SID information when
-you have the account name representation rather than the SID itself.
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-$sidBySid = Get-KnownSidHashTable
-$sidByCaption = Get-KnownCaptionHashTable -WellKnownSidBySid $sidBySid
-$systemInfo = $sidByCaption['NT AUTHORITY\SYSTEM']
+PS C:\> Add example code here
 ```
 
-Creates a hashtable of well-known SIDs indexed by their NT Account names and retrieves
-information about the SYSTEM account.
-This is useful when you need to look up SID
-information by NT Account name rather than by SID string.
+Add example description here
 
 ## PARAMETERS
 
 ### -WellKnownSidBySid
-Hashtable of well-known Security Identifiers (SIDs) with their properties
+Fill WellKnownSidBySid Description
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -48,21 +40,26 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: (Get-KnownSidHashTable)
+Position: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
 ## INPUTS
 
-### System.Collections.Hashtable
-### A hashtable containing SID strings as keys and information objects as values.
+### None
+
 ## OUTPUTS
 
-### System.Collections.Hashtable
-### Returns a hashtable with NT Account names as keys and SID information objects as values.
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable](https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable)
+
 

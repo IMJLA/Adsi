@@ -1,4 +1,5 @@
 ﻿function Resolve-ServiceNameToSID {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
     <#
     .SYNOPSIS
         Resolves Windows service names to their corresponding security identifiers (SIDs).

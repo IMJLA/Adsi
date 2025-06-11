@@ -1,4 +1,5 @@
 ﻿function Search-Directory {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Search-Directory')]
 
     <#
     .SYNOPSIS

@@ -1,4 +1,5 @@
 ﻿function Resolve-IdRefSearchDir {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSearchDir')]
 
     [OutputType([string])]
 

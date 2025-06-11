@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath
 schema: 2.0.0
 ---
 
 # Add-DomainFqdnToLdapPath
 
 ## SYNOPSIS
-Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -18,28 +18,21 @@ Add-DomainFqdnToLdapPath [[-DirectoryPath] <String[]>] [-Cache] <PSReference>
 ```
 
 ## DESCRIPTION
-Uses RegEx to:
- - Match the Domain Components from the Distinguished Name in the LDAP directory path
- - Convert the Domain Components to an FQDN
- - Insert them into the directory path as the server address
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-Add-DomainFqdnToLdapPath -DirectoryPath 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' -Cache $Cache
+PS C:\> Add example code here
 ```
 
-Completes the partial LDAP path 'LDAP://CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' to
-'LDAP://ad.contoso.com/CN=user1,OU=UsersOU,DC=ad,DC=contoso,DC=com' with the domain FQDN added as the
-server address.
-This is crucial for making remote LDAP queries to specific domain controllers, especially
-when working in multi-domain environments or when connecting to trusted domains.
+Add example description here
 
 ## PARAMETERS
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+Fill Cache Description
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -47,14 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DirectoryPath
-Incomplete LDAP directory path containing a distinguishedName but lacking a server address
+Fill DirectoryPath Description
 
 ```yaml
 Type: System.String[]
@@ -62,7 +55,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -73,11 +66,16 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String]$DirectoryPath
+### System.String[]
+
 ## OUTPUTS
 
-### [System.String] Complete LDAP directory path including server address
+### System.String
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath](https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath)
+
 

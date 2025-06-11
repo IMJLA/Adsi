@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo
 schema: 2.0.0
 ---
 
 # Add-SidInfo
 
 ## SYNOPSIS
-Add some useful properties to a DirectoryEntry object for easier access
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -18,24 +18,21 @@ Add-SidInfo [[-InputObject] <Object>] [[-DomainsBySid] <PSReference>] [-Progress
 ```
 
 ## DESCRIPTION
-Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator') | Add-SidInfo
-distinguishedName :
-Path : WinNT://localhost/Administrator
+PS C:\> Add example code here
 ```
 
-The output object's default format is not modified so with default formatting it appears identical to the original.
-Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
+Add example description here
 
 ## PARAMETERS
 
 ### -DomainsBySid
-In-process cache to reduce calls to other processes or to disk
+Fill DomainsBySid Description
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -43,15 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -InputObject
-Expecting a \[System.DirectoryServices.DirectoryEntry\] from the LDAP or WinNT providers, or a \[PSCustomObject\] imitation from Get-DirectoryEntry.
-Must contain the objectSid property
+Fill InputObject Description
 
 ```yaml
 Type: System.Object
@@ -59,7 +55,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -70,11 +66,18 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. InputObject parameter. Must contain the objectSid property.
+### System.Object
+
 ## OUTPUTS
 
-### [System.DirectoryServices.DirectoryEntry] or a [PSCustomObject] imitation. Whatever was input, but with three extra properties added now.
+### System.DirectoryServices.DirectoryEntry[]
+
+### System.Management.Automation.PSObject[]
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo](https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo)
+
 

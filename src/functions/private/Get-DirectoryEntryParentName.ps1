@@ -1,4 +1,5 @@
 ﻿function Get-DirectoryEntryParentName {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntryParentName')]
 
     # Possibly a debugging issue, not sure whether I need to prepare for both here.
     # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String

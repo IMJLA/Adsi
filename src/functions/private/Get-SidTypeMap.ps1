@@ -1,5 +1,6 @@
 ﻿function Get-SidTypeMap {
-
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-SidTypeMap')]
+    param()
     <#
     .SYNOPSIS
     Returns a mapping of SID type numbers to their string representations.

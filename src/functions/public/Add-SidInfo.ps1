@@ -1,4 +1,5 @@
 ﻿function Add-SidInfo {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
 
     <#
     .SYNOPSIS

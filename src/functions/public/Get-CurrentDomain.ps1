@@ -1,4 +1,5 @@
 ﻿function Get-CurrentDomain {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
 
     <#
     .SYNOPSIS

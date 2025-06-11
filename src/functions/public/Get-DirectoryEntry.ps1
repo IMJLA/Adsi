@@ -25,7 +25,7 @@
     #>
 
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
 
     param (
 

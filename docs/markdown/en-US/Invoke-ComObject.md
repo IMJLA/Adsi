@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject
 schema: 2.0.0
 ---
 
 # Invoke-ComObject
 
 ## SYNOPSIS
-Invoke a member method of a ComObject \[__ComObject\]
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -18,31 +18,54 @@ Invoke-ComObject [-ComObject] <Object> [-Property] <String> [[-Value] <Object>] 
 ```
 
 ## DESCRIPTION
-Use the InvokeMember method to invoke the InvokeMethod or GetProperty or SetProperty methods
-By default, invokes the GetProperty method for the specified Property
-If the Value parameter is specified, invokes the SetProperty method for the specified Property
-If the Method switch is specified, invokes the InvokeMethod method
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-$ComObject = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators').Invoke('Members') | Select -First 1
-Invoke-ComObject -ComObject $ComObject -Property AdsPath
+PS C:\> Add example code here
 ```
 
-Get the first member of the local Administrators group on the current computer
-Then use Invoke-ComObject to invoke the GetProperty method and return the value of the AdsPath property
-This technique is essential when working with ADSI objects that expose properties or methods only through COM interfaces,
-providing a consistent way to access these properties in PowerShell.
+Add example description here
 
 ## PARAMETERS
 
 ### -ComObject
-The ComObject whose member method to invoke
+Fill ComObject Description
 
 ```yaml
 Type: System.Object
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Method
+Fill Method Description
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Property
+Fill Property Description
+
+```yaml
+Type: System.String
 Parameter Sets: (All)
 Aliases:
 
@@ -53,38 +76,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Method
-Use the InvokeMethod method of the ComObject
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Property
-The property to use with the invoked method
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Value
-The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method
+Fill Value Description
 
 ```yaml
 Type: System.Object
@@ -92,7 +85,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -103,11 +96,15 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None. Pipeline input is not accepted.
+### None
+
 ## OUTPUTS
 
-### The output of the invoked method is returned directly
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject](https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject)
+
 

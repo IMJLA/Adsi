@@ -2,7 +2,7 @@
 Module Name: Adsi
 Module Guid: 282a2aed-9567-49a1-901c-122b7831a805
 Download Help Link: https://IMJLA.github.io/Adsi/UpdateableHelp/
-Help Version: 5.0.483
+Help Version: 5.0.488
 Locale: en-US
 ---
 
@@ -12,153 +12,112 @@ Use Active Directory Service Interfaces to query LDAP and WinNT directories
 
 ## Adsi Cmdlets
 ### [Add-DomainFqdnToLdapPath](Add-DomainFqdnToLdapPath.md)
-Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
-
+Description for Add-DomainFqdnToLdapPath
 
 ### [Add-SidInfo](Add-SidInfo.md)
-Add some useful properties to a DirectoryEntry object for easier access
-
+Description for Add-SidInfo
 
 ### [ConvertFrom-DirectoryEntry](ConvertFrom-DirectoryEntry.md)
-Convert a DirectoryEntry to a PSCustomObject
-
+Description for ConvertFrom-DirectoryEntry
 
 ### [ConvertFrom-PropertyValueCollectionToString](ConvertFrom-PropertyValueCollectionToString.md)
-Convert a PropertyValueCollection to a string
-
+Description for ConvertFrom-PropertyValueCollectionToString
 
 ### [ConvertFrom-ResolvedID](ConvertFrom-ResolvedID.md)
-Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
-
+Description for ConvertFrom-ResolvedID
 
 ### [ConvertFrom-ResultPropertyValueCollectionToString](ConvertFrom-ResultPropertyValueCollectionToString.md)
-Convert a ResultPropertyValueCollection to a string
-
+Description for ConvertFrom-ResultPropertyValueCollectionToString
 
 ### [ConvertFrom-SearchResult](ConvertFrom-SearchResult.md)
-Convert a SearchResult to a PSCustomObject
-
+Description for ConvertFrom-SearchResult
 
 ### [ConvertFrom-SidString](ConvertFrom-SidString.md)
-Converts a SID string to a DirectoryEntry object.
-
-
+Description for ConvertFrom-SidString
 
 ### [ConvertTo-DecStringRepresentation](ConvertTo-DecStringRepresentation.md)
-Convert a byte array to a string representation of its decimal format
-
+Description for ConvertTo-DecStringRepresentation
 
 ### [ConvertTo-DistinguishedName](ConvertTo-DistinguishedName.md)
-Convert a domain NetBIOS name to its distinguishedName
-
+Description for ConvertTo-DistinguishedName
 
 ### [ConvertTo-DomainNetBIOS](ConvertTo-DomainNetBIOS.md)
-Converts a domain FQDN to its NetBIOS name.
-
-
+Description for ConvertTo-DomainNetBIOS
 
 ### [ConvertTo-DomainSidString](ConvertTo-DomainSidString.md)
-Converts a domain DNS name to its corresponding SID string.
-
-
+Description for ConvertTo-DomainSidString
 
 ### [ConvertTo-FakeDirectoryEntry](ConvertTo-FakeDirectoryEntry.md)
-Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
-
-
+Description for ConvertTo-FakeDirectoryEntry
 
 ### [ConvertTo-Fqdn](ConvertTo-Fqdn.md)
-Convert a domain distinguishedName name or NetBIOS name to its FQDN
-
+Description for ConvertTo-Fqdn
 
 ### [ConvertTo-HexStringRepresentation](ConvertTo-HexStringRepresentation.md)
-Convert a SID from byte array format to a string representation of its hexadecimal format
-
+Description for ConvertTo-HexStringRepresentation
 
 ### [ConvertTo-HexStringRepresentationForLDAPFilterString](ConvertTo-HexStringRepresentationForLDAPFilterString.md)
-Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
-
+Description for ConvertTo-HexStringRepresentationForLDAPFilterString
 
 ### [ConvertTo-SidByteArray](ConvertTo-SidByteArray.md)
-Convert a SID from a string to binary format (byte array)
-
+Description for ConvertTo-SidByteArray
 
 ### [Expand-AdsiGroupMember](Expand-AdsiGroupMember.md)
-Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
-
+Description for Expand-AdsiGroupMember
 
 ### [Expand-WinNTGroupMember](Expand-WinNTGroupMember.md)
-Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
-
+Description for Expand-WinNTGroupMember
 
 ### [Find-LocalAdsiServerSid](Find-LocalAdsiServerSid.md)
-Finds the SID prefix of the local server by querying the built-in administrator account.
-
+Description for Find-LocalAdsiServerSid
 
 ### [Get-AdsiGroup](Get-AdsiGroup.md)
-Get the directory entries for a group and its members using ADSI
-
+Description for Get-AdsiGroup
 
 ### [Get-AdsiGroupMember](Get-AdsiGroupMember.md)
-Get members of a group from the LDAP provider
-
+Description for Get-AdsiGroupMember
 
 ### [Get-AdsiServer](Get-AdsiServer.md)
-Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
-
+Description for Get-AdsiServer
 
 ### [Get-CurrentDomain](Get-CurrentDomain.md)
-Use ADSI to get the current domain
-
+Description for Get-CurrentDomain
 
 ### [Get-DirectoryEntry](Get-DirectoryEntry.md)
 Use Active Directory Service Interfaces to retrieve an object from a directory
 
 
 ### [Get-KnownCaptionHashTable](Get-KnownCaptionHashTable.md)
-Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).
-
+Description for Get-KnownCaptionHashTable
 
 ### [Get-KnownSid](Get-KnownSid.md)
-Retrieves information about well-known security identifiers (SIDs).
-
-
+Description for Get-KnownSid
 
 ### [Get-KnownSidByName](Get-KnownSidByName.md)
-Creates a hashtable of well-known SIDs indexed by their friendly names.
-
+Description for Get-KnownSidByName
 
 ### [Get-KnownSidHashTable](Get-KnownSidHashTable.md)
-Returns a hashtable of known security identifiers (SIDs) with detailed information.
-
-
+Description for Get-KnownSidHashTable
 
 ### [Get-ParentDomainDnsName](Get-ParentDomainDnsName.md)
-Gets the DNS name of the parent domain for a given computer or domain.
-
+Description for Get-ParentDomainDnsName
 
 ### [Get-TrustedDomain](Get-TrustedDomain.md)
-Returns a dictionary of trusted domains by the current computer
-
+Description for Get-TrustedDomain
 
 ### [Get-WinNTGroupMember](Get-WinNTGroupMember.md)
-Get members of a group from the WinNT provider
-
+Description for Get-WinNTGroupMember
 
 ### [Invoke-ComObject](Invoke-ComObject.md)
-Invoke a member method of a ComObject [__ComObject]
-
+Description for Invoke-ComObject
 
 ### [Resolve-IdentityReference](Resolve-IdentityReference.md)
-Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
-
+Description for Resolve-IdentityReference
 
 ### [Resolve-ServiceNameToSID](Resolve-ServiceNameToSID.md)
-Resolves Windows service names to their corresponding security identifiers (SIDs).
-
+Description for Resolve-ServiceNameToSID
 
 ### [Search-Directory](Search-Directory.md)
-Use Active Directory Service Interfaces to search an LDAP directory
-
+Description for Search-Directory
 
 

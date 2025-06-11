@@ -1,4 +1,5 @@
 ﻿function Find-CachedWellKnownSID {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-CachedWellKnownSID')]
 
     param (
 

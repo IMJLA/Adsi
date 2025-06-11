@@ -1,4 +1,5 @@
 ﻿function Find-AdsiProvider {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
 
     <#
         .SYNOPSIS

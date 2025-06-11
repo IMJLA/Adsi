@@ -1,4 +1,5 @@
 ﻿function Invoke-ComObject {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
 
     <#
     .SYNOPSIS

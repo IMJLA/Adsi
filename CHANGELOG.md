@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.488] - 2025-06-10
+### Changed
+- retry build
+
+## [5.0.487] - 2025-06-10
+### Added
+- add missing param block
+
+## [5.0.486] - 2025-06-10
+### Added
+- add missing param block
+
+## [5.0.485] - 2025-06-10
+### Added
+- add missing param blocks
+
+## [5.0.484] - 2025-06-10
+### Added
+- add helpuri task
+
 ## [5.0.483] - 2025-06-10
 ### Changed
 - death to OneDrive!

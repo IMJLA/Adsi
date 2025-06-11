@@ -1,4 +1,5 @@
 ﻿function Resolve-SidAuthority {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
 
     <#
     .SYNOPSIS

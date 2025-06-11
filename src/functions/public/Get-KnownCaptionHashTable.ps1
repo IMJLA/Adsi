@@ -1,4 +1,5 @@
 ﻿function Get-KnownCaptionHashTable {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownCaptionHashTable')]
     <#
     .SYNOPSIS
         Creates a hashtable of well-known SIDs indexed by their NT Account names (captions).

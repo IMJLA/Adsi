@@ -1,4 +1,5 @@
 ﻿function Get-AdsiGroup {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
 
     <#
     .SYNOPSIS

@@ -1,4 +1,5 @@
 ﻿function ConvertTo-DecStringRepresentation {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
 
     <#
     .SYNOPSIS

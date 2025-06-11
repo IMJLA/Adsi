@@ -1,4 +1,5 @@
 ﻿function ConvertTo-DistinguishedName {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
 
     <#
     .SYNOPSIS

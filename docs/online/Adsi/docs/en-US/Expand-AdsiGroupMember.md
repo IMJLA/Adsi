@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember
 schema: 2.0.0
 ---
 
 # Expand-AdsiGroupMember
 
 ## SYNOPSIS
-Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -18,39 +18,21 @@ Expand-AdsiGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String
 ```
 
 ## DESCRIPTION
-Recursively retrieves group members and detailed information about them
-Specifically gets the SID, and resolves foreign security principals to their DirectoryEntry from the trusted domain
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') |
-Get-AdsiGroupMember |
-Expand-AdsiGroupMember
+PS C:\> Add example code here
 ```
 
-Retrieves the members of the local Administrators group and then expands each member with additional
-information such as SID and domain information.
-Foreign security principals from trusted domains are
-resolved to their actual DirectoryEntry objects from the appropriate domain.
-
-### EXAMPLE 2
-```powershell
-[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
-Get-AdsiGroupMember |
-Expand-AdsiGroupMember -Cache $Cache
-```
-
-Retrieves the members of the domain Administrators group and then expands each member with additional
-information such as SID and domain information.
-Foreign security principals from trusted domains are
-resolved to their actual DirectoryEntry objects from the appropriate domain.
+Add example description here
 
 ## PARAMETERS
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+Fill Cache Description
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -58,14 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DirectoryEntry
-Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
+Fill DirectoryEntry Description
 
 ```yaml
 Type: System.Object
@@ -73,14 +55,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -PropertiesToLoad
-Properties of the group members to retrieve
+Fill PropertiesToLoad Description
 
 ```yaml
 Type: System.String[]
@@ -88,8 +70,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
-Default value: @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')
+Position: 1
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -99,11 +81,16 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
+### System.Object
+
 ## OUTPUTS
 
-### [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
+### System.DirectoryServices.DirectoryEntry
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember](https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember)
+
 

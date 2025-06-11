@@ -1,4 +1,5 @@
 ﻿function ConvertFrom-DirectoryEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
 
     <#
     .SYNOPSIS

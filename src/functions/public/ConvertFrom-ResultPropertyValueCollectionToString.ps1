@@ -1,4 +1,5 @@
 ﻿function ConvertFrom-ResultPropertyValueCollectionToString {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString')]
 
     <#
     .SYNOPSIS

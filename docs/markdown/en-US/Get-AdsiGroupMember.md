@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember
 schema: 2.0.0
 ---
 
 # Get-AdsiGroupMember
 
 ## SYNOPSIS
-Get members of a group from the LDAP provider
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -18,28 +18,21 @@ Get-AdsiGroupMember [[-Group] <Object>] [[-PropertiesToLoad] <String[]>] [-NoRec
 ```
 
 ## DESCRIPTION
-Use ADSI to get members of a group from the LDAP provider
-Return the group's DirectoryEntry plus a FullMembers property containing the member DirectoryEntries
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-[System.DirectoryServices.DirectoryEntry]::new('LDAP://ad.contoso.com/CN=Administrators,CN=BuiltIn,DC=ad,DC=contoso,DC=com') |
-Get-AdsiGroupMember -Cache $Cache
+PS C:\> Add example code here
 ```
 
-Retrieves all members of the domain's Administrators group, including both direct members and those
-who inherit membership through their primary group.
-The function returns the original group DirectoryEntry
-object with an added FullMembers property containing all member DirectoryEntry objects.
-This
-approach ensures proper resolution of all group memberships regardless of how they are assigned.
+Add example description here
 
 ## PARAMETERS
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+Fill Cache Description
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -47,14 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 3
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Group
-Directory entry of the LDAP group whose members to get
+Fill Group Description
 
 ```yaml
 Type: System.Object
@@ -62,16 +55,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -NoRecurse
-Perform a non-recursive search of the memberOf attribute
-
-Otherwise the search will be recursive by default
+Fill NoRecurse Description
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -80,15 +71,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -PrimaryGroupOnly
-Search the primaryGroupId attribute only
-
-Ignore the memberOf attribute
+Fill PrimaryGroupOnly Description
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -97,13 +86,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -PropertiesToLoad
-Properties of the group members to find in the directory
+Fill PropertiesToLoad Description
 
 ```yaml
 Type: System.String[]
@@ -111,8 +100,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
-Default value: @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')
+Position: 1
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -122,11 +111,16 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
+### System.Object
+
 ## OUTPUTS
 
-### [System.DirectoryServices.DirectoryEntry] plus a FullMembers property
+### System.DirectoryServices.DirectoryEntry
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember](https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember)
+
 

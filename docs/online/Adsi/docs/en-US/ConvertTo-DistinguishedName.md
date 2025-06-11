@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName
 schema: 2.0.0
 ---
 
 # ConvertTo-DistinguishedName
 
 ## SYNOPSIS
-Convert a domain NetBIOS name to its distinguishedName
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -27,28 +27,21 @@ ConvertTo-DistinguishedName -DomainFQDN <String[]> [-InitType <String>] [-InputT
 ```
 
 ## DESCRIPTION
-https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-ConvertTo-DistinguishedName -Domain 'CONTOSO' -Cache $Cache
+PS C:\> Add example code here
 ```
 
-Resolves the NetBIOS domain name 'CONTOSO' to its distinguished name format 'DC=ad,DC=contoso,DC=com'.
-This conversion is necessary when constructing LDAP queries that require the domain in distinguished
-name format, particularly when working with Active Directory objects across different domains or forests.
-The function utilizes Windows API calls to perform accurate name translation.
+Add example description here
 
 ## PARAMETERS
 
 ### -AdsiProvider
-AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
-
-This parameter can be used to reduce calls to Find-AdsiProvider
-
-Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet
+Fill AdsiProvider Description
 
 ```yaml
 Type: System.String
@@ -63,7 +56,7 @@ Accept wildcard characters: False
 ```
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+Fill Cache Description
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -78,7 +71,7 @@ Accept wildcard characters: False
 ```
 
 ### -Domain
-NetBIOS name of the domain
+Fill Domain Description
 
 ```yaml
 Type: System.String[]
@@ -93,7 +86,7 @@ Accept wildcard characters: False
 ```
 
 ### -DomainFQDN
-FQDN of the domain
+Fill DomainFQDN Description
 
 ```yaml
 Type: System.String[]
@@ -108,9 +101,7 @@ Accept wildcard characters: False
 ```
 
 ### -InitType
-Type of initialization to be performed
-Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Init method (iads.h)
-https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_inittype_enum
+Fill InitType Description
 
 ```yaml
 Type: System.String
@@ -119,15 +110,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: ADS_NAME_INITTYPE_GC
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -InputType
-Format of the name of the directory object that will be used for the input
-Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Set method (iads.h)
-https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
+Fill InputType Description
 
 ```yaml
 Type: System.String
@@ -136,15 +125,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: ADS_NAME_TYPE_NT4
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -OutputType
-Format of the name of the directory object that will be used for the output
-Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
-https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
+Fill OutputType Description
 
 ```yaml
 Type: System.String
@@ -153,7 +140,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: ADS_NAME_TYPE_1779
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -163,11 +150,16 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String]$Domain
+### System.String[]
+
 ## OUTPUTS
 
-### [System.String] distinguishedName of the domain
+### System.String
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName](https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName)
+
 

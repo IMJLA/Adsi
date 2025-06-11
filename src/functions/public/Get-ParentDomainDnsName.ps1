@@ -1,4 +1,5 @@
 ﻿function Get-ParentDomainDnsName {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
     <#
     .SYNOPSIS
         Gets the DNS name of the parent domain for a given computer or domain.

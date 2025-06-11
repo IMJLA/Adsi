@@ -1,38 +1,38 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation
 schema: 2.0.0
 ---
 
 # ConvertTo-DecStringRepresentation
 
 ## SYNOPSIS
-Convert a byte array to a string representation of its decimal format
+Fill in the Synopsis
 
 ## SYNTAX
 
 ```powershell
-ConvertTo-DecStringRepresentation [[-ByteArray] <Byte[]>]
+ConvertTo-DecStringRepresentation [[-ByteArray] <Byte[]>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses the custom format operator -f to format each byte as a string decimal representation
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-ConvertTo-DecStringRepresentation -ByteArray $Bytes
+PS C:\> Add example code here
 ```
 
-Convert the binary SID $Bytes to a decimal string representation
+Add example description here
 
 ## PARAMETERS
 
 ### -ByteArray
-Byte array. 
-Often the binary format of an objectSid or LoginHours
+Fill ByteArray Description
 
 ```yaml
 Type: System.Byte[]
@@ -40,19 +40,27 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
 ## INPUTS
 
-### [System.Byte[]]$ByteArray
+### None
+
 ## OUTPUTS
 
-### [System.String] Array of strings representing the byte array's decimal values
+### System.String
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation](https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation)
+
 

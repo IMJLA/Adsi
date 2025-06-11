@@ -1,37 +1,38 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString
 schema: 2.0.0
 ---
 
 # ConvertTo-HexStringRepresentationForLDAPFilterString
 
 ## SYNOPSIS
-Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
+Fill in the Synopsis
 
 ## SYNTAX
 
 ```powershell
 ConvertTo-HexStringRepresentationForLDAPFilterString [[-SIDByteArray] <Byte[]>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses the custom format operator -f to format each byte as a string hex representation
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-ConvertTo-HexStringRepresentationForLDAPFilterString -SIDByteArray $Bytes
+PS C:\> Add example code here
 ```
 
-Convert the binary SID $Bytes to a hexadecimal string representation, formatted for use in an LDAP filter string
+Add example description here
 
 ## PARAMETERS
 
 ### -SIDByteArray
-SID to convert to a hex string
+Fill SIDByteArray Description
 
 ```yaml
 Type: System.Byte[]
@@ -39,19 +40,27 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
 ## INPUTS
 
-### [System.Byte[]]$SIDByteArray
+### None
+
 ## OUTPUTS
 
-### [System.String] SID as an array of strings representing the byte array's hexadecimal values
+### System.String
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString](https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString)
+
 

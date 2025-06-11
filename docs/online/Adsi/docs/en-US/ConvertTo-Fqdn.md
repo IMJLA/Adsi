@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version:
+online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn
 schema: 2.0.0
 ---
 
 # ConvertTo-Fqdn
 
 ## SYNOPSIS
-Convert a domain distinguishedName name or NetBIOS name to its FQDN
+Fill in the Synopsis
 
 ## SYNTAX
 
@@ -25,24 +25,21 @@ ConvertTo-Fqdn [-NetBIOS <String[]>] -Cache <PSReference> [-ProgressAction <Acti
 ```
 
 ## DESCRIPTION
-For the DistinguishedName parameter, uses PowerShell's -replace operator to perform the conversion
-For the NetBIOS parameter, uses ConvertTo-DistinguishedName to convert from NetBIOS to distinguishedName, then recursively calls this function to get the FQDN
+Fill in the Description
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
 ```powershell
-ConvertTo-Fqdn -DistinguishedName 'DC=ad,DC=contoso,DC=com' -Cache $Cache
+PS C:\> Add example code here
 ```
 
-Converts the domain distinguishedName 'DC=ad,DC=contoso,DC=com' to its FQDN format 'ad.contoso.com'.
-This is essential when working with LDAP directory paths that need to be converted to readable domain
-names or when constructing proper LDAP paths that require the FQDN of the domain for remote connections.
+Add example description here
 
 ## PARAMETERS
 
 ### -Cache
-In-process cache to reduce calls to other processes or to disk
+Fill Cache Description
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -57,7 +54,7 @@ Accept wildcard characters: False
 ```
 
 ### -DistinguishedName
-distinguishedName of the domain
+Fill DistinguishedName Description
 
 ```yaml
 Type: System.String[]
@@ -72,7 +69,7 @@ Accept wildcard characters: False
 ```
 
 ### -NetBIOS
-NetBIOS name of the domain
+Fill NetBIOS Description
 
 ```yaml
 Type: System.String[]
@@ -91,11 +88,16 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### [System.String]$DistinguishedName
+### System.String[]
+
 ## OUTPUTS
 
-### [System.String] FQDN version of the distinguishedName
+### System.String
+
 ## NOTES
 
 ## RELATED LINKS
+
+[https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn](https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn)
+
 

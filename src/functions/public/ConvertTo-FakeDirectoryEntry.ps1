@@ -1,4 +1,5 @@
 ﻿function ConvertTo-FakeDirectoryEntry {
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
 
     <#
     .SYNOPSIS
