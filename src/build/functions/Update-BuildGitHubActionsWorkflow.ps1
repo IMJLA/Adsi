@@ -1,4 +1,5 @@
 ﻿function Update-BuildGitHubActionsWorkflow {
+
     <#
     .SYNOPSIS
     Updates GitHub Actions workflow files to use the correct module name.
@@ -18,6 +19,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         [Parameter(Mandatory)]
         [string]$ModuleName,
@@ -41,6 +43,7 @@
     $updatedFiles = 0
 
     foreach ($workflowFile in $workflowFiles) {
+
         Write-Verbose "`t[string]`$workflowContent = Get-Content -LiteralPath '$($workflowFile.FullName)' -Raw"
         [string]$workflowContent = Get-Content -LiteralPath $workflowFile.FullName -Raw
         $originalContent = $workflowContent

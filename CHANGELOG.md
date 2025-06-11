@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.495] - 2025-06-11
+### Changed
+- missed a write-verbose
+
 ## [5.0.494] - 2025-06-11
 ### Changed
 - use write-verbose for read-only operations
