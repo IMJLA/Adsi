@@ -64,7 +64,7 @@
         [string]$NormalizedContent = $OriginalContent -replace "`r`n|`n|`r", "`r`n"
 
         # Explicitly trim trailing whitespace from the end of the file
-        $strings += "`t`$TrimmedContent = `$NormalizedContent.Trim()"
+        $strings += "`t`$TrimmedContent = `"`$NormalizedContent.Trim()``r``n`""
         [string]$TrimmedContent = "$($NormalizedContent.Trim())`r`n"
 
         $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$TrimmedContent -Settings '$SettingsPath'"

@@ -30,7 +30,7 @@
         return
     }
 
-    Write-Information "`tGet-ChildItem -Path '$WorkflowDir' -Filter '*.yml'"
+    Write-Verbose "`tGet-ChildItem -Path '$WorkflowDir' -Filter '*.yml'"
     $workflowFiles = Get-ChildItem -Path $WorkflowDir -Filter '*.yml'
 
     if ($workflowFiles.Count -eq 0) {

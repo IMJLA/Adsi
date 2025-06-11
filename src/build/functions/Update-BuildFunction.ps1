@@ -49,12 +49,12 @@
         $folderPath = [IO.Path]::Combine($functionsDir, $folder)
 
         if (-not (Test-Path $folderPath)) {
-            Write-Verbose "Folder not found: $folderPath"
+            Write-Verbose "`t# Folder not found: $folderPath"
             continue
         }
 
         $relativeFolderPath = [IO.Path]::Combine($SourceCodeDir, 'functions', $folder)
-        Write-Information "`tGet-ChildItem -Path '$relativeFolderPath' -Filter '*.ps1'"
+        Write-Verbose "`tGet-ChildItem -Path '$relativeFolderPath' -Filter '*.ps1'"
         $functionFiles = Get-ChildItem -Path $folderPath -Filter '*.ps1'
 
         foreach ($functionFile in $functionFiles) {

@@ -43,18 +43,20 @@
     Write-InfoColor "FindOnlineHelpWebsitePrerequisites$NewLine" -ForegroundColor Blue
 
     # Set location to the project root
-    Write-InfoColor "`tSet-Location -Path '$ModuleName'"
+    Write-Verbose "`tSet-Location -Path '$ModuleName'"
     Set-Location -Path $Root
     [string]$ProjectRoot = [IO.Path]::Combine('..', '..')
     Set-Location -Path $ProjectRoot
 
     # Determine whether the Online Help website already exists.
-    Write-Information "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { `$_.Name -eq '$ModuleName' }"
+    Write-Verbose "`tGet-ChildItem -Path '$DocsOnlineHelpRoot' -Directory -ErrorAction SilentlyContinue | Where-Object { `$_.Name -eq '$ModuleName' }"
+    $joinedPath = [IO.Path]::Combine($DocsOnlineHelpRoot, $ModuleName)
+
     if (Get-ChildItem -Path $DocsOnlineHelpRoot -Directory -ErrorAction Stop | Where-Object { $_.Name -eq $ModuleName }) {
-        Write-InfoColor "`t# Online Help website already exists. It will be updated.$NewLine" -ForegroundColor Green
+        Write-InfoColor "`t# Online Help website already exists. ('$joinedPath') It will be updated.$NewLine" -ForegroundColor Green
         return $true
     } else {
-        Write-InfoColor "`t# Online Help website does not exist. It will be created." -ForegroundColor Green
+        Write-InfoColor "`t# Online Help website does not exist. It will be created. ('$joinedPath')" -ForegroundColor Green
         return $false
     }
 }

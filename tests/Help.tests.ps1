@@ -105,7 +105,6 @@ Describe 'help for <_.Name>' -ForEach $commands {
             $parameterName = $parameter.Name
             $parameterHelp = $commandHelp.parameters.parameter | Where-Object Name -EQ $parameterName
             $parameterHelpType = $parameterHelp.Type.Name
-            #$parameterHelpType = if ($parameterHelp.ParameterValue) { $parameterHelp.ParameterValue.Trim() }
         }
 
         # Should be a description for every parameter

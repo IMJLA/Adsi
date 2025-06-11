@@ -7,11 +7,11 @@
         [hashtable]$IO = @{}
     )
 
-    Write-Information "`tGet-ChildItem -LiteralPath '$DocsMarkdownDir' -Filter *.md -Recurse" @IO
+    Write-Verbose "`tGet-ChildItem -LiteralPath '$DocsMarkdownDir' -Filter *.md -Recurse" @IO
 
     if (Get-ChildItem -LiteralPath $DocsMarkdownDir -Filter *.md -Recurse) {
 
-        Write-Information "`tGet-ChildItem -LiteralPath '$DocsMarkdownDir' -Directory" @IO
+        Write-Verbose "`tGet-ChildItem -LiteralPath '$DocsMarkdownDir' -Directory" @IO
         Get-ChildItem -LiteralPath $DocsMarkdownDir -Directory | ForEach-Object {
 
             $DirName = $_.FullName

@@ -6,7 +6,7 @@
         [string[]]$BuildCopyDirectoryPath
     )
 
-    Write-Information "`tGet-ChildItem -Path '.' -Directory"
+    Write-Verbose "`tGet-ChildItem -Path '.' -Directory"
 
     $EmptyFolders = Get-ChildItem -Path . -Directory | ForEach-Object {
 
@@ -24,7 +24,7 @@
         $EmptyFolders -notcontains $_
     }
 
-    Write-InfoColor "`t# Found $($CopyDirectories.Count) directories to copy to the build output directory." -ForegroundColor Green
+    Write-InfoColor "`t# Found $($CopyDirectories.Count) directories to copy to the build output directory (this means they are all empty)." -ForegroundColor Green
     return $CopyDirectories
 
 }

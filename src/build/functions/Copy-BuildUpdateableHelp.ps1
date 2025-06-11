@@ -1,6 +1,8 @@
 ﻿function Copy-BuildUpdateableHelp {
+
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
+
     param(
         [Parameter(Mandatory)]
         [string]$DocsUpdateableDir,
@@ -14,13 +16,13 @@
     # Create the destination directory if it doesn't exist
     if (-not (Test-Path $destinationPath)) {
         if ($PSCmdlet.ShouldProcess($destinationPath, 'Create Directory')) {
+            Write-Information "`tNew-Item -Path '$destinationPath' -ItemType Directory -Force"
             New-Item -Path $destinationPath -ItemType Directory -Force | Out-Null
-            Write-Information "`tCreated directory: $destinationPath"
         }
     }
 
     # Get the Updateable Help files (.cab files and HelpInfo.xml file) but exclude .zip files
-    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Exclude '*.zip'"
+    Write-Verbose "`tGet-ChildItem -Path '$DocsUpdateableDir' -Exclude '*.zip'"
     $UpdateableHelpFiles = Get-ChildItem -Path $DocsUpdateableDir -Exclude '*.zip'
 
     if ($UpdateableHelpFiles.Count -eq 0) {
@@ -39,4 +41,5 @@
 
     Write-InfoColor "`t# Successfully copied updatable help files to online help website." -ForegroundColor Green
     return $true
+
 }
