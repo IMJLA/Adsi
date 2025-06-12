@@ -26,7 +26,7 @@
     # Find the current git branch
     Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''"
     Write-Verbose "`t& git branch --show-current"
-    $CurrentBranch = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'SilentlyContinue' -OutputPrefix ''
+    $CurrentBranch = & git branch --show-current
 
     # Add all changes
     if ($PSCmdlet.ShouldProcess('.', 'git add all changes')) {

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.503] - 2025-06-11
+### Changed
+- suppress branch name from console output
+
 ## [5.0.502] - 2025-06-11
 ### Changed
 - cleanup console output
