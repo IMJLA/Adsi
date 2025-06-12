@@ -25,7 +25,7 @@
 
     # Find the current git branch
     Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git branch --show-current"
+    Write-Verbose "`t& git branch --show-current"
     $CurrentBranch = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('branch', '--show-current') -InformationAction 'Continue' -OutputPrefix ''
 
     # Add all changes
@@ -51,7 +51,7 @@
 
     # Test if commit was successful by checking git status
     Write-Verbose "`tInvoke-FileWithOutputPrefix -Command 'git' -ArgumentString 'status --porcelain' -InformationAction 'Continue' -OutputPrefix ''"
-    Write-Information "`t& git status --porcelain"
+    Write-Verbose "`t& git status --porcelain"
     $gitStatus = Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('status', '--porcelain') -InformationAction 'Continue' -OutputPrefix ''
 
     if ($gitStatus) {
