@@ -444,6 +444,7 @@ FormatTaskName {
 
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
     Write-InfoColor $taskName -ForegroundColor Blue
+    pause
 
 }
 

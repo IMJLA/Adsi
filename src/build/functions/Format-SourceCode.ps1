@@ -61,7 +61,7 @@
             Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
         Also trim trailing whitespace from the end of the file
         #>
-        $strings += "`t`$NormalizedContent = `"`$(`$OriginalContent.Trim())``r``n`" -replace '``r``n|``n|``r', '``r``n'"
+        $strings += "`t`$NormalizedContent = `"`$(`$OriginalContent.Trim())``r``n`" -replace `"``r``n|``n|``r`", `"``r``n`""
         [string]$NormalizedContent = "$($OriginalContent.Trim())`r`n" -replace "`r`n|`n|`r", "`r`n"
 
         $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$SettingsPath'"

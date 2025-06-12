@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.499] - 2025-06-11
+### Changed
+- debug docusaurus version reversions
+
 ## [5.0.498] - 2025-06-11
 ### Changed
 - clear, upgrade docusaurus in package.json, build, clear
