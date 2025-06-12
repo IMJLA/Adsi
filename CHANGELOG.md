@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.505] - 2025-06-12
+### Fixed
+- fix spacing
+
 ## [5.0.504] - 2025-06-12
 ### Changed
 - document build functions

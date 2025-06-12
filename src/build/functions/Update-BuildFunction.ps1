@@ -15,7 +15,9 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
+
         # The source code directory containing the functions folders
         [Parameter(Mandatory)]
         [string]$SourceCodeDir,
@@ -27,6 +29,7 @@
         # The default locale for documentation (e.g., "en-US")
         [Parameter(Mandatory)]
         [string]$DocsDefaultLocale
+
     )
 
     $functionsDir = [IO.Path]::Combine($SourceCodeDir, 'functions')

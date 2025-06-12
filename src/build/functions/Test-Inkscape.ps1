@@ -1,4 +1,5 @@
 ﻿function Test-Inkscape {
+
     <#
     .SYNOPSIS
     Test if the Inkscape command is available on the system.

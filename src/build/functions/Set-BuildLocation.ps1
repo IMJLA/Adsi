@@ -1,4 +1,5 @@
 ﻿function Set-BuildLocation {
+
     <#
     .SYNOPSIS
     Set the working directory to the project root to ensure all relative paths are correct.

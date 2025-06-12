@@ -13,13 +13,16 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
+
         # The directory containing markdown help files
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDir,
 
         # Hashtable for output parameters
         [hashtable]$IO = @{}
+
     )
 
     Write-Verbose "`tGet-ChildItem -LiteralPath '$DocsMarkdownDir' -Filter *.md -Recurse" @IO

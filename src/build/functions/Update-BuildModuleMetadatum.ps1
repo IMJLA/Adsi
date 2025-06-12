@@ -12,7 +12,9 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]
+
     param(
+
         # Path to the module manifest (.psd1) file to update
         [Parameter(Mandatory)]
         [string]$ModuleManifestPath,
@@ -24,6 +26,7 @@
         # The help info URI for the module
         [Parameter(Mandatory)]
         [string]$HelpInfoUri
+
     )
 
     if ($PSCmdlet.ShouldProcess($ModuleManifestPath, "Update module version to $NewVersion")) {

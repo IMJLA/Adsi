@@ -14,7 +14,9 @@
 
     [CmdletBinding()]
     [OutputType([bool])]
+
     param(
+
         # The name of the module to wait for
         [Parameter(Mandatory)]
         [string]$ModuleName,
@@ -32,6 +34,7 @@
 
         # Interval between checks in seconds. Default is 1
         [int]$IntervalSeconds = 1
+
     )
 
     $timer = 0

@@ -1,4 +1,5 @@
 ﻿function Get-NewVersion {
+
     <#
     .SYNOPSIS
         Determines the new version number for a module build.
@@ -9,8 +10,10 @@
     .EXAMPLE
         Get-NewVersion -IncrementMajorVersion:$false -IncrementMinorVersion:$true -OldVersion '1.0.0'
     #>
+
     [CmdletBinding()]
     [OutputType([System.Version])]
+
     param(
         # Whether to increment the major version number
         [bool]$IncrementMajorVersion,

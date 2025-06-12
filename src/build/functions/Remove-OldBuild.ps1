@@ -1,4 +1,5 @@
 ﻿function Remove-OldBuild {
+
     <#
     .SYNOPSIS
     Removes old build files from the specified build output directory.
@@ -9,7 +10,9 @@
     .EXAMPLE
     Remove-OldBuild -BuildOutDir './dist'
     #>
+
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # Path to the build output directory to clean
         [Parameter(Mandatory)]

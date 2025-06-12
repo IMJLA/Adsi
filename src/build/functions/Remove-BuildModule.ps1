@@ -1,4 +1,5 @@
 ﻿function Remove-BuildModule {
+
     <#
     .SYNOPSIS
     Removes a PowerShell module from the current session.
@@ -15,6 +16,7 @@
     Remove-BuildModule -ModuleName 'MyModule' -WhatIf
     Shows what would happen if the module were removed without actually removing it.
     #>
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # The name of the module to remove from the current PowerShell session

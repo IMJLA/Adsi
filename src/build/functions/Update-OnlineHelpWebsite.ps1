@@ -18,6 +18,7 @@
         # The working directory containing the Docusaurus project
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir
+
     )
 
     if ($PSCmdlet.ShouldProcess($DocsOnlineHelpDir, 'Build online help website')) {

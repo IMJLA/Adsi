@@ -17,6 +17,7 @@
 
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
+
         # The directory containing the Docusaurus website
         [string]$DocsOnlineHelpDir = '.',
 

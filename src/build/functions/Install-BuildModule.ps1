@@ -1,4 +1,5 @@
 ﻿function Install-BuildModule {
+
     <#
     .SYNOPSIS
     Install the latest version of a specified module with retry logic.

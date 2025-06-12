@@ -1,4 +1,5 @@
 ﻿function Install-OnlineHelpDependency {
+
     <#
     .SYNOPSIS
     Installs all npm dependencies for the Online Help website.

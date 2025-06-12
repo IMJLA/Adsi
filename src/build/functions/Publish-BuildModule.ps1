@@ -1,4 +1,5 @@
 ﻿function Publish-BuildModule {
+
     <#
     .SYNOPSIS
     Publishes a PowerShell module to a specified repository.
@@ -24,6 +25,7 @@
     .EXAMPLE
     Publish-BuildModule -Path "C:\Build\MyModule\1.0.0\MyModule" -Repository "PSGallery" -ApiKey $apiKey
     #>
+
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
