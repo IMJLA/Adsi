@@ -14,7 +14,7 @@ function Remove-BuildUpdatableHelp {
         [string]$DocsUpdateableDir
     )
 
-    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$DocsUpdateableDir' -Recurse | Remove-Item -Recurse -Force"
 
     if ($PSCmdlet.ShouldProcess($DocsUpdateableDir, 'Remove existing updateable help files')) {
         Get-ChildItem -Path $DocsUpdateableDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue

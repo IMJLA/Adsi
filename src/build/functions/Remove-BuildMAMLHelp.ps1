@@ -13,10 +13,11 @@ function Remove-BuildMAMLHelp {
         [string]$DocsMamlDir
     )
 
-    Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
+    Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force"
 
-    if ($PSCmdlet.ShouldProcess($DocsMamlDir, "Remove existing MAML help files")) {
+    if ($PSCmdlet.ShouldProcess($DocsMamlDir, 'Remove existing MAML help files')) {
         Get-ChildItem -Path $DocsMamlDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
         Write-InfoColor "`t# Successfully deleted existing MAML help files." -ForegroundColor Green
     }
+
 }

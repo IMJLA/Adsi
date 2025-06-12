@@ -71,14 +71,14 @@
             $Val = Get-Variable -name $_ -ValueOnly -ErrorAction SilentlyContinue
             if ($Val -ne '' -and $null -ne $Val) {
                 $buildParams.$_ = $Val
-                $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))' "
+                $CompileParamStr += "-$_ '$($Val.Replace("'", "''"))'"
             }
         }
 
         $ExcludeJoined = $buildParams['Exclude'] -join "','"
         $CompileDirectoriesJoined = $buildParams['CompileDirectories'] -join "','"
         $CopyDirectoriesJoined = $buildParams['CopyDirectories'] -join "','"
-        Write-Information "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$DocsMarkdownReadMePath' $CompileParamStr-ErrorAction 'Stop'"
+        Write-Information "`tBuild-PSBuildModule -Path '$SourceCodeDir' -ModuleName '$ModuleName' -DestinationPath '$BuildOutputDir' -Exclude @('$ExcludeJoined') -Compile '$BuildCompileModule' -CompileDirectories @('$CompileDirectoriesJoined') -CopyDirectories @('$CopyDirectoriesJoined') -Culture '$DocsDefaultLocale' -ReadMePath '$DocsMarkdownReadMePath' $CompileParamStr"
         Build-PSBuildModule @buildParams
         Write-InfoColor "`t# Successfully built the module." -ForegroundColor Green
 

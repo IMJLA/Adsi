@@ -20,7 +20,7 @@ function Remove-BuildMarkdownHelp {
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
 
     if ($PSCmdlet.ShouldProcess($MarkdownDir, 'Remove existing Markdown help files')) {
-        Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue"
+        Write-Information "`tGet-ChildItem -Path '$MarkdownDir' -Recurse | Remove-Item -Recurse -Force"
         Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction Stop | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue -ProgressAction SilentlyContinue
 
         if (Get-ChildItem -Path $MarkdownDir -Recurse -ErrorAction SilentlyContinue) {

@@ -17,7 +17,7 @@ function Copy-BuildMAMLHelp {
         [string]$BuildOutputDir
     )
 
-    Write-Information "`tCopy-Item -Path '$DocsMamlDir\*' -Destination '$BuildOutputDir' -Recurse -ErrorAction SilentlyContinue"
+    Write-Information "`tCopy-Item -Path '$DocsMamlDir\*' -Destination '$BuildOutputDir' -Recurse"
     Copy-Item -Path "$DocsMamlDir\*" -Destination $BuildOutputDir -Recurse -ErrorAction SilentlyContinue
 
     # Test if MAML help files were copied successfully

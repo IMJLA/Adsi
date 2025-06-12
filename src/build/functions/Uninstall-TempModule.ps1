@@ -19,7 +19,8 @@ function Uninstall-TempModule {
     )
 
     if ($PSCmdlet.ShouldProcess($ModuleInstallDir, 'Remove temporary module installation directory')) {
-        Write-Information "`tRemove-Item -Path '$ModuleInstallDir' -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
+
+        Write-Information "`tRemove-Item -Path '$ModuleInstallDir' -Recurse -Force"
         Remove-Item -Path $ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
 
         if (Test-Path -Path $ModuleInstallDir) {

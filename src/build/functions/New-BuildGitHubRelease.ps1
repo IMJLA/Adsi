@@ -54,13 +54,13 @@
             # Add the module zip file to the release
             Write-Verbose "`tAdd-GitHubReleaseAsset -Token `$GitHubToken -UploadUrl '$($release.upload_url)' -FilePath `"$ZipFileDisplayPath`" -FileName '$zipFileName' -FileDisplayPath $ZipFileDisplayPath"
             $null = Add-GitHubReleaseAsset -Token $GitHubToken -UploadUrl $release.upload_url -FilePath $zipFilePath -FileName $zipFileName -InformationAction 'Continue' -FileDisplayPath $ZipFileDisplayPath
-            Write-Information ''
 
             # Clean up temporary zip file
             Write-Information "`tRemove-Item `"$ZipFileDisplayPath`" -Force -ProgressAction 'SilentlyContinue'"
             if ($PSCmdlet.ShouldProcess($zipFilePath, 'Remove Temporary Zip File')) {
                 Remove-Item $zipFilePath -Force -ProgressAction 'SilentlyContinue'
             }
+            Write-Information ''
 
         } else {
             throw "Failed to create zip file at: $zipFilePath"

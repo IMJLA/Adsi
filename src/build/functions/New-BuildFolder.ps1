@@ -33,7 +33,7 @@ function New-BuildFolder {
 
     if ($PSCmdlet.ShouldProcess($Path, 'Create directory')) {
 
-        Write-Information "`tNew-Item -Path '$Path' -ItemType Directory -ErrorAction SilentlyContinue" -InformationAction $InformationPreference
+        Write-Information "`tNew-Item -Path '$Path' -ItemType Directory"
         $null = New-Item -Path $Path -ItemType Directory -ErrorAction SilentlyContinue
 
         if (Test-Path -Path $Path) {
