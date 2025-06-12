@@ -1,6 +1,23 @@
 ﻿function Get-VersionFolder {
-    # Function to find the version folder dynamically
-    param([string]$DistPath)
+
+    <#
+    .SYNOPSIS
+    Finds the version folder dynamically within a distribution directory.
+
+    .DESCRIPTION
+    This function searches for version folders in the module distribution directory and returns
+    the first version folder found. Version folders are identified by a pattern matching semantic versioning.
+
+    .EXAMPLE
+    Get-VersionFolder -DistPath './dist'
+    #>
+
+    [CmdletBinding()]
+    [OutputType([System.IO.DirectoryInfo])]
+    param(
+        # Path to the distribution directory containing the module
+        [string]$DistPath
+    )
 
     if (-not (Test-Path $DistPath)) {
         throw "Dist folder not found at: $DistPath"

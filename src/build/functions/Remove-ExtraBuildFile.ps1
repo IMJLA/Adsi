@@ -1,4 +1,5 @@
 ﻿function Remove-ExtraBuildFile {
+
     <#
     .SYNOPSIS
     Remove unnecessary files from the build output directory.
@@ -6,13 +7,6 @@
     .DESCRIPTION
     This function removes specific files that are not needed in the final build output,
     such as dependency requirement files and PSScriptAnalyzer settings files.
-
-    .PARAMETER BuildOutputDir
-    The path to the build output directory where files should be removed.
-
-    .PARAMETER FilesToRemove
-    Array of filenames to remove from the build output directory.
-    Default removes 'psdependRequirements.psd1' and 'psscriptanalyzerSettings.psd1'.
 
     .EXAMPLE
     Remove-ExtraBuildFile -BuildOutputDir 'C:\Build\Output'
@@ -23,9 +17,11 @@
 
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # The path to the build output directory where files should be removed
         [Parameter(Mandatory)]
         [string]$BuildOutputDir,
 
+        # Array of filenames to remove from the build output directory. Default removes 'psdependRequirements.psd1' and 'psscriptanalyzerSettings.psd1'
         [string[]]$FilesToRemove = @(
             'psdependRequirements.psd1',
             'psscriptanalyzerSettings.psd1'

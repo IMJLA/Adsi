@@ -1,8 +1,21 @@
 ﻿function Find-BuildCopyDirectory {
 
+    <#
+    .SYNOPSIS
+    Finds directories that should be copied to the build output directory.
+
+    .DESCRIPTION
+    Identifies directories that are not empty (or only contain .gitkeep files) and should be copied
+    to the build output directory during the build process.
+
+    .EXAMPLE
+    Find-BuildCopyDirectory -BuildCopyDirectoryPath @('../docs', '../examples')
+    #>
+
     [CmdletBinding()]
 
     param (
+        # Array of directory paths to evaluate for copying
         [string[]]$BuildCopyDirectoryPath
     )
 

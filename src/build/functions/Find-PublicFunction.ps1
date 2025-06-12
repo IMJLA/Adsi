@@ -1,8 +1,21 @@
 ﻿function Find-PublicFunction {
 
+    <#
+    .SYNOPSIS
+    Finds all public function files in the specified directory.
+
+    .DESCRIPTION
+    Searches for PowerShell function files in the public functions directory and returns
+    information about each file found.
+
+    .EXAMPLE
+    Find-PublicFunction -PublicFunctionPath './src/functions/public'
+    #>
+
     [CmdletBinding()]
 
     param(
+        # Path to the directory containing public function files
         [string]$PublicFunctionPath
     )
 

@@ -1,6 +1,19 @@
 ﻿function Invoke-CommandWithOutputPrefix {
 
-    # Generic command wrapper that adds prefixes to output lines
+    <#
+    .SYNOPSIS
+    Generic PowerShell command wrapper that adds prefixes to output lines.
+
+    .DESCRIPTION
+    Executes a PowerShell command in a separate job and adds prefixes to each output line.
+    Handles both parameter hashtables and argument arrays for flexible command execution.
+
+    .EXAMPLE
+    Invoke-CommandWithOutputPrefix -Command 'Get-Process' -Parameter @{Name='powershell'} -OutputPrefix "`t"
+
+    .EXAMPLE
+    Invoke-CommandWithOutputPrefix -Command 'Test-Path' -ArgumentArray @('C:\Windows') -WorkingDirectory 'C:\'
+    #>
 
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from command output')]

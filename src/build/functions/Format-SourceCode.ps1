@@ -1,5 +1,4 @@
 ﻿function Format-SourceCode {
-    #requires -module PSScriptAnalyzer
 
     <#
     .SYNOPSIS
@@ -9,12 +8,6 @@
     This script automatically formats all PowerShell script files in the source directory
     according to the PSScriptAnalyzer rules defined in the settings file.
 
-    .PARAMETER Path
-    The path to format. Defaults to the src directory.
-
-    .PARAMETER SettingsPath
-    Path to the PSScriptAnalyzer settings file.
-
     .EXAMPLE
     Format-SourceCode
 
@@ -22,11 +15,14 @@
     Format-SourceCode -Path "C:\MyProject\src" -WhatIf
     #>
 
+    #requires -module PSScriptAnalyzer
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+        # The path to format. Defaults to the src directory
         [string]$Path = (Join-Path $PSScriptRoot '..' ),
 
+        # Path to the PSScriptAnalyzer settings file
         [string]$SettingsPath = (Join-Path $PSScriptRoot 'psscriptanalyzerSettings.psd1')
     )
 

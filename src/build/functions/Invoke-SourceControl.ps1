@@ -1,4 +1,5 @@
 ﻿function Invoke-SourceControl {
+
     <#
     .SYNOPSIS
     Commit and push changes to source control using git.
@@ -7,15 +8,13 @@
     Performs git add, commit, and push operations to commit changes to source control.
     Includes validation to ensure all changes are successfully committed.
 
-    .PARAMETER CommitMessage
-    The commit message to use for the git commit.
-
     .EXAMPLE
     Invoke-SourceControl -CommitMessage "Updated module version"
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # The commit message to use for the git commit
         [Parameter(Mandatory)]
         [string]$CommitMessage,
 

@@ -1,24 +1,20 @@
-﻿<#
-.SYNOPSIS
-Creates a directory for the build process.
+﻿function New-BuildFolder {
 
-.DESCRIPTION
-Creates a directory if it doesn't exist and provides appropriate success or error messaging.
+    <#
+    .SYNOPSIS
+    Creates a directory for the build process.
 
-.PARAMETER Path
-Path to the directory to create
+    .DESCRIPTION
+    Creates a directory if it doesn't exist and provides appropriate success or error messaging.
 
-.PARAMETER Description
-Description of the directory being created for output messages
+    .NOTES
+    This function supports ShouldProcess for the New verb.
 
-.NOTES
-This function supports ShouldProcess for the New verb.
-#>
-
-function New-BuildFolder {
+    .EXAMPLE
+    New-BuildFolder -Path 'C:\Build\Output' -Description 'Build output'
+    #>
 
     [CmdletBinding(SupportsShouldProcess)]
-
     param(
 
         # Path to the directory to create

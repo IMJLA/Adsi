@@ -1,16 +1,17 @@
 ﻿function Update-BuildOutputDir {
+
     <#
     .SYNOPSIS
-        Updates the build output directory environment variable.
+    Updates the build output directory environment variable.
 
     .DESCRIPTION
-        Sets the build output directory path based on the module version and updates environment variables.
+    Sets the build output directory path based on the module version and updates environment variables.
 
     .EXAMPLE
-        Update-BuildOutputDir -BuildOutDir './dist' -ModuleVersion '1.0.0' -ModuleName 'MyModule'
+    Update-BuildOutputDir -BuildOutDir './dist' -ModuleVersion '1.0.0' -ModuleName 'MyModule'
 
     .EXAMPLE
-        Update-BuildOutputDir -BuildOutDir './dist' -ModuleVersion '1.0.0' -ModuleName 'MyModule' -WhatIf
+    Update-BuildOutputDir -BuildOutDir './dist' -ModuleVersion '1.0.0' -ModuleName 'MyModule' -WhatIf
     #>
 
     [CmdletBinding(SupportsShouldProcess)]

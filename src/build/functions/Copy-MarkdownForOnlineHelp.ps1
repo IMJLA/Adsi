@@ -1,4 +1,5 @@
 ﻿function Copy-MarkdownForOnlineHelp {
+
     <#
     .SYNOPSIS
     Copies Markdown help files as source for the online help website.

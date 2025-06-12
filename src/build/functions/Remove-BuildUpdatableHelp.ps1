@@ -1,11 +1,16 @@
-﻿<#
-.SYNOPSIS
-Delete existing Updateable help files to prepare for PlatyPS to build new ones.
+﻿function Remove-BuildUpdatableHelp {
 
-.DESCRIPTION
-This function removes all existing updateable help files from the specified directory to ensure a clean build environment for new updateable help generation.
-#>
-function Remove-BuildUpdatableHelp {
+    <#
+    .SYNOPSIS
+    Delete existing Updateable help files to prepare for PlatyPS to build new ones.
+
+    .DESCRIPTION
+    This function removes all existing updateable help files from the specified directory to ensure a clean build environment for new updateable help generation.
+
+    .EXAMPLE
+    Remove-BuildUpdatableHelp -DocsUpdateableDir './docs/updateable'
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
     param(

@@ -1,5 +1,17 @@
 ﻿function Export-PublicFunction {
 
+    <#
+    .SYNOPSIS
+    Exports public functions from a PowerShell module.
+
+    .DESCRIPTION
+    This function extracts function names from public function files and updates both the module file
+    and module manifest to properly export those functions for use by consumers of the module.
+
+    .EXAMPLE
+    Export-PublicFunction -PublicFunctionFile $files -ModuleFilePath './MyModule.psm1' -ModuleManifestPath './MyModule.psd1'
+    #>
+
     [CmdletBinding()]
 
     param(
@@ -11,6 +23,7 @@
         # Path to the module file (.psm1)
         [string]$ModuleFilePath,
 
+        # Path to the module manifest file (.psd1)
         [Parameter(Mandatory)]
         [string]$ModuleManifestPath
 

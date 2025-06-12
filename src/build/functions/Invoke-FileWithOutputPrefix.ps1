@@ -1,6 +1,19 @@
 ﻿function Invoke-FileWithOutputPrefix {
 
-    # Generic command wrapper that adds prefixes to output lines
+    <#
+    .SYNOPSIS
+    Generic command wrapper that adds prefixes to output lines.
+
+    .DESCRIPTION
+    Executes a command in a separate PowerShell job and adds prefixes to each output line.
+    Handles both string and array argument formats and manages working directory changes.
+
+    .EXAMPLE
+    Invoke-FileWithOutputPrefix -Command 'git' -ArgumentArray @('status') -OutputPrefix "`t"
+
+    .EXAMPLE
+    Invoke-FileWithOutputPrefix -Command 'npm' -ArgumentString 'install' -WorkingDirectory 'C:\MyProject'
+    #>
 
     [CmdletBinding(DefaultParameterSetName = 'ArgumentString')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from command output')]

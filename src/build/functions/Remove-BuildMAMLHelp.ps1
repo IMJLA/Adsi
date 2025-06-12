@@ -1,11 +1,16 @@
-﻿<#
-.SYNOPSIS
-Delete existing MAML help files to prepare for PlatyPS to build new ones.
+﻿function Remove-BuildMAMLHelp {
 
-.DESCRIPTION
-This function removes all existing MAML help files from the specified directory to ensure a clean build environment for new MAML help generation.
-#>
-function Remove-BuildMAMLHelp {
+    <#
+    .SYNOPSIS
+    Delete existing MAML help files to prepare for PlatyPS to build new ones.
+
+    .DESCRIPTION
+    This function removes all existing MAML help files from the specified directory to ensure a clean build environment for new MAML help generation.
+
+    .EXAMPLE
+    Remove-BuildMAMLHelp -DocsMamlDir 'C:\MyProject\docs\maml'
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # Path to the MAML help directory

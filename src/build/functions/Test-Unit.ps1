@@ -1,23 +1,25 @@
-﻿<#
-.SYNOPSIS
-    Performs unit tests using Pester with configuration from JSON file.
+﻿function Test-Unit {
 
-.DESCRIPTION
-    Reads Pester configuration from a JSON file, creates a Pester configuration object,
-    and executes the tests. Returns the test results for further processing.
+    <#
+    .SYNOPSIS
+        Performs unit tests using Pester with configuration from JSON file.
 
-.OUTPUTS
-    Returns the Pester test results object.
+    .DESCRIPTION
+        Reads Pester configuration from a JSON file, creates a Pester configuration object,
+        and executes the tests. Returns the test results for further processing.
 
-.EXAMPLE
-    $TestResults = Test-Unit
+    .OUTPUTS
+        Returns the Pester test results object.
 
-    Runs unit tests and stores the results in $TestResults variable.
-#>
-function Test-Unit {
+    .EXAMPLE
+        $TestResults = Test-Unit
+
+        Runs unit tests and stores the results in $TestResults variable.
+    #>
 
     [CmdletBinding()]
     [OutputType([object])]
+
     param(
         # Path to the Pester configuration JSON file
         [string]$ConfigPath = '.\tests\config\pesterConfig.json',

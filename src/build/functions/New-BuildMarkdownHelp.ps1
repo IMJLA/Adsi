@@ -16,9 +16,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
-
     param(
-
         # Name of the module to generate help for
         [Parameter(Mandatory)]
         [string]$ModuleName,
@@ -35,9 +33,9 @@
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDefaultLocaleDir,
 
+        # Help info URI for the module
         [Parameter(Mandatory)]
         [string]$HelpInfoUri
-
     )
 
     $markdownHelpParams = @{

@@ -1,4 +1,5 @@
 ﻿function Update-OnlineHelpWebsite {
+
     <#
     .SYNOPSIS
     Builds the online help website using Docusaurus.
@@ -13,6 +14,7 @@
 
     [CmdletBinding(SupportsShouldProcess)]
     param(
+
         # The working directory containing the Docusaurus project
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir

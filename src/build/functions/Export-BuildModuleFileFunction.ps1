@@ -1,9 +1,24 @@
 ﻿function Export-BuildModuleFileFunction {
+
+    <#
+    .SYNOPSIS
+    Exports functions in a module file by adding Export-ModuleMember commands.
+
+    .DESCRIPTION
+    This function adds Export-ModuleMember commands to a PowerShell module file (.psm1)
+    to explicitly export the specified functions.
+
+    .EXAMPLE
+    Export-BuildModuleFileFunction -ModuleFilePath './MyModule.psm1' -FunctionName @('Get-Something', 'Set-Something')
+    #>
+
     [CmdletBinding()]
     param(
+        # Path to the module file (.psm1) to update
         [Parameter(Mandatory)]
         [string]$ModuleFilePath,
 
+        # Array of function names to export from the module
         [Parameter(Mandatory)]
         [string[]]$FunctionName
     )

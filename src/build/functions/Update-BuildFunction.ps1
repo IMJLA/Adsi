@@ -1,4 +1,5 @@
 ﻿function Update-BuildFunction {
+
     <#
     .SYNOPSIS
     Updates PowerShell functions to include HelpUri attributes in their CmdletBinding.
@@ -9,27 +10,21 @@
     online help URL combined with the relative path to the documentation for that specific function.
     If a function doesn't have a param block, an empty one will be added when CmdletBinding is added.
 
-    .PARAMETER SourceCodeDir
-    The source code directory containing the functions folders.
-
-    .PARAMETER DocsOnlineHelpUrl
-    The base URL for the online help documentation.
-
-    .PARAMETER DocsDefaultLocale
-    The default locale for documentation (e.g., "en-US").
-
     .EXAMPLE
     Update-BuildFunction -SourceCodeDir './src' -DocsOnlineHelpUrl 'https://example.github.io/MyModule/' -DocsDefaultLocale 'en-US'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # The source code directory containing the functions folders
         [Parameter(Mandatory)]
         [string]$SourceCodeDir,
 
+        # The base URL for the online help documentation
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpUrl,
 
+        # The default locale for documentation (e.g., "en-US")
         [Parameter(Mandatory)]
         [string]$DocsDefaultLocale
     )

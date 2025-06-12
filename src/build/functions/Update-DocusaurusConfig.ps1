@@ -1,9 +1,21 @@
 ﻿function Update-DocusaurusConfig {
 
+    <#
+    .SYNOPSIS
+    Updates Docusaurus configuration file with module-specific settings.
+
+    .DESCRIPTION
+    This function updates the docusaurus.config.ts file with module-specific information including
+    titles, URLs, GitHub organization details, and various configuration settings for optimal
+    documentation site generation.
+
+    .EXAMPLE
+    Update-DocusaurusConfig -DocsOnlineHelpDir './docs/online/MyModule' -GitHubOrgName 'MyOrg' -ModuleInfo $moduleInfo
+    #>
+
     # ToDo: Use the TypeScript Compiler API or Bun to update the configuration file instead of string manipulation.
 
     [CmdletBinding(SupportsShouldProcess = $true)]
-
     param (
         # The directory containing the Docusaurus website
         [string]$DocsOnlineHelpDir = '.',

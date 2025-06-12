@@ -1,20 +1,37 @@
 ﻿function New-BuildGitHubRelease {
 
+    <#
+    .SYNOPSIS
+    Creates a new GitHub release with module assets.
+
+    .DESCRIPTION
+    This function creates a new GitHub release for a PowerShell module, including creating a zip file
+    of the module and uploading it as a release asset.
+
+    .EXAMPLE
+    New-BuildGitHubRelease -GitHubToken $token -GitHubOrgName 'MyOrg' -ModuleName 'MyModule'
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+        # GitHub authentication token for API access
         [Parameter(Mandatory = $true)]
         [string]$GitHubToken,
 
+        # GitHub organization name
         [Parameter(Mandatory = $true)]
         [string]$GitHubOrgName,
 
+        # Name of the module to release
         [Parameter(Mandatory = $true)]
         [string]$ModuleName,
 
+        # Path to the distribution directory. Defaults to '.\dist'
         [Parameter(Mandatory = $false)]
         [string]$DistPath = '.\dist',
 
+        # Release notes for the GitHub release
         [Parameter(Mandatory = $false)]
         [string]$ReleaseNotes = 'Automated release'
     )

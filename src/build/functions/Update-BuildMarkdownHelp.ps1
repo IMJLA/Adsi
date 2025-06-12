@@ -1,9 +1,24 @@
 ﻿function Update-BuildMarkdownHelp {
+
+    <#
+    .SYNOPSIS
+    Updates existing markdown help files using PlatyPS.
+
+    .DESCRIPTION
+    This function updates existing markdown help files by scanning the markdown directory
+    for .md files and running Update-MarkdownHelp on each directory containing them.
+
+    .EXAMPLE
+    Update-BuildMarkdownHelp -DocsMarkdownDir 'C:\MyProject\docs\markdown'
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # The directory containing markdown help files
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDir,
 
+        # Hashtable for output parameters
         [hashtable]$IO = @{}
     )
 

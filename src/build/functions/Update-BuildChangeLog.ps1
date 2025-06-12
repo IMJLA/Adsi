@@ -1,9 +1,27 @@
 ﻿function Update-BuildChangeLog {
+
+    <#
+    .SYNOPSIS
+    Updates the change log file with new version and commit message.
+
+    .DESCRIPTION
+    Analyzes the commit message to determine the type of change and adds it to the change log,
+    then updates the change log with the new release version.
+
+    .EXAMPLE
+    Update-BuildChangeLog -Version '1.0.0' -CommitMessage 'Add new feature'
+    #>
+
     #requires -Module ChangelogManagement
     [CmdletBinding(SupportsShouldProcess)]
     param (
+        # The version number for the release
         [version]$Version,
+
+        # The commit message to analyze and add to the change log
         [string]$CommitMessage,
+
+        # Path to the change log file
         [string]$ChangeLog = [IO.Path]::Combine('..', '..', 'CHANGELOG.md')
     )
 

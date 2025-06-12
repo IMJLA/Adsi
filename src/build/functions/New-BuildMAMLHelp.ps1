@@ -1,11 +1,16 @@
-﻿<#
-.SYNOPSIS
-Build MAML help files from the Markdown files by using PlatyPS invoked by PowerShellBuild.
+﻿function New-BuildMAMLHelp {
 
-.DESCRIPTION
-This function creates MAML help files from existing Markdown help files using the PowerShellBuild module's PlatyPS integration.
-#>
-function New-BuildMAMLHelp {
+    <#
+    .SYNOPSIS
+    Build MAML help files from the Markdown files by using PlatyPS invoked by PowerShellBuild.
+
+    .DESCRIPTION
+    This function creates MAML help files from existing Markdown help files using the PowerShellBuild module's PlatyPS integration.
+
+    .EXAMPLE
+    New-BuildMAMLHelp -DocsMarkdownDir './docs/markdown' -DocsMamlDir './docs/maml'
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # Path to the directory containing Markdown help files

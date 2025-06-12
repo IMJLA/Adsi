@@ -1,16 +1,29 @@
 ﻿function Invoke-NpmCommand {
 
-    # Custom npm wrapper function
+    <#
+    .SYNOPSIS
+    Wrapper function for executing npm commands with proper output handling.
+
+    .DESCRIPTION
+    Executes npm commands in a separate job to handle Node.js output properly and provide
+    real-time feedback. Manages working directory changes and handles common npm issues.
+
+    .EXAMPLE
+    Invoke-NpmCommand -Command 'install' -WorkingDirectory 'C:\MyProject'
+
+    .EXAMPLE
+    Invoke-NpmCommand -Command 'run build'
+    #>
 
     [CmdletBinding()]
     param(
-        # The npm command to execute
+
+        # The npm command to execute (e.g., 'install', 'run build', 'audit fix')
         [Parameter(Mandatory)]
         [string]$Command,
 
-        [string]$WorkingDirectory = (Get-Location).Path,
-
-        [switch]$PassThru
+        # The directory where the npm command should be executed. Defaults to current directory
+        [string]$WorkingDirectory = (Get-Location).Path
 
     )
 
@@ -36,10 +49,6 @@
         OutputPrefix         = ''
         EnvironmentVariables = $npmEnvironment
         InformationAction    = 'Continue'
-    }
-
-    if ($PassThru) {
-        $splat.PassThru = $true
     }
 
     Write-Verbose "`t`t`$EnvironmentVariables = @{ 'FORCE_COLOR'='1'; 'NPM_CONFIG_COLOR'='always'; 'TERM'='xterm-256color'; 'COLUMNS'='200'; 'LINES'='50' }"

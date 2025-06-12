@@ -1,7 +1,20 @@
 ﻿function Test-BuildOnlineHelpPrereq {
+
+    <#
+    .SYNOPSIS
+    Tests if online help prerequisites are met.
+
+    .DESCRIPTION
+    Checks if npm is installed and available, which is required for building the online help website.
+
+    .EXAMPLE
+    Test-BuildOnlineHelpPrereq -NewLine "`r`n"
+    #>
+
     [CmdletBinding()]
     [OutputType([bool])]
     param(
+        # Character sequence for line separation in output
         [string]$NewLine
     )
 

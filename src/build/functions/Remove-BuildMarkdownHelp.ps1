@@ -1,11 +1,16 @@
-﻿<#
-.SYNOPSIS
-Remove existing Markdown help files to prepare for PlatyPS to build new ones.
+﻿function Remove-BuildMarkdownHelp {
 
-.DESCRIPTION
-This function removes all existing Markdown help files from the specified directory to ensure a clean state before generating new help documentation.
-#>
-function Remove-BuildMarkdownHelp {
+    <#
+    .SYNOPSIS
+    Remove existing Markdown help files to prepare for PlatyPS to build new ones.
+
+    .DESCRIPTION
+    This function removes all existing Markdown help files from the specified directory to ensure a clean state before generating new help documentation.
+
+    .EXAMPLE
+    Remove-BuildMarkdownHelp -DocsMarkdownDir './docs/markdown' -DocsDefaultLocale 'en-US'
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # Path to the Markdown help directory containing locale subdirectories

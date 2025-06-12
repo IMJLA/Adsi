@@ -1,35 +1,26 @@
 ﻿function New-OnlineHelpWebsite {
+
     <#
     .SYNOPSIS
-    Create Docusaurus scaffolding for the online help website.
+    Creates a new Docusaurus-based online help website for a PowerShell module.
 
     .DESCRIPTION
-    Scaffolds the skeleton of the Online Help website with Docusaurus which is written
-    in TypeScript and uses React.js.
-
-    .PARAMETER ModuleName
-    The name of the module for which to create the scaffolding.
-
-    .PARAMETER DocsOnlineHelpRoot
-    The root directory where the online help will be created.
-
-    .PARAMETER DocsOnlineHelpDir
-    The directory where the online help website will be created.
+    This function creates a new online help website using Docusaurus by running the create command
+    and setting up the initial structure for PowerShell module documentation.
 
     .EXAMPLE
-    New-OnlineHelpWebsite -ModuleName 'MyModule' -DocsOnlineHelpRoot 'C:\docs\online' -DocsOnlineHelpDir 'C:\docs\online\MyModule'
+    New-OnlineHelpWebsite -DocsOnlineHelpDir 'C:\docs\online\MyModule' -ModuleName 'MyModule'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # The directory where the online help website should be created
         [Parameter(Mandatory)]
-        [string]$ModuleName,
+        [string]$DocsOnlineHelpDir,
 
+        # The name of the module for which the help website is being created
         [Parameter(Mandatory)]
-        [string]$DocsOnlineHelpRoot,
-
-        [Parameter(Mandatory)]
-        [string]$DocsOnlineHelpDir
+        [string]$ModuleName
     )
 
     $Location = Get-Location

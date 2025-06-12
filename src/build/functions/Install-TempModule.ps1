@@ -1,4 +1,5 @@
 ﻿function Install-TempModule {
+
     <#
     .SYNOPSIS
     Install a module temporarily for help generation.
@@ -7,24 +8,19 @@
     Creates a temporary module installation directory and copies the built module files
     to it so the module can be loaded by name for help generation.
 
-    .PARAMETER ModuleName
-    The name of the module to install.
-
-    .PARAMETER ModulePath
-    The directory containing the built module files.
-
     .EXAMPLE
-    Install-TempModule -ModuleName 'MyModule' -Path 'C:\Build\Output'
+    Install-TempModule -ModuleName 'MyModule' -ModulePath 'C:\Build\Output'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([string])]
-
     param(
 
+        # The name of the module to install
         [Parameter(Mandatory)]
         [string]$ModuleName,
 
+        # The directory containing the built module files
         [Parameter(Mandatory)]
         [string]$ModulePath
     )

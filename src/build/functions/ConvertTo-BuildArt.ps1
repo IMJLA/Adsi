@@ -6,15 +6,13 @@
     .DESCRIPTION
     This function converts SVG files to PNG format using Inkscape.
 
-    .PARAMETER Path
-    The directory containing the SVG files to convert.
-
     .EXAMPLE
     ConvertTo-BuildArt -Path "C:\MyProject\static\img"
     #>
 
     [CmdletBinding()]
     param(
+        # The directory containing the SVG files to convert
         [Parameter(Mandatory)]
         [string]$Path
     )

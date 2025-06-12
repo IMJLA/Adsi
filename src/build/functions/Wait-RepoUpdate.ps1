@@ -1,4 +1,5 @@
 ﻿function Wait-RepoUpdate {
+
     <#
     .SYNOPSIS
     Wait for a module version to appear in a PowerShell repository.
@@ -7,21 +8,6 @@
     This function polls a PowerShell repository until the specified module version becomes available,
     or until a timeout is reached.
 
-    .PARAMETER ModuleName
-    The name of the module to wait for.
-
-    .PARAMETER Repository
-    The PowerShell repository to check.
-
-    .PARAMETER ExpectedVersion
-    The version of the module to wait for.
-
-    .PARAMETER TimeoutSeconds
-    Maximum time to wait in seconds. Default is 60.
-
-    .PARAMETER IntervalSeconds
-    Interval between checks in seconds. Default is 1.
-
     .EXAMPLE
     Wait-RepoUpdate -ModuleName 'MyModule' -Repository 'PSGallery' -ExpectedVersion '1.0.0'
     #>
@@ -29,17 +15,22 @@
     [CmdletBinding()]
     [OutputType([bool])]
     param(
+        # The name of the module to wait for
         [Parameter(Mandatory)]
         [string]$ModuleName,
 
+        # The PowerShell repository to check
         [Parameter(Mandatory)]
         [string]$Repository,
 
+        # The version of the module to wait for
         [Parameter(Mandatory)]
         [version]$ExpectedVersion,
 
+        # Maximum time to wait in seconds. Default is 60
         [int]$TimeoutSeconds = 60,
 
+        # Interval between checks in seconds. Default is 1
         [int]$IntervalSeconds = 1
     )
 

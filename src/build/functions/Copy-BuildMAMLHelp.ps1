@@ -1,11 +1,16 @@
-﻿<#
-.SYNOPSIS
-Copy MAML help files to the build output directory.
+﻿function Copy-BuildMAMLHelp {
 
-.DESCRIPTION
-This function copies the generated MAML help files from the documentation directory to the module build output directory and validates the copy operation.
-#>
-function Copy-BuildMAMLHelp {
+    <#
+    .SYNOPSIS
+    Copy MAML help files to the build output directory.
+
+    .DESCRIPTION
+    This function copies the generated MAML help files from the documentation directory to the module build output directory and validates the copy operation.
+
+    .EXAMPLE
+    Copy-BuildMAMLHelp -DocsMamlDir './docs/maml' -BuildOutputDir './dist'
+    #>
+
     [CmdletBinding()]
     param(
         # Path to the MAML help directory (source)

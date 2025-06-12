@@ -8,12 +8,6 @@
     This function updates the working-directory and cache-dependency-path settings in GitHub Actions
     workflow files to match the current module name instead of hardcoded values.
 
-    .PARAMETER ModuleName
-    The name of the module to use in the workflow files.
-
-    .PARAMETER WorkflowDir
-    The directory containing the GitHub Actions workflow files. Defaults to '.github/workflows'.
-
     .EXAMPLE
     Update-BuildGitHubActionsWorkflow -ModuleName 'MyModule'
     #>
@@ -21,9 +15,11 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+        # The name of the module to use in the workflow files
         [Parameter(Mandatory)]
         [string]$ModuleName,
 
+        # The directory containing the GitHub Actions workflow files. Defaults to '.github/workflows'
         [string]$WorkflowDir = [IO.Path]::Combine('.github', 'workflows')
     )
 

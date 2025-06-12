@@ -1,17 +1,20 @@
-﻿<#
-.SYNOPSIS
-Uninstall a temporary module installation directory.
+﻿function Uninstall-TempModule {
 
-.DESCRIPTION
-Removes a temporary module installation directory that was created during the build process for help generation.
+    <#
+    .SYNOPSIS
+    Uninstall a temporary module installation directory.
 
-.EXAMPLE
-Uninstall-TempModule -ModuleInstallDir 'C:\temp\MyModule'
+    .DESCRIPTION
+    Removes a temporary module installation directory that was created during the build process for help generation.
 
-Removes the temporary module installation directory.
-#>
-function Uninstall-TempModule {
+    .EXAMPLE
+    Uninstall-TempModule -ModuleInstallDir 'C:\temp\MyModule'
+
+    Removes the temporary module installation directory.
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # Path to the temporary module installation directory to remove
         [Parameter(Mandatory)]
@@ -29,4 +32,5 @@ function Uninstall-TempModule {
             Write-InfoColor "`t# Successfully removed the temporary module installation directory." -ForegroundColor Green
         }
     }
+
 }

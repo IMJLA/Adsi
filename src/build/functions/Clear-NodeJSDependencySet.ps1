@@ -1,4 +1,5 @@
 ﻿function Clear-NodeJSDependencySet {
+
     <#
     .SYNOPSIS
     Clears corrupted Node.js dependencies by removing node_modules and package-lock.json files.
@@ -7,15 +8,13 @@
     This function removes corrupted node_modules directory and package-lock.json file,
     then triggers a clean reinstallation of dependencies.
 
-    .PARAMETER WorkingDirectory
-    The directory containing the Node.js project with corrupted dependencies.
-
     .EXAMPLE
     Clear-NodeJSDependencySet -WorkingDirectory "C:\MyProject"
     #>
 
     [CmdletBinding()]
     param(
+        # The directory containing the Node.js project with corrupted dependencies
         [Parameter(Mandatory)]
         [string]$WorkingDirectory
     )

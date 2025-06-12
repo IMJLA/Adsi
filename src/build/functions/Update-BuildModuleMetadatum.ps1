@@ -1,4 +1,5 @@
 ﻿function Update-BuildModuleMetadatum {
+
     <#
     .SYNOPSIS
     Updates the module metadata with a new version number.
@@ -6,23 +7,21 @@
     .DESCRIPTION
     Updates the ModuleVersion property in the specified module manifest file.
 
-    .PARAMETER ModuleManifestPath
-    Path to the module manifest (.psd1) file to update.
-
-    .PARAMETER NewVersion
-    The new version number to set in the module manifest.
-
     .EXAMPLE
     Update-BuildModuleMetadatum -ModuleManifestPath './MyModule.psd1' -NewVersion '1.2.3'
     #>
+
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
+        # Path to the module manifest (.psd1) file to update
         [Parameter(Mandatory)]
         [string]$ModuleManifestPath,
 
+        # The new version number to set in the module manifest
         [Parameter(Mandatory)]
         [version]$NewVersion,
 
+        # The help info URI for the module
         [Parameter(Mandatory)]
         [string]$HelpInfoUri
     )

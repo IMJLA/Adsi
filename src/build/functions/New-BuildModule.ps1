@@ -1,4 +1,5 @@
 ﻿function New-BuildModule {
+
     <#
     .SYNOPSIS
     Builds a PowerShell script module based on the source directory.
@@ -9,6 +10,7 @@
     .EXAMPLE
     New-ModuleBuild -SourceCodeDir './src' -ModuleName 'MyModule' -BuildOutputDir './dist' -BuildCompileModule $true
     #>
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
         # Path to the source code directory

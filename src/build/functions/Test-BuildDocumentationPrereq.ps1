@@ -1,8 +1,24 @@
 ﻿function Test-BuildDocumentationPrereq {
+
+    <#
+    .SYNOPSIS
+    Tests if documentation prerequisites are met.
+
+    .DESCRIPTION
+    Checks if documentation is enabled and returns a boolean indicating whether documentation
+    tasks should proceed.
+
+    .EXAMPLE
+    Test-BuildDocumentationPrereq -DocumentationEnabled $true -NewLine "`r`n"
+    #>
+
     [CmdletBinding()]
     [OutputType([bool])]
     param(
+        # Whether documentation is enabled
         [bool]$DocumentationEnabled,
+
+        # Character sequence for line separation in output
         [string]$NewLine
     )
 

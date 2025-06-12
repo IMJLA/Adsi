@@ -1,13 +1,11 @@
 ﻿function Test-BuildManifest {
+
     <#
     .SYNOPSIS
         Validates a PowerShell module manifest file.
 
     .DESCRIPTION
         Tests the specified module manifest file for validity and returns the manifest object if successful.
-
-    .PARAMETER Path
-        Path to the module manifest (.psd1) file to validate.
 
     .EXAMPLE
         Test-BuildManifest -Path 'C:\Module\MyModule.psd1'
@@ -18,8 +16,10 @@
         System.Management.Automation.PSModuleInfo
         Returns the validated module manifest object.
     #>
+
     [CmdletBinding()]
     param(
+        # Path to the module manifest (.psd1) file to validate.
         [Parameter(Mandatory)]
         [string]$Path
     )

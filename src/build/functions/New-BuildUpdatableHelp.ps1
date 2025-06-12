@@ -1,4 +1,5 @@
 ﻿function New-BuildUpdatableHelp {
+
     <#
     .SYNOPSIS
     Creates updatable help .cab files based on PlatyPS markdown help.
@@ -7,35 +8,29 @@
     Generates updatable help files by processing markdown help files in different locales
     and creating .cab files for each locale using PlatyPS.
 
-    .PARAMETER DocsMarkdownDir
-    Directory containing the markdown help files organized by locale.
-
-    .PARAMETER DocsMarkdownDefaultLocaleDir
-    Directory containing the default locale markdown files.
-
-    .PARAMETER BuildOutputDir
-    Directory where the built module files are located.
-
-    .PARAMETER DocsUpdateableDir
-    Output directory where the .cab files will be created.
-
-    .PARAMETER ModuleName
-    Name of the module for which help is being generated.
+    .EXAMPLE
+    New-BuildUpdatableHelp -DocsMarkdownDir './docs/markdown' -DocsMarkdownDefaultLocaleDir './docs/markdown/en-US' -BuildOutputDir './dist' -DocsUpdateableDir './docs/updateable' -ModuleName 'MyModule'
     #>
+
     [CmdletBinding(SupportsShouldProcess)]
     param(
+        # Directory containing the markdown help files organized by locale
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDir,
 
+        # Directory containing the default locale markdown files
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDefaultLocaleDir,
 
+        # Directory where the built module files are located
         [Parameter(Mandatory)]
         [string]$BuildOutputDir,
 
+        # Output directory where the .cab files will be created
         [Parameter(Mandatory)]
         [string]$DocsUpdateableDir,
 
+        # Name of the module for which help is being generated
         [Parameter(Mandatory)]
         [string]$ModuleName
     )

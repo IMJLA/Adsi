@@ -1,12 +1,25 @@
 ﻿function Copy-BuildUpdateableHelp {
 
+    <#
+    .SYNOPSIS
+    Copies updatable help files to the online help website directory.
+
+    .DESCRIPTION
+    This function copies updatable help .cab files and HelpInfo.xml files from the updatable help
+    directory to the online help website's static directory for download by users.
+
+    .EXAMPLE
+    Copy-BuildUpdateableHelp -DocsUpdateableDir './docs/updateable' -DocsOnlineHelpDir './docs/online/MyModule'
+    #>
+
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool])]
-
     param(
+        # Directory containing the updatable help files
         [Parameter(Mandatory)]
         [string]$DocsUpdateableDir,
 
+        # Directory of the online help website
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir
     )

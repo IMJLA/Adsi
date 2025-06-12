@@ -1,22 +1,11 @@
 ﻿function Test-OnlineHelpWebsite {
+
     <#
     .SYNOPSIS
     Test if online help website exists.
 
     .DESCRIPTION
     Checks if the online help website directory already exists for the module.
-
-    .PARAMETER ModuleName
-    The name of the module.
-
-    .PARAMETER DocsOnlineHelpRoot
-    The root directory for online help.
-
-    .PARAMETER Root
-    The root directory to set as the working location.
-
-    .PARAMETER NewLine
-    Character sequence for line separation in output.
 
     .EXAMPLE
     Test-OnlineHelpWebsite -ModuleName 'MyModule' -DocsOnlineHelpRoot 'C:\docs\online' -Root 'C:\ProjectRoot' -NewLine "`r`n"
@@ -25,15 +14,19 @@
     [CmdletBinding()]
     [OutputType([bool])]
     param(
+        # The name of the module
         [Parameter(Mandatory)]
         [string]$ModuleName,
 
+        # The root directory for online help
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpRoot,
 
+        # The root directory to set as the working location
         [Parameter(Mandatory)]
         [string]$Root,
 
+        # Character sequence for line separation in output
         [Parameter(Mandatory)]
         [string]$NewLine
     )
