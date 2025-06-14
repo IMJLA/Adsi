@@ -189,8 +189,8 @@ Properties {
     # URL of the hosted online help website
     [string]$DocsOnlineHelpUrl = "https://$GitHubOrgName.github.io/$ModuleName/"
 
-    # URL of the hosted updateable help files for download by Update-Help
-    [string]$DocsUpdateableHelpInfoUri = "$DocsOnlineHelpUrl`UpdateableHelp/"
+    # Base URL for updateable help files - will be completed with specific HelpInfo.xml filename later
+    [string]$DocsUpdateableHelpBaseUri = "$DocsOnlineHelpUrl`UpdateableHelp/"
 
     # Path to the module script file
     [string]$ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
@@ -485,6 +485,9 @@ Task -name TestModuleManifest -action {
 
     $script:ManifestTest = Test-BuildManifest @testManifestSplat
 
+    # Construct the proper HelpInfoUri with HelpInfo.xml filename format
+    $script:DocsUpdateableHelpInfoUri = "$DocsUpdateableHelpBaseUri$ModuleName`_$($script:ManifestTest.Guid))`_HelpInfo.xml"
+
 } -description 'Validate the module manifest'
 
 
@@ -503,7 +506,7 @@ task -name UpdateBuildOutputDirVariable -depends DetermineNewVersionNumber -acti
 
 Task -name UpdateModuleVersion -depends UpdateBuildOutputDirVariable -action {
 
-    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion -HelpInfoUri $DocsUpdateableHelpInfoUri @metadataSplat
+    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion -HelpInfoUri $script:DocsUpdateableHelpInfoUri @metadataSplat
 
 } -description 'Update the module manifest with the new version number'
 
@@ -619,7 +622,7 @@ Task -name UpdateMarkDownHelp -depends ImportModule -action {
 
 Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
-    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $DocsUpdateableHelpInfoUri @buildMarkdownHelpSplat
+    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $script:DocsUpdateableHelpInfoUri @buildMarkdownHelpSplat
 
 } -description 'Generate markdown files from the module help using PlatyPS'
 

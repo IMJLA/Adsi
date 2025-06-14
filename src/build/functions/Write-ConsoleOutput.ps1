@@ -18,10 +18,10 @@
 
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from command output')]
+
     param(
 
         # The output content to display (array of strings or objects)
-        [Parameter(ValueFromPipeline)]
         $Output,
 
         # Optional prefix to add to each line of output
@@ -63,9 +63,11 @@
                 ''
             }
         }
+
         if ($PassThru) {
             return $linesToOutput
         }
+
     }
 
 }
