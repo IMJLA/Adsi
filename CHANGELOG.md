@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.524] - 2025-06-14
+### Changed
+- uh oh spaghettios
+
+## [5.0.523] - 2025-06-14
+### Changed
+- retry build after fixing ntfs perms
+
+## [5.0.522] - 2025-06-14
+### Changed
+- retry build
+
+## [5.0.520] - 2025-06-14
+### Changed
+- death to OneDrive
+
+## [5.0.519] - 2025-06-14
+### Changed
+- retry clean build with all TitleCase things
+
+## [5.0.518] - 2025-06-14
+### Changed
+- retry clean all-TitleCase build
+
 ## [5.0.517] - 2025-06-14
 ### Added
 - add task to cleanup downloadable help every time

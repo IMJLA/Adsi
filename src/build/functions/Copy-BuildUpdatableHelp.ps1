@@ -78,18 +78,36 @@
                 $lowerCaseFileName = $ModuleName.ToLowerInvariant() + "_$ModuleGuid" + '_HelpInfo.xml'
                 $lowerCaseFilePath = $destinationFile = [IO.Path]::Combine($destinationPath, $lowerCaseFileName)
 
-                Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$lowerCaseFilePath' -Force"
-                Copy-Item -Path $helpFile.FullName -Destination $lowerCaseFilePath -Force -ErrorAction Stop
-                pause
+                #Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$lowerCaseFilePath' -Force"
+                #Copy-Item -Path $helpFile.FullName -Destination $lowerCaseFilePath -Force -ErrorAction Stop
             }
 
             # Copy the original file to the website's directory for static content
             Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$destinationFile' -Force"
             Copy-Item -Path $helpFile.FullName -Destination $destinationFile -Force -ErrorAction Stop
-            pause
 
         }
+
     }
+
+
+
+    $html = @"
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="refresh" content="0; url=$($ModuleName.ToLowerInvariant())`_$ModuleGuid`_HelpInfo.xml">
+    </head>
+    <body>
+        Redirecting to helpInfo.xml…
+    </body>
+</html>
+
+"@
+    #$destinationFile = [IO.Path]::Combine($destinationPath, 'index.html')
+    #Write-Information "`tSet-Content -Path '$destinationFile' -Value '`$html' -Force -Encoding UTF8BOM"
+    #Set-Content -Path $destinationFile -Value $html -Force -ErrorAction Stop -Encoding UTF8BOM
+
 
     Write-InfoColor "`t# Successfully copied updatable help files to online help website." -ForegroundColor Green
     return $true

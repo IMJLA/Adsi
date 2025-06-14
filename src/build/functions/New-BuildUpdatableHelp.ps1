@@ -63,19 +63,6 @@
         #$ModuleRootHelpInfoPath = [IO.Path]::Combine($BuildOutputDir, 'HelpInfo.xml')
         Write-Information "`tCopy-Item -Path '$XmlPath' -Destination '$BuildOutputDir' -Force"
         Copy-Item -Path $HelpInfoXml.FullName -Destination $BuildOutputDir -Force -ErrorAction 'Stop'
-
-        $html = @"
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="refresh" content="0; url=$ModuleName`_$ModuleGuid`_HelpInfo.xml">
-    </head>
-    <body>
-        Redirecting to helpInfo.xml…
-    </body>
-</html>
-
-"@
         Write-InfoColor "`t# Successfully created updatable help HelpInfo.xml with HelpContent.cab files for each locale." -ForegroundColor Green
 
     }
