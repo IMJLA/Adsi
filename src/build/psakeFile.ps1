@@ -484,8 +484,11 @@ Task -name TestModuleManifest -action {
 
     $script:ManifestTest = Test-BuildManifest @testManifestSplat
 
-    # Construct the proper HelpInfoUri with HelpInfo.xml filename format
-    $script:DocsUpdateableHelpInfoUri = "$DocsUpdateableHelpBaseUri$ModuleName`_$($script:ManifestTest.Guid))`_HelpInfo.xml"
+    # Construct the proper HelpInfoUri with HelpInfo.xml filename format (for module manifest)
+    $script:DocsUpdateableHelpInfoUri = "$DocsUpdateableHelpBaseUri$ModuleName`_$($script:ManifestTest.Guid)`_HelpInfo.xml"
+
+    # Construct the proper FwLink with CAB filename format (for PlatyPS)
+    $script:DocsFwLink = "$DocsUpdateableHelpBaseUri$ModuleName`_$($script:ManifestTest.Guid)`_$DocsDefaultLocale`_HelpContent.cab"
 
 } -description 'Validate the module manifest'
 
@@ -629,7 +632,7 @@ Task -name UpdateMarkDownHelp -depends ImportModule -action {
 
 Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
-    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $script:DocsUpdateableHelpInfoUri @script:buildMarkdownHelpSplat
+    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -FwLink $script:DocsFwLink @script:buildMarkdownHelpSplat
 
 } -description 'Generate markdown files from the module help using PlatyPS'
 

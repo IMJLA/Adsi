@@ -3,7 +3,7 @@ external help file: Adsi-help.xml
 Module Name: Adsi
 ModuleGuid: 282a2aed-9567-49a1-901c-122b7831a805
 ModuleName: Adsi
-ModuleVersion: 5.0.508
+ModuleVersion: 5.0.509
 online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
 schema: 2.0.0
 ---

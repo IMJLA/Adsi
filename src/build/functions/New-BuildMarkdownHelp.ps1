@@ -35,9 +35,9 @@
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDefaultLocaleDir,
 
-        # Help info URI for the module
+        # Forward link URL for the help CAB file
         [Parameter(Mandatory)]
-        [string]$HelpInfoUri,
+        [string]$FwLink,
 
         # Metadata for the help files
         [hashtable]$Metadata = @{}
@@ -47,7 +47,7 @@
     $markdownHelpParams = @{
         'AlphabeticParamsOrder' = $true
         'ErrorAction'           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
-        'FwLink'                = $HelpInfoUri
+        'FwLink'                = $FwLink
         'HelpVersion'           = $HelpVersion
         'Locale'                = $DocsDefaultLocale
         'Metadata'              = $Metadata
@@ -59,7 +59,7 @@
 
     if ($PSCmdlet.ShouldProcess("Module '$ModuleName'", 'Generate markdown help files')) {
 
-        Write-Information "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$HelpVersion' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true -Metadata @{ $($Metadata.GetEnumerator() | ForEach-Object { "$($_.Key) = '$($_.Value)'" }) } -FwLink '$HelpInfoUri'" -InformationAction 'Continue'
+        Write-Information "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$HelpVersion' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true -Metadata @{ $($Metadata.GetEnumerator() | ForEach-Object { "$($_.Key) = '$($_.Value)'" }) } -FwLink '$FwLink'" -InformationAction 'Continue'
         $null = New-MarkdownHelp @markdownHelpParams
         Write-InfoColor "`t# Successfully generated Markdown help files." -ForegroundColor Green
     }
