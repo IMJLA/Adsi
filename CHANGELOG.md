@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.514] - 2025-06-14
+### Changed
+- retry 404 fix
+
 ## [5.0.513] - 2025-06-14
 ### Fixed
 - fix 404

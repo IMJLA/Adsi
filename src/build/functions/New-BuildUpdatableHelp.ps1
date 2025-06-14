@@ -64,29 +64,6 @@
         Write-Information "`tCopy-Item -Path '$XmlPath' -Destination '$BuildOutputDir' -Force"
         Copy-Item -Path $HelpInfoXml.FullName -Destination $BuildOutputDir -Force -ErrorAction 'Stop'
 
-        <#
-        PowerShell’s Update-Help does exactly two lookups for your HelpInfo.xml:
-
-        A “lower-case” trial: It takes your module’s Name (Adsi) and does a ToLowerInvariant(), so it first GETs …/UpdateableHelp/adsi_<GUID>_HelpInfo.xml (hence your 404).
-
-        The “correct-case” retry: It then GETs …/UpdateableHelp/Adsi_<GUID>_HelpInfo.xml which succeeds and lets it parse the <HelpContentUri> element properly.
-
-        Because GitHub Pages is case-sensitive, that first lowercase attempt will always 404 if you only checked in the PascalCase file. There’s no built-in way to suppress it—it’s simply Update-Help’s fallback logic at work, logged because you ran -Verbose.
-
-        You have three options:
-
-        • Ignore it It’s only a verbose log line, and Update-Help proceeds normally once the correct file is found.
-
-        • Mirror the lowercase filename Add a second copy (or redirect) named adsi_282a2aed-9567-49a1-901c-122b7831a805_HelpInfo.xml in the same folder. Then both requests return 200.
-
-        • Host locally via -SourcePath If you don’t want any HTTP lookups at all, build cab + xml locally and call: powershell Update-Help -Module Adsi -SourcePath 'C:\MyHelpRepo' -Force -Verbose (bypasses the web lookup entirely).
-
-        In practice most folks just ignore the first 404—once the correct-case URI succeeds, your updatable help installs without any further errors.
-        #>
-        $Lowercase = [IO.Path]::Combine($BuildOutputDir, "$($ModuleName.ToLowerInvariant())`_$ModuleGuid`_HelpInfo.xml")
-        Write-Information "`tCopy-Item -Path '$XmlPath' -Destination '$Lowercase' -Force"
-        Copy-Item -Path $HelpInfoXml.FullName -Destination $Lowercase -Force -ErrorAction 'Stop'
-
         $html = @"
 <!DOCTYPE html>
 <html>
