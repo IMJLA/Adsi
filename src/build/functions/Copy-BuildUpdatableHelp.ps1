@@ -44,11 +44,24 @@
     }
     pause
     foreach ($helpFile in $UpdatableHelpFiles) {
+
         $destinationFile = [IO.Path]::Combine($destinationPath, $helpFile.Name)
 
         if ($PSCmdlet.ShouldProcess($helpFile.FullName, 'Copy Help File to Online Help Website')) {
 
-            <#
+            # Copy the original file to the website's directory for static content
+            Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$destinationFile' -Force"
+            Copy-Item -Path $helpFile.FullName -Destination $destinationFile -Force -ErrorAction Stop
+            pause
+
+        }
+
+    }
+
+
+
+
+    <#
             PowerShell’s Update-Help does exactly two lookups for your HelpInfo.xml:
 
             A “lower-case” trial: It takes your module’s Name (Adsi) and does a ToLowerInvariant(), so it first GETs …/UpdatableHelp/adsi_<GUID>_HelpInfo.xml (hence your 404).
@@ -66,7 +79,7 @@
             • Host locally via -SourcePath If you don’t want any HTTP lookups at all, build cab + xml locally and call: powershell Update-Help -Module Adsi -SourcePath 'C:\MyHelpRepo' -Force -Verbose (bypasses the web lookup entirely).
 
             In practice most folks just ignore the first 404—once the correct-case URI succeeds, your updatable help installs without any further errors.
-            #>
+
             # If the file is the HelpInfo.xml, also copy it with a lowercase name to avoid 404 errors
             if ($helpFile.Name -like '*_HelpInfo.xml') {
                 $HelpInfoXml = $helpFile
@@ -81,17 +94,6 @@
                 #Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$lowerCaseFilePath' -Force"
                 #Copy-Item -Path $helpFile.FullName -Destination $lowerCaseFilePath -Force -ErrorAction Stop
             }
-
-            # Copy the original file to the website's directory for static content
-            Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$destinationFile' -Force"
-            Copy-Item -Path $helpFile.FullName -Destination $destinationFile -Force -ErrorAction Stop
-
-        }
-
-    }
-
-
-
     $html = @"
 <!DOCTYPE html>
 <html>
@@ -104,9 +106,10 @@
 </html>
 
 "@
-    #$destinationFile = [IO.Path]::Combine($destinationPath, 'index.html')
-    #Write-Information "`tSet-Content -Path '$destinationFile' -Value '`$html' -Force -Encoding UTF8BOM"
-    #Set-Content -Path $destinationFile -Value $html -Force -ErrorAction Stop -Encoding UTF8BOM
+    $destinationFile = [IO.Path]::Combine($destinationPath, 'index.html')
+    Write-Information "`tSet-Content -Path '$destinationFile' -Value '`$html' -Force -Encoding UTF8BOM"
+    Set-Content -Path $destinationFile -Value $html -Force -ErrorAction Stop -Encoding UTF8BOM
+    #>
 
 
     Write-InfoColor "`t# Successfully copied updatable help files to online help website." -ForegroundColor Green
