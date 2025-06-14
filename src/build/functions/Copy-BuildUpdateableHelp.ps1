@@ -47,10 +47,6 @@
         $destinationFile = [IO.Path]::Combine($destinationPath, $helpFile.Name)
 
         if ($PSCmdlet.ShouldProcess($helpFile.FullName, 'Copy Help File to Online Help Website')) {
-            Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$destinationFile' -Force"
-            Copy-Item -Path $helpFile.FullName -Destination $destinationFile -Force
-
-
 
             <#
             PowerShell’s Update-Help does exactly two lookups for your HelpInfo.xml:
@@ -83,8 +79,12 @@
                 $lowerCaseFilePath = $destinationFile = [IO.Path]::Combine($destinationPath, $lowerCaseFileName)
 
                 Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$lowerCaseFilePath' -Force"
-                Copy-Item -Path $helpFile.FullName -Destination $lowerCaseFilePath -Force
+                Copy-Item -Path $helpFile.FullName -Destination $lowerCaseFilePath -Force -ErrorAction Stop
             }
+
+            # Copy the original file to the website's directory for static content
+            Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$destinationFile' -Force"
+            Copy-Item -Path $helpFile.FullName -Destination $destinationFile -Force -ErrorAction Stop
 
         }
     }

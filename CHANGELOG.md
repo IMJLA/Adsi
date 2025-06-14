@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.516] - 2025-06-14
+### Changed
+- troubleshoot missing lowercaseinvariant file
+
+## [5.0.515] - 2025-06-14
+### Changed
+- troubleshoot missing lowercase file
+
 ## [5.0.514] - 2025-06-14
 ### Changed
 - retry 404 fix
