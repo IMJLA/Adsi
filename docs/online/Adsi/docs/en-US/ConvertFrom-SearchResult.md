@@ -1,6 +1,9 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
+ModuleGuid: 282a2aed-9567-49a1-901c-122b7831a805
+ModuleName: Adsi
+ModuleVersion: 5.0.507
 online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult
 schema: 2.0.0
 ---

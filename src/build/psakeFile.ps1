@@ -419,7 +419,6 @@ Properties {
 
     [hashtable]$copyMarkdownSplat = $MarkdownCopyParams + $IO # Splat for Copy-MarkdownForOnlineHelp
     [hashtable]$MarkdownRepairParams = $lineSplat + $MarkdownHelpParams + $ModuleNameSplat # Splat for Repair-BuildMarkdownHelp
-    [hashtable]$buildMarkdownHelpSplat = $MarkdownHelpParams + $ModuleNameSplat + $IO # Splat for New-BuildMarkdownHelp
     [hashtable]$fixMarkdownHelpSplat = $MarkdownRepairParams + $IO # Splat for Repair-BuildMarkdownHelp
     [hashtable]$buildUpdateableHelpSplat = $UpdatableHelpParams + $IO # Splat for New-BuildUpdatableHelp
 
@@ -495,6 +494,14 @@ Task -name TestModuleManifest -action {
 Task -name DetermineNewVersionNumber -Depends TestModuleManifest -action {
 
     $script:NewModuleVersion = Get-NewVersion -OldVersion $script:ManifestTest.Version @versionSplat
+
+    # Splat for New-BuildMarkdownHelp
+    [hashtable]$script:buildMarkdownHelpSplat = $MarkdownHelpParams + $ModuleNameSplat + $IO + @{ 'Metadata' = @{
+            'ModuleName'    = $ModuleName
+            'ModuleGuid'    = $script:ManifestTest.Guid
+            'ModuleVersion' = $script:NewModuleVersion
+        }
+    }
 
 } -description 'Determine the new version number based on the build parameters'
 
@@ -622,7 +629,7 @@ Task -name UpdateMarkDownHelp -depends ImportModule -action {
 
 Task -name BuildMarkdownHelp -depends UpdateMarkDownHelp -action {
 
-    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $script:DocsUpdateableHelpInfoUri @buildMarkdownHelpSplat
+    New-BuildMarkdownHelp -HelpVersion $script:NewModuleVersion -HelpInfoUri $script:DocsUpdateableHelpInfoUri @script:buildMarkdownHelpSplat
 
 } -description 'Generate markdown files from the module help using PlatyPS'
 

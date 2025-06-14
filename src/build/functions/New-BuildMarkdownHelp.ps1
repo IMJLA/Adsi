@@ -16,7 +16,9 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
+
         # Name of the module to generate help for
         [Parameter(Mandatory)]
         [string]$ModuleName,
@@ -35,7 +37,11 @@
 
         # Help info URI for the module
         [Parameter(Mandatory)]
-        [string]$HelpInfoUri
+        [string]$HelpInfoUri,
+
+        # Metadata for the help files
+        [hashtable]$Metadata = @{}
+
     )
 
     $markdownHelpParams = @{
@@ -44,6 +50,7 @@
         'FwLink'                = $HelpInfoUri
         'HelpVersion'           = $HelpVersion
         'Locale'                = $DocsDefaultLocale
+        'Metadata'              = $Metadata
         'Module'                = $ModuleName
         'OutputFolder'          = $DocsMarkdownDefaultLocaleDir
         'UseFullTypeName'       = $true
