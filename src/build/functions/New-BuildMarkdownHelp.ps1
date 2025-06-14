@@ -59,7 +59,7 @@
 
     if ($PSCmdlet.ShouldProcess("Module '$ModuleName'", 'Generate markdown help files')) {
 
-        Write-Information "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$HelpVersion' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true"
+        Write-Information "`tNew-MarkdownHelp -AlphabeticParamsOrder `$true -HelpVersion '$HelpVersion' -Locale '$DocsDefaultLocale' -Module '$ModuleName' -OutputFolder '$DocsMarkdownDefaultLocaleDir' -UseFullTypeName `$true -WithModulePage `$true -Metadata @{ $($Metadata.GetEnumerator() | ForEach-Object { "$($_.Key) = '$($_.Value)'" }) } -FwLink '$HelpInfoUri'" -InformationAction 'Continue'
         $null = New-MarkdownHelp @markdownHelpParams
         Write-InfoColor "`t# Successfully generated Markdown help files." -ForegroundColor Green
     }

@@ -3,7 +3,7 @@ external help file: Adsi-help.xml
 Module Name: Adsi
 ModuleGuid: 282a2aed-9567-49a1-901c-122b7831a805
 ModuleName: Adsi
-ModuleVersion: 5.0.507
+ModuleVersion: 5.0.508
 online version: https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid
 schema: 2.0.0
 ---

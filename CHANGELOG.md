@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.508] - 2025-06-14
+### Fixed
+- fix build console output
+
 ## [5.0.507] - 2025-06-14
 ### Fixed
 - fix yaml metadata in markdown help for new-externalhelpcab
