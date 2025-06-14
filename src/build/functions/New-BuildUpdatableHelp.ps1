@@ -76,9 +76,9 @@
 </html>
 
 "@
-        $html | Out-File -FilePath ([IO.Path]::Combine($DocsUpdateableDir, 'index.html')) -Encoding 'UTF8' -Force
-        $html | Out-File -FilePath ([IO.Path]::Combine($BuildOutputDir, 'index.html')) -Encoding 'UTF8' -Force
-        Write-InfoColor "`t# Successfully created updatable help .cab files for each locale." -ForegroundColor Green
+        #$html | Out-File -FilePath ([IO.Path]::Combine($DocsUpdateableDir, 'index.html')) -Encoding 'UTF8' -Force
+        #$html | Out-File -FilePath ([IO.Path]::Combine($BuildOutputDir, 'index.html')) -Encoding 'UTF8' -Force
+        Write-InfoColor "`t# Successfully created updatable help HelpInfo.xml with HelpContent.cab files for each locale." -ForegroundColor Green
 
     }
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.512] - 2025-06-14
+### Changed
+- test without index.html
+
 ## [5.0.511] - 2025-06-14
 ### Fixed
 - fix redirect url
