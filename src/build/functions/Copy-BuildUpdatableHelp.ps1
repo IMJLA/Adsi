@@ -1,4 +1,4 @@
-﻿function Copy-BuildUpdateableHelp {
+﻿function Copy-BuildUpdatableHelp {
 
     <#
     .SYNOPSIS
@@ -9,7 +9,7 @@
     directory to the online help website's static directory for download by users.
 
     .EXAMPLE
-    Copy-BuildUpdateableHelp -DocsUpdateableDir './docs/updateable' -DocsOnlineHelpDir './docs/online/MyModule'
+    Copy-BuildUpdatableHelp -DocsUpdatableDir './docs/updatable' -DocsOnlineHelpDir './docs/online/MyModule'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -17,14 +17,14 @@
     param(
         # Directory containing the updatable help files
         [Parameter(Mandatory)]
-        [string]$DocsUpdateableDir,
+        [string]$DocsUpdatableDir,
 
         # Directory of the online help website
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir
     )
 
-    $destinationPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'UpdateableHelp')
+    $destinationPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'UpdatableHelp')
 
     # Create the destination directory if it doesn't exist
     if (-not (Test-Path $destinationPath)) {
@@ -34,16 +34,16 @@
         }
     }
 
-    # Get the Updateable Help files (.cab files and HelpInfo.xml file) but exclude .zip files
-    Write-Verbose "`tGet-ChildItem -Path '$DocsUpdateableDir' -Exclude '*.zip'"
-    $UpdateableHelpFiles = Get-ChildItem -Path $DocsUpdateableDir -Exclude '*.zip'
+    # Get the Updatable Help files (.cab files and HelpInfo.xml file) but exclude .zip files
+    Write-Verbose "`tGet-ChildItem -Path '$DocsUpdatableDir' -Exclude '*.zip'"
+    $UpdatableHelpFiles = Get-ChildItem -Path $DocsUpdatableDir -Exclude '*.zip'
 
-    if ($UpdateableHelpFiles.Count -eq 0) {
-        Write-Warning "No updatable help files found in '$DocsUpdateableDir'"
+    if ($UpdatableHelpFiles.Count -eq 0) {
+        Write-Warning "No updatable help files found in '$DocsUpdatableDir'"
         return $false
     }
 
-    foreach ($helpFile in $UpdateableHelpFiles) {
+    foreach ($helpFile in $UpdatableHelpFiles) {
         $destinationFile = [IO.Path]::Combine($destinationPath, $helpFile.Name)
 
         if ($PSCmdlet.ShouldProcess($helpFile.FullName, 'Copy Help File to Online Help Website')) {
@@ -51,9 +51,9 @@
             <#
             PowerShell’s Update-Help does exactly two lookups for your HelpInfo.xml:
 
-            A “lower-case” trial: It takes your module’s Name (Adsi) and does a ToLowerInvariant(), so it first GETs …/UpdateableHelp/adsi_<GUID>_HelpInfo.xml (hence your 404).
+            A “lower-case” trial: It takes your module’s Name (Adsi) and does a ToLowerInvariant(), so it first GETs …/UpdatableHelp/adsi_<GUID>_HelpInfo.xml (hence your 404).
 
-            The “correct-case” retry: It then GETs …/UpdateableHelp/Adsi_<GUID>_HelpInfo.xml which succeeds and lets it parse the <HelpContentUri> element properly.
+            The “correct-case” retry: It then GETs …/UpdatableHelp/Adsi_<GUID>_HelpInfo.xml which succeeds and lets it parse the <HelpContentUri> element properly.
 
             Because GitHub Pages is case-sensitive, that first lowercase attempt will always 404 if you only checked in the PascalCase file. There’s no built-in way to suppress it—it’s simply Update-Help’s fallback logic at work, logged because you ran -Verbose.
 
@@ -80,11 +80,13 @@
 
                 Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$lowerCaseFilePath' -Force"
                 Copy-Item -Path $helpFile.FullName -Destination $lowerCaseFilePath -Force -ErrorAction Stop
+                pause
             }
 
             # Copy the original file to the website's directory for static content
             Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$destinationFile' -Force"
             Copy-Item -Path $helpFile.FullName -Destination $destinationFile -Force -ErrorAction Stop
+            pause
 
         }
     }

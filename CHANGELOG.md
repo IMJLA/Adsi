@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.517] - 2025-06-14
+### Added
+- add task to cleanup downloadable help every time
+
 ## [5.0.516] - 2025-06-14
 ### Changed
 - troubleshoot missing lowercaseinvariant file

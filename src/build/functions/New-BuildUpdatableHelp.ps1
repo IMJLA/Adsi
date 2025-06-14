@@ -9,7 +9,7 @@
     and creating .cab files for each locale using PlatyPS.
 
     .EXAMPLE
-    New-BuildUpdatableHelp -DocsMarkdownDir './docs/markdown' -DocsMarkdownDefaultLocaleDir './docs/markdown/en-US' -BuildOutputDir './dist' -DocsUpdateableDir './docs/updateable' -ModuleName 'MyModule'
+    New-BuildUpdatableHelp -DocsMarkdownDir './docs/markdown' -DocsMarkdownDefaultLocaleDir './docs/markdown/en-US' -BuildOutputDir './dist' -DocsUpdatableDir './docs/updatable' -ModuleName 'MyModule'
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -28,7 +28,7 @@
 
         # Output directory where the .cab files will be created
         [Parameter(Mandatory)]
-        [string]$DocsUpdateableDir,
+        [string]$DocsUpdatableDir,
 
         # Name of the module for which help is being generated
         [Parameter(Mandatory)]
@@ -37,7 +37,7 @@
         [string]$ModuleGuid
     )
 
-    if ($PSCmdlet.ShouldProcess('Updatable help .cab files', "Create for module '$ModuleName' in '$DocsUpdateableDir'")) {
+    if ($PSCmdlet.ShouldProcess('Updatable help .cab files', "Create for module '$ModuleName' in '$DocsUpdatableDir'")) {
         $helpLocales = (Get-ChildItem -Path $DocsMarkdownDir -Directory).Name
 
         # Generate updatable help files.  Note: this will currently update the version number in the module's MD
@@ -48,7 +48,7 @@
             $cabParams = @{
                 'CabFilesFolder'  = [IO.Path]::Combine($BuildOutputDir, $locale)
                 'LandingPagePath' = [IO.Path]::Combine($DocsMarkdownDefaultLocaleDir, "$ModuleName.md")
-                'OutputFolder'    = $DocsUpdateableDir
+                'OutputFolder'    = $DocsUpdatableDir
                 'ErrorAction'     = 'Stop'
             }
 
@@ -58,8 +58,8 @@
         }
 
         # Copy HelpInfo.xml to module root
-        $HelpInfoXml = Get-ChildItem -Path $DocsUpdateableDir -Filter '*_HelpInfo.xml' -File -ErrorAction 'Stop'
-        $XmlPath = [IO.Path]::Combine($DocsUpdateableDir, $HelpInfoXml.Name)
+        $HelpInfoXml = Get-ChildItem -Path $DocsUpdatableDir -Filter '*_HelpInfo.xml' -File -ErrorAction 'Stop'
+        $XmlPath = [IO.Path]::Combine($DocsUpdatableDir, $HelpInfoXml.Name)
         #$ModuleRootHelpInfoPath = [IO.Path]::Combine($BuildOutputDir, 'HelpInfo.xml')
         Write-Information "`tCopy-Item -Path '$XmlPath' -Destination '$BuildOutputDir' -Force"
         Copy-Item -Path $HelpInfoXml.FullName -Destination $BuildOutputDir -Force -ErrorAction 'Stop'

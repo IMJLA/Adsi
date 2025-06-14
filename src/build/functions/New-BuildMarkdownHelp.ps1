@@ -35,7 +35,7 @@
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDefaultLocaleDir,
 
-        # Forward link URL for updateable help
+        # Forward link URL for updatable help
         [Parameter(Mandatory)]
         [string]$FwLink,
 

@@ -33,7 +33,7 @@ Properties {
 
 
 
-    # PlatyPS (Markdown and Updateable help)
+    # PlatyPS (Markdown and Updatable help)
 
     # Whether or not to generate markdown documentation using PlatyPS
     [boolean]$DocumentationEnabled = $true
@@ -175,7 +175,7 @@ Properties {
     [string]$DocsMarkdownDir = [IO.Path]::Combine($DocsRootDir, 'markdown')
 
     # .CAB-formatted Updatable Help will be created in this folder
-    [string]$DocsUpdateableDir = [IO.Path]::Combine($DocsRootDir, 'updateable')
+    [string]$DocsUpdatableDir = [IO.Path]::Combine($DocsRootDir, 'Updatable')
 
     # Directory where the markdown help files will be copied to
     [string]$DocsMarkdownDefaultLocaleDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)
@@ -189,8 +189,8 @@ Properties {
     # URL of the hosted online help website
     [string]$DocsOnlineHelpUrl = "https://$GitHubOrgName.github.io/$ModuleName/"
 
-    # Base URL for updateable help files - will be completed with specific HelpInfo.xml filename later
-    [string]$DocsUpdateableHelpUri = "$DocsOnlineHelpUrl`UpdateableHelp/"
+    # Base URL for Updatable help files - will be completed with specific HelpInfo.xml filename later
+    [string]$DocsUpdatableHelpUri = "$DocsOnlineHelpUrl`UpdatableHelp/"
 
     # Path to the module script file
     [string]$ModuleFilePath = [IO.Path]::Combine($SourceCodeDir, "$ModuleName.psm1")
@@ -249,7 +249,7 @@ Properties {
     [hashtable]$buildWebsiteSplat = @{ 'DocsOnlineHelpDir' = $DocsOnlineHelpDir } # Splat for Update-OnlineHelpWebsite
     [hashtable]$uninstallBuildModuleSplat = $ModuleNameSplat + $IO # Splat for Uninstall-BuildModule
     [hashtable]$installBuildModuleSplat = $ModuleNameSplat + $IO + @{ 'MaxAttempts' = 3 } # Splat for Install-BuildModule
-    [hashtable]$removeUpdateableHelpSplat = $IO + @{ 'DocsUpdateableDir' = $DocsUpdateableDir } # Splat for Remove-BuildUpdatableHelp
+    [hashtable]$removeUpdatableHelpSplat = $IO + @{ 'DocsUpdatableDir' = $DocsUpdatableDir } # Splat for Remove-BuildUpdatableHelp
 
     # Splat for Get-NewVersion
     [hashtable]$versionSplat = $IO + @{
@@ -291,7 +291,7 @@ Properties {
     [hashtable]$UpdatableHelpParams = $ModuleNameSplat + @{
         'DocsMarkdownDir'              = $DocsMarkdownDir
         'DocsMarkdownDefaultLocaleDir' = $DocsMarkdownDefaultLocaleDir
-        'DocsUpdateableDir'            = $DocsUpdateableDir
+        'DocsUpdatableDir'             = $DocsUpdatableDir
     }
 
     # Splat for New-BuildGitHubRelease
@@ -359,10 +359,10 @@ Properties {
         'DocsMamlDir'     = $DocsMamlDir
     }
 
-    # Splat for New-BuildFolder (Updateable help)
-    [hashtable]$updateableFolderSplat = $IO + @{
-        'Path'        = $DocsUpdateableDir
-        'Description' = 'Updateable help'
+    # Splat for New-BuildFolder (Updatable help)
+    [hashtable]$UpdatableFolderSplat = $IO + @{
+        'Path'        = $DocsUpdatableDir
+        'Description' = 'Updatable help'
     }
 
     # Splat for New-BuildFolder (Online help root)
@@ -401,9 +401,14 @@ Properties {
         'Description' = 'Unit test output'
     }
 
-    # Splat for Copy-BuildUpdateableHelp
-    [hashtable]$copyUpdateableHelpSplat = $IO + @{
-        'DocsUpdateableDir' = $DocsUpdateableDir
+    # Splat for Copy-BuildUpdatableHelp
+    [hashtable]$copyUpdatableHelpSplat = $IO + @{
+        'DocsUpdatableDir'  = $DocsUpdatableDir
+        'DocsOnlineHelpDir' = $DocsOnlineHelpDir
+    }
+
+    # Splat for Remove-DownloadableHelp
+    [hashtable]$removeDownloadableHelpSplat = $IO + @{
         'DocsOnlineHelpDir' = $DocsOnlineHelpDir
     }
 
@@ -417,13 +422,10 @@ Properties {
         'DocsDefaultLocale' = $DocsDefaultLocale
     }
 
-
-    # Splat for New-BuildMarkdownHelp
-    [hashtable]$buildMarkdownHelpSplat = $MarkdownHelpParams + $ModuleNameSplat + $IO + @{ 'FwLink' = $DocsUpdateableHelpUri }
+    [hashtable]$buildMarkdownHelpSplat = $MarkdownHelpParams + $ModuleNameSplat + $IO + @{ 'FwLink' = $DocsUpdatableHelpUri } # Splat for New-BuildMarkdownHelp
     [hashtable]$copyMarkdownSplat = $MarkdownCopyParams + $IO # Splat for Copy-MarkdownForOnlineHelp
-    [hashtable]$MarkdownRepairParams = $lineSplat + $MarkdownHelpParams + $ModuleNameSplat # Splat for Repair-BuildMarkdownHelp
-    [hashtable]$fixMarkdownHelpSplat = $MarkdownRepairParams + $IO # Splat for Repair-BuildMarkdownHelp
-    [hashtable]$buildUpdateableHelpSplat = $UpdatableHelpParams + $IO # Splat for New-BuildUpdatableHelp
+    [hashtable]$fixMarkdownHelpSplat = $lineSplat + $MarkdownHelpParams + $ModuleNameSplat + $IO  # Splat for Repair-BuildMarkdownHelp
+    [hashtable]$buildUpdatableHelpSplat = $UpdatableHelpParams + $IO # Splat for New-BuildUpdatableHelp
 
 
 
@@ -461,11 +463,12 @@ Format, # Format the source code files.
 LintAnalysis, # Perform linting and analysis of the source code.
 FixModule, # Build the module.
 UpdateChangeLog, # Add an entry to the Change Log.
-DeleteUpdateableHelp, # Create Markdown and MAML help documentation.
-BuildUpdatableHelp, # Create Updateable help documentation.
+DeleteUpdatableHelp, # Create Markdown and MAML help documentation.
+BuildUpdatableHelp, # Create Updatable help documentation.
 CreateOnlineHelpFolder, # Create a folder for the Online Help website.
 CreateOnlineHelpWebsite, # Create the Online Help website scaffolding (Docusaurus).
-CopyUpdateableHelp, # Copy updateable help files to online help website.
+RemoveDownloadableHelp, # Remove existing downloadable help files.
+CopyUpdatableHelp, # Copy Updatable help files to online help website.
 BuildArt, # Build dynamic SVG art files for the Online Help website.
 CopyArt, # Build and copy static SVG art files to the Online Help website.
 ConvertArt, # Convert SVGs to PNG using Inkscape.
@@ -505,7 +508,7 @@ task -name UpdateBuildOutputDirVariable -depends DetermineNewVersionNumber -acti
 
 Task -name UpdateModuleVersion -depends UpdateBuildOutputDirVariable -action {
 
-    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion -HelpInfoUri $DocsUpdateableHelpUri @metadataSplat
+    Update-BuildModuleMetadatum -NewVersion $script:NewModuleVersion -HelpInfoUri $DocsUpdatableHelpUri @metadataSplat
 
 } -description 'Update the module manifest with the new version number'
 
@@ -667,25 +670,25 @@ Task -name CopyMAMLHelp -depends BuildMAMLHelp -action {
 
 } -description 'Copy MAML help files to the build output directory.'
 
-Task -name CreateUpdateableHelpFolder -depends CopyMAMLHelp -action {
+Task -name CreateUpdatableHelpFolder -depends CopyMAMLHelp -action {
 
-    New-BuildFolder @updateableFolderSplat
+    New-BuildFolder @UpdatableFolderSplat
 
-} -description 'Create a folder for the Updateable help files.'
+} -description 'Create a folder for the Updatable help files.'
 
-Task -name DeleteUpdateableHelp -depends CreateUpdateableHelpFolder -action {
+Task -name DeleteUpdatableHelp -depends CreateUpdatableHelpFolder -action {
 
-    $script:ReadyForUpdateableHelp = Remove-BuildUpdatableHelp @removeUpdateableHelpSplat
+    $script:ReadyForUpdatableHelp = Remove-BuildUpdatableHelp @removeUpdatableHelpSplat
 
-} -description 'Delete existing Updateable help files to prepare for PlatyPS to build new ones.'
+} -description 'Delete existing Updatable help files to prepare for PlatyPS to build new ones.'
 
 
-# Create Updateable help documentation.
-$UpdateableHelpPrereq = { Test-BuildUpdateableHelpPrereq -ReadyForUpdateableHelp $script:ReadyForUpdateableHelp @lineSplat @IO }
+# Create Updatable help documentation.
+$UpdatableHelpPrereq = { Test-BuildUpdatableHelpPrereq -ReadyForUpdatableHelp $script:ReadyForUpdatableHelp @lineSplat @IO }
 
-Task -name BuildUpdatableHelp -precondition $UpdateableHelpPrereq -action {
+Task -name BuildUpdatableHelp -precondition $UpdatableHelpPrereq -action {
 
-    New-BuildUpdatableHelp -BuildOutputDir $script:BuildOutputDir -ModuleGuid $script:ManifestTest.Guid @buildUpdateableHelpSplat
+    New-BuildUpdatableHelp -BuildOutputDir $script:BuildOutputDir -ModuleGuid $script:ManifestTest.Guid @buildUpdatableHelpSplat
 
 } -description 'Create updatable help .cab files based on PlatyPS markdown help.'
 
@@ -709,9 +712,15 @@ Task -name CreateOnlineHelpWebsite -precondition $OnlineHelpWebsiteMissing -acti
 
 } -description 'Scaffold the skeleton of the Online Help website with Docusaurus which is written in TypeScript and uses React.js.'
 
-Task -name CopyUpdateableHelp -action {
+Task -name RemoveDownloadableHelp -action {
 
-    $script:UpdateableHelpCopied = Copy-BuildUpdateableHelp @copyUpdateableHelpSplat
+    Remove-DownloadableHelp @removeDownloadableHelpSplat
+
+} -description 'Remove existing downloadable help files to prepare for copying fresh files.'
+
+Task -name CopyUpdatableHelp -action {
+
+    $script:UpdatableHelpCopied = Copy-BuildUpdatableHelp @copyUpdatableHelpSplat
 
 } -description 'Copy updatable help files to the online help website static directory.'
 
