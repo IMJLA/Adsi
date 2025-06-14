@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.527] - 2025-06-14
+### Changed
+- debug build
+
 ## [5.0.526] - 2025-06-14
 ### Fixed
 - fix need to clear build dir as well for updatable hdlp

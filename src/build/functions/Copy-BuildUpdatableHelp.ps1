@@ -42,7 +42,7 @@
         Write-Warning "No updatable help files found in '$DocsUpdatableDir'"
         return $false
     }
-
+    pause
     foreach ($helpFile in $UpdatableHelpFiles) {
         $destinationFile = [IO.Path]::Combine($destinationPath, $helpFile.Name)
 
