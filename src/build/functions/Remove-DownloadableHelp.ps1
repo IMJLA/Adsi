@@ -25,9 +25,17 @@
         if ($PSCmdlet.ShouldProcess($downloadableHelpPath, 'Remove downloadable help directory')) {
             Write-Information "`tRemove-Item -Path '$downloadableHelpPath' -Recurse -Force"
             Remove-Item -Path $downloadableHelpPath -Recurse -Force -ErrorAction Stop
-            Write-InfoColor "`t# Successfully removed existing downloadable help directory." -ForegroundColor Green
         }
-    } else {
-        Write-InfoColor "`t# No existing downloadable help directory found to remove." -ForegroundColor Green
     }
+
+    $downloadableHelpPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'build', 'UpdatableHelp')
+
+    if (Test-Path $downloadableHelpPath) {
+        if ($PSCmdlet.ShouldProcess($downloadableHelpPath, 'Remove downloadable help directory')) {
+            Write-Information "`tRemove-Item -Path '$downloadableHelpPath' -Recurse -Force"
+            Remove-Item -Path $downloadableHelpPath -Recurse -Force -ErrorAction Stop
+        }
+    }
+
+    Write-InfoColor "`t# Successfully removed existing downloadable help directory." -ForegroundColor Green
 }

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.526] - 2025-06-14
+### Fixed
+- fix need to clear build dir as well for updatable hdlp
+
+## [5.0.525] - 2025-06-14
+### Changed
+- debug build
+
 ## [5.0.524] - 2025-06-14
 ### Changed
 - uh oh spaghettios
