@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.511] - 2025-06-14
+### Fixed
+- fix redirect url
+
+## [5.0.510] - 2025-06-14
+### Fixed
+- fix help uri and add index.html
+
 ## [5.0.509] - 2025-06-14
 ### Fixed
 - fix fwlink

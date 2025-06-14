@@ -32,7 +32,9 @@
 
         # Name of the module for which help is being generated
         [Parameter(Mandatory)]
-        [string]$ModuleName
+        [string]$ModuleName,
+
+        [string]$ModuleGuid
     )
 
     if ($PSCmdlet.ShouldProcess('Updatable help .cab files', "Create for module '$ModuleName' in '$DocsUpdateableDir'")) {
@@ -61,6 +63,21 @@
         $ModuleRootHelpInfoPath = [IO.Path]::Combine($BuildOutputDir, 'HelpInfo.xml')
         Write-Information "`tCopy-Item -Path '$XmlPath' -Destination '$ModuleRootHelpInfoPath' -Force"
         Copy-Item -Path $HelpInfoXml.FullName -Destination $ModuleRootHelpInfoPath -Force -ErrorAction 'Stop'
+
+        $html = @"
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="refresh" content="0; url=$ModuleName`_$ModuleGuid`_HelpInfo.xml">
+    </head>
+    <body>
+        Redirecting to helpInfo.xml…
+    </body>
+</html>
+
+"@
+        $html | Out-File -FilePath ([IO.Path]::Combine($DocsUpdateableDir, 'index.html')) -Encoding 'UTF8' -Force
+        $html | Out-File -FilePath ([IO.Path]::Combine($BuildOutputDir, 'index.html')) -Encoding 'UTF8' -Force
         Write-InfoColor "`t# Successfully created updatable help .cab files for each locale." -ForegroundColor Green
 
     }

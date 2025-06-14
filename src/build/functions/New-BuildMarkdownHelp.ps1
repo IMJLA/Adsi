@@ -35,7 +35,7 @@
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDefaultLocaleDir,
 
-        # Forward link URL for the help CAB file
+        # Forward link URL for updateable help
         [Parameter(Mandatory)]
         [string]$FwLink,
 

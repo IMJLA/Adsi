@@ -1,9 +1,6 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-ModuleGuid: 282a2aed-9567-49a1-901c-122b7831a805
-ModuleName: Adsi
-ModuleVersion: 5.0.509
 online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation
 schema: 2.0.0
 ---
