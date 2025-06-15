@@ -346,10 +346,10 @@ function ConvertFrom-ScShowSidResult {
 
     param (
 
-
         [string[]]$Result
 
     )
+
     $dict = @{}
     ForEach ($Line in $Result) {
 
@@ -1115,33 +1115,94 @@ function Find-CachedWellKnownSID {
 }
 function Find-WinNTGroupMember {
 
-    # Find LDAP and WinNT group members to retrieve from their directories.
-    # Convert COM objects from the IADsGroup::Members method into strings.
-    # Use contextual information to determine whether each string represents an LDAP or a WinNT group member.
+    <#
+    .SYNOPSIS
+        Finds and categorizes LDAP and WinNT group members from a WinNT group's COM objects.
+
+    .DESCRIPTION
+        The Find-WinNTGroupMember function processes COM objects from the IADsGroup::Members method
+        to identify and categorize group members. It converts COM objects into directory paths and
+        uses contextual information to determine whether each member represents an LDAP or WinNT
+        group member.
+
+        The function analyzes the ADSI provider for each member's domain and categorizes them
+        accordingly:
+        - LDAP members are added to domain-specific LDAP queries for efficient batch processing
+        - WinNT members are collected for individual WinNT provider access
+        - Unknown providers default to WinNT for compatibility
+
+        This categorization allows the calling code to optimize directory queries by grouping
+        LDAP members into batch queries while handling WinNT members individually.
+
+    .EXAMPLE
+        $out = @{ 'LDAP://domain.com' = @(); 'WinNTMembers' = @() }
+        Find-WinNTGroupMember -DirectoryEntry $groupEntry -ComObject $members -Out $out -Cache ([ref]$cache)
+
+        This example processes group members and categorizes them into the output hashtable.
+
+    .EXAMPLE
+        $members = $group.Invoke('Members')
+        $results = @{}
+        Find-WinNTGroupMember -DirectoryEntry $group -ComObject $members -Out $results -LogSuffix 'from local group' -Cache ([ref]$cache)
+
+        This example shows processing members with a custom log suffix for tracking.
+
+    .INPUTS
+        System.DirectoryServices.DirectoryEntry
+        System.Object (COM Objects)
+        System.Collections.Hashtable
+        System.String
+
+    .OUTPUTS
+        None. The function modifies the passed hashtable reference to categorize members.
+
+    .NOTES
+        Author: IMJLA
+        This function is part of the ADSI module for Active Directory and WinNT group processing.
+
+        The function handles several scenarios:
+        - LDAP domain members are collected into SAM account name queries
+        - WinNT local members are stored as resolved directory paths
+        - Unknown providers are logged as warnings and treated as WinNT
+        - Well-known SID authorities are resolved to computer names
+
+        Performance considerations:
+        - Uses caching to reduce repeated ADSI server lookups
+        - Groups LDAP queries for batch processing efficiency
+        - Resolves SID authorities once per member
+
+    .LINK
+        https://IMJLA.github.io/Adsi/docs/en-US/Find-WinNTGroupMember
+
+    .LINK
+        Get-AdsiServer
+
+    .LINK
+        Split-DirectoryPath
+    #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-WinNTGroupMember')]
 
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
-
         $DirectoryEntry,
 
         # COM Objects representing the DirectoryPaths of the group members
-
         $ComObject,
 
+        # Hashtable to store categorized results with keys for LDAP queries and WinNT members
         [hashtable]$Out,
 
+        # String to append to log messages for context and debugging
         [string]$LogSuffix,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-
-
         [ref]$Cache
 
     )
+
     ForEach ($DirectoryMember in $ComObject) {
 
         # Convert the ComObjects into DirectoryEntry objects.
@@ -1208,21 +1269,17 @@ function Get-CachedDirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         [string]$Server,
 
         [string]$AccountName,
 
-
-
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -1555,10 +1612,8 @@ function Invoke-ScShowSid {
 
         [hashtable]$Log
 
-
-
-
     )
+
     if (
         $ComputerName -eq $ThisFqdn -or
         $ComputerName -eq $ThisHostName -or
@@ -4008,22 +4063,18 @@ function Get-AdsiGroup {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
-
         [string]$GroupName,
 
         # Properties of the group members to retrieve
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
 
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -4631,7 +4682,6 @@ function Get-DirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
@@ -4642,18 +4692,15 @@ function Get-DirectoryEntry {
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve
-
         [string[]]$PropertiesToLoad,
 
         # Mapping of SID types to descriptions used for converting security identifiers
-
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
 
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -7113,15 +7160,12 @@ function Search-Directory {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
 
         # Filter for the LDAP search
-
         [string]$Filter,
 
         # Number of results to return in each page
-
         [int]$PageSize = 1000,
 
         # Search scope (Base, OneLevel, or Subtree)
@@ -7129,19 +7173,17 @@ function Search-Directory {
         [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
 
         # Additional properties to return
-
         [string[]]$PropertiesToLoad,
 
         # Credentials to use
-
         [pscredential]$Credential,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
     )
+
 
 
     $DirectoryEntryParameters = @{ 'Cache' = $Cache }

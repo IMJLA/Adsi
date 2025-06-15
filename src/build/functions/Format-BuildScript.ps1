@@ -518,31 +518,14 @@
 
             # Ensure exactly one blank line after param block
             if (($endLine + 1) -lt $lines.Count) {
-                # Count consecutive blank lines after param block
-                $blankLinesAfterBlock = 0
-                $checkIdx = $endLine + 1
+                $nextLineAfterParam = $endLine + 1
 
-                while ($checkIdx -lt $lines.Count -and $lines[$checkIdx].Trim() -eq '') {
-                    $blankLinesAfterBlock++
-                    $checkIdx++
-                }
-
-                # If we have content after the param block, ensure exactly one blank line
-                if ($checkIdx -lt $lines.Count) {
-                    if ($blankLinesAfterBlock -ne 1) {
-                        # Remove all blank lines after param block
-                        for ($removeIdx = $endLine + $blankLinesAfterBlock; $removeIdx -gt $endLine; $removeIdx--) {
-                            if ($removeIdx -lt $lines.Count) {
-                                $lines = $lines[0..($removeIdx - 1)] + $lines[($removeIdx + 1)..($lines.Count - 1)]
-                                $modified = $true
-                            }
-                        }
-
-                        # Add exactly one blank line
-                        $lines = $lines[0..$endLine] + @('') + $lines[($endLine + 1)..($lines.Count - 1)]
-                        $modified = $true
-                        Write-Verbose "Fixed blank lines after param block at line $($endLine + 2)"
-                    }
+                # Check if the next line after param block is non-empty (needs blank line)
+                if ($nextLineAfterParam -lt $lines.Count -and $lines[$nextLineAfterParam].Trim() -ne '') {
+                    # Add blank line after param block
+                    $lines = $lines[0..$endLine] + @('') + $lines[$nextLineAfterParam..($lines.Count - 1)]
+                    $modified = $true
+                    Write-Verbose "Added blank line after param block at line $($endLine + 2)"
                 }
             }
 
@@ -821,23 +804,28 @@
                     if ($paramOpenLine -ge 0) {
                         # Count and fix blank lines after "param ("
                         $blankLinesAfterOpen = 0
+                        $nextNonBlankLine = -1
+
                         for ($lineIdx = $paramOpenLine + 1; $lineIdx -lt $firstRegionStartLine; $lineIdx++) {
                             if ($lines[$lineIdx].Trim() -eq '') {
                                 $blankLinesAfterOpen++
+                            } else {
+                                if ($nextNonBlankLine -eq -1) {
+                                    $nextNonBlankLine = $lineIdx
+                                }
                             }
                         }
 
-                        # Ensure exactly one blank line after "param ("
-                        if ($blankLinesAfterOpen -ne 1) {
-                            # Remove all blank lines after "param ("
-                            for ($lineIdx = $firstRegionStartLine - 1; $lineIdx -gt $paramOpenLine; $lineIdx--) {
-                                if ($lines[$lineIdx].Trim() -eq '') {
-                                    $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
-                                    $modified = $true
-                                }
+                        # Remove ALL blank lines after "param (" first
+                        for ($lineIdx = $firstRegionStartLine - 1; $lineIdx -gt $paramOpenLine; $lineIdx--) {
+                            if ($lines[$lineIdx].Trim() -eq '') {
+                                $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                $modified = $true
                             }
+                        }
 
-                            # Add exactly one blank line
+                        # Then add exactly one blank line if there are parameters
+                        if ($firstRegionStartLine -gt ($paramOpenLine + 1)) {
                             $lines = $lines[0..$paramOpenLine] + @('') + $lines[($paramOpenLine + 1)..($lines.Count - 1)]
                             $modified = $true
                             Write-Verbose 'Fixed blank lines after param block opening'

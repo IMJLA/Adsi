@@ -6,10 +6,10 @@
 
     param (
 
-
         [string[]]$Result
 
     )
+
     $dict = @{}
     ForEach ($Line in $Result) {
 

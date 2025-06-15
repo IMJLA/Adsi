@@ -16,10 +16,8 @@
 
         [hashtable]$Log
 
-
-
-
     )
+
     if (
         $ComputerName -eq $ThisFqdn -or
         $ComputerName -eq $ThisHostName -or
