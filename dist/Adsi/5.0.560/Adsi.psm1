@@ -1008,7 +1008,6 @@ function Find-AdsiProvider {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
-
     [OutputType([System.String])]
 
 
@@ -1440,7 +1439,6 @@ function Invoke-IADsGroupMembersMethod {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 
@@ -1517,7 +1515,6 @@ function Resolve-IdRefAppPkgAuth {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefAppPkgAuth')]
-
     [OutputType([PSCustomObject])]
 
 
@@ -1607,7 +1604,6 @@ function Resolve-IdRefAppPkgAuth {
 }
 function Resolve-IdRefBuiltIn {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefBuiltIn')]
-
     [OutputType([PSCustomObject])]
 
     param (
@@ -1679,7 +1675,6 @@ function Resolve-IdRefBuiltIn {
 }
 function Resolve-IdRefCached {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefCached')]
-
     [OutputType([PSCustomObject])]
 
     param (
@@ -1728,7 +1723,6 @@ function Resolve-IdRefCached {
 }
 function Resolve-IdRefGetDirEntry {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefGetDirEntry')]
-
     [OutputType([string])]
 
     param (
@@ -1755,7 +1749,6 @@ function Resolve-IdRefGetDirEntry {
 }
 function Resolve-IdRefSearchDir {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSearchDir')]
-
     [OutputType([string])]
 
     param (
@@ -1809,7 +1802,6 @@ function Resolve-IdRefSID {
             #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
-
     [OutputType([PSCustomObject])]
 
 
@@ -2010,7 +2002,6 @@ function Resolve-IdRefSID {
 }
 function Resolve-IdRefSvc {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSvc')]
-
     [OutputType([PSCustomObject])]
 
     param (
@@ -2215,7 +2206,6 @@ function Test-AdsiProvider {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
-
     [OutputType([System.String])]
 
 
@@ -2281,7 +2271,6 @@ function Add-DomainFqdnToLdapPath {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
-
     [OutputType([System.String])]
 
 
@@ -2373,7 +2362,6 @@ function Add-SidInfo {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
 
 
@@ -2611,7 +2599,6 @@ function ConvertFrom-ResolvedID {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
-
     [OutputType([void])]
 
 
@@ -2871,7 +2858,6 @@ function ConvertTo-DecStringRepresentation {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
-
     [OutputType([System.String])]
 
 
@@ -2915,7 +2901,6 @@ function ConvertTo-DistinguishedName {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
-
     [OutputType([System.String])]
 
 
@@ -3488,7 +3473,6 @@ function ConvertTo-Fqdn {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
-
     [OutputType([System.String])]
 
 
@@ -3568,7 +3552,6 @@ function ConvertTo-HexStringRepresentation {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation')]
-
     [OutputType([System.String[]])]
 
 
@@ -3607,7 +3590,6 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString')]
-
     [OutputType([System.String])]
 
 
@@ -3653,7 +3635,6 @@ function ConvertTo-SidByteArray {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
-
     [OutputType([System.Byte[]])]
 
 
@@ -3708,7 +3689,6 @@ function Expand-AdsiGroupMember {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 
@@ -3852,7 +3832,6 @@ function Expand-WinNTGroupMember {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 
@@ -3983,7 +3962,6 @@ function Find-LocalAdsiServerSid {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
-
     [OutputType([System.String])]
 
 
@@ -4051,7 +4029,6 @@ function Get-AdsiGroup {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 
@@ -4171,7 +4148,6 @@ function Get-AdsiGroupMember {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 
@@ -4393,7 +4369,6 @@ function Get-AdsiServer {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer')]
-
     [OutputType([System.String])]
 
 
@@ -4633,7 +4608,6 @@ function Get-CurrentDomain {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 
@@ -4699,7 +4673,6 @@ function Get-DirectoryEntry {
 
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
 
 
@@ -6714,7 +6687,6 @@ function Get-TrustedDomain {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
-
     [OutputType([PSCustomObject])]
 
 
@@ -6785,7 +6757,6 @@ function Get-WinNTGroupMember {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 
@@ -6982,7 +6953,6 @@ function Resolve-IdentityReference {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference')]
-
     [OutputType([PSCustomObject])]
 
 

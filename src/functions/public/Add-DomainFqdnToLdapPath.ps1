@@ -23,7 +23,6 @@
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
-
     [OutputType([System.String])]
 
 

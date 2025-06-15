@@ -1,6 +1,5 @@
 ﻿function Resolve-IdRefBuiltIn {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefBuiltIn')]
-
     [OutputType([PSCustomObject])]
 
     param (

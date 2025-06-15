@@ -30,7 +30,6 @@
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 

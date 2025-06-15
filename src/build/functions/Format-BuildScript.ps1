@@ -188,37 +188,62 @@
                 }
             }
 
-            # Find CmdletBinding attribute - only within this function's param block
-            $cmdletBinding = $null
+            # Find ALL function attributes - not just CmdletBinding and OutputType
+            $allAttributes = @()
             if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
-                $cmdletBinding = $function.Body.ParamBlock.Attributes | Where-Object {
-                    $_.TypeName.Name -eq 'CmdletBinding'
-                } | Select-Object -First 1
+                $allAttributes = $function.Body.ParamBlock.Attributes | Sort-Object { $_.Extent.StartLineNumber }
             }
 
-            if ($cmdletBinding) {
-                $components['CmdletBinding'] = @{
-                    StartLine = $cmdletBinding.Extent.StartLineNumber - 1
-                    EndLine   = $cmdletBinding.Extent.EndLineNumber - 1
-                    Content   = $lines[($cmdletBinding.Extent.StartLineNumber - 1)..($cmdletBinding.Extent.EndLineNumber - 1)]
+            if ($allAttributes.Count -gt 0) {
+                $firstAttribute = $allAttributes | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
+                $lastAttribute = $allAttributes | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -Last 1
+
+                # Collect all attribute content
+                $attributeContent = @()
+                foreach ($attr in $allAttributes) {
+                    $attrLines = $lines[($attr.Extent.StartLineNumber - 1)..($attr.Extent.EndLineNumber - 1)]
+                    $attributeContent += $attrLines
+                }
+
+                $components['Attributes'] = @{
+                    StartLine = $firstAttribute.Extent.StartLineNumber - 1
+                    EndLine   = $lastAttribute.Extent.EndLineNumber - 1
+                    Content   = $attributeContent
                 }
             }
+
+            # Remove the old CmdletBinding and OutputType logic since they're now part of Attributes
+            # Find CmdletBinding attribute - only within this function's param block
+            # $cmdletBinding = $null
+            # if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
+            #     $cmdletBinding = $function.Body.ParamBlock.Attributes | Where-Object {
+            #         $_.TypeName.Name -eq 'CmdletBinding'
+            #     } | Select-Object -First 1
+            # }
+
+            # if ($cmdletBinding) {
+            #     $components['CmdletBinding'] = @{
+            #         StartLine = $cmdletBinding.Extent.StartLineNumber - 1
+            #         EndLine   = $cmdletBinding.Extent.EndLineNumber - 1
+            #         Content   = $lines[($cmdletBinding.Extent.StartLineNumber - 1)..($cmdletBinding.Extent.EndLineNumber - 1)]
+            #     }
+            # }
 
             # Find OutputType attribute - only within this function's param block
-            $outputType = $null
-            if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
-                $outputType = $function.Body.ParamBlock.Attributes | Where-Object {
-                    $_.TypeName.Name -eq 'OutputType'
-                } | Select-Object -First 1
-            }
+            # $outputType = $null
+            # if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
+            #     $outputType = $function.Body.ParamBlock.Attributes | Where-Object {
+            #         $_.TypeName.Name -eq 'OutputType'
+            #     } | Select-Object -First 1
+            # }
 
-            if ($outputType) {
-                $components['OutputType'] = @{
-                    StartLine = $outputType.Extent.StartLineNumber - 1
-                    EndLine   = $outputType.Extent.EndLineNumber - 1
-                    Content   = $lines[($outputType.Extent.StartLineNumber - 1)..($outputType.Extent.EndLineNumber - 1)]
-                }
-            }
+            # if ($outputType) {
+            #     $components['OutputType'] = @{
+            #         StartLine = $outputType.Extent.StartLineNumber - 1
+            #         EndLine   = $outputType.Extent.EndLineNumber - 1
+            #         Content   = $lines[($outputType.Extent.StartLineNumber - 1)..($outputType.Extent.EndLineNumber - 1)]
+            #     }
+            # }
 
             # Find param block - only for this specific function
             if ($function.Body.ParamBlock) {
@@ -246,7 +271,7 @@
             } else {
                 # Check if the order inside the function is wrong
                 $insideComponents = @()
-                foreach ($comp in @('Requires', 'Help', 'CmdletBinding', 'OutputType', 'ParamBlock')) {
+                foreach ($comp in @('Requires', 'Help', 'Attributes', 'ParamBlock')) {
                     if ($components.ContainsKey($comp) -and -not ($comp -eq 'Help' -and $components[$comp].IsOutside)) {
                         $insideComponents += @{ Name = $comp; StartLine = $components[$comp].StartLine }
                     }
@@ -254,8 +279,8 @@
 
                 # Only reorder if we have multiple components and they're in wrong order
                 if ($insideComponents.Count -gt 1) {
-                    # Check the expected order: Requires, Help, CmdletBinding, OutputType, ParamBlock
-                    $expectedOrder = @('Requires', 'Help', 'CmdletBinding', 'OutputType', 'ParamBlock')
+                    # Check the expected order: Requires, Help, Attributes, ParamBlock
+                    $expectedOrder = @('Requires', 'Help', 'Attributes', 'ParamBlock')
                     $actualOrder = ($insideComponents | Sort-Object StartLine | ForEach-Object { $_.Name })
                     $filteredExpectedOrder = $expectedOrder | Where-Object { $_ -in $actualOrder }
 
@@ -320,8 +345,7 @@
                 $orderedComponents = @()
                 if ($components.ContainsKey('Requires')) { $orderedComponents += $components['Requires'] }
                 if ($components.ContainsKey('Help')) { $orderedComponents += $components['Help'] }
-                if ($components.ContainsKey('CmdletBinding')) { $orderedComponents += $components['CmdletBinding'] }
-                if ($components.ContainsKey('OutputType')) { $orderedComponents += $components['OutputType'] }
+                if ($components.ContainsKey('Attributes')) { $orderedComponents += $components['Attributes'] }
                 if ($components.ContainsKey('ParamBlock')) { $orderedComponents += $components['ParamBlock'] }
 
                 $insertLines = @()
@@ -447,6 +471,33 @@
                     $lines = $lines[0..($startLine - 1)] + @('') + $lines[$startLine..($lines.Count - 1)]
                     $modified = $true
                     Write-Verbose "Added blank line before param block at line $($startLine + 1)"
+                }
+            }
+        }
+
+        # Process function attributes for proper grouping and spacing
+        foreach ($function in $functions) {
+            if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes -and $function.Body.ParamBlock.Attributes.Count -gt 1) {
+                $functionStart = $function.Extent.StartLineNumber - 1
+                $attributes = $function.Body.ParamBlock.Attributes | Sort-Object { $_.Extent.StartLineNumber }
+
+                # Check if attributes need spacing fixes (remove blank lines between them)
+                for ($i = 0; $i -lt ($attributes.Count - 1); $i++) {
+                    $currentAttr = $attributes[$i]
+                    $nextAttr = $attributes[$i + 1]
+
+                    $currentEndLine = $currentAttr.Extent.EndLineNumber - 1
+                    $nextStartLine = $nextAttr.Extent.StartLineNumber - 1
+
+                    # Remove blank lines between consecutive attributes
+                    while (($currentEndLine + 1) -lt $nextStartLine -and
+                        ($currentEndLine + 1) -lt $lines.Count -and
+                        $lines[$currentEndLine + 1].Trim() -eq '') {
+                        $lines = $lines[0..$currentEndLine] + $lines[($currentEndLine + 2)..($lines.Count - 1)]
+                        $nextStartLine--
+                        $modified = $true
+                        Write-Verbose 'Removed blank line between function attributes'
+                    }
                 }
             }
         }

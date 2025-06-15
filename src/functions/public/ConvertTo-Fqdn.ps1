@@ -20,7 +20,6 @@
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
-
     [OutputType([System.String])]
 
 

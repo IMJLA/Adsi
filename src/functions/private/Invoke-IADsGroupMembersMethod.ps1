@@ -38,7 +38,6 @@
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 

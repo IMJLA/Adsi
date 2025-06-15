@@ -17,8 +17,8 @@
 
     [CmdletBinding(SupportsShouldProcess)]
 
-
     param (
+
 
         # The version number for the release
         [version]$Version,
@@ -31,6 +31,7 @@
 
 
     )
+
 
     switch -Wildcard ($CommitMessage) {
         'add*' { $Type = 'Added' }

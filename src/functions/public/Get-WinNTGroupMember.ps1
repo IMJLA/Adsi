@@ -21,7 +21,6 @@
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 

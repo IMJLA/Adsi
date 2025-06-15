@@ -19,7 +19,6 @@
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
-
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
 

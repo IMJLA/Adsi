@@ -121,7 +121,6 @@ function Measure-ParamBlockSpacing {
     #>
 
     [CmdletBinding()]
-
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
     param(
