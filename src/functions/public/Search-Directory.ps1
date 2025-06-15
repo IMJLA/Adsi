@@ -36,17 +36,23 @@
         [int]$PageSize = 1000,
 
         # Search scope (Base, OneLevel, or Subtree)
-
         [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
+
+
 
         # Additional properties to return
         [string[]]$PropertiesToLoad,
 
+
+
         # Credentials to use
         [pscredential]$Credential,
 
+
+
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
+
         [ref]$Cache
 
     )

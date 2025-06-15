@@ -4119,8 +4119,8 @@ function Get-AdsiGroup {
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
+
         [ref]$Cache
 
     )
@@ -4718,9 +4718,9 @@ function Get-DirectoryEntry {
     As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
 
-
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
+
 
     param (
 
@@ -4744,8 +4744,8 @@ function Get-DirectoryEntry {
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
+
         [ref]$Cache
 
     )
@@ -7215,17 +7215,23 @@ function Search-Directory {
         [int]$PageSize = 1000,
 
         # Search scope (Base, OneLevel, or Subtree)
-
         [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
+
+
 
         # Additional properties to return
         [string[]]$PropertiesToLoad,
 
+
+
         # Credentials to use
         [pscredential]$Credential,
 
+
+
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
+
         [ref]$Cache
 
     )

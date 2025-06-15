@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.577] - 2025-06-15
+### Changed
+- test run
+
 ## [5.0.576] - 2025-06-15
 ### Removed
 - remove excess blank line
