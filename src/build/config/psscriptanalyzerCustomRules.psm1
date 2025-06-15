@@ -180,12 +180,14 @@ function Measure-ParamBlockSpacing {
             if ($endLine -ge 0 -and ($endLine + 1) -lt $lines.Count) {
                 $nextLine = $lines[$endLine + 1].Trim()
                 if ($nextLine -ne '') {
+
                     $results += [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord]@{
                         Message  = 'Param block should have a blank line after it'
                         Extent   = $paramBlock.Extent
                         RuleName = 'ParamBlockSpacing'
                         Severity = 'Warning'
                     }
+
                 }
             }
         }
