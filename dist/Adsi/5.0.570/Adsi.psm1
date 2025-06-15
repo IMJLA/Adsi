@@ -339,15 +339,17 @@ function ConvertFrom-AppCapabilitySid {
     }
 }
 function ConvertFrom-ScShowSidResult {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ScShowSidResult')]
+
     # Convert the results from sc.exe into an object
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ScShowSidResult')]
+
     param (
+
 
         [string[]]$Result
 
     )
-
     $dict = @{}
     ForEach ($Line in $Result) {
 
@@ -1112,11 +1114,13 @@ function Find-CachedWellKnownSID {
 
 }
 function Find-WinNTGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-WinNTGroupMember')]
 
     # Find LDAP and WinNT group members to retrieve from their directories.
     # Convert COM objects from the IADsGroup::Members method into strings.
     # Use contextual information to determine whether each string represents an LDAP or a WinNT group member.
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-WinNTGroupMember')]
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
@@ -1138,7 +1142,6 @@ function Find-WinNTGroupMember {
         [ref]$Cache
 
     )
-
     ForEach ($DirectoryMember in $ComObject) {
 
         # Convert the ComObjects into DirectoryEntry objects.
@@ -1205,17 +1208,21 @@ function Get-CachedDirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         [string]$Server,
 
         [string]$AccountName,
 
+
+
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -1531,9 +1538,11 @@ function Invoke-IADsGroupMembersMethod {
 
 }
 function Invoke-ScShowSid {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
 
     # Invoke sc.exe showsid
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
+
     param (
 
         [string]$ServiceName,
@@ -1550,7 +1559,6 @@ function Invoke-ScShowSid {
 
 
     )
-
     if (
         $ComputerName -eq $ThisFqdn -or
         $ComputerName -eq $ThisHostName -or
@@ -4000,18 +4008,22 @@ function Get-AdsiGroup {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
+
         [string]$GroupName,
 
         # Properties of the group members to retrieve
+
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
 
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -4619,6 +4631,7 @@ function Get-DirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
@@ -4629,15 +4642,18 @@ function Get-DirectoryEntry {
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve
+
         [string[]]$PropertiesToLoad,
 
         # Mapping of SID types to descriptions used for converting security identifiers
+
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
 
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -7097,12 +7113,15 @@ function Search-Directory {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
 
         # Filter for the LDAP search
+
         [string]$Filter,
 
         # Number of results to return in each page
+
         [int]$PageSize = 1000,
 
         # Search scope (Base, OneLevel, or Subtree)
@@ -7110,14 +7129,17 @@ function Search-Directory {
         [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
 
         # Additional properties to return
+
         [string[]]$PropertiesToLoad,
 
         # Credentials to use
+
         [pscredential]$Credential,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 

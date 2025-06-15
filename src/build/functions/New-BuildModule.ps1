@@ -48,7 +48,6 @@
         [boolean]$DocsConvertReadMeToAboutFile = $false,
 
         # Path to the ReadMe file
-
         [string]$DocsMarkdownReadMePath
 
     )

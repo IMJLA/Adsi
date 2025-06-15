@@ -1,7 +1,9 @@
 ﻿function Invoke-ScShowSid {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
 
     # Invoke sc.exe showsid
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
+
     param (
 
         [string]$ServiceName,
@@ -18,7 +20,6 @@
 
 
     )
-
     if (
         $ComputerName -eq $ThisFqdn -or
         $ComputerName -eq $ThisHostName -or

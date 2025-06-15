@@ -1,13 +1,15 @@
 ﻿function ConvertFrom-ScShowSidResult {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ScShowSidResult')]
+
     # Convert the results from sc.exe into an object
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ScShowSidResult')]
+
     param (
+
 
         [string[]]$Result
 
     )
-
     $dict = @{}
     ForEach ($Line in $Result) {
 

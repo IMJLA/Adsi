@@ -117,9 +117,6 @@
         $modified = $false
 
         # Fix function element sequence
-
-
-
         $functions = $ast.FindAll({
 
                 param($astNode)
@@ -229,6 +226,59 @@
                 }
             }
 
+            # Find regular comments before param block (but not comment-based help)
+            if ($function.Body.ParamBlock) {
+                $paramBlockStart = $function.Body.ParamBlock.Extent.StartLineNumber - 1
+
+                # Find consecutive comment lines before param block
+                $commentLines = @()
+                $currentLine = $paramBlockStart - 1
+
+                # Skip any blank lines immediately before param block
+                while ($currentLine -gt $functionStart -and $lines[$currentLine].Trim() -eq '') {
+                    $currentLine--
+                }
+
+                # Collect consecutive comment lines (not comment-based help)
+                while ($currentLine -gt $functionStart) {
+                    $line = $lines[$currentLine].Trim()
+                    if ($line -match '^#' -and $line -notmatch '^#>' -and $line -notmatch '^\s*<#') {
+                        $commentLines = @($currentLine) + $commentLines
+                        $currentLine--
+                    } elseif ($line -eq '') {
+                        # Skip blank lines within comments
+                        $currentLine--
+                    } else {
+                        # Hit non-comment line, stop collecting
+                        break
+                    }
+                }
+
+                # Only create RegularComments component if we found comments and they're not already covered by other components
+                if ($commentLines.Count -gt 0) {
+                    $firstCommentLine = $commentLines | Sort-Object | Select-Object -First 1
+                    $lastCommentLine = $commentLines | Sort-Object | Select-Object -Last 1
+
+                    # Check if these comments overlap with existing components
+                    $overlapsWithExisting = $false
+                    foreach ($comp in $components.Values) {
+                        if (($firstCommentLine -ge $comp.StartLine -and $firstCommentLine -le $comp.EndLine) -or
+                            ($lastCommentLine -ge $comp.StartLine -and $lastCommentLine -le $comp.EndLine)) {
+                            $overlapsWithExisting = $true
+                            break
+                        }
+                    }
+
+                    if (-not $overlapsWithExisting) {
+                        $components['RegularComments'] = @{
+                            StartLine = $firstCommentLine
+                            EndLine   = $lastCommentLine
+                            Content   = $commentLines | ForEach-Object { $lines[$_] }
+                        }
+                    }
+                }
+            }
+
             # Find ALL function attributes - not just CmdletBinding and OutputType
             $allAttributes = @()
             if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
@@ -252,39 +302,6 @@
                     Content   = $attributeContent
                 }
             }
-
-            # Remove the old CmdletBinding and OutputType logic since they're now part of Attributes
-            # Find CmdletBinding attribute - only within this function's param block
-            # $cmdletBinding = $null
-            # if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
-            #     $cmdletBinding = $function.Body.ParamBlock.Attributes | Where-Object {
-            #         $_.TypeName.Name -eq 'CmdletBinding'
-            #     } | Select-Object -First 1
-            # }
-
-            # if ($cmdletBinding) {
-            #     $components['CmdletBinding'] = @{
-            #         StartLine = $cmdletBinding.Extent.StartLineNumber - 1
-            #         EndLine   = $cmdletBinding.Extent.EndLineNumber - 1
-            #         Content   = $lines[($cmdletBinding.Extent.StartLineNumber - 1)..($cmdletBinding.Extent.EndLineNumber - 1)]
-            #     }
-            # }
-
-            # Find OutputType attribute - only within this function's param block
-            # $outputType = $null
-            # if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
-            #     $outputType = $function.Body.ParamBlock.Attributes | Where-Object {
-            #         $_.TypeName.Name -eq 'OutputType'
-            #     } | Select-Object -First 1
-            # }
-
-            # if ($outputType) {
-            #     $components['OutputType'] = @{
-            #         StartLine = $outputType.Extent.StartLineNumber - 1
-            #         EndLine   = $outputType.Extent.EndLineNumber - 1
-            #         Content   = $lines[($outputType.Extent.StartLineNumber - 1)..($outputType.Extent.EndLineNumber - 1)]
-            #     }
-            # }
 
             # Find param block - only for this specific function
             if ($function.Body.ParamBlock) {
@@ -312,7 +329,7 @@
             } else {
                 # Check if the order inside the function is wrong
                 $insideComponents = @()
-                foreach ($comp in @('Requires', 'Help', 'Attributes', 'ParamBlock')) {
+                foreach ($comp in @('Requires', 'Help', 'RegularComments', 'Attributes', 'ParamBlock')) {
                     if ($components.ContainsKey($comp) -and -not ($comp -eq 'Help' -and $components[$comp].IsOutside)) {
                         $insideComponents += @{ Name = $comp; StartLine = $components[$comp].StartLine }
                     }
@@ -320,8 +337,8 @@
 
                 # Only reorder if we have multiple components and they're in wrong order
                 if ($insideComponents.Count -gt 1) {
-                    # Check the expected order: Requires, Help, Attributes, ParamBlock
-                    $expectedOrder = @('Requires', 'Help', 'Attributes', 'ParamBlock')
+                    # Check the expected order: Requires, Help, RegularComments, Attributes, ParamBlock
+                    $expectedOrder = @('Requires', 'Help', 'RegularComments', 'Attributes', 'ParamBlock')
                     $actualOrder = ($insideComponents | Sort-Object StartLine | ForEach-Object { $_.Name })
                     $filteredExpectedOrder = $expectedOrder | Where-Object { $_ -in $actualOrder }
 
@@ -386,6 +403,7 @@
                 $orderedComponents = @()
                 if ($components.ContainsKey('Requires')) { $orderedComponents += $components['Requires'] }
                 if ($components.ContainsKey('Help')) { $orderedComponents += $components['Help'] }
+                if ($components.ContainsKey('RegularComments')) { $orderedComponents += $components['RegularComments'] }
                 if ($components.ContainsKey('Attributes')) { $orderedComponents += $components['Attributes'] }
                 if ($components.ContainsKey('ParamBlock')) { $orderedComponents += $components['ParamBlock'] }
 
