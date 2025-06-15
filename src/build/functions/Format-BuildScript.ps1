@@ -670,18 +670,21 @@
 
                     # Count blank lines between last attribute and param block
                     $blankLineCount = 0
+                    $blankLineIndices = @()
                     for ($lineIdx = $lastAttrEndLine + 1; $lineIdx -lt $paramStartLine; $lineIdx++) {
                         if ($lineIdx -lt $lines.Count -and $lines[$lineIdx].Trim() -eq '') {
                             $blankLineCount++
+                            $blankLineIndices += $lineIdx
                         }
                     }
 
                     # Ensure exactly one blank line between attributes and param block
                     if ($blankLineCount -ne 1) {
-                        # Remove all blank lines between attributes and param block
-                        for ($lineIdx = $paramStartLine - 1; $lineIdx -gt $lastAttrEndLine; $lineIdx--) {
-                            if ($lineIdx -lt $lines.Count -and $lines[$lineIdx].Trim() -eq '') {
-                                $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                        # Remove all blank lines between attributes and param block (from bottom to top)
+                        $blankLineIndices = $blankLineIndices | Sort-Object -Descending
+                        foreach ($blankLineIdx in $blankLineIndices) {
+                            if ($blankLineIdx -ge 0 -and $blankLineIdx -lt $lines.Count -and $lines[$blankLineIdx].Trim() -eq '') {
+                                $lines = $lines[0..($blankLineIdx - 1)] + $lines[($blankLineIdx + 1)..($lines.Count - 1)]
                                 $modified = $true
                             }
                         }
