@@ -41,6 +41,7 @@
     #>
 
     [CmdletBinding()]
+    [OutputType([System.String])]
 
     param(
 

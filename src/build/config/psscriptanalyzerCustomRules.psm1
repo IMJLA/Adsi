@@ -26,7 +26,7 @@
         # Find all tokens to locate comment-based help
         $tokens = $null
         $parseErrors = $null
-        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
+        $null = [System.Management.Automation.Language.Parser]::ParseInput(
             $ScriptBlockAst.Extent.Text,
             [ref]$tokens,
             [ref]$parseErrors
@@ -86,6 +86,26 @@
 }
 
 function Measure-ParamBlockSpacing {
+    <#
+    .SYNOPSIS
+        Custom PSScriptAnalyzer rule for enforcing proper spacing around param blocks
+
+    .DESCRIPTION
+        This rule ensures that param blocks have proper blank line spacing before and after them.
+        A blank line should exist before the param block (unless preceded by comment-based help)
+        and after the param block's closing parenthesis.
+
+    .PARAMETER ScriptBlockAst
+        The AST object representing the script block to analyze
+
+    .OUTPUTS
+        Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]
+        Returns diagnostic records for any spacing violations found
+
+    .EXAMPLE
+        Measure-ParamBlockSpacing -ScriptBlockAst $ast
+        Analyzes the provided AST for param block spacing issues
+    #>
 
     [CmdletBinding()]
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
