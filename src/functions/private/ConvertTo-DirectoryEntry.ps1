@@ -1,8 +1,7 @@
 ﻿function ConvertTo-DirectoryEntry {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DirectoryEntry')]
-
     <#
 .SYNOPSIS
+
 Converts identity information to a DirectoryEntry object.
 
 .DESCRIPTION
@@ -21,6 +20,9 @@ None. Pipeline input is not accepted.
 System.DirectoryServices.DirectoryEntry or a custom object that mimics DirectoryEntry.
 #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DirectoryEntry')]
+
+
     param (
         $CachedWellKnownSID,
         $DomainNetBIOS,
@@ -31,7 +33,10 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         $IdentityReference,
         $DomainDn,
         [ref]$Cache
+
     )
+
+
 
     if ($CachedWellKnownSID) {
 

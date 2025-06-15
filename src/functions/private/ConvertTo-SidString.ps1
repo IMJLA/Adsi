@@ -1,8 +1,7 @@
 ﻿function ConvertTo-SidString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidString')]
-
     <#
 .SYNOPSIS
+
 Converts an NT account name to a SID string.
 
 .DESCRIPTION
@@ -19,6 +18,9 @@ System.String
 System.Security.Principal.SecurityIdentifier
 #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidString')]
+
+
     param (
         [string]$ServerNetBIOS,
         [string]$Name,
@@ -26,7 +28,10 @@ System.Security.Principal.SecurityIdentifier
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
     )
+
+
 
     # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
     Write-LogMsg -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])" -Cache $Cache

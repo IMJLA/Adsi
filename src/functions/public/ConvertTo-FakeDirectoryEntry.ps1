@@ -1,8 +1,7 @@
 ﻿function ConvertTo-FakeDirectoryEntry {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
-
     <#
     .SYNOPSIS
+
     Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
 
     .DESCRIPTION
@@ -23,6 +22,9 @@
     PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,
     SchemaClassName, and objectSid.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
+
 
     param (
         # Full directory path for the fake entry in the format "Provider://Domain/Name"
@@ -99,7 +101,10 @@
             'WinRMRemoteWMIUsers__'               = $null
         }
 
+
     )
+
+
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1

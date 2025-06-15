@@ -1,8 +1,7 @@
 ﻿function ConvertTo-SidByteArray {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
-
     <#
     .SYNOPSIS
+
     Convert a SID from a string to binary format (byte array)
     .DESCRIPTION
     Uses the GetBinaryForm method of the [System.Security.Principal.SecurityIdentifier] class
@@ -17,13 +16,19 @@
     representation, which is required when working with directory services that expect SIDs in binary format.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
+
     [OutputType([System.Byte[]])]
+
     param (
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
 
+
         [string[]]$SidString
     )
+
+
     process {
         ForEach ($ThisSID in $SidString) {
             $SID = [System.Security.Principal.SecurityIdentifier]::new($ThisSID)

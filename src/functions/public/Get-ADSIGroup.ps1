@@ -1,8 +1,7 @@
 ﻿function Get-AdsiGroup {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
-
     <#
     .SYNOPSIS
+
     Get the directory entries for a group and its members using ADSI
     .DESCRIPTION
     Uses the ADSI components to search a directory for a group, then get its members
@@ -27,7 +26,10 @@
     detection simplifies scripts that need to work in both domain and workgroup environments.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -49,7 +51,11 @@
         [ref]$Cache
 
 
+
     )
+
+
+
 
     $Log = @{ 'Cache' = $Cache ; 'Suffix' = " # for ADSI group '$GroupName'" }
 

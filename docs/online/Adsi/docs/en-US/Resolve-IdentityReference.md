@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference
+online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
 schema: 2.0.0
 ---
 
 # Resolve-IdentityReference
 
 ## SYNOPSIS
-Fill in the Synopsis
+Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
 
 ## SYNTAX
 
@@ -18,21 +18,27 @@ Resolve-IdentityReference [-IdentityReference] <String> [[-AdsiServer] <PSObject
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Based on the IdentityReference proprety of each Access Control Entry:
+Resolve SID to NT account name and vise-versa
+Resolve well-known SIDs
+Resolve generic defaults like 'NT AUTHORITY' and 'BUILTIN' to the applicable computer or domain name
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+Resolve-IdentityReference -IdentityReference 'BUILTIN\Administrator' -AdsiServer (Get-AdsiServer 'localhost')
 ```
 
-Add example description here
+Resolves the local Administrator account on the BUILTIN domain to its proper SID, NetBIOS name,
+and DNS name format.
+This is useful when analyzing permissions to ensure consistency in how identities
+are represented, especially when comparing permissions across different systems or domains.
 
 ## PARAMETERS
 
 ### -AccountProperty
-Fill AccountProperty Description
+Properties of each Account to display on the report
 
 ```yaml
 Type: System.String[]
@@ -40,14 +46,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
-Default value: None
+Position: 4
+Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -AdsiServer
-Fill AdsiServer Description
+Object from Get-AdsiServer representing the directory server and its attributes
 
 ```yaml
 Type: System.Management.Automation.PSObject
@@ -55,14 +61,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Cache
-Fill Cache Description
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -70,14 +76,15 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -IdentityReference
-Fill IdentityReference Description
+IdentityReference from an Access Control Entry
+Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)
 
 ```yaml
 Type: System.String
@@ -85,7 +92,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -96,16 +103,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Management.Automation.PSObject
-
+### [PSCustomObject] with IdentityReferenceNetBios,IdentityReferenceDns, and SIDString properties (each strings)
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference](https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference)
-
 

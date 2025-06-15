@@ -108,10 +108,9 @@ class FakeDirectoryEntry {
 
 }
 function ConvertFrom-AppCapabilitySid {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-AppCapabilitySid')]
-
     <#
     .SYNOPSIS
+
     Converts an app capability SID to a friendly representation.
 
     .DESCRIPTION
@@ -160,9 +159,15 @@ function ConvertFrom-AppCapabilitySid {
     PSCustomObject with SID information and friendly names.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-AppCapabilitySid')]
+
+
     param (
         [string]$SID
+
     )
+
+
 
     $KnownDeviceInterfaceGuids = @{
         'BFA794E4-F964-4FDB-90F6-51056BFE4B44' = [PSCustomObject]@{
@@ -377,10 +382,9 @@ function ConvertTo-AccountCache {
 
 }
 function ConvertTo-DirectoryEntry {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DirectoryEntry')]
-
     <#
 .SYNOPSIS
+
 Converts identity information to a DirectoryEntry object.
 
 .DESCRIPTION
@@ -399,6 +403,9 @@ None. Pipeline input is not accepted.
 System.DirectoryServices.DirectoryEntry or a custom object that mimics DirectoryEntry.
 #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DirectoryEntry')]
+
+
     param (
         $CachedWellKnownSID,
         $DomainNetBIOS,
@@ -409,7 +416,10 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         $IdentityReference,
         $DomainDn,
         [ref]$Cache
+
     )
+
+
 
     if ($CachedWellKnownSID) {
 
@@ -645,10 +655,9 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
 }
 function ConvertTo-PermissionPrincipal {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
-
     <#
 .SYNOPSIS
+
 Converts directory entry information into a permission principal object.
 
 .DESCRIPTION
@@ -666,6 +675,9 @@ System.DirectoryServices.DirectoryEntry
 .OUTPUTS
 None. This function populates the PrincipalById cache with permission principal objects.
 #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
+
 
     param (
 
@@ -685,7 +697,10 @@ None. This function populates the PrincipalById cache with permission principal 
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
 
     $Log = @{
         'Cache'  = $Cache
@@ -910,10 +925,9 @@ function ConvertTo-ServiceSID {
 
 }
 function ConvertTo-SidString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidString')]
-
     <#
 .SYNOPSIS
+
 Converts an NT account name to a SID string.
 
 .DESCRIPTION
@@ -930,6 +944,9 @@ System.String
 System.Security.Principal.SecurityIdentifier
 #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidString')]
+
+
     param (
         [string]$ServerNetBIOS,
         [string]$Name,
@@ -937,7 +954,10 @@ System.Security.Principal.SecurityIdentifier
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
     )
+
+
 
     # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
     Write-LogMsg -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])" -Cache $Cache
@@ -954,10 +974,9 @@ System.Security.Principal.SecurityIdentifier
 
 }
 function Find-AdsiProvider {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
-
     <#
         .SYNOPSIS
+
         Determine whether a directory server is an LDAP or a WinNT server
         .DESCRIPTION
         Uses CIM to look for open TCP port 389 indicating LDAP, otherwise assumes WinNT.
@@ -979,7 +998,10 @@ function Find-AdsiProvider {
         Find the ADSI provider of the AD domain 'ad.contoso.com'
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -990,7 +1012,11 @@ function Find-AdsiProvider {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     $CommandParameters = @{
         Cache        = $Cache
@@ -1149,13 +1175,18 @@ function Find-WinNTGroupMember {
 
 }
 function Get-CachedDirectoryEntry {
+    <#
+        Path to the directory object to retrieve
+        Defaults to the root of the current domain
+        #>
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CachedDirectoryEntry')]
 
-    # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
 
     param (
 
         <#
+
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
@@ -1169,15 +1200,15 @@ function Get-CachedDirectoryEntry {
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
+
         [Parameter(Mandatory)]
         [ref]$Cache
 
 
     )
 
-    <#
-    The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-    We will create own dummy objects instead of performing the query
+    # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
+
     #>
 
     $ID = "$Server\$AccountName"
@@ -1358,10 +1389,9 @@ function Get-SidTypeMap {
     }
 }
 function Invoke-IADsGroupMembersMethod {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
-
     <#
         .SYNOPSIS
+
         Get members of a group from the WinNT provider
         .DESCRIPTION
         Get members of a group from the WinNT provider
@@ -1396,8 +1426,9 @@ function Invoke-IADsGroupMembersMethod {
         Get members of the local Administrators group
     #>
 
-    [OutputType([System.DirectoryServices.DirectoryEntry])]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
 
+    [OutputType([System.DirectoryServices.DirectoryEntry])]
 
     param (
 
@@ -1407,6 +1438,10 @@ function Invoke-IADsGroupMembersMethod {
 
 
     )
+
+
+
+
 
     process {
 
@@ -1450,6 +1485,21 @@ function Invoke-ScShowSid {
 
 }
 function Resolve-IdRefAppPkgAuth {
+    <#
+    These SIDs cannot be resolved from the NTAccount name:
+        PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount]).Translate([System.Security.Principal.SecurityIdentifier])
+        MethodInvocationException: Exception calling "Translate" with "1" argument(s): "Some or all identity references could not be translated."
+
+
+    Even though resolving the reverse direction works:
+        PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount])
+
+        Value
+        -----
+        APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
+    So we will instead hardcode a map of SIDs
+    #>
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefAppPkgAuth')]
 
     [OutputType([PSCustomObject])]
@@ -1460,6 +1510,7 @@ function Resolve-IdRefAppPkgAuth {
         # Expecting either a SID (S-1-5-18) or an NT account name (CONTOSO\User)
         [Parameter(Mandatory)]
         [string]$IdentityReference,
+
 
         # Object from Get-AdsiServer representing the directory server and its attributes
         [PSObject]$AdsiServer,
@@ -1476,24 +1527,14 @@ function Resolve-IdRefAppPkgAuth {
 
     )
 
+
+
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null
+
     $DomainsByNetbios = $Cache.Value['DomainByNetbios']
     $TryGetValueResult = $DomainsByNetbios.Value.TryGetValue($ServerNetBIOS, [ref]$DomainCacheResult)
 
-    <#
-    These SIDs cannot be resolved from the NTAccount name:
-        PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount]).Translate([System.Security.Principal.SecurityIdentifier])
-        MethodInvocationException: Exception calling "Translate" with "1" argument(s): "Some or all identity references could not be translated."
-
-    Even though resolving the reverse direction works:
-        PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount])
-
-        Value
-        -----
-        APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
-    So we will instead hardcode a map of SIDs
-    #>
 
     $Known = $Cache.Value['WellKnownSidByCaption'].Value[$IdentityReference]
 
@@ -1740,6 +1781,14 @@ function Resolve-IdRefSearchDir {
 
 }
 function Resolve-IdRefSID {
+    <#
+                This .Net method makes it impossible to redirect the error stream directly
+                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+                I don't understand exactly why
+
+                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
+            #>
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
 
     [OutputType([PSCustomObject])]
@@ -1758,6 +1807,7 @@ function Resolve-IdRefSID {
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # In-process cache to reduce calls to other processes or to disk
+
         [Parameter(Mandatory)]
         [ref]$Cache,
 
@@ -1765,6 +1815,8 @@ function Resolve-IdRefSID {
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
+
+
 
     $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $IdentityReference -DomainNetBIOS $ServerNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
     $AccountProperties = @{}
@@ -1803,6 +1855,7 @@ function Resolve-IdRefSID {
 
     if (-not $done) {
 
+
         #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # No match with known SID patterns" -Cache $Cache
         # The SID of the domain is everything up to (but not including) the last hyphen
         $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-'))
@@ -1811,12 +1864,6 @@ function Resolve-IdRefSID {
 
         try {
 
-            <#
-                This .Net method makes it impossible to redirect the error stream directly
-                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-                I don't understand exactly why
-                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
-            #>
 
             $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 
@@ -2007,10 +2054,9 @@ function Resolve-IdRefSvc {
 
 }
 function Resolve-SidAuthority {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
-
     <#
     .SYNOPSIS
+
     Resolves SID authority names to their proper representation.
 
     .DESCRIPTION
@@ -2026,6 +2072,9 @@ function Resolve-SidAuthority {
     .OUTPUTS
     None. Modifies the DirectorySplit hashtable directly by adding 'ResolvedDomain' and 'ResolvedDirectoryPath' keys.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
+
 
     param (
 
@@ -2050,7 +2099,10 @@ function Resolve-SidAuthority {
             'WORLD SID AUTHORITY'           = $null
         }
 
+
     )
+
+
 
     $Domain = $DirectorySplit['Domain']
 
@@ -2116,10 +2168,9 @@ function Split-DirectoryPath {
 
 }
 function Test-AdsiProvider {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
-
     <#
     .SYNOPSIS
+
     Determine whether a directory server is an LDAP or a WinNT server
     .DESCRIPTION
     Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
@@ -2139,7 +2190,10 @@ function Test-AdsiProvider {
     Find the ADSI provider of the AD domain 'ad.contoso.com'
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -2150,7 +2204,11 @@ function Test-AdsiProvider {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
 
     $Log = @{ 'Cache' = $Cache }
@@ -2174,10 +2232,9 @@ function Test-AdsiProvider {
 
 }
 function Add-DomainFqdnToLdapPath {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
-
     <#
     .SYNOPSIS
+
     Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
     .DESCRIPTION
     Uses RegEx to:
@@ -2197,7 +2254,10 @@ function Add-DomainFqdnToLdapPath {
     when working in multi-domain environments or when connecting to trusted domains.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -2209,7 +2269,11 @@ function Add-DomainFqdnToLdapPath {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
         $DomainRegEx = '(?i)DC=\w{1,}?\b'
@@ -2261,10 +2325,9 @@ function Add-DomainFqdnToLdapPath {
 
 }
 function Add-SidInfo {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
-
     <#
     .SYNOPSIS
+
     Add some useful properties to a DirectoryEntry object for easier access
     .DESCRIPTION
     Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
@@ -2281,7 +2344,10 @@ function Add-SidInfo {
     Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
+
 
     param (
 
@@ -2293,7 +2359,11 @@ function Add-SidInfo {
         # In-process cache to reduce calls to other processes or to disk
         [ref]$DomainsBySid
 
+
     )
+
+
+
 
     process {
 
@@ -2377,10 +2447,9 @@ function Add-SidInfo {
 
 }
 function ConvertFrom-DirectoryEntry {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
-
     <#
     .SYNOPSIS
+
     Convert a DirectoryEntry to a PSCustomObject
     .DESCRIPTION
     Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
@@ -2398,6 +2467,9 @@ function ConvertFrom-DirectoryEntry {
     [PSCustomObject]
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
+
+
     param (
 
         # DirectoryEntry objects to convert to PSCustomObjects
@@ -2406,7 +2478,10 @@ function ConvertFrom-DirectoryEntry {
         )]
         [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
 
+
     )
+
+
 
     ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
 
@@ -2424,10 +2499,9 @@ function ConvertFrom-DirectoryEntry {
 
 }
 function ConvertFrom-PropertyValueCollectionToString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString')]
-
     <#
     .SYNOPSIS
+
     Convert a PropertyValueCollection to a string
     .DESCRIPTION
     Useful when working with System.DirectoryServices and some other namespaces
@@ -2447,12 +2521,18 @@ function ConvertFrom-PropertyValueCollectionToString {
     For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString')]
+
+
     param (
 
         # This PropertyValueCollection will be converted to a string
         [System.DirectoryServices.PropertyValueCollection]$PropertyValueCollection
 
+
     )
+
+
 
     if ($null -ne $PropertyValueCollection.Value) {
         $SubType = $PropertyValueCollection.Value.GetType().FullName
@@ -2465,10 +2545,9 @@ function ConvertFrom-PropertyValueCollectionToString {
 
 }
 function ConvertFrom-ResolvedID {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
-
     <#
     .SYNOPSIS
+
     Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
     .DESCRIPTION
     Recursively retrieves group members and detailed information about them
@@ -2497,7 +2576,10 @@ function ConvertFrom-ResolvedID {
     permission analysis and reporting.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
+
     [OutputType([void])]
+
 
     param (
 
@@ -2515,7 +2597,11 @@ function ConvertFrom-ResolvedID {
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
+
     )
+
+
+
 
     if ( -not $Cache.Value['PrincipalById'].Value[ $IdentityReference ] ) {
 
@@ -2562,10 +2648,9 @@ function ConvertFrom-ResolvedID {
 
 }
 function ConvertFrom-ResultPropertyValueCollectionToString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString')]
-
     <#
     .SYNOPSIS
+
     Convert a ResultPropertyValueCollection to a string
     .DESCRIPTION
     Useful when working with System.DirectoryServices and some other namespaces
@@ -2583,10 +2668,16 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
     For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString')]
+
+
     param (
         # ResultPropertyValueCollection object to convert to a string
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
+
     )
+
+
 
     if ($null -ne $ResultPropertyValueCollection.Value) {
         $SubType = $ResultPropertyValueCollection.Value.GetType().FullName
@@ -2599,10 +2690,9 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
 
 }
 function ConvertFrom-SearchResult {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult')]
-
     <#
     .SYNOPSIS
+
     Convert a SearchResult to a PSCustomObject
     .DESCRIPTION
     Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
@@ -2629,6 +2719,9 @@ function ConvertFrom-SearchResult {
     # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of SearchResult to see how to get those properties
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult')]
+
+
     param (
 
         # SearchResult objects to convert to PSCustomObjects
@@ -2638,7 +2731,10 @@ function ConvertFrom-SearchResult {
         )]
         [System.DirectoryServices.SearchResult[]]$SearchResult
 
+
     )
+
+
 
     process {
 
@@ -2664,10 +2760,9 @@ function ConvertFrom-SearchResult {
 
 }
 function ConvertFrom-SidString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
-
     <#
     .SYNOPSIS
+
     Converts a SID string to a DirectoryEntry object.
 
     .DESCRIPTION
@@ -2692,9 +2787,10 @@ function ConvertFrom-SidString {
     This function is not currently in use by Export-Permission
     #>
 
-    #[OutputType([System.Security.Principal.NTAccount])]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
     param (
+
         # Security Identifier (SID) string to convert to a DirectoryEntry
         [string]$SID,
 
@@ -2702,6 +2798,10 @@ function ConvertFrom-SidString {
         [Parameter(Mandatory)]
         [ref]$Cache
     )
+
+
+    #[OutputType([System.Security.Principal.NTAccount])]
+
 
     #[System.Security.Principal.SecurityIdentifier]::new($SID)
     # Only works if SID is in the current domain...otherwise SID not found
@@ -2711,10 +2811,9 @@ function ConvertFrom-SidString {
 
 }
 function ConvertTo-DecStringRepresentation {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
-
     <#
     .SYNOPSIS
+
     Convert a byte array to a string representation of its decimal format
     .DESCRIPTION
     Uses the custom format operator -f to format each byte as a string decimal representation
@@ -2728,14 +2827,21 @@ function ConvertTo-DecStringRepresentation {
     Convert the binary SID $Bytes to a decimal string representation
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
+
     [OutputType([System.String])]
+
 
     param (
 
         # Byte array.  Often the binary format of an objectSid or LoginHours
         [byte[]]$ByteArray
 
+
     )
+
+
+
 
     $ByteArray |
         ForEach-Object {
@@ -2744,10 +2850,9 @@ function ConvertTo-DecStringRepresentation {
 
 }
 function ConvertTo-DistinguishedName {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
-
     <#
     .SYNOPSIS
+
     Convert a domain NetBIOS name to its distinguishedName
     .DESCRIPTION
     https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
@@ -2764,7 +2869,10 @@ function ConvertTo-DistinguishedName {
     The function utilizes Windows API calls to perform accurate name translation.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -2806,7 +2914,11 @@ function ConvertTo-DistinguishedName {
         [ref]$Cache
 
 
+
     )
+
+
+
 
     begin {
 
@@ -3011,10 +3123,9 @@ function ConvertTo-DomainNetBIOS {
 
 }
 function ConvertTo-DomainSidString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainSidString')]
-
     <#
     .SYNOPSIS
+
     Converts a domain DNS name to its corresponding SID string.
 
     .DESCRIPTION
@@ -3043,6 +3154,9 @@ function ConvertTo-DomainSidString {
     System.String. The SID string of the specified domain.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainSidString')]
+
+
     param (
 
         # Domain DNS name to convert to the domain's SID
@@ -3064,7 +3178,10 @@ function ConvertTo-DomainSidString {
         [ref]$Cache
 
 
+
     )
+
+
 
     $Log = @{ Cache = $Cache ; Suffix = " # for domain FQDN '$DomainDnsName'" }
     $CacheResult = $null
@@ -3136,10 +3253,9 @@ function ConvertTo-DomainSidString {
 
 }
 function ConvertTo-FakeDirectoryEntry {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
-
     <#
     .SYNOPSIS
+
     Creates a fake DirectoryEntry object for security principals that don't have objects in the directory.
 
     .DESCRIPTION
@@ -3160,6 +3276,9 @@ function ConvertTo-FakeDirectoryEntry {
     PSCustomObject. A custom object that mimics a DirectoryEntry with properties such as Name, Description,
     SchemaClassName, and objectSid.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
+
 
     param (
         # Full directory path for the fake entry in the format "Provider://Domain/Name"
@@ -3236,7 +3355,10 @@ function ConvertTo-FakeDirectoryEntry {
             'WinRMRemoteWMIUsers__'               = $null
         }
 
+
     )
+
+
 
     $LastSlashIndex = $DirectoryPath.LastIndexOf('/')
     $StartIndex = $LastSlashIndex + 1
@@ -3295,10 +3417,9 @@ function ConvertTo-FakeDirectoryEntry {
 
 }
 function ConvertTo-Fqdn {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
-
     <#
     .SYNOPSIS
+
     Convert a domain distinguishedName name or NetBIOS name to its FQDN
     .DESCRIPTION
     For the DistinguishedName parameter, uses PowerShell's -replace operator to perform the conversion
@@ -3315,7 +3436,10 @@ function ConvertTo-Fqdn {
     names or when constructing proper LDAP paths that require the FQDN of the domain for remote connections.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -3337,7 +3461,11 @@ function ConvertTo-Fqdn {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     process {
 
@@ -3370,10 +3498,9 @@ function ConvertTo-Fqdn {
 
 }
 function ConvertTo-HexStringRepresentation {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation')]
-
     <#
     .SYNOPSIS
+
     Convert a SID from byte array format to a string representation of its hexadecimal format
     .DESCRIPTION
     Uses the custom format operator -f to format each byte as a string hex representation
@@ -3387,12 +3514,18 @@ function ConvertTo-HexStringRepresentation {
     Convert the binary SID $Bytes to a hexadecimal string representation
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation')]
+
     [OutputType([System.String[]])]
+
     param (
         # SID
 
+
         [byte[]]$SIDByteArray
     )
+
+
 
     $SIDHexString = $SIDByteArray |
         ForEach-Object {
@@ -3401,10 +3534,9 @@ function ConvertTo-HexStringRepresentation {
     return $SIDHexString
 }
 function ConvertTo-HexStringRepresentationForLDAPFilterString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString')]
-
     <#
     .SYNOPSIS
+
     Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
     .DESCRIPTION
     Uses the custom format operator -f to format each byte as a string hex representation
@@ -3418,12 +3550,18 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
     Convert the binary SID $Bytes to a hexadecimal string representation, formatted for use in an LDAP filter string
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString')]
+
     [OutputType([System.String])]
+
     param (
         # SID to convert to a hex string
 
+
         [byte[]]$SIDByteArray
     )
+
+
     $Hexes = $SIDByteArray |
         ForEach-Object {
             '{0:X}' -f $_
@@ -3438,10 +3576,9 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
     "\$($Hexes -join '\')"
 }
 function ConvertTo-SidByteArray {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
-
     <#
     .SYNOPSIS
+
     Convert a SID from a string to binary format (byte array)
     .DESCRIPTION
     Uses the GetBinaryForm method of the [System.Security.Principal.SecurityIdentifier] class
@@ -3456,13 +3593,19 @@ function ConvertTo-SidByteArray {
     representation, which is required when working with directory services that expect SIDs in binary format.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
+
     [OutputType([System.Byte[]])]
+
     param (
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
 
+
         [string[]]$SidString
     )
+
+
     process {
         ForEach ($ThisSID in $SidString) {
             $SID = [System.Security.Principal.SecurityIdentifier]::new($ThisSID)
@@ -3473,10 +3616,9 @@ function ConvertTo-SidByteArray {
     }
 }
 function Expand-AdsiGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
-
     <#
     .SYNOPSIS
+
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
     .DESCRIPTION
     Recursively retrieves group members and detailed information about them
@@ -3503,7 +3645,10 @@ function Expand-AdsiGroupMember {
     resolved to their actual DirectoryEntry objects from the appropriate domain.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
     param (
 
         # Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
@@ -3518,6 +3663,8 @@ function Expand-AdsiGroupMember {
         [ref]$Cache
 
     )
+
+
 
     begin {
 
@@ -3621,10 +3768,9 @@ function Expand-AdsiGroupMember {
 
 }
 function Expand-WinNTGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
-
     <#
     .SYNOPSIS
+
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
     .DESCRIPTION
     Recursively retrieves group members and detailed information about them
@@ -3640,7 +3786,10 @@ function Expand-WinNTGroupMember {
     is itself a group. This provides a complete hierarchical view of permissions.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -3655,7 +3804,11 @@ function Expand-WinNTGroupMember {
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
+
     )
+
+
+
 
     begin {
 
@@ -3739,10 +3892,9 @@ function Expand-WinNTGroupMember {
 
 }
 function Find-LocalAdsiServerSid {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
-
     <#
     .SYNOPSIS
+
         Finds the SID prefix of the local server by querying the built-in administrator account.
     .DESCRIPTION
         This function queries the local computer or a remote computer via CIM to find the SID
@@ -3763,8 +3915,9 @@ function Find-LocalAdsiServerSid {
         the domain and construct SIDs for domain users and groups.
     #>
 
-    [OutputType([System.String])]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
 
+    [OutputType([System.String])]
 
     param (
 
@@ -3777,6 +3930,10 @@ function Find-LocalAdsiServerSid {
 
 
     )
+
+
+
+
 
     $CimParams = @{
         Cache        = $Cache
@@ -3796,10 +3953,9 @@ function Find-LocalAdsiServerSid {
 
 }
 function Get-AdsiGroup {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
-
     <#
     .SYNOPSIS
+
     Get the directory entries for a group and its members using ADSI
     .DESCRIPTION
     Uses the ADSI components to search a directory for a group, then get its members
@@ -3824,7 +3980,10 @@ function Get-AdsiGroup {
     detection simplifies scripts that need to work in both domain and workgroup environments.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -3846,7 +4005,11 @@ function Get-AdsiGroup {
         [ref]$Cache
 
 
+
     )
+
+
+
 
     $Log = @{ 'Cache' = $Cache ; 'Suffix' = " # for ADSI group '$GroupName'" }
 
@@ -3914,10 +4077,9 @@ function Get-AdsiGroup {
 
 }
 function Get-AdsiGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
-
     <#
     .SYNOPSIS
+
     Get members of a group from the LDAP provider
     .DESCRIPTION
     Use ADSI to get members of a group from the LDAP provider
@@ -3936,7 +4098,10 @@ function Get-AdsiGroupMember {
     approach ensures proper resolution of all group memberships regardless of how they are assigned.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -3967,7 +4132,11 @@ function Get-AdsiGroupMember {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
 
@@ -4123,10 +4292,9 @@ function Get-AdsiGroupMember {
 
 }
 function Get-AdsiServer {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer')]
-
     <#
     .SYNOPSIS
+
     Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
     .DESCRIPTION
     Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
@@ -4150,7 +4318,10 @@ function Get-AdsiServer {
     This enables proper identity resolution for domain accounts when working with permissions across systems.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -4168,7 +4339,11 @@ function Get-AdsiServer {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
 
@@ -4361,10 +4536,9 @@ function Get-AdsiServer {
 
 }
 function Get-CurrentDomain {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
-
     <#
     .SYNOPSIS
+
     Use ADSI to get the current domain
     .DESCRIPTION
     Works only on domain-joined systems, otherwise returns nothing
@@ -4382,7 +4556,10 @@ function Get-CurrentDomain {
     performance in subsequent operations involving the current domain.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -4390,7 +4567,11 @@ function Get-CurrentDomain {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     $ComputerName = $Cache.Value['ThisHostname'].Value
     $Suffix = " # for the computer running the script, named '$ComputerName'"
@@ -4413,8 +4594,8 @@ function Get-CurrentDomain {
 
 }
 function Get-DirectoryEntry {
-
     <#
+
     .SYNOPSIS
     Use Active Directory Service Interfaces to retrieve an object from a directory
     .DESCRIPTION
@@ -4438,8 +4619,10 @@ function Get-DirectoryEntry {
     As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
 
-    [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
+
+    [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
 
     param (
 
@@ -4468,6 +4651,9 @@ function Get-DirectoryEntry {
         [ref]$Cache
 
     )
+
+
+
 
     $Log = @{ Cache = $Cache }
     $CacheResult = $null
@@ -6353,10 +6539,9 @@ function Get-KnownSidHashTable {
 
 }
 function Get-ParentDomainDnsName {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
-
     <#
     .SYNOPSIS
+
         Gets the DNS name of the parent domain for a given computer or domain.
     .DESCRIPTION
         This function retrieves the DNS name of the parent domain for a specified domain
@@ -6372,6 +6557,9 @@ function Get-ParentDomainDnsName {
         Results are stored in the $Cache variable to improve performance if the function is called again
         with the same parameters. For domain controllers, this will typically return the forest root domain name.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
+
 
     param (
 
@@ -6389,7 +6577,10 @@ function Get-ParentDomainDnsName {
         [ref]$Cache
 
 
+
     )
+
+
 
     if (-not $CimSession) {
         Write-LogMsg -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' -Cache `$Cache" -Cache $Cache
@@ -6414,10 +6605,9 @@ function Get-ParentDomainDnsName {
     return $ParentDomainDnsName
 }
 function Get-TrustedDomain {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
-
     <#
     .SYNOPSIS
+
     Returns a dictionary of trusted domains by the current computer
     .DESCRIPTION
     Works only on domain-joined systems
@@ -6440,7 +6630,10 @@ function Get-TrustedDomain {
     .NOTES
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
+
     [OutputType([PSCustomObject])]
+
     param (
 
         # In-process cache to reduce calls to other processes or to disk
@@ -6448,6 +6641,8 @@ function Get-TrustedDomain {
         [ref]$Cache
 
     )
+
+
 
     # Errors are expected on non-domain-joined systems
     # Redirecting the error stream to null only suppresses the error in the console; it will still be in the transcript
@@ -6483,10 +6678,9 @@ function Get-TrustedDomain {
 
 }
 function Get-WinNTGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
-
     <#
     .SYNOPSIS
+
     Get members of a group from the WinNT provider
     .DESCRIPTION
     Get members of a group from the WinNT provider
@@ -6504,7 +6698,10 @@ function Get-WinNTGroupMember {
     operation by avoiding redundant directory queries.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -6519,7 +6716,11 @@ function Get-WinNTGroupMember {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
 
@@ -6598,10 +6799,9 @@ function Get-WinNTGroupMember {
 
 }
 function Invoke-ComObject {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
-
     <#
     .SYNOPSIS
+
     Invoke a member method of a ComObject [__ComObject]
     .DESCRIPTION
     Use the InvokeMember method to invoke the InvokeMethod or GetProperty or SetProperty methods
@@ -6622,6 +6822,9 @@ function Invoke-ComObject {
     providing a consistent way to access these properties in PowerShell.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
+
+
     param (
 
         # The ComObject whose member method to invoke
@@ -6638,7 +6841,10 @@ function Invoke-ComObject {
         # Use the InvokeMethod method of the ComObject
         [Switch]$Method
 
+
     )
+
+
 
     <#
     # Don't remember what this is for
@@ -6650,6 +6856,7 @@ function Invoke-ComObject {
             $ComInvoke.$ComObject = New-Object -ComObject $ComObject
         }
         $ComObject = $ComInvoke.$ComObject
+
     }
     #>
 
@@ -6663,10 +6870,9 @@ function Invoke-ComObject {
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
 }
 function Resolve-IdentityReference {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference')]
-
     <#
     .SYNOPSIS
+
     Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
     .DESCRIPTION
     Based on the IdentityReference proprety of each Access Control Entry:
@@ -6685,7 +6891,10 @@ function Resolve-IdentityReference {
     are represented, especially when comparing permissions across different systems or domains.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference')]
+
     [OutputType([PSCustomObject])]
+
 
     param (
 
@@ -6704,7 +6913,11 @@ function Resolve-IdentityReference {
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
+
     )
+
+
+
 
     $ServerNetBIOS = $AdsiServer.Netbios
     $splat1 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
@@ -6720,9 +6933,11 @@ function Resolve-IdentityReference {
 
     }
 
+
     #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Cache miss" -Cache $Cache
 
     <#
+
     If no match was found in any cache, the resolution method depends on the IdentityReference.
     First, determine whether the IdentityReference is an NTAccount (DOMAIN\Name vs Name).
     #>
@@ -6833,10 +7048,9 @@ function Resolve-IdentityReference {
 
 }
 function Resolve-ServiceNameToSID {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
-
     <#
     .SYNOPSIS
+
         Resolves Windows service names to their corresponding security identifiers (SIDs).
     .DESCRIPTION
         This function takes service objects (from Get-Service or Win32_Service) and
@@ -6850,6 +7064,9 @@ function Resolve-ServiceNameToSID {
         The output includes all original properties of the service plus the SID property.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
+
+
     param (
 
         # Output of Get-Service or an instance of the Win32_Service CIM class
@@ -6857,7 +7074,10 @@ function Resolve-ServiceNameToSID {
         $InputObject
 
 
+
     )
+
+
 
     process {
 

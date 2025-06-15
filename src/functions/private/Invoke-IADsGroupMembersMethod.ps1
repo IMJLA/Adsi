@@ -1,8 +1,7 @@
 ﻿function Invoke-IADsGroupMembersMethod {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
-
     <#
         .SYNOPSIS
+
         Get members of a group from the WinNT provider
         .DESCRIPTION
         Get members of a group from the WinNT provider
@@ -37,8 +36,9 @@
         Get members of the local Administrators group
     #>
 
-    [OutputType([System.DirectoryServices.DirectoryEntry])]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
 
+    [OutputType([System.DirectoryServices.DirectoryEntry])]
 
     param (
 
@@ -48,6 +48,10 @@
 
 
     )
+
+
+
+
 
     process {
 

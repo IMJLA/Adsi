@@ -1,8 +1,7 @@
 ﻿function Resolve-SidAuthority {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
-
     <#
     .SYNOPSIS
+
     Resolves SID authority names to their proper representation.
 
     .DESCRIPTION
@@ -18,6 +17,9 @@
     .OUTPUTS
     None. Modifies the DirectorySplit hashtable directly by adding 'ResolvedDomain' and 'ResolvedDirectoryPath' keys.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
+
 
     param (
 
@@ -42,7 +44,10 @@
             'WORLD SID AUTHORITY'           = $null
         }
 
+
     )
+
+
 
     $Domain = $DirectorySplit['Domain']
 

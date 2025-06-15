@@ -1,8 +1,7 @@
 ﻿function Find-AdsiProvider {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
-
     <#
         .SYNOPSIS
+
         Determine whether a directory server is an LDAP or a WinNT server
         .DESCRIPTION
         Uses CIM to look for open TCP port 389 indicating LDAP, otherwise assumes WinNT.
@@ -24,7 +23,10 @@
         Find the ADSI provider of the AD domain 'ad.contoso.com'
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -35,7 +37,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     $CommandParameters = @{
         Cache        = $Cache

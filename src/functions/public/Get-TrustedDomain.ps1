@@ -1,8 +1,7 @@
 ﻿function Get-TrustedDomain {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
-
     <#
     .SYNOPSIS
+
     Returns a dictionary of trusted domains by the current computer
     .DESCRIPTION
     Works only on domain-joined systems
@@ -25,7 +24,10 @@
     .NOTES
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
+
     [OutputType([PSCustomObject])]
+
     param (
 
         # In-process cache to reduce calls to other processes or to disk
@@ -33,6 +35,8 @@
         [ref]$Cache
 
     )
+
+
 
     # Errors are expected on non-domain-joined systems
     # Redirecting the error stream to null only suppresses the error in the console; it will still be in the transcript

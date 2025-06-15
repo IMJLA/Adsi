@@ -1,8 +1,7 @@
 ﻿function Invoke-ComObject {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
-
     <#
     .SYNOPSIS
+
     Invoke a member method of a ComObject [__ComObject]
     .DESCRIPTION
     Use the InvokeMember method to invoke the InvokeMethod or GetProperty or SetProperty methods
@@ -23,6 +22,9 @@
     providing a consistent way to access these properties in PowerShell.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
+
+
     param (
 
         # The ComObject whose member method to invoke
@@ -39,7 +41,10 @@
         # Use the InvokeMethod method of the ComObject
         [Switch]$Method
 
+
     )
+
+
 
     <#
     # Don't remember what this is for
@@ -51,6 +56,7 @@
             $ComInvoke.$ComObject = New-Object -ComObject $ComObject
         }
         $ComObject = $ComInvoke.$ComObject
+
     }
     #>
 

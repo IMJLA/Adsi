@@ -1,8 +1,7 @@
 ﻿function Get-ParentDomainDnsName {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
-
     <#
     .SYNOPSIS
+
         Gets the DNS name of the parent domain for a given computer or domain.
     .DESCRIPTION
         This function retrieves the DNS name of the parent domain for a specified domain
@@ -18,6 +17,9 @@
         Results are stored in the $Cache variable to improve performance if the function is called again
         with the same parameters. For domain controllers, this will typically return the forest root domain name.
     #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
+
 
     param (
 
@@ -35,7 +37,10 @@
         [ref]$Cache
 
 
+
     )
+
+
 
     if (-not $CimSession) {
         Write-LogMsg -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' -Cache `$Cache" -Cache $Cache

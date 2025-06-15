@@ -1,8 +1,7 @@
 ﻿function ConvertTo-DecStringRepresentation {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
-
     <#
     .SYNOPSIS
+
     Convert a byte array to a string representation of its decimal format
     .DESCRIPTION
     Uses the custom format operator -f to format each byte as a string decimal representation
@@ -16,14 +15,21 @@
     Convert the binary SID $Bytes to a decimal string representation
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
+
     [OutputType([System.String])]
+
 
     param (
 
         # Byte array.  Often the binary format of an objectSid or LoginHours
         [byte[]]$ByteArray
 
+
     )
+
+
+
 
     $ByteArray |
         ForEach-Object {

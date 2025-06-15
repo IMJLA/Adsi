@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain
+online version:
 schema: 2.0.0
 ---
 
 # Get-CurrentDomain
 
 ## SYNOPSIS
-Fill in the Synopsis
+Use ADSI to get the current domain
 
 ## SYNTAX
 
@@ -17,21 +17,26 @@ Get-CurrentDomain [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Works only on domain-joined systems, otherwise returns nothing
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+Get-CurrentDomain -Cache $Cache
 ```
 
-Add example description here
+Retrieves the current domain of the computer running the script as a DirectoryEntry object.
+On domain-joined systems, this returns the Active Directory domain.
+On workgroup computers,
+it returns the local computer as the domain.
+The function caches the result to improve
+performance in subsequent operations involving the current domain.
 
 ## PARAMETERS
 
 ### -Cache
-Fill Cache Description
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -39,7 +44,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -50,16 +55,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.DirectoryServices.DirectoryEntry
-
+### [System.DirectoryServices.DirectoryEntry] The current domain
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain](https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain)
-
 

@@ -62,7 +62,7 @@
         $strings += "`t`$NormalizedContent = `"`$(`$OriginalContent.Trim())``r``n`" -replace `"``r``n|``n|``r`", `"``r``n`""
         $NormalizedContent = "$($OriginalContent.Trim())`r`n" -replace "`r`n|`n|`r", "`r`n"
         $strings += "`t`$ScriptDefinition = Format-PowerShellSpacing -Content `$NormalizedContent"
-        $ScriptDefinition = Format-PowerShellSpacing -Content $NormalizedContent
+        $ScriptDefinition = Format-BuildScript -Content $NormalizedContent
 
         $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$ScriptDefinition -Settings '$SettingsPath'"
         [string]$FormattedContent = Invoke-Formatter -ScriptDefinition $ScriptDefinition -Settings $SettingsPath -ErrorAction Stop

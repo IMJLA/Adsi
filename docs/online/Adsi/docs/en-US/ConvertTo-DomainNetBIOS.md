@@ -1,7 +1,7 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName
+online version:
 schema: 2.0.0
 ---
 

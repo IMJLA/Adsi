@@ -1,8 +1,7 @@
 ﻿function ConvertTo-DomainSidString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainSidString')]
-
     <#
     .SYNOPSIS
+
     Converts a domain DNS name to its corresponding SID string.
 
     .DESCRIPTION
@@ -31,6 +30,9 @@
     System.String. The SID string of the specified domain.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainSidString')]
+
+
     param (
 
         # Domain DNS name to convert to the domain's SID
@@ -52,7 +54,10 @@
         [ref]$Cache
 
 
+
     )
+
+
 
     $Log = @{ Cache = $Cache ; Suffix = " # for domain FQDN '$DomainDnsName'" }
     $CacheResult = $null

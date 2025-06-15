@@ -1,8 +1,7 @@
 ﻿function ConvertTo-DistinguishedName {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
-
     <#
     .SYNOPSIS
+
     Convert a domain NetBIOS name to its distinguishedName
     .DESCRIPTION
     https://docs.microsoft.com/en-us/windows/win32/api/iads/nn-iads-iadsnametranslate
@@ -19,7 +18,10 @@
     The function utilizes Windows API calls to perform accurate name translation.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -61,7 +63,11 @@
         [ref]$Cache
 
 
+
     )
+
+
+
 
     begin {
 

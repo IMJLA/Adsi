@@ -1,8 +1,7 @@
 ﻿function Add-DomainFqdnToLdapPath {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
-
     <#
     .SYNOPSIS
+
     Add a domain FQDN to an LDAP directory path as the server address so the new path can be used for remote queries
     .DESCRIPTION
     Uses RegEx to:
@@ -22,7 +21,10 @@
     when working in multi-domain environments or when connecting to trusted domains.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -34,7 +36,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
         $DomainRegEx = '(?i)DC=\w{1,}?\b'

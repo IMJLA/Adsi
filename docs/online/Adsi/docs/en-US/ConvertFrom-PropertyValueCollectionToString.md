@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString
+online version:
 schema: 2.0.0
 ---
 
 # ConvertFrom-PropertyValueCollectionToString
 
 ## SYNOPSIS
-Fill in the Synopsis
+Convert a PropertyValueCollection to a string
 
 ## SYNTAX
 
@@ -18,21 +18,25 @@ ConvertFrom-PropertyValueCollectionToString [[-PropertyValueCollection] <Propert
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Useful when working with System.DirectoryServices and some other namespaces
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+$DirectoryEntry = [adsi]("WinNT://$(hostname)")
+$DirectoryEntry.Properties.Keys |
+ForEach-Object {
+ ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
+}
 ```
 
-Add example description here
+For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
 
 ## PARAMETERS
 
 ### -PropertyValueCollection
-Fill PropertyValueCollection Description
+This PropertyValueCollection will be converted to a string
 
 ```yaml
 Type: System.DirectoryServices.PropertyValueCollection
@@ -40,7 +44,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -51,15 +55,12 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Object
+### [System.String]
+### Returns a string representation of the PropertyValueCollection's value.
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString](https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString)
-
 

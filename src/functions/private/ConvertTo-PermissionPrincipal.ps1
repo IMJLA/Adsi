@@ -1,8 +1,7 @@
 ﻿function ConvertTo-PermissionPrincipal {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
-
     <#
 .SYNOPSIS
+
 Converts directory entry information into a permission principal object.
 
 .DESCRIPTION
@@ -20,6 +19,9 @@ System.DirectoryServices.DirectoryEntry
 .OUTPUTS
 None. This function populates the PrincipalById cache with permission principal objects.
 #>
+
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
+
 
     param (
 
@@ -39,7 +41,10 @@ None. This function populates the PrincipalById cache with permission principal 
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
 
     $Log = @{
         'Cache'  = $Cache

@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain
+online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
 schema: 2.0.0
 ---
 
 # Get-TrustedDomain
 
 ## SYNOPSIS
-Fill in the Synopsis
+Returns a dictionary of trusted domains by the current computer
 
 ## SYNTAX
 
@@ -17,21 +17,30 @@ Get-TrustedDomain [-Cache] <PSReference> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Works only on domain-joined systems
+Use nltest to get the domain trust relationships for the domain of the current computer
+Use ADSI's LDAP provider to get each trusted domain's DNS name, NETBIOS name, and SID
+For each trusted domain the key is the domain's SID, or its NETBIOS name if the -KeyByNetbios switch parameter was used
+For each trusted domain the value contains the details retrieved with ADSI
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+Get-TrustedDomain -Cache $Cache
 ```
 
-Add example description here
+Retrieves information about all domains trusted by the current domain-joined computer, including each domain's
+NetBIOS name, DNS name, and distinguished name.
+This information is essential for cross-domain identity resolution
+and permission analysis.
+The function stores the results in the provided cache to improve performance in
+subsequent operations involving these trusted domains.
 
 ## PARAMETERS
 
 ### -Cache
-Fill Cache Description
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -39,7 +48,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -50,16 +59,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Management.Automation.PSObject
-
+### [PSCustomObject] One object per trusted domain, each with a DomainFqdn property and a DomainNetbios property
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain](https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain)
-
 

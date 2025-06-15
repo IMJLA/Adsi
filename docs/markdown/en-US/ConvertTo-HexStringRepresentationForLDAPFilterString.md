@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString
+online version:
 schema: 2.0.0
 ---
 
 # ConvertTo-HexStringRepresentationForLDAPFilterString
 
 ## SYNOPSIS
-Fill in the Synopsis
+Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
 
 ## SYNTAX
 
@@ -18,16 +18,16 @@ ConvertTo-HexStringRepresentationForLDAPFilterString [[-SIDByteArray] <Byte[]>]
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Uses the custom format operator -f to format each byte as a string hex representation
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+ConvertTo-HexStringRepresentationForLDAPFilterString -SIDByteArray $Bytes
 ```
 
-Add example description here
+Convert the binary SID $Bytes to a hexadecimal string representation, formatted for use in an LDAP filter string
 
 ## PARAMETERS
 
@@ -40,7 +40,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -51,16 +51,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### [System.Byte[]]$SIDByteArray
 ## OUTPUTS
 
-### System.String
-
+### [System.String] SID as an array of strings representing the byte array's hexadecimal values
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString](https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString)
-
 

@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer
+online version:
 schema: 2.0.0
 ---
 
 # Get-AdsiServer
 
 ## SYNOPSIS
-Fill in the Synopsis
+Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
 
 ## SYNTAX
 
@@ -18,21 +18,33 @@ Get-AdsiServer [[-Fqdn] <String[]>] [[-Netbios] <String[]>] [-RemoveCimSession] 
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
+Uses WinRM to query the CIM class Win32_SystemAccount for well-known SIDs
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+Get-AdsiServer -Fqdn localhost -Cache $Cache
 ```
 
-Add example description here
+Retrieves information about the local computer's directory service, determining whether it uses
+the LDAP or WinNT provider, and collects information about well-known security identifiers (SIDs).
+This is essential for consistent identity resolution on the local system when analyzing permissions.
+
+### EXAMPLE 2
+```powershell
+Get-AdsiServer -Fqdn 'ad.contoso.com' -Cache $Cache
+```
+
+Connects to the domain controller for 'ad.contoso.com', determines it uses the LDAP provider,
+and retrieves domain-specific information including SIDs, NetBIOS name, and distinguished name.
+This enables proper identity resolution for domain accounts when working with permissions across systems.
 
 ## PARAMETERS
 
 ### -Cache
-Fill Cache Description
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -40,29 +52,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Fqdn
-Fill Fqdn Description
-
-```yaml
-Type: System.String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 0
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -Netbios
-Fill Netbios Description
+IP address or hostname of the directory server whose ADSI provider type to determine
 
 ```yaml
 Type: System.String[]
@@ -72,12 +69,27 @@ Aliases:
 Required: False
 Position: 1
 Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Netbios
+NetBIOS name of the ADSI server whose information to determine
+
+```yaml
+Type: System.String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -RemoveCimSession
-Fill RemoveCimSession Description
+Remove the CIM session used to get ADSI server information
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -86,7 +98,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -96,16 +108,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.String[]
-
+### [System.String]$Fqdn
 ## OUTPUTS
 
-### System.String
-
+### [PSCustomObject] with AdsiProvider and WellKnownSidBySid properties
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer](https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer)
-
 

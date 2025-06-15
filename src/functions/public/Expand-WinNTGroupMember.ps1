@@ -1,8 +1,7 @@
 ﻿function Expand-WinNTGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
-
     <#
     .SYNOPSIS
+
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
     .DESCRIPTION
     Recursively retrieves group members and detailed information about them
@@ -18,7 +17,10 @@
     is itself a group. This provides a complete hierarchical view of permissions.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -33,7 +35,11 @@
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
+
     )
+
+
+
 
     begin {
 

@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString
+online version:
 schema: 2.0.0
 ---
 
 # ConvertFrom-ResultPropertyValueCollectionToString
 
 ## SYNOPSIS
-Fill in the Synopsis
+Convert a ResultPropertyValueCollection to a string
 
 ## SYNTAX
 
@@ -19,21 +19,25 @@ ConvertFrom-ResultPropertyValueCollectionToString
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Useful when working with System.DirectoryServices and some other namespaces
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+$DirectoryEntry = [adsi]("WinNT://$(hostname)")
+$DirectoryEntry.Properties.Keys |
+ForEach-Object {
+ ConvertFrom-PropertyValueCollectionToString -PropertyValueCollection $DirectoryEntry.Properties[$_]
+}
 ```
 
-Add example description here
+For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
 
 ## PARAMETERS
 
 ### -ResultPropertyValueCollection
-Fill ResultPropertyValueCollection Description
+ResultPropertyValueCollection object to convert to a string
 
 ```yaml
 Type: System.DirectoryServices.ResultPropertyValueCollection
@@ -41,7 +45,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -52,15 +56,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### None. Pipeline input is not accepted.
 ## OUTPUTS
 
-### System.Object
+### [System.String]
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString](https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString)
-
 

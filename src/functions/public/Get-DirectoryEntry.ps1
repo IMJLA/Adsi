@@ -1,6 +1,6 @@
 ﻿function Get-DirectoryEntry {
-
     <#
+
     .SYNOPSIS
     Use Active Directory Service Interfaces to retrieve an object from a directory
     .DESCRIPTION
@@ -24,8 +24,10 @@
     As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
 
-    [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
+
+    [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
 
     param (
 
@@ -54,6 +56,9 @@
         [ref]$Cache
 
     )
+
+
+
 
     $Log = @{ Cache = $Cache }
     $CacheResult = $null

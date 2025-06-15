@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation
+online version:
 schema: 2.0.0
 ---
 
 # ConvertTo-DecStringRepresentation
 
 ## SYNOPSIS
-Fill in the Synopsis
+Convert a byte array to a string representation of its decimal format
 
 ## SYNTAX
 
@@ -18,21 +18,22 @@ ConvertTo-DecStringRepresentation [[-ByteArray] <Byte[]>] [-ProgressAction <Acti
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Uses the custom format operator -f to format each byte as a string decimal representation
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+ConvertTo-DecStringRepresentation -ByteArray $Bytes
 ```
 
-Add example description here
+Convert the binary SID $Bytes to a decimal string representation
 
 ## PARAMETERS
 
 ### -ByteArray
-Fill ByteArray Description
+Byte array. 
+Often the binary format of an objectSid or LoginHours
 
 ```yaml
 Type: System.Byte[]
@@ -40,7 +41,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -51,16 +52,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### [System.Byte[]]$ByteArray
 ## OUTPUTS
 
-### System.String
-
+### [System.String] Array of strings representing the byte array's decimal values
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation](https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation)
-
 

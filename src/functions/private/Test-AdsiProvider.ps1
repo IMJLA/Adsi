@@ -1,8 +1,7 @@
 ﻿function Test-AdsiProvider {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
-
     <#
     .SYNOPSIS
+
     Determine whether a directory server is an LDAP or a WinNT server
     .DESCRIPTION
     Uses the ADSI provider to attempt to query the server using LDAP first, then WinNT second
@@ -22,7 +21,10 @@
     Find the ADSI provider of the AD domain 'ad.contoso.com'
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -33,7 +35,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
 
     $Log = @{ 'Cache' = $Cache }

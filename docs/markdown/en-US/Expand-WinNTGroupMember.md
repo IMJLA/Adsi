@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember
+online version:
 schema: 2.0.0
 ---
 
 # Expand-WinNTGroupMember
 
 ## SYNOPSIS
-Fill in the Synopsis
+Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
 
 ## SYNTAX
 
@@ -18,21 +18,24 @@ Expand-WinNTGroupMember [[-DirectoryEntry] <Object>] [-Cache] <PSReference> [[-A
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Recursively retrieves group members and detailed information about them
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember | Expand-WinNTGroupMember
 ```
 
-Add example description here
+Retrieves the members of the local Administrators group and then expands each member by adding
+additional information such as SID, domain information, and group membership details if the member
+is itself a group.
+This provides a complete hierarchical view of permissions.
 
 ## PARAMETERS
 
 ### -AccountProperty
-Fill AccountProperty Description
+Properties of each Account to display on the report
 
 ```yaml
 Type: System.String[]
@@ -40,14 +43,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
-Default value: None
+Position: 3
+Default value: @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Cache
-Fill Cache Description
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -55,14 +58,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 1
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DirectoryEntry
-Fill DirectoryEntry Description
+Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry
 
 ```yaml
 Type: System.Object
@@ -70,7 +73,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -81,16 +84,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Object
-
+### [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
 ## OUTPUTS
 
-### System.DirectoryServices.DirectoryEntry
-
+### [System.DirectoryServices.DirectoryEntry] Returned with member info added now (if the DirectoryEntry is a group).
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember](https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember)
-
 

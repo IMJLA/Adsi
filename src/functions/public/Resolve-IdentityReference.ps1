@@ -1,8 +1,7 @@
 ﻿function Resolve-IdentityReference {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference')]
-
     <#
     .SYNOPSIS
+
     Use CIM and ADSI to lookup info about IdentityReferences from Access Control Entries that came from Discretionary Access Control Lists
     .DESCRIPTION
     Based on the IdentityReference proprety of each Access Control Entry:
@@ -21,7 +20,10 @@
     are represented, especially when comparing permissions across different systems or domains.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference')]
+
     [OutputType([PSCustomObject])]
+
 
     param (
 
@@ -40,7 +42,11 @@
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
+
     )
+
+
+
 
     $ServerNetBIOS = $AdsiServer.Netbios
     $splat1 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
@@ -56,9 +62,11 @@
 
     }
 
+
     #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Cache miss" -Cache $Cache
 
     <#
+
     If no match was found in any cache, the resolution method depends on the IdentityReference.
     First, determine whether the IdentityReference is an NTAccount (DOMAIN\Name vs Name).
     #>

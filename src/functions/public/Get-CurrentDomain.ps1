@@ -1,8 +1,7 @@
 ﻿function Get-CurrentDomain {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
-
     <#
     .SYNOPSIS
+
     Use ADSI to get the current domain
     .DESCRIPTION
     Works only on domain-joined systems, otherwise returns nothing
@@ -20,7 +19,10 @@
     performance in subsequent operations involving the current domain.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -28,7 +30,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     $ComputerName = $Cache.Value['ThisHostname'].Value
     $Suffix = " # for the computer running the script, named '$ComputerName'"

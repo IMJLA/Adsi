@@ -1,8 +1,7 @@
 ﻿function ConvertFrom-SidString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
-
     <#
     .SYNOPSIS
+
     Converts a SID string to a DirectoryEntry object.
 
     .DESCRIPTION
@@ -27,9 +26,10 @@
     This function is not currently in use by Export-Permission
     #>
 
-    #[OutputType([System.Security.Principal.NTAccount])]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
     param (
+
         # Security Identifier (SID) string to convert to a DirectoryEntry
         [string]$SID,
 
@@ -37,6 +37,10 @@
         [Parameter(Mandatory)]
         [ref]$Cache
     )
+
+
+    #[OutputType([System.Security.Principal.NTAccount])]
+
 
     #[System.Security.Principal.SecurityIdentifier]::new($SID)
     # Only works if SID is in the current domain...otherwise SID not found

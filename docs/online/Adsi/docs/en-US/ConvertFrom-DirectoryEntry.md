@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry
+online version:
 schema: 2.0.0
 ---
 
 # ConvertFrom-DirectoryEntry
 
 ## SYNOPSIS
-Fill in the Synopsis
+Convert a DirectoryEntry to a PSCustomObject
 
 ## SYNTAX
 
@@ -18,21 +18,26 @@ ConvertFrom-DirectoryEntry [[-DirectoryEntry] <DirectoryEntry[]>] [-ProgressActi
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
+This obfuscates the troublesome PropertyCollection and PropertyValueCollection and Hashtable aspects of working with ADSI
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+$DirEntry = [System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrator')
+ConvertFrom-DirectoryEntry -DirectoryEntry $DirEntry
 ```
 
-Add example description here
+Converts the DirectoryEntry for the local Administrator account into a PowerShell custom object with simplified
+property values.
+This makes it easier to work with the object in PowerShell and avoids the complexity of
+DirectoryEntry property collections, which can be difficult to access and manipulate directly.
 
 ## PARAMETERS
 
 ### -DirectoryEntry
-Fill DirectoryEntry Description
+DirectoryEntry objects to convert to PSCustomObjects
 
 ```yaml
 Type: System.DirectoryServices.DirectoryEntry[]
@@ -40,7 +45,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -51,15 +56,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
+### [System.DirectoryServices.DirectoryEntry]
 ## OUTPUTS
 
-### System.Object
+### [PSCustomObject]
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry](https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry)
-
 

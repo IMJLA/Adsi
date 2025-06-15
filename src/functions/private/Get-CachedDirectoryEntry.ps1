@@ -1,11 +1,16 @@
 ﻿function Get-CachedDirectoryEntry {
+    <#
+        Path to the directory object to retrieve
+        Defaults to the root of the current domain
+        #>
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CachedDirectoryEntry')]
 
-    # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
 
     param (
 
         <#
+
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
@@ -19,15 +24,15 @@
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
+
         [Parameter(Mandatory)]
         [ref]$Cache
 
 
     )
 
-    <#
-    The WinNT provider only throws an error if you try to retrieve certain accounts/identities
-    We will create own dummy objects instead of performing the query
+    # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
+
     #>
 
     $ID = "$Server\$AccountName"

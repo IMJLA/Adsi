@@ -1,8 +1,7 @@
 ﻿function Get-AdsiGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
-
     <#
     .SYNOPSIS
+
     Get members of a group from the LDAP provider
     .DESCRIPTION
     Use ADSI to get members of a group from the LDAP provider
@@ -21,7 +20,10 @@
     approach ensures proper resolution of all group memberships regardless of how they are assigned.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -52,7 +54,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
 

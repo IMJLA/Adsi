@@ -1,8 +1,7 @@
 ﻿function ConvertFrom-PropertyValueCollectionToString {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString')]
-
     <#
     .SYNOPSIS
+
     Convert a PropertyValueCollection to a string
     .DESCRIPTION
     Useful when working with System.DirectoryServices and some other namespaces
@@ -22,12 +21,18 @@
     For each property in a DirectoryEntry, convert its corresponding PropertyValueCollection to a string
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString')]
+
+
     param (
 
         # This PropertyValueCollection will be converted to a string
         [System.DirectoryServices.PropertyValueCollection]$PropertyValueCollection
 
+
     )
+
+
 
     if ($null -ne $PropertyValueCollection.Value) {
         $SubType = $PropertyValueCollection.Value.GetType().FullName

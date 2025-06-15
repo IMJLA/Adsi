@@ -1,8 +1,7 @@
 ﻿function Expand-AdsiGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
-
     <#
     .SYNOPSIS
+
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
     .DESCRIPTION
     Recursively retrieves group members and detailed information about them
@@ -29,7 +28,10 @@
     resolved to their actual DirectoryEntry objects from the appropriate domain.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
     param (
 
         # Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
@@ -44,6 +46,8 @@
         [ref]$Cache
 
     )
+
+
 
     begin {
 

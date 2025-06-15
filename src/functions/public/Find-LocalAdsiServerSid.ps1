@@ -1,8 +1,7 @@
 ﻿function Find-LocalAdsiServerSid {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
-
     <#
     .SYNOPSIS
+
         Finds the SID prefix of the local server by querying the built-in administrator account.
     .DESCRIPTION
         This function queries the local computer or a remote computer via CIM to find the SID
@@ -23,8 +22,9 @@
         the domain and construct SIDs for domain users and groups.
     #>
 
-    [OutputType([System.String])]
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
 
+    [OutputType([System.String])]
 
     param (
 
@@ -37,6 +37,10 @@
 
 
     )
+
+
+
+
 
     $CimParams = @{
         Cache        = $Cache

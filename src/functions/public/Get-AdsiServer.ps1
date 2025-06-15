@@ -1,8 +1,7 @@
 ﻿function Get-AdsiServer {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer')]
-
     <#
     .SYNOPSIS
+
     Get information about a directory server including the ADSI provider it hosts and its well-known SIDs
     .DESCRIPTION
     Uses the ADSI provider to query the server using LDAP first, then WinNT upon failure
@@ -26,7 +25,10 @@
     This enables proper identity resolution for domain accounts when working with permissions across systems.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -44,7 +46,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
 

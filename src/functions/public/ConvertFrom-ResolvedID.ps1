@@ -1,8 +1,7 @@
 ﻿function ConvertFrom-ResolvedID {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
-
     <#
     .SYNOPSIS
+
     Use ADSI to collect more information about the IdentityReference in NTFS Access Control Entries
     .DESCRIPTION
     Recursively retrieves group members and detailed information about them
@@ -31,7 +30,10 @@
     permission analysis and reporting.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
+
     [OutputType([void])]
+
 
     param (
 
@@ -49,7 +51,11 @@
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
+
     )
+
+
+
 
     if ( -not $Cache.Value['PrincipalById'].Value[ $IdentityReference ] ) {
 

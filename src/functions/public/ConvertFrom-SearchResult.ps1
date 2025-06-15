@@ -1,8 +1,7 @@
 ﻿function ConvertFrom-SearchResult {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult')]
-
     <#
     .SYNOPSIS
+
     Convert a SearchResult to a PSCustomObject
     .DESCRIPTION
     Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
@@ -29,6 +28,9 @@
     # TODO: There is a faster way than Select-Object, just need to dig into the default formatting of SearchResult to see how to get those properties
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult')]
+
+
     param (
 
         # SearchResult objects to convert to PSCustomObjects
@@ -38,7 +40,10 @@
         )]
         [System.DirectoryServices.SearchResult[]]$SearchResult
 
+
     )
+
+
 
     process {
 

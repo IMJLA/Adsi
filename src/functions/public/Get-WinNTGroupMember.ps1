@@ -1,8 +1,7 @@
 ﻿function Get-WinNTGroupMember {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
-
     <#
     .SYNOPSIS
+
     Get members of a group from the WinNT provider
     .DESCRIPTION
     Get members of a group from the WinNT provider
@@ -20,7 +19,10 @@
     operation by avoiding redundant directory queries.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
+
 
     param (
 
@@ -35,7 +37,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     begin {
 

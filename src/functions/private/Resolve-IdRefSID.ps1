@@ -1,4 +1,12 @@
 ﻿function Resolve-IdRefSID {
+    <#
+                This .Net method makes it impossible to redirect the error stream directly
+                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
+                I don't understand exactly why
+
+                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
+            #>
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
 
     [OutputType([PSCustomObject])]
@@ -17,6 +25,7 @@
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # In-process cache to reduce calls to other processes or to disk
+
         [Parameter(Mandatory)]
         [ref]$Cache,
 
@@ -24,6 +33,8 @@
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
     )
+
+
 
     $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $IdentityReference -DomainNetBIOS $ServerNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
     $AccountProperties = @{}
@@ -62,6 +73,7 @@
 
     if (-not $done) {
 
+
         #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # No match with known SID patterns" -Cache $Cache
         # The SID of the domain is everything up to (but not including) the last hyphen
         $DomainSid = $IdentityReference.Substring(0, $IdentityReference.LastIndexOf('-'))
@@ -70,12 +82,6 @@
 
         try {
 
-            <#
-                This .Net method makes it impossible to redirect the error stream directly
-                Wrapping it in a scriptblock (which is then executed with &) fixes the problem
-                I don't understand exactly why
-                The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
-            #>
 
             $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 

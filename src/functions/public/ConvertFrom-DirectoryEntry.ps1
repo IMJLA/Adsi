@@ -1,8 +1,7 @@
 ﻿function ConvertFrom-DirectoryEntry {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
-
     <#
     .SYNOPSIS
+
     Convert a DirectoryEntry to a PSCustomObject
     .DESCRIPTION
     Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
@@ -20,6 +19,9 @@
     [PSCustomObject]
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
+
+
     param (
 
         # DirectoryEntry objects to convert to PSCustomObjects
@@ -28,7 +30,10 @@
         )]
         [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
 
+
     )
+
+
 
     ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
 

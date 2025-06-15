@@ -1,8 +1,7 @@
 ﻿function Add-SidInfo {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
-
     <#
     .SYNOPSIS
+
     Add some useful properties to a DirectoryEntry object for easier access
     .DESCRIPTION
     Add SidString, Domain, and SamAccountName NoteProperties to a DirectoryEntry
@@ -19,7 +18,10 @@
     Upon closer inspection it now has SidString, Domain, and SamAccountName properties.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
+
     [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
+
 
     param (
 
@@ -31,7 +33,11 @@
         # In-process cache to reduce calls to other processes or to disk
         [ref]$DomainsBySid
 
+
     )
+
+
+
 
     process {
 

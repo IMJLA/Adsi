@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember
+online version: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dtyp/11e1608c-6169-4fbc-9c33-373fc9b224f4#Appendix_A_34
 schema: 2.0.0
 ---
 
 # Get-WinNTGroupMember
 
 ## SYNOPSIS
-Fill in the Synopsis
+Get members of a group from the WinNT provider
 
 ## SYNTAX
 
@@ -18,21 +18,26 @@ Get-WinNTGroupMember [[-DirectoryEntry] <Object>] [[-PropertiesToLoad] <String[]
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Get members of a group from the WinNT provider
+Convert them from COM objects into usable DirectoryEntry objects
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+[System.DirectoryServices.DirectoryEntry]::new('WinNT://localhost/Administrators') | Get-WinNTGroupMember -Cache $Cache
 ```
 
-Add example description here
+Retrieves all members of the local Administrators group and returns them as DirectoryEntry objects.
+This allows for further processing of group membership information, including nested groups, and provides
+a consistent object format that works well with other ADSI functions.
+The Cache parameter ensures efficient
+operation by avoiding redundant directory queries.
 
 ## PARAMETERS
 
 ### -Cache
-Fill Cache Description
+In-process cache to reduce calls to other processes or to disk
 
 ```yaml
 Type: System.Management.Automation.PSReference
@@ -40,14 +45,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DirectoryEntry
-Fill DirectoryEntry Description
+DirectoryEntry \[System.DirectoryServices.DirectoryEntry\] of the WinNT group whose members to get
 
 ```yaml
 Type: System.Object
@@ -55,14 +60,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -PropertiesToLoad
-Fill PropertiesToLoad Description
+Properties of the group members to find in the directory
 
 ```yaml
 Type: System.String[]
@@ -70,8 +75,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: None
+Position: 2
+Default value: @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName')
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -81,16 +86,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Object
-
+### [System.DirectoryServices.DirectoryEntry]$DirectoryEntry
 ## OUTPUTS
 
-### System.DirectoryServices.DirectoryEntry
-
+### [System.DirectoryServices.DirectoryEntry] for each group member
 ## NOTES
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember](https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember)
-
 

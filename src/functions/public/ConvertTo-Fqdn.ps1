@@ -1,8 +1,7 @@
 ﻿function ConvertTo-Fqdn {
-    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
-
     <#
     .SYNOPSIS
+
     Convert a domain distinguishedName name or NetBIOS name to its FQDN
     .DESCRIPTION
     For the DistinguishedName parameter, uses PowerShell's -replace operator to perform the conversion
@@ -19,7 +18,10 @@
     names or when constructing proper LDAP paths that require the FQDN of the domain for remote connections.
     #>
 
+    [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
+
     [OutputType([System.String])]
+
 
     param (
 
@@ -41,7 +43,11 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
+
+
+
 
     process {
 

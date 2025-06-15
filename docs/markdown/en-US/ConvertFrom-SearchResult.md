@@ -1,14 +1,14 @@
 ---
 external help file: Adsi-help.xml
 Module Name: Adsi
-online version: https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult
+online version:
 schema: 2.0.0
 ---
 
 # ConvertFrom-SearchResult
 
 ## SYNOPSIS
-Fill in the Synopsis
+Convert a SearchResult to a PSCustomObject
 
 ## SYNTAX
 
@@ -18,21 +18,29 @@ ConvertFrom-SearchResult [[-SearchResult] <SearchResult[]>] [-ProgressAction <Ac
 ```
 
 ## DESCRIPTION
-Fill in the Description
+Recursively convert every property into a string, or a PSCustomObject (whose properties are all strings, or more PSCustomObjects)
+This obfuscates the troublesome ResultPropertyCollection and ResultPropertyValueCollection and Hashtable aspects of working with ADSI searches
 
 ## EXAMPLES
 
-### Example 1
+### EXAMPLE 1
 ```powershell
-PS C:\> Add example code here
+$DirectorySearcher = [System.DirectoryServices.DirectorySearcher]::new("LDAP://DC=contoso,DC=com")
+$DirectorySearcher.Filter = "(objectClass=user)"
+$SearchResults = $DirectorySearcher.FindAll()
+$SearchResults | ConvertFrom-SearchResult
 ```
 
-Add example description here
+Performs a search in Active Directory for all user objects, then converts each SearchResult
+into a PSCustomObject with simplified properties.
+This makes it easier to work with the
+search results in PowerShell by flattening complex nested property collections into
+regular object properties.
 
 ## PARAMETERS
 
 ### -SearchResult
-Fill SearchResult Description
+SearchResult objects to convert to PSCustomObjects
 
 ```yaml
 Type: System.DirectoryServices.SearchResult[]
@@ -40,7 +48,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -52,14 +60,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### System.DirectoryServices.SearchResult[]
-
+### Accepts SearchResult objects from a directory search via the pipeline.
 ## OUTPUTS
 
-### System.Object
+### PSCustomObject
+### Returns PSCustomObject instances with simplified properties.
 ## NOTES
+# TODO: There is a faster way than Select-Object, just need to dig into the default formatting of SearchResult to see how to get those properties
 
 ## RELATED LINKS
-
-[https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult](https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult)
-
 
