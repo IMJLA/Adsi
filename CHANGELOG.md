@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.547] - 2025-06-15
+### Fixed
+- fix use stricter typing
+
 ## [5.0.546] - 2025-06-15
 ### Fixed
 - fix bug in format-buildscript
