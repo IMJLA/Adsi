@@ -20,7 +20,7 @@
 
     try {
         if (-not $ScriptBlockAst.Extent -or -not $ScriptBlockAst.Extent.Text) {
-            return $results
+            return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
         # Find all tokens to locate comment-based help
@@ -33,7 +33,7 @@
         )
 
         if (-not $tokens) {
-            return $results
+            return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
         # Find comment tokens that look like comment-based help
@@ -45,7 +45,7 @@
         }
 
         if (-not $commentTokens) {
-            return $results
+            return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
         $lines = $ScriptBlockAst.Extent.Text -split "`r?`n"
@@ -82,7 +82,7 @@
         Write-Warning "Error in Measure-CommentBasedHelpSpacing: $_"
     }
 
-    return $results
+    return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
 }
 
 function Measure-ParamBlockSpacing {
@@ -101,7 +101,7 @@ function Measure-ParamBlockSpacing {
 
     try {
         if (-not $ScriptBlockAst.Extent -or -not $ScriptBlockAst.Extent.Text) {
-            return $results
+            return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
         # Get tokens to find actual param block boundaries
@@ -114,7 +114,7 @@ function Measure-ParamBlockSpacing {
         )
 
         if (-not $tokens) {
-            return $results
+            return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
         # Find param blocks
@@ -126,7 +126,7 @@ function Measure-ParamBlockSpacing {
             }, $true)
 
         if (-not $paramBlocks) {
-            return $results
+            return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
         $lines = $ScriptBlockAst.Extent.Text -split "`r?`n"
@@ -182,7 +182,7 @@ function Measure-ParamBlockSpacing {
         Write-Warning "Error in Measure-ParamBlockSpacing: $_"
     }
 
-    return $results
+    return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
 }
 
 Export-ModuleMember -Function Measure-CommentBasedHelpSpacing, Measure-ParamBlockSpacing
