@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.569] - 2025-06-15
+### Added
+- add comment-based help to get-directoryentryparentname
+
 ## [5.0.568] - 2025-06-15
 ### Fixed
 - fix param block exterior padding

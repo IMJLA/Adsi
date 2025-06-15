@@ -35,7 +35,6 @@
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
@@ -46,11 +45,9 @@
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve
-
         [string[]]$PropertiesToLoad,
 
         # Mapping of SID types to descriptions used for converting security identifiers
-
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
@@ -58,10 +55,7 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
     )
-
-
 
     $Log = @{ Cache = $Cache }
     $CacheResult = $null

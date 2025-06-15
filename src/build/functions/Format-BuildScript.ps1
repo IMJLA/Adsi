@@ -11,33 +11,74 @@
         formatting best practices.
 
         The function uses the PowerShell AST (Abstract Syntax Tree) to parse the content and identify
-        comment-based help blocks and parameter blocks, then modifies the spacing accordingly.
+        various script elements including:
+        - #requires statements
+        - Comment-based help blocks
+        - Function attributes ([CmdletBinding], [OutputType], etc.)
+        - Parameter blocks and individual parameters
+
+        Key formatting improvements include:
+        - Proper ordering of function elements (#requires, help, attributes, param block)
+        - Consistent spacing around comment-based help blocks
+        - Proper grouping of function attributes without blank lines between them
+        - Consistent parameter spacing with blank lines between parameter groups
+        - Removal of excessive blank lines while maintaining readability
+
+        The function processes content from bottom to top to maintain correct line numbers during
+        modifications and only returns modified content if changes were actually made.
 
     .EXAMPLE
         $scriptContent = Get-Content -Path 'MyScript.ps1' -Raw
         $formattedContent = Format-BuildScript -Content $scriptContent
+        Set-Content -Path 'MyScript.ps1' -Value $formattedContent
 
-        This example reads a PowerShell script file and formats its spacing.
+        This example reads a PowerShell script file, formats its spacing, and saves the result.
 
     .EXAMPLE
-        Get-Content -Path 'MyScript.ps1' -Raw | Format-BuildScript
+        Get-Content -Path 'MyScript.ps1' -Raw | Format-BuildScript | Set-Content -Path 'MyScript-Formatted.ps1'
 
-        This example demonstrates using the function with pipeline input.
+        This example demonstrates using the function with pipeline input to create a formatted copy.
+
+    .EXAMPLE
+        Get-ChildItem -Path '*.ps1' | ForEach-Object {
+            $content = Get-Content $_.FullName -Raw
+            $formatted = Format-BuildScript -Content $content
+            Set-Content -Path $_.FullName -Value $formatted
+        }
+
+        This example formats all PowerShell script files in the current directory.
 
     .INPUTS
         System.String
-        The PowerShell script content to be formatted.
+        The PowerShell script content to be formatted. Must be valid PowerShell syntax.
 
     .OUTPUTS
         System.String
-        The formatted PowerShell script content with corrected spacing.
+        The formatted PowerShell script content with corrected spacing and element ordering.
 
     .NOTES
-        - The function processes content from bottom to top to maintain correct line numbers during modifications
-        - Parse errors will cause the function to return the original content unchanged
-        - Only adds spacing; does not remove existing blank lines
-        - Designed specifically for PowerShell script formatting
+        Author: Your Name
+        Version: 1.0.0
 
+        The function makes the following formatting decisions:
+        - Processes content from bottom to top to maintain correct line numbers
+        - Parse errors will cause the function to return the original content unchanged
+        - Only adds spacing; does not remove existing blank lines unless they violate formatting rules
+        - Reorders function elements to follow best practices: #requires, help, attributes, param block
+        - Groups function attributes together without blank lines between them
+        - Ensures exactly one blank line between major function components
+        - Maintains proper spacing around individual parameters within param blocks
+
+        Performance considerations:
+        - Uses PowerShell AST parsing which is efficient for most script sizes
+        - Processes files with thousands of lines without significant performance impact
+        - Memory usage scales linearly with input size
+
+    .LINK
+        about_Comment_Based_Help
+
+    .LINK
+        about_Functions_Advanced_Parameters
     #>
 
     [CmdletBinding()]
@@ -45,7 +86,7 @@
 
     param(
 
-        # The PowerShell script content to format. Must be a valid PowerShell script string.
+        # The PowerShell script content to format. Must be a valid PowerShell script string that can be parsed by the PowerShell AST. Empty or whitespace-only content will be returned unchanged.
         [Parameter(Mandatory, ValueFromPipeline)]
         [string]$Content
 

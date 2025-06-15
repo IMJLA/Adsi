@@ -42,7 +42,6 @@
         # Metadata for the help files
         [hashtable]$Metadata = @{}
 
-
     )
 
     $markdownHelpParams = @{

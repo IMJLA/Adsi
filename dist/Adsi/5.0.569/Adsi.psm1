@@ -1117,7 +1117,6 @@ function Find-WinNTGroupMember {
     # Find LDAP and WinNT group members to retrieve from their directories.
     # Convert COM objects from the IADsGroup::Members method into strings.
     # Use contextual information to determine whether each string represents an LDAP or a WinNT group member.
-
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
@@ -1132,9 +1131,9 @@ function Find-WinNTGroupMember {
 
         [string]$LogSuffix,
 
-
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
+
 
         [ref]$Cache
 
@@ -1206,21 +1205,17 @@ function Get-CachedDirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         [string]$Server,
 
         [string]$AccountName,
 
-
-
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -1345,13 +1340,83 @@ function Get-CachedDirectoryEntry {
 
 }
 function Get-DirectoryEntryParentName {
+
+    <#
+    .SYNOPSIS
+        Extracts the parent name from a DirectoryEntry object.
+
+    .DESCRIPTION
+        The Get-DirectoryEntryParentName function retrieves the name of the parent container
+        from a DirectoryEntry object. This function handles different scenarios where the
+        DirectoryEntry.Parent property might be presented as either a DirectoryEntry object
+        with properties or as a string path.
+
+        The function first attempts to access the Parent.Name property directly. If that
+        fails or returns null, it falls back to parsing the parent path string by finding
+        the last forward slash and extracting the substring that follows it.
+
+        This dual approach ensures compatibility with different representations of the
+        DirectoryEntry.Parent property that may occur in different execution contexts
+        (such as debugging in VS Code versus console execution).
+
+    .EXAMPLE
+        $directoryEntry = [ADSI]"LDAP://CN=Users,DC=contoso,DC=com"
+        $parentName = Get-DirectoryEntryParentName -DirectoryEntry $directoryEntry
+
+        This example gets the parent name of a specific LDAP directory entry.
+
+    .EXAMPLE
+        $user = Get-ADUser -Identity "jdoe"
+        $userEntry = [ADSI]"LDAP://$($user.DistinguishedName)"
+        $parentName = Get-DirectoryEntryParentName -DirectoryEntry $userEntry
+
+        This example demonstrates getting the parent container name for a user object.
+
+    .EXAMPLE
+        $entries = Get-ChildItem "LDAP://CN=Users,DC=contoso,DC=com"
+        $entries | ForEach-Object { Get-DirectoryEntryParentName -DirectoryEntry $_ }
+
+        This example shows processing multiple directory entries to get their parent names.
+
+    .INPUTS
+        System.DirectoryServices.DirectoryEntry
+        A DirectoryEntry object from which to extract the parent name.
+
+    .OUTPUTS
+        System.String
+        The name of the parent container or organizational unit.
+
+    .NOTES
+        Author: Your Name
+        Version: 1.0.0
+
+        This function addresses a specific issue where DirectoryEntry.Parent behavior
+        can vary between execution contexts:
+        - In VS Code debugger: Shows as DirectoryEntry with accessible properties
+        - In console execution: May appear as a string representation
+
+        The function includes error handling for both scenarios to ensure reliable
+        operation regardless of the execution environment.
+
+        Performance considerations:
+        - Primary method (Parent.Name) is fastest when available
+        - Fallback string parsing adds minimal overhead
+        - No external dependencies or network calls
+
+    .LINK
+        https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntryParentName
+
+    .LINK
+        System.DirectoryServices.DirectoryEntry
+    #>
+
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntryParentName')]
 
-    # Possibly a debugging issue, not sure whether I need to prepare for both here.
-    # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
     param (
 
+        # The DirectoryEntry object from which to extract the parent name. This can be any valid DirectoryEntry object that has a Parent property, such as LDAP directory entries, Active Directory objects, or other directory service entries.
         $DirectoryEntry
+
     )
 
     if ($DirectoryEntry.Parent.Name) {
@@ -1469,7 +1534,6 @@ function Invoke-ScShowSid {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
 
     # Invoke sc.exe showsid
-
     param (
 
         [string]$ServiceName,
@@ -1478,12 +1542,10 @@ function Invoke-ScShowSid {
 
         [string]$ThisHostName,
 
-
         [string]$ThisFqdn,
 
-
-
         [hashtable]$Log
+
 
 
 
@@ -3938,22 +4000,18 @@ function Get-AdsiGroup {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
-
         [string]$GroupName,
 
         # Properties of the group members to retrieve
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
 
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -4561,7 +4619,6 @@ function Get-DirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
@@ -4572,11 +4629,9 @@ function Get-DirectoryEntry {
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve
-
         [string[]]$PropertiesToLoad,
 
         # Mapping of SID types to descriptions used for converting security identifiers
-
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
@@ -4584,10 +4639,7 @@ function Get-DirectoryEntry {
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
     )
-
-
 
     $Log = @{ Cache = $Cache }
     $CacheResult = $null
@@ -7045,15 +7097,12 @@ function Search-Directory {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
 
         # Filter for the LDAP search
-
         [string]$Filter,
 
         # Number of results to return in each page
-
         [int]$PageSize = 1000,
 
         # Search scope (Base, OneLevel, or Subtree)
@@ -7061,19 +7110,17 @@ function Search-Directory {
         [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
 
         # Additional properties to return
-
         [string[]]$PropertiesToLoad,
 
         # Credentials to use
-
         [pscredential]$Credential,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
     )
+
 
     $DirectoryEntryParameters = @{ 'Cache' = $Cache }
 

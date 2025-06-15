@@ -2,7 +2,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
 
     # Invoke sc.exe showsid
-
     param (
 
         [string]$ServiceName,
@@ -11,12 +10,10 @@
 
         [string]$ThisHostName,
 
-
         [string]$ThisFqdn,
 
-
-
         [hashtable]$Log
+
 
 
 
