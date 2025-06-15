@@ -139,25 +139,9 @@ function Measure-ParamBlockSpacing {
             return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
-        # Get tokens to find actual param block boundaries
-        $tokens = $null
-        $parseErrors = $null
-        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
-            $ScriptBlockAst.Extent.Text,
-            [ref]$tokens,
-            [ref]$parseErrors
-        )
-
-        if (-not $tokens) {
-            return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
-        }
-
         # Find param blocks and deduplicate by position
-
         $paramBlocks = $ScriptBlockAst.FindAll({
-
                 param($ast)
-
                 $ast -is [System.Management.Automation.Language.ParamBlockAst]
             }, $true) | Sort-Object { $_.Extent.StartOffset } | Group-Object { $_.Extent.StartOffset } | ForEach-Object { $_.Group[0] }
 
@@ -174,8 +158,26 @@ function Measure-ParamBlockSpacing {
 
             $startLine = $paramBlock.Extent.StartLineNumber - 1
 
-            # Use the param block's actual end line from its extent
-            $endLine = $paramBlock.Extent.EndLineNumber - 1
+            # For param blocks, we want to find the line containing the closing parenthesis
+            # The AST extent may include trailing whitespace or comments after the )
+            $paramText = $paramBlock.Extent.Text
+            $paramLines = $paramText -split "`r?`n"
+
+            # Find the last line that contains a closing parenthesis
+            $closingParenLineIndex = -1
+            for ($i = $paramLines.Count - 1; $i -ge 0; $i--) {
+                if ($paramLines[$i] -match '\)') {
+                    $closingParenLineIndex = $i
+                    break
+                }
+            }
+
+            if ($closingParenLineIndex -ge 0) {
+                $endLine = $startLine + $closingParenLineIndex
+            } else {
+                # Fallback to the AST extent end line
+                $endLine = $paramBlock.Extent.EndLineNumber - 1
+            }
 
             # Check blank line before (allow comment-based help immediately before)
             if ($startLine -gt 0 -and $startLine -lt $lines.Count) {

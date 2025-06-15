@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.554] - 2025-06-15
+### Fixed
+- fix custom rules
+
 ## [5.0.553] - 2025-06-15
 ### Fixed
 - fix custom rules bug
