@@ -22,21 +22,17 @@
         [string]$ModuleName,
 
         # The PowerShell repository to check
-
         [Parameter(Mandatory)]
         [string]$Repository,
 
         # The version of the module to wait for
-
         [Parameter(Mandatory)]
         [version]$ExpectedVersion,
 
         # Maximum time to wait in seconds. Default is 60
-
         [int]$TimeoutSeconds = 60,
 
         # Interval between checks in seconds. Default is 1
-
         [int]$IntervalSeconds = 1
 
     )

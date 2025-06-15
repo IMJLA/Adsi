@@ -26,8 +26,8 @@
         [string]$ConfigPath = '.\tests\config\pesterConfig.json',
 
         # Common parameters for Write-Information calls
-
         [hashtable]$IO = @{ 'ErrorAction' = 'Stop'; 'InformationAction' = 'Continue' ; 'ProgressAction' = 'SilentlyContinue' }
+
     )
 
     Write-Information "`t`$PesterConfigParams  = Get-Content -Path '$ConfigPath' | ConvertFrom-Json -AsHashtable" @IO

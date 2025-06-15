@@ -10,11 +10,9 @@
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-
         [string]$ServerNetBIOS = $AdsiServer.Netbios
 
     )

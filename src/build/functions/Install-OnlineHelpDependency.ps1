@@ -21,8 +21,8 @@
         [string]$WorkingDirectory,
 
         # Array of npm packages to install (in addition to what is already in package.json)
-
         [string[]]$Dependency = @('@docusaurus/theme-mermaid', '@docusaurus/tsconfig')
+
     )
 
     if ($PSCmdlet.ShouldProcess($WorkingDirectory, "Install all npm dependencies, plus: $($Dependency -join ', ')")) {

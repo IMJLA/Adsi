@@ -21,20 +21,19 @@
         [string]$ModuleName,
 
         # The root directory for online help
-
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpRoot,
 
         # The root directory to set as the working location
-
         [Parameter(Mandatory)]
         [string]$Root,
 
         # Character sequence for line separation in output
-
         [Parameter(Mandatory)]
         [string]$NewLine
+
     )
+
 
     # Find prerequisites for creating online help website.
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline

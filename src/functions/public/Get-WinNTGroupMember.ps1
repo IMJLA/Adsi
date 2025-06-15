@@ -30,15 +30,11 @@
         $DirectoryEntry,
 
         # Properties of the group members to find in the directory
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 

@@ -10,23 +10,20 @@
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # Name of the IdentityReference with the DOMAIN\ prefix removed
-
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
+
 
     # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
     # But they may have real DirectoryEntry objects

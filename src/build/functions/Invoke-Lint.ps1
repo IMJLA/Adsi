@@ -21,9 +21,9 @@
         [string]$SourceCodeDir,
 
         # Path to the PSScriptAnalyzer settings file
-
         [Parameter(Mandatory)]
         [string]$LintSettingsFile
+
     )
 
     Write-Information "`tInvoke-ScriptAnalyzer -Path '$SourceCodeDir' -Settings '$LintSettingsFile' -Recurse"

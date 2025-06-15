@@ -23,7 +23,6 @@
         [string]$Path,
 
         # Description of the directory being created for output messages
-
         [Parameter(Mandatory)]
         [string]$Description
 

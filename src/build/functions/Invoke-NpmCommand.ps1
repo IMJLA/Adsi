@@ -24,7 +24,6 @@
         [string]$Command,
 
         # The directory where the npm command should be executed. Defaults to current directory
-
         [string]$WorkingDirectory = (Get-Location).Path
 
     )

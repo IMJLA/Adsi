@@ -16,6 +16,7 @@
     param (
 
         [string]$DirectoryPath
+
     )
 
     $Split = $DirectoryPath.Split('/')

@@ -20,26 +20,21 @@
         [string]$SourceCodeDir,
 
         # Name of the module being built
-
         [Parameter(Mandatory)]
         [string]$ModuleName,
 
         # Path to the build output directory
-
         [Parameter(Mandatory)]
         [string]$BuildOutputDir,
 
         # Whether to compile module into single PSM1 or not
-
         [Parameter(Mandatory)]
         [boolean]$BuildCompileModule,
 
         # List of directories to concatenate into the PSM1 if compiling
-
         [string[]]$BuildCompileDirectories = @(),
 
         # List of directories to copy to output directory
-
         [string[]]$CopyDirectories = @(),
 
         # Default locale for the module
@@ -58,14 +53,17 @@
         # Path to the ReadMe file
 
         [string]$DocsMarkdownReadMePath
+
     )
 
     if ($PSCmdlet.ShouldProcess($BuildOutputDir, 'Build PowerShell module')) {
 
         $buildParams = @{
+
             Compile            = $BuildCompileModule
             CompileDirectories = $BuildCompileDirectories
             CopyDirectories    = $CopyDirectories
+
             Culture            = $DocsDefaultLocale
             DestinationPath    = $BuildOutputDir
             ErrorAction        = 'Stop'

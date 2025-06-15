@@ -24,32 +24,31 @@
         [string]$ModuleName,
 
         # Version number for the help files
-
         [Parameter(Mandatory)]
         [string]$HelpVersion,
 
         # Default locale for help generation
-
         [Parameter(Mandatory)]
         [string]$DocsDefaultLocale,
 
         # Output directory for markdown help files
-
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDefaultLocaleDir,
 
         # Forward link URL for updatable help
-
         [Parameter(Mandatory)]
+
         [string]$FwLink,
 
         # Metadata for the help files
-
         [hashtable]$Metadata = @{}
+
+
 
     )
 
     $markdownHelpParams = @{
+
         'AlphabeticParamsOrder' = $true
         'ErrorAction'           = 'Stop' # SilentlyContinue will not overwrite an existing MD file.
         'FwLink'                = $FwLink

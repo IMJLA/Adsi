@@ -30,10 +30,7 @@
         $InputObject,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [ref]$DomainsBySid
-
-
 
     )
 

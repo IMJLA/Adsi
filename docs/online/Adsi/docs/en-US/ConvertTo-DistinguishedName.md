@@ -46,6 +46,8 @@ The function utilizes Windows API calls to perform accurate name translation.
 ### -AdsiProvider
 AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
 
+
+
 This parameter can be used to reduce calls to Find-AdsiProvider
 
 Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet

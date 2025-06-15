@@ -20,13 +20,13 @@
         [bool]$IncrementMajorVersion,
 
         # Whether to increment the minor version number
-
         [bool]$IncrementMinorVersion,
 
         # The current version to increment from
-
         [version]$OldVersion
+
     )
+
 
     Write-Verbose "`tGet-NewVersion -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$OldVersion'"
 

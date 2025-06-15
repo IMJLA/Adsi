@@ -23,7 +23,6 @@
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-
         [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
 
     )
@@ -127,7 +126,6 @@ function Measure-ParamBlockSpacing {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-
         [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
 
     )

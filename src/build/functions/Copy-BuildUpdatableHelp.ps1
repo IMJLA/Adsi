@@ -22,9 +22,9 @@
         [string]$DocsUpdatableDir,
 
         # Directory of the online help website
-
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir
+
     )
 
     $destinationPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'UpdatableHelp')

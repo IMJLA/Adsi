@@ -21,14 +21,13 @@
         [string]$DocsMarkdownDir,
 
         # The destination directory for the online help source markdown
-
         [Parameter(Mandatory)]
         [string]$OnlineHelpSourceMarkdown,
 
         # The source directory containing additional markdown documentation
-
         [Parameter(Mandatory)]
         [string]$MarkdownSourceCodeDir
+
     )
 
     if ($PSCmdlet.ShouldProcess($OnlineHelpSourceMarkdown, 'Copy Markdown files for online help')) {

@@ -20,9 +20,9 @@
         [string]$DocsMarkdownDir,
 
         # Default locale for the documentation
-
         [Parameter(Mandatory)]
         [string]$DocsDefaultLocale
+
     )
 
     $MarkdownDir = [IO.Path]::Combine($DocsMarkdownDir, $DocsDefaultLocale)

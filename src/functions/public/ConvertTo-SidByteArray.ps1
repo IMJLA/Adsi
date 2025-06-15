@@ -24,8 +24,6 @@
 
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
-
-
         [string[]]$SidString
 
     )

@@ -21,11 +21,9 @@
         [System.IO.FileInfo[]]$PublicFunctionFile,
 
         # Path to the module file (.psm1)
-
         [string]$ModuleFilePath,
 
         # Path to the module manifest file (.psd1)
-
         [Parameter(Mandatory)]
         [string]$ModuleManifestPath
 

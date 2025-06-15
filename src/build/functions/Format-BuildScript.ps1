@@ -544,6 +544,7 @@
                 $parameters = $paramBlock.Parameters
 
                 if ($parameters.Count -gt 0) {
+                    # First, fix any unwanted blank lines within parameter regions
                     # Process parameters from bottom to top to maintain line numbers
                     $sortedParameters = $parameters | Sort-Object { $_.Extent.StartLineNumber } -Descending
 
@@ -551,51 +552,184 @@
                         $paramStartLine = $param.Extent.StartLineNumber - 1
                         $paramEndLine = $param.Extent.EndLineNumber - 1
 
-                        # Add blank line after parameter (if not the last parameter)
-                        $nextParam = $parameters | Where-Object { $_.Extent.StartLineNumber -gt $param.Extent.EndLineNumber } |
-                            Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
+                        # Look backwards from parameter start to find associated comments and attributes
+                        $actualStartLine = $paramStartLine
 
-                        if ($nextParam) {
-                            # Check if there's already a blank line after this parameter
-                            $hasBlankLineAfter = ($paramEndLine + 1) -lt $lines.Count -and $lines[$paramEndLine + 1].Trim() -eq ''
+                        # First, check for parameter attributes
+                        if ($param.Attributes) {
+                            $firstAttribute = $param.Attributes | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
+                            $actualStartLine = $firstAttribute.Extent.StartLineNumber - 1
+                        }
+
+                        # Then look backwards for parameter comments (lines starting with #)
+                        for ($lineIdx = $actualStartLine - 1; $lineIdx -ge 0; $lineIdx--) {
+                            $line = $lines[$lineIdx].Trim()
+                            if ($line -match '^#' -and $line -notmatch '^#>') {
+                                $actualStartLine = $lineIdx
+                            } elseif ($line -eq '') {
+                                # Continue looking through blank lines
+                                continue
+                            } else {
+                                # Hit non-comment, non-blank line - stop looking
+                                break
+                            }
+                        }
+
+                        # Remove blank lines between comments and attributes
+                        if ($param.Attributes -and $actualStartLine -lt $paramStartLine) {
+                            $firstAttribute = $param.Attributes | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
+                            $firstAttrStartLine = $firstAttribute.Extent.StartLineNumber - 1
+
+                            # Remove blank lines between comments and first attribute
+                            for ($lineIdx = $firstAttrStartLine - 1; $lineIdx -gt $actualStartLine; $lineIdx--) {
+                                if ($lines[$lineIdx].Trim() -eq '') {
+                                    $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                    $modified = $true
+                                    Write-Verbose 'Removed unwanted blank line between parameter comment and attribute'
+                                }
+                            }
+                        }
+
+                        # Remove blank lines between attributes and parameter definition
+                        if ($param.Attributes) {
+                            $lastAttribute = $param.Attributes | Sort-Object { $_.Extent.EndLineNumber } | Select-Object -Last 1
+                            $lastAttrEndLine = $lastAttribute.Extent.EndLineNumber - 1
+
+                            # Remove blank lines between last attribute and parameter definition
+                            for ($lineIdx = $paramStartLine - 1; $lineIdx -gt $lastAttrEndLine; $lineIdx--) {
+                                if ($lines[$lineIdx].Trim() -eq '') {
+                                    $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                    $modified = $true
+                                    Write-Verbose 'Removed unwanted blank line between parameter attribute and definition'
+                                }
+                            }
+                        }
+
+                        # Remove blank lines between attributes themselves
+                        if ($param.Attributes -and $param.Attributes.Count -gt 1) {
+                            $sortedAttributes = $param.Attributes | Sort-Object { $_.Extent.StartLineNumber } -Descending
+                            for ($i = 0; $i -lt ($sortedAttributes.Count - 1); $i++) {
+                                $currentAttr = $sortedAttributes[$i]
+                                $nextAttr = $sortedAttributes[$i + 1]
+
+                                $currentAttrStartLine = $currentAttr.Extent.StartLineNumber - 1
+                                $nextAttrEndLine = $nextAttr.Extent.EndLineNumber - 1
+
+                                # Remove blank lines between consecutive parameter attributes
+                                for ($lineIdx = $currentAttrStartLine - 1; $lineIdx -gt $nextAttrEndLine; $lineIdx--) {
+                                    if ($lines[$lineIdx].Trim() -eq '') {
+                                        $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                        $modified = $true
+                                        Write-Verbose 'Removed unwanted blank line between parameter attributes'
+                                    }
+                                }
+                            }
+                        }
+
+                        # Remove blank lines between comments and parameter definition (if no attributes)
+                        if (-not $param.Attributes -and $actualStartLine -lt $paramStartLine) {
+                            for ($lineIdx = $paramStartLine - 1; $lineIdx -gt $actualStartLine; $lineIdx--) {
+                                if ($lines[$lineIdx].Trim() -eq '') {
+                                    $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                    $modified = $true
+                                    Write-Verbose 'Removed unwanted blank line between parameter comment and definition'
+                                }
+                            }
+                        }
+                    }
+
+                    # Now process parameter regions for proper spacing between parameters
+                    $parameterRegions = @()
+
+                    foreach ($param in $parameters) {
+                        $paramStartLine = $param.Extent.StartLineNumber - 1
+                        $paramEndLine = $param.Extent.EndLineNumber - 1
+
+                        # Find the actual start of this parameter (including preceding comments and attributes)
+                        $actualStartLine = $paramStartLine
+
+                        # First, check for parameter attributes
+                        if ($param.Attributes) {
+                            $firstAttribute = $param.Attributes | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
+                            $actualStartLine = $firstAttribute.Extent.StartLineNumber - 1
+                        }
+
+                        # Then look backwards for parameter comments (lines starting with #)
+                        for ($lineIdx = $actualStartLine - 1; $lineIdx -ge 0; $lineIdx--) {
+                            $line = $lines[$lineIdx].Trim()
+                            if ($line -match '^#' -and $line -notmatch '^#>') {
+                                $actualStartLine = $lineIdx
+                            } elseif ($line -eq '') {
+                                # Continue looking through blank lines
+                                continue
+                            } else {
+                                # Hit non-comment, non-blank line
+                                break
+                            }
+                        }
+
+                        $parameterRegions += @{
+                            Parameter = $param
+                            StartLine = $actualStartLine
+                            EndLine   = $paramEndLine
+                        }
+                    }
+
+                    # Sort regions by start line
+                    $parameterRegions = $parameterRegions | Sort-Object StartLine
+
+                    # Process regions from bottom to top to maintain line numbers
+                    $sortedRegions = $parameterRegions | Sort-Object StartLine -Descending
+
+                    foreach ($region in $sortedRegions) {
+                        $regionStartLine = $region.StartLine
+                        $regionEndLine = $region.EndLine
+
+                        # Add blank line after parameter region (if not the last parameter)
+                        $nextRegion = $parameterRegions | Where-Object { $_.StartLine -gt $region.EndLine } |
+                            Sort-Object StartLine | Select-Object -First 1
+
+                        if ($nextRegion) {
+                            # Check if there's already a blank line after this parameter region
+                            $hasBlankLineAfter = ($regionEndLine + 1) -lt $lines.Count -and $lines[$regionEndLine + 1].Trim() -eq ''
 
                             if (-not $hasBlankLineAfter) {
                                 # Find the end of the parameter (including trailing comma)
-                                $insertAfterLine = $paramEndLine
-                                if (($paramEndLine + 1) -lt $lines.Count -and $lines[$paramEndLine + 1].Trim() -eq ',') {
-                                    $insertAfterLine = $paramEndLine + 1
+                                $insertAfterLine = $regionEndLine
+                                if (($regionEndLine + 1) -lt $lines.Count -and $lines[$regionEndLine + 1].Trim() -eq ',') {
+                                    $insertAfterLine = $regionEndLine + 1
                                 }
 
                                 $lines = $lines[0..$insertAfterLine] + @('') + $lines[($insertAfterLine + 1)..($lines.Count - 1)]
                                 $modified = $true
-                                Write-Verbose "Added blank line after parameter at line $($paramEndLine + 2)"
+                                Write-Verbose "Added blank line after parameter region at line $($regionEndLine + 2)"
                             }
                         }
 
-                        # Add blank line before parameter (if not the first parameter)
-                        $prevParam = $parameters | Where-Object { $_.Extent.EndLineNumber -lt $param.Extent.StartLineNumber } |
-                            Sort-Object { $_.Extent.StartLineNumber } -Descending | Select-Object -First 1
+                        # Add blank line before parameter region (if not the first parameter)
+                        $prevRegion = $parameterRegions | Where-Object { $_.EndLine -lt $region.StartLine } |
+                            Sort-Object StartLine -Descending | Select-Object -First 1
 
-                        if ($prevParam) {
-                            # Check if there's already a blank line before this parameter
-                            $hasBlankLineBefore = $paramStartLine -gt 0 -and $lines[$paramStartLine - 1].Trim() -eq ''
+                        if ($prevRegion) {
+                            # Check if there's already a blank line before this parameter region
+                            $hasBlankLineBefore = $regionStartLine -gt 0 -and $lines[$regionStartLine - 1].Trim() -eq ''
 
                             if (-not $hasBlankLineBefore) {
-                                $lines = $lines[0..($paramStartLine - 1)] + @('') + $lines[$paramStartLine..($lines.Count - 1)]
+                                $lines = $lines[0..($regionStartLine - 1)] + @('') + $lines[$regionStartLine..($lines.Count - 1)]
                                 $modified = $true
-                                Write-Verbose "Added blank line before parameter at line $($paramStartLine + 1)"
+                                Write-Verbose "Added blank line before parameter region at line $($regionStartLine + 1)"
                             }
                         }
                     }
 
                     # Ensure exactly one blank line at the beginning of param block (after "param (")
                     $paramBlockStartLine = $paramBlock.Extent.StartLineNumber - 1
-                    $firstParam = $parameters | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
-                    $firstParamStartLine = $firstParam.Extent.StartLineNumber - 1
+                    $firstRegion = $parameterRegions | Sort-Object StartLine | Select-Object -First 1
+                    $firstRegionStartLine = $firstRegion.StartLine
 
                     # Find the line with "param ("
                     $paramOpenLine = -1
-                    for ($lineIdx = $paramBlockStartLine; $lineIdx -le $firstParamStartLine; $lineIdx++) {
+                    for ($lineIdx = $paramBlockStartLine; $lineIdx -le $firstRegionStartLine; $lineIdx++) {
                         if ($lines[$lineIdx] -match '^\s*param\s*\(\s*$') {
                             $paramOpenLine = $lineIdx
                             break
@@ -605,7 +739,7 @@
                     if ($paramOpenLine -ge 0) {
                         # Count and fix blank lines after "param ("
                         $blankLinesAfterOpen = 0
-                        for ($lineIdx = $paramOpenLine + 1; $lineIdx -lt $firstParamStartLine; $lineIdx++) {
+                        for ($lineIdx = $paramOpenLine + 1; $lineIdx -lt $firstRegionStartLine; $lineIdx++) {
                             if ($lines[$lineIdx].Trim() -eq '') {
                                 $blankLinesAfterOpen++
                             }
@@ -614,7 +748,7 @@
                         # Ensure exactly one blank line after "param ("
                         if ($blankLinesAfterOpen -ne 1) {
                             # Remove all blank lines after "param ("
-                            for ($lineIdx = $firstParamStartLine - 1; $lineIdx -gt $paramOpenLine; $lineIdx--) {
+                            for ($lineIdx = $firstRegionStartLine - 1; $lineIdx -gt $paramOpenLine; $lineIdx--) {
                                 if ($lines[$lineIdx].Trim() -eq '') {
                                     $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
                                     $modified = $true
@@ -629,13 +763,19 @@
                     }
 
                     # Ensure exactly one blank line at the end of param block (before ")")
-                    $lastParam = $parameters | Sort-Object { $_.Extent.EndLineNumber } | Select-Object -Last 1
-                    $lastParamEndLine = $lastParam.Extent.EndLineNumber - 1
+                    $lastRegion = $parameterRegions | Sort-Object EndLine | Select-Object -Last 1
+                    $lastRegionEndLine = $lastRegion.EndLine
                     $paramBlockEndLine = $paramBlock.Extent.EndLineNumber - 1
+
+                    # Find the line with the closing ")" - account for trailing comma
+                    $actualLastLine = $lastRegionEndLine
+                    if (($lastRegionEndLine + 1) -lt $lines.Count -and $lines[$lastRegionEndLine + 1].Trim() -eq ',') {
+                        $actualLastLine = $lastRegionEndLine + 1
+                    }
 
                     # Find the line with the closing ")"
                     $paramCloseLine = -1
-                    for ($lineIdx = $paramBlockEndLine; $lineIdx -ge $lastParamEndLine; $lineIdx--) {
+                    for ($lineIdx = $paramBlockEndLine; $lineIdx -gt $actualLastLine; $lineIdx--) {
                         if ($lines[$lineIdx] -match '^\s*\)\s*$') {
                             $paramCloseLine = $lineIdx
                             break
@@ -645,7 +785,7 @@
                     if ($paramCloseLine -ge 0) {
                         # Count blank lines before ")"
                         $blankLinesBeforeClose = 0
-                        for ($lineIdx = $paramCloseLine - 1; $lineIdx -gt $lastParamEndLine; $lineIdx--) {
+                        for ($lineIdx = $paramCloseLine - 1; $lineIdx -gt $actualLastLine; $lineIdx--) {
                             if ($lines[$lineIdx].Trim() -eq '') {
                                 $blankLinesBeforeClose++
                             }
@@ -654,7 +794,7 @@
                         # Ensure exactly one blank line before ")"
                         if ($blankLinesBeforeClose -ne 1) {
                             # Remove all blank lines before ")"
-                            for ($lineIdx = $paramCloseLine - 1; $lineIdx -gt $lastParamEndLine; $lineIdx--) {
+                            for ($lineIdx = $paramCloseLine - 1; $lineIdx -gt $actualLastLine; $lineIdx--) {
                                 if ($lines[$lineIdx].Trim() -eq '') {
                                     $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
                                     $modified = $true
@@ -662,11 +802,75 @@
                             }
 
                             # Add exactly one blank line
-                            $lines = $lines[0..$lastParamEndLine] + @('') + $lines[($lastParamEndLine + 1)..($lines.Count - 1)]
+                            $lines = $lines[0..$actualLastLine] + @('') + $lines[($actualLastLine + 1)..($lines.Count - 1)]
                             $modified = $true
                             Write-Verbose 'Fixed blank lines before param block closing'
                         }
                     }
+                }
+            }
+        }
+
+        # Remove multiple consecutive blank lines within the param block (but not within comment blocks)
+        $paramBlockStartLine = $paramBlock.Extent.StartLineNumber - 1
+        $paramBlockEndLine = $paramBlock.Extent.EndLineNumber - 1
+
+        # Find all comment-based help blocks within this param block
+        $commentBlocks = $tokens | Where-Object {
+            $_.Kind -eq 'Comment' -and
+            $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
+            $_.Extent.StartLineNumber -gt ($paramBlockStartLine + 1) -and
+            $_.Extent.EndLineNumber -lt $paramBlockEndLine
+        }
+
+        # Process from bottom to top to maintain line numbers
+        for ($lineIdx = $paramBlockEndLine - 1; $lineIdx -gt ($paramBlockStartLine + 1); $lineIdx--) {
+            # Check if we're inside a comment block
+            $insideCommentBlock = $false
+            foreach ($commentBlock in $commentBlocks) {
+                if ($lineIdx -ge ($commentBlock.Extent.StartLineNumber - 1) -and
+                    $lineIdx -le ($commentBlock.Extent.EndLineNumber - 1)) {
+                    $insideCommentBlock = $true
+                    break
+                }
+            }
+
+            # Only process blank lines that are not inside comment blocks
+            if (-not $insideCommentBlock -and $lines[$lineIdx].Trim() -eq '') {
+                # Count consecutive blank lines
+                $consecutiveBlankLines = 1
+                $checkIdx = $lineIdx - 1
+
+                while ($checkIdx -gt $paramBlockStartLine -and $lines[$checkIdx].Trim() -eq '') {
+                    # Make sure this blank line is also not inside a comment block
+                    $blankLineInsideComment = $false
+                    foreach ($commentBlock in $commentBlocks) {
+                        if ($checkIdx -ge ($commentBlock.Extent.StartLineNumber - 1) -and
+                            $checkIdx -le ($commentBlock.Extent.EndLineNumber - 1)) {
+                            $blankLineInsideComment = $true
+                            break
+                        }
+                    }
+
+                    if ($blankLineInsideComment) {
+                        break
+                    }
+
+                    $consecutiveBlankLines++
+                    $checkIdx--
+                }
+
+                # If we have more than one consecutive blank line, remove the extras
+                if ($consecutiveBlankLines -gt 1) {
+                    # Remove the extra blank lines (keep only one)
+                    for ($removeIdx = $lineIdx; $removeIdx -gt ($lineIdx - $consecutiveBlankLines + 1); $removeIdx--) {
+                        $lines = $lines[0..($removeIdx - 1)] + $lines[($removeIdx + 1)..($lines.Count - 1)]
+                        $modified = $true
+                        Write-Verbose "Removed extra blank line within param block at line $($removeIdx + 1)"
+                    }
+
+                    # Skip past the blank lines we just processed
+                    $lineIdx = $lineIdx - $consecutiveBlankLines + 1
                 }
             }
         }

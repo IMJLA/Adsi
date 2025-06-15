@@ -20,9 +20,9 @@
         [string]$DocsMarkdownDir,
 
         # Destination path for the MAML help files
-
         [Parameter(Mandatory)]
         [string]$DocsMamlDir
+
     )
 
     if ($PSCmdlet.ShouldProcess('MAML help files', "Build from Markdown files in '$DocsMarkdownDir' to '$DocsMamlDir'")) {

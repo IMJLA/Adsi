@@ -22,9 +22,9 @@
         [string]$ModuleName,
 
         # The directory containing the built module files
-
         [Parameter(Mandatory)]
         [string]$ModulePath
+
     )
 
     $ModuleInstallDir = $env:PSModulePath -split ';' | Select-Object -First 1

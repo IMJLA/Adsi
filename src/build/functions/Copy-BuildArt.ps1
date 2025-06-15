@@ -21,9 +21,9 @@
         [string]$DocsImageSourceCodeDir,
 
         # The destination directory for the art files
-
         [Parameter(Mandatory)]
         [string]$DocsOnlineStaticImageDir
+
     )
 
     if ($PSCmdlet.ShouldProcess($DocsOnlineStaticImageDir, 'Copy static SVG art files')) {

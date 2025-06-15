@@ -23,12 +23,10 @@
         [string]$SourceCodeDir,
 
         # The base URL for the online help documentation
-
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpUrl,
 
         # The default locale for documentation (e.g., "en-US")
-
         [Parameter(Mandatory)]
         [string]$DocsDefaultLocale
 

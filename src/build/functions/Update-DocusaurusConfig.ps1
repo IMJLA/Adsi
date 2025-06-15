@@ -23,20 +23,20 @@
         [string]$DocsOnlineHelpDir = '.',
 
         # The GitHub organization name
-
         [Parameter(Mandatory)]
         [string]$GitHubOrgName,
 
         # The module information object, ideally from Get-Module or Test-ModuleManifest
-
         [Parameter(Mandatory)]
         [PSModuleInfo]$ModuleInfo,
 
         # Comments to add to the configuration file
-
         [hashtable]$ElementComment = @{
+
             'title'                 = @(
+
                 'Set the title of your site here',
+
                 'The title appears in the browser tab and is used across various parts of your documentation'
             )
             'tagline'               = @(
@@ -94,6 +94,7 @@
                 '    "true":  Adds trailing slashes to URLs and generates /docs/myDoc/index.html for /docs/myDoc.md',
 
                 'This can affect how links are resolved and should be consistent across your site.'
+
             )
         }
 

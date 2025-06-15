@@ -21,6 +21,7 @@
     param(
 
         [string]$NewLine = "`n"
+
     )
 
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline

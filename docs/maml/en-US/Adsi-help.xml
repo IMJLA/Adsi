@@ -972,6 +972,8 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
           <maml:name>AdsiProvider</maml:name>
           <maml:description>
             <maml:para>AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names</maml:para>
+            <maml:para></maml:para>
+            <maml:para></maml:para>
             <maml:para>This parameter can be used to reduce calls to Find-AdsiProvider</maml:para>
             <maml:para>Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet</maml:para>
           </maml:description>
@@ -1049,6 +1051,8 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
           <maml:name>AdsiProvider</maml:name>
           <maml:description>
             <maml:para>AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names</maml:para>
+            <maml:para></maml:para>
+            <maml:para></maml:para>
             <maml:para>This parameter can be used to reduce calls to Find-AdsiProvider</maml:para>
             <maml:para>Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet</maml:para>
           </maml:description>
@@ -1126,6 +1130,8 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
         <maml:name>AdsiProvider</maml:name>
         <maml:description>
           <maml:para>AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names</maml:para>
+          <maml:para></maml:para>
+          <maml:para></maml:para>
           <maml:para>This parameter can be used to reduce calls to Find-AdsiProvider</maml:para>
           <maml:para>Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet</maml:para>
         </maml:description>

@@ -36,19 +36,14 @@
         [string[]]$Fqdn,
 
         # NetBIOS name of the ADSI server whose information to determine
-
         [string[]]$Netbios,
 
         # Remove the CIM session used to get ADSI server information
-
         [switch]$RemoveCimSession,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 

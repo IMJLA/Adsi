@@ -23,11 +23,9 @@
         [string]$BuildOutDir,
 
         # Module version for the build.
-
         [version]$ModuleVersion,
 
         # Name of the module being built.
-
         [string]$ModuleName
 
     )

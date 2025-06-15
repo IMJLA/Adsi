@@ -28,15 +28,11 @@
         $DirectoryEntry,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache,
 
         # Properties of each Account to display on the report
-
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
-
-
 
     )
 

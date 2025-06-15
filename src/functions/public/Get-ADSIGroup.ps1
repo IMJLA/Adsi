@@ -39,11 +39,9 @@
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
-
         [string]$GroupName,
 
         # Properties of the group members to retrieve
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
@@ -51,13 +49,7 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
-
-
     )
-
-
-
 
     $Log = @{ 'Cache' = $Cache ; 'Suffix' = " # for ADSI group '$GroupName'" }
 

@@ -21,9 +21,9 @@
         [string]$ModuleFilePath,
 
         # Array of function names to export from the module
-
         [Parameter(Mandatory)]
         [string[]]$FunctionName
+
     )
 
     # Create a string representation of the public functions array

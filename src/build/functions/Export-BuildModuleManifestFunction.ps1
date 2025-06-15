@@ -21,9 +21,9 @@
         [string]$ModuleManifestPath,
 
         # Array of function names to export in the manifest
-
         [Parameter(Mandatory)]
         [string[]]$FunctionName
+
     )
 
     Write-Verbose "`t[string]`$ManifestContent = Get-Content -LiteralPath '$ModuleManifestPath' -Raw"

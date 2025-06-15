@@ -21,8 +21,8 @@
         [string]$CommitMessage,
 
         # The newline character(s) to use in output messages
-
         [string]$NewLine = [System.Environment]::NewLine
+
     )
 
     # Find the current git branch

@@ -20,9 +20,9 @@
         [string]$DocsMamlDir,
 
         # Path to the build output directory (destination)
-
         [Parameter(Mandatory)]
         [string]$BuildOutputDir
+
     )
 
     Write-Information "`tCopy-Item -Path '$DocsMamlDir\*' -Destination '$BuildOutputDir' -Recurse"

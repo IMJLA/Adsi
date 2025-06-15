@@ -26,8 +26,8 @@
         [bool]$BuildCompileModule,
 
         # String containing newline characters for formatting output messages.
-
         [string]$NewLine
+
     )
 
     if (-not $BuildCompileModule) {

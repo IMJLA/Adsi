@@ -18,18 +18,16 @@ function Write-InfoColor {
         [string]$MessageData,
 
         # The foreground color for the message. Default is the current foreground color.
-
         [ConsoleColor]$ForegroundColor = $Host.UI.RawUI.ForegroundColor, # Make sure we use the current colours by default
 
         # The background color for the message. Default is the current background color.
-
         [ConsoleColor]$BackgroundColor = $Host.UI.RawUI.BackgroundColor,
 
         # If specified, does not append a newline after the message.
-
         [Switch]$NoNewline
 
     )
+
 
     $msg = [HostInformationMessage]@{
         'Message'         = $MessageData

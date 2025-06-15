@@ -32,23 +32,18 @@
         [string]$DirectoryPath,
 
         # Security Identifier (SID) string for the fake entry
-
         [string]$SID,
 
         # Description of the security principal
-
         [string]$Description,
 
         # Schema class name (e.g., 'user', 'group', 'computer')
-
         [string]$SchemaClassName,
 
         # Optional input object containing additional properties to include in the fake directory entry
-
         $InputObject,
 
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
-
         [hashtable]$NameAllowList = @{
             'ALL APPLICATION PACKAGES'            = $null
             'ALL RESTRICTED APPLICATION PACKAGES' = $null
@@ -84,7 +79,6 @@
         },
 
         # These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries
-
         [hashtable]$NameBlockList = @{
             'Access Control Assistance Operators' = $null
             'Administrators'                      = $null
@@ -107,8 +101,6 @@
             'Users'                               = $null
             'WinRMRemoteWMIUsers__'               = $null
         }
-
-
 
     )
 

@@ -50,12 +50,8 @@
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
-
 
     )
 

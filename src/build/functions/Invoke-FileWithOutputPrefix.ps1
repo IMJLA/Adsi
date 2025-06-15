@@ -27,35 +27,32 @@
         [string]$Command,
 
         # Arguments as an array of strings
-
         [Parameter(ParameterSetName = 'ArgumentArray')]
         [string[]]$ArgumentArray = @(),
 
         # Arguments as a single string
-
         [Parameter(ParameterSetName = 'ArgumentString')]
         [string]$ArgumentString = '',
 
         # Working directory for the command
-
         [string]$WorkingDirectory = (Get-Location).Path,
 
         # Prefix to add to each output line
-
         [string]$OutputPrefix = "`t",
 
         # Environment variables to set for the command
-
         [hashtable]$EnvironmentVariables = @{},
 
         # Skip console output
-
         [switch]$NoConsoleOutput
+
 
     )
 
+
     # Set console to UTF-8 to handle unicode output properly
     $originalOutputEncoding = [Console]::OutputEncoding
+
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
     # Determine which parameter set was used and prepare both formats

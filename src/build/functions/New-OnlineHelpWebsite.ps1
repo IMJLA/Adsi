@@ -21,9 +21,9 @@
         [string]$DocsOnlineHelpDir,
 
         # The name of the module for which the help website is being created
-
         [Parameter(Mandatory)]
         [string]$ModuleName
+
     )
 
     $Location = Get-Location

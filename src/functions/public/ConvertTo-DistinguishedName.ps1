@@ -29,30 +29,29 @@
         [string[]]$Domain,
 
         # FQDN of the domain
-
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'FQDN')]
         [string[]]$DomainFQDN,
 
         # Type of initialization to be performed
         # Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Init method (iads.h)
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_inittype_enum
-
         [string]$InitType = 'ADS_NAME_INITTYPE_GC',
 
         # Format of the name of the directory object that will be used for the input
         # Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Set method (iads.h)
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
-
         [string]$InputType = 'ADS_NAME_TYPE_NT4',
 
         # Format of the name of the directory object that will be used for the output
         # Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
-
         [string]$OutputType = 'ADS_NAME_TYPE_1779',
 
         <#
+
         AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+
 
         This parameter can be used to reduce calls to Find-AdsiProvider
 
@@ -62,15 +61,10 @@
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
-
-
     )
-
 
 
 

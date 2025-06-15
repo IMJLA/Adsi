@@ -10,19 +10,13 @@
 
         $DirectoryEntry,
 
-
         # COM Objects representing the DirectoryPaths of the group members
 
         $ComObject,
 
-
-
         [hashtable]$Out,
 
-
-
         [string]$LogSuffix,
-
 
 
         # In-process cache to reduce calls to other processes or to disk

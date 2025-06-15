@@ -41,6 +41,7 @@
         [bool]$NoPublish = $false,
 
         [string]$RequiredBranch = 'main'
+
     )
 
     $publishParams = @{

@@ -21,12 +21,10 @@
         [string]$In,
 
         # The destination directory for the generated art files
-
         [Parameter(Mandatory)]
         [string]$Out,
 
         # The newline character(s) to use in output messages
-
         [string]$NewLine = [System.Environment]::NewLine
 
     )

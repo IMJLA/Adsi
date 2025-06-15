@@ -21,36 +21,36 @@
         [string]$Token,
 
         # Repository in the format 'owner/repository'
-
         [Parameter(Mandatory)]
         [string]$Repo,
 
         # Git tag name for the release
-
         [Parameter(Mandatory)]
         [string]$TagName,
 
         # Name/title of the release
-
         [Parameter(Mandatory)]
         [string]$ReleaseName,
 
         # Release notes/body content
-
         [string]$Body = '',
 
         # Whether this is a draft release
-
         [bool]$Draft = $false,
 
         # Whether this is a prerelease
 
         [bool]$Prerelease = $false
+
     )
+
+
+
 
     $headers = @{
         'Authorization' = "Bearer $Token"
         'Accept'        = 'application/vnd.github.v3+json'
+
         'Content-Type'  = 'application/json'
     }
 

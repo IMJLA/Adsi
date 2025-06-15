@@ -23,13 +23,10 @@
         [version]$Version,
 
         # The commit message to analyze and add to the change log
-
         [string]$CommitMessage,
 
         # Path to the change log file
-
         [string]$ChangeLog = [IO.Path]::Combine('..', '..', 'CHANGELOG.md')
-
 
     )
 

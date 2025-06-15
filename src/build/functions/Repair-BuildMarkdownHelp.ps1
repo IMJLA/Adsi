@@ -22,27 +22,25 @@
         $BuildOutputDir,
 
         # The name of the module
-
         [string]
+
         $ModuleName,
 
         # The directory containing markdown documentation files in the default locale
-
         [string]
         $DocsMarkdownDefaultLocaleDir,
 
         # The newline character(s) to use in documentation
-
         [string]$NewLine = [Environment]::NewLine,
 
         # The default locale code for documentation (e.g., "en-US")
-
         [string]$DocsDefaultLocale,
 
         # Collection of files containing public functions
-
         [System.IO.FileInfo[]]
+
         $PublicFunctionFiles
+
     )
 
     #Fix the Module Page () things PlatyPS does not do):

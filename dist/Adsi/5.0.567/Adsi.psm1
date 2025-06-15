@@ -166,7 +166,6 @@ function ConvertFrom-AppCapabilitySid {
 
         [string]$SID
 
-
     )
 
 
@@ -348,6 +347,7 @@ function ConvertFrom-ScShowSidResult {
     param (
 
         [string[]]$Result
+
     )
 
     $dict = @{}
@@ -379,6 +379,7 @@ function ConvertTo-AccountCache {
         [ref]$SidCache,
 
         [ref]$NameCache
+
     )
 
     ForEach ($ThisAccount in $Account) {
@@ -431,7 +432,6 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         $DomainDn,
 
         [ref]$Cache
-
 
     )
 
@@ -714,15 +714,11 @@ None. This function populates the PrincipalById cache with permission principal 
         $AceGuid,
 
         # Properties of each Account to display on the report
-
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description'),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -918,6 +914,7 @@ function ConvertTo-ServiceSID {
 
         [Parameter(position = 0, mandatory = $true)]
         [string]$ServiceName
+
     )
 
     #2: Convert service name to upper case.
@@ -981,10 +978,8 @@ System.Security.Principal.SecurityIdentifier
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -1039,11 +1034,8 @@ function Find-AdsiProvider {
         [string]$AdsiServer,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -1142,19 +1134,13 @@ function Find-WinNTGroupMember {
 
         $DirectoryEntry,
 
-
         # COM Objects representing the DirectoryPaths of the group members
 
         $ComObject,
 
-
-
         [hashtable]$Out,
 
-
-
         [string]$LogSuffix,
-
 
 
         # In-process cache to reduce calls to other processes or to disk
@@ -1240,11 +1226,8 @@ function Get-CachedDirectoryEntry {
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -1373,7 +1356,9 @@ function Get-DirectoryEntryParentName {
 
     # Possibly a debugging issue, not sure whether I need to prepare for both here.
     # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
+
     param (
+
         $DirectoryEntry
     )
 
@@ -1501,18 +1486,17 @@ function Invoke-ScShowSid {
 
         [string]$ServiceName,
 
-
         [string]$ComputerName,
-
-
 
         [string]$ThisHostName,
 
-
-
         [string]$ThisFqdn,
 
+
+
         [hashtable]$Log
+
+
 
     )
 
@@ -1561,24 +1545,18 @@ function Resolve-IdRefAppPkgAuth {
         [Parameter(Mandatory)]
         [string]$IdentityReference,
 
-
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # Name of the IdentityReference with the DOMAIN\ prefix removed
-
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -1654,23 +1632,20 @@ function Resolve-IdRefBuiltIn {
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # Name of the IdentityReference with the DOMAIN\ prefix removed
-
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
+
 
     # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
     # But they may have real DirectoryEntry objects
@@ -1729,11 +1704,9 @@ function Resolve-IdRefCached {
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-
         [string]$ServerNetBIOS = $AdsiServer.Netbios
 
     )
@@ -1781,7 +1754,6 @@ function Resolve-IdRefGetDirEntry {
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
@@ -1810,7 +1782,6 @@ function Resolve-IdRefSearchDir {
         [string]$DomainDn,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
@@ -1860,24 +1831,20 @@ function Resolve-IdRefSID {
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache,
 
         # Properties of each Account to display on the report
-
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
-
     )
+
 
 
 
@@ -2062,23 +2029,20 @@ function Resolve-IdRefSvc {
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
-
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # Name of the IdentityReference with the DOMAIN\ prefix removed
-
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
     )
+
 
     $SIDString = ConvertTo-ServiceSID -ServiceName $Name
     $Caption = "$ServerNetBIOS\$Name"
@@ -2149,13 +2113,12 @@ function Resolve-SidAuthority {
         [hashtable]$DirectorySplit,
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] object whose Parent's Name will be used as the replacement Authority.
-
         $DirectoryEntry,
 
         # Well-Known local SID authorities to replace with the computer name in the InputObject string.
-
         [hashtable]$AuthoritiesToReplaceWithParentName = @{
             'APPLICATION PACKAGE AUTHORITY' = $null
+
             'BUILTIN'                       = $null
             'CREATOR SID AUTHORITY'         = $null
             'LOCAL SID AUTHORITY'           = $null
@@ -2166,8 +2129,6 @@ function Resolve-SidAuthority {
             'NULL SID AUTHORITY'            = $null
             'WORLD SID AUTHORITY'           = $null
         }
-
-
 
     )
 
@@ -2209,6 +2170,7 @@ function Split-DirectoryPath {
     param (
 
         [string]$DirectoryPath
+
     )
 
     $Split = $DirectoryPath.Split('/')
@@ -2270,11 +2232,8 @@ function Test-AdsiProvider {
         [string]$AdsiServer,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -2336,11 +2295,8 @@ function Add-DomainFqdnToLdapPath {
         [string[]]$DirectoryPath,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -2428,10 +2384,7 @@ function Add-SidInfo {
         $InputObject,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [ref]$DomainsBySid
-
-
 
     )
 
@@ -2658,19 +2611,14 @@ function ConvertFrom-ResolvedID {
         [string]$IdentityReference,
 
         # Do not get group members
-
         [switch]$NoGroupMembers,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache,
 
         # Properties of each Account to display on the report
-
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
-
-
 
     )
 
@@ -2870,7 +2818,6 @@ function ConvertFrom-SidString {
         [string]$SID,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
@@ -2955,30 +2902,29 @@ function ConvertTo-DistinguishedName {
         [string[]]$Domain,
 
         # FQDN of the domain
-
         [Parameter(Mandatory, ValueFromPipeline, ParameterSetName = 'FQDN')]
         [string[]]$DomainFQDN,
 
         # Type of initialization to be performed
         # Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Init method (iads.h)
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_inittype_enum
-
         [string]$InitType = 'ADS_NAME_INITTYPE_GC',
 
         # Format of the name of the directory object that will be used for the input
         # Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Set method (iads.h)
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
-
         [string]$InputType = 'ADS_NAME_TYPE_NT4',
 
         # Format of the name of the directory object that will be used for the output
         # Will be translated to the corresponding integer for use as the lnSetType parameter of the IADsNameTranslate::Get method (iads.h)
         # https://docs.microsoft.com/en-us/windows/win32/api/iads/ne-iads-ads_name_type_enum
-
         [string]$OutputType = 'ADS_NAME_TYPE_1779',
 
         <#
+
         AdsiProvider (WinNT or LDAP) of the servers associated with the provided FQDNs or NetBIOS names
+
+
 
         This parameter can be used to reduce calls to Find-AdsiProvider
 
@@ -2988,15 +2934,10 @@ function ConvertTo-DistinguishedName {
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
-
-
     )
-
 
 
 
@@ -3150,11 +3091,9 @@ function ConvertTo-DomainNetBIOS {
         [string]$DomainFQDN,
 
         # ADSI provider to use (LDAP or WinNT)
-
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
 
@@ -3256,12 +3195,8 @@ function ConvertTo-DomainSidString {
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
-
 
     )
 
@@ -3370,23 +3305,18 @@ function ConvertTo-FakeDirectoryEntry {
         [string]$DirectoryPath,
 
         # Security Identifier (SID) string for the fake entry
-
         [string]$SID,
 
         # Description of the security principal
-
         [string]$Description,
 
         # Schema class name (e.g., 'user', 'group', 'computer')
-
         [string]$SchemaClassName,
 
         # Optional input object containing additional properties to include in the fake directory entry
-
         $InputObject,
 
         # Account names known to be impossible to resolve to a Directory Entry (currently based on testing on a non-domain-joined PC)
-
         [hashtable]$NameAllowList = @{
             'ALL APPLICATION PACKAGES'            = $null
             'ALL RESTRICTED APPLICATION PACKAGES' = $null
@@ -3422,7 +3352,6 @@ function ConvertTo-FakeDirectoryEntry {
         },
 
         # These are retrievable via the WinNT ADSI Provider which enables group member retrival so we don't want to return fake directory entries
-
         [hashtable]$NameBlockList = @{
             'Access Control Assistance Operators' = $null
             'Administrators'                      = $null
@@ -3445,8 +3374,6 @@ function ConvertTo-FakeDirectoryEntry {
             'Users'                               = $null
             'WinRMRemoteWMIUsers__'               = $null
         }
-
-
 
     )
 
@@ -3542,19 +3469,16 @@ function ConvertTo-Fqdn {
         [string[]]$DistinguishedName,
 
         # NetBIOS name of the domain
-
         [Parameter(
+
             ParameterSetName = 'NetBIOS',
             ValueFromPipeline
         )]
         [string[]]$NetBIOS,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -3697,8 +3621,6 @@ function ConvertTo-SidByteArray {
 
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
-
-
         [string[]]$SidString
 
     )
@@ -3754,14 +3676,11 @@ function Expand-AdsiGroupMember {
         $DirectoryEntry,
 
         # Properties of the group members to retrieve
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -3898,15 +3817,11 @@ function Expand-WinNTGroupMember {
         $DirectoryEntry,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache,
 
         # Properties of each Account to display on the report
-
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
-
-
 
     )
 
@@ -4028,11 +3943,8 @@ function Find-LocalAdsiServerSid {
         [string]$ComputerName = (HOSTNAME.EXE),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -4098,11 +4010,9 @@ function Get-AdsiGroup {
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
-
         [string]$GroupName,
 
         # Properties of the group members to retrieve
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
@@ -4110,13 +4020,7 @@ function Get-AdsiGroup {
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
-
-
     )
-
-
-
 
     $Log = @{ 'Cache' = $Cache ; 'Suffix' = " # for ADSI group '$GroupName'" }
 
@@ -4216,7 +4120,6 @@ function Get-AdsiGroupMember {
         $Group,
 
         # Properties of the group members to find in the directory
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         <#
@@ -4236,11 +4139,8 @@ function Get-AdsiGroupMember {
         [switch]$PrimaryGroupOnly,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -4438,19 +4338,14 @@ function Get-AdsiServer {
         [string[]]$Fqdn,
 
         # NetBIOS name of the ADSI server whose information to determine
-
         [string[]]$Netbios,
 
         # Remove the CIM session used to get ADSI server information
-
         [switch]$RemoveCimSession,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -4750,11 +4645,9 @@ function Get-DirectoryEntry {
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve
-
         [string[]]$PropertiesToLoad,
 
         # Mapping of SID types to descriptions used for converting security identifiers
-
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
@@ -4762,9 +4655,7 @@ function Get-DirectoryEntry {
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
     )
-
 
 
 
@@ -6684,20 +6575,14 @@ function Get-ParentDomainDnsName {
         [string]$DomainNetbios,
 
         # Existing CIM session to the computer (to avoid creating redundant CIM sessions)
-
         [CimSession]$CimSession,
 
         # Switch to remove the CIM session when done
-
         [switch]$RemoveCimSession,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
-
 
     )
 
@@ -6830,15 +6715,11 @@ function Get-WinNTGroupMember {
         $DirectoryEntry,
 
         # Properties of the group members to find in the directory
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
-
 
     )
 
@@ -6955,19 +6836,14 @@ function Invoke-ComObject {
         $ComObject,
 
         # The property to use with the invoked method
-
         [Parameter(Mandatory)]
         [String]$Property,
 
         # The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method
-
         $Value,
 
         # Use the InvokeMethod method of the ComObject
-
         [Switch]$Method
-
-
 
     )
 
@@ -7030,19 +6906,14 @@ function Resolve-IdentityReference {
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
-
         [PSObject]$AdsiServer,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache,
 
         # Properties of each Account to display on the report
-
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
-
-
 
     )
 
@@ -7261,11 +7132,9 @@ function Search-Directory {
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
 
         # Filter for the LDAP search
-
         [string]$Filter,
 
         # Number of results to return in each page
-
         [int]$PageSize = 1000,
 
         # Search scope (Base, OneLevel, or Subtree)
@@ -7273,18 +7142,14 @@ function Search-Directory {
         [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
 
         # Additional properties to return
-
         [string[]]$PropertiesToLoad,
 
         # Credentials to use
-
         [pscredential]$Credential,
 
         # In-process cache to reduce calls to other processes or to disk
-
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -7292,6 +7157,7 @@ function Search-Directory {
 
     if ($Credential) {
         $DirectoryEntryParameters['Credential'] = $Credential
+
     }
 
     if (($null -eq $DirectoryPath -or '' -eq $DirectoryPath)) {

@@ -5,6 +5,7 @@
     param (
 
         [string[]]$Result
+
     )
 
     $dict = @{}

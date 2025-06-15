@@ -6,18 +6,17 @@
 
         [string]$ServiceName,
 
-
         [string]$ComputerName,
-
-
 
         [string]$ThisHostName,
 
-
-
         [string]$ThisFqdn,
 
+
+
         [hashtable]$Log
+
+
 
     )
 

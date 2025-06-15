@@ -21,7 +21,6 @@
         [string]$DocsMarkdownDir,
 
         # Hashtable for output parameters
-
         [hashtable]$IO = @{}
 
     )
