@@ -299,45 +299,12 @@
             }
         }
 
-        # Also include help comments that are immediately before functions
-        $functionHelpRanges = @()
-        foreach ($function in $functions) {
-            $functionStart = $function.Extent.StartLineNumber - 1
-            $helpComment = $tokens | Where-Object {
-                $_.Kind -eq 'Comment' -and
-                $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
-                $_.Extent.EndLineNumber -lt $functionStart -and
-                ($_.Extent.EndLineNumber + 3) -ge $functionStart
-            } | Sort-Object { $_.Extent.StartLineNumber } -Descending | Select-Object -First 1
-
-            if ($helpComment) {
-                $functionHelpRanges += @{
-                    Start = $helpComment.Extent.StartLineNumber - 1
-                    End   = $helpComment.Extent.EndLineNumber - 1
-                }
-            }
-        }
-
+        # Process ALL comment-based help blocks for spacing (including function help)
         $commentTokens = $tokens | Where-Object {
             $_ -and
             $_.Kind -eq 'Comment' -and
             $_.Text -and
             $_.Text -match '^\s*<#[\s\S]*?#>\s*$'
-        } | Where-Object {
-            $commentStart = $_.Extent.StartLineNumber - 1
-            $commentEnd = $_.Extent.EndLineNumber - 1
-
-            # Skip if this comment is inside a function
-            $isInFunction = $functionRanges | Where-Object {
-                $commentStart -ge $_.Start -and $commentEnd -le $_.End
-            }
-
-            # Skip if this comment is function help
-            $isFunctionHelp = $functionHelpRanges | Where-Object {
-                $commentStart -ge $_.Start -and $commentEnd -le $_.End
-            }
-
-            -not $isInFunction -and -not $isFunctionHelp
         }
 
         # Process from bottom to top to maintain line numbers
@@ -364,9 +331,6 @@
 
         # Fix param block spacing
         $paramBlocks = $ast.FindAll({
-
-
-
 
                 param($astNode)
 
@@ -406,5 +370,7 @@
             Write-Verbose 'No spacing issues found in content'
             return $Content
         }
+
     }
+
 }

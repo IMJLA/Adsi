@@ -1,4 +1,5 @@
 ﻿function Measure-CommentBasedHelpSpacing {
+
     <#
     .SYNOPSIS
         Custom PSScriptAnalyzer rule for enforcing proper spacing around comment-based help blocks
@@ -18,11 +19,13 @@
     [CmdletBinding()]
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
+
     param(
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
 
         [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
+
     )
 
     [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results = @()
@@ -95,6 +98,7 @@
 }
 
 function Measure-ParamBlockSpacing {
+
     <#
     .SYNOPSIS
         Custom PSScriptAnalyzer rule for enforcing proper spacing around param blocks
@@ -117,12 +121,14 @@ function Measure-ParamBlockSpacing {
     #>
 
     [CmdletBinding()]
+
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
     param(
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
+
         [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
     )
 
@@ -147,6 +153,7 @@ function Measure-ParamBlockSpacing {
         }
 
         # Find param blocks and deduplicate by position
+
         $paramBlocks = $ScriptBlockAst.FindAll({
 
                 param($ast)
