@@ -4719,9 +4719,9 @@ function Get-DirectoryEntry {
     As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
 
-
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
+
 
     param (
 

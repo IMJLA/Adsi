@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.574] - 2025-06-15
+### Fixed
+- fix extra blank lines
+
 ## [5.0.573] - 2025-06-15
 ### Changed
 - find dmg

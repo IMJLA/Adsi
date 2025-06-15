@@ -14,8 +14,8 @@
     #>
 
     # ToDo: Use the TypeScript Compiler API or Bun to update the configuration file instead of string manipulation.
-
     [CmdletBinding(SupportsShouldProcess = $true)]
+
 
     param (
 
