@@ -1,12 +1,21 @@
 ﻿function Measure-CommentBasedHelpSpacing {
     <#
     .SYNOPSIS
-        Custom PSScriptAnalyzer rules for enforcing consistent formatting
+        Custom PSScriptAnalyzer rule for enforcing proper spacing around comment-based help blocks
 
+    .DESCRIPTION
+        This rule ensures that comment-based help blocks have proper blank line spacing before and after them.
+        A blank line should exist before and after comment-based help blocks to improve readability.
+
+    .PARAMETER ScriptBlockAst
+        The AST object representing the script block to analyze
+
+    .OUTPUTS
+        Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]
+        Returns diagnostic records for any spacing violations found
     #>
 
     [CmdletBinding()]
-
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
     param(
@@ -36,13 +45,13 @@
             return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
-        # Find comment tokens that look like comment-based help
+        # Find comment tokens that look like comment-based help and deduplicate by position
         $commentTokens = $tokens | Where-Object {
             $_ -and
             $_.Kind -eq 'Comment' -and
             $_.Text -and
             $_.Text -match '^\s*<#[\s\S]*?#>\s*$'
-        }
+        } | Sort-Object { $_.Extent.StartOffset } | Group-Object { $_.Extent.StartOffset } | ForEach-Object { $_.Group[0] }
 
         if (-not $commentTokens) {
             return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
@@ -137,13 +146,13 @@ function Measure-ParamBlockSpacing {
             return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
         }
 
-        # Find param blocks
+        # Find param blocks and deduplicate by position
         $paramBlocks = $ScriptBlockAst.FindAll({
 
                 param($ast)
 
                 $ast -is [System.Management.Automation.Language.ParamBlockAst]
-            }, $true)
+            }, $true) | Sort-Object { $_.Extent.StartOffset } | Group-Object { $_.Extent.StartOffset } | ForEach-Object { $_.Group[0] }
 
         if (-not $paramBlocks) {
             return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results

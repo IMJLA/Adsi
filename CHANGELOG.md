@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.550] - 2025-06-15
+### Added
+- add features to custom formatter
+
 ## [5.0.549] - 2025-06-15
 ### Fixed
 - fix linting issues
