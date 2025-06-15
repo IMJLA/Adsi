@@ -1,4 +1,5 @@
 ﻿function Resolve-IdRefAppPkgAuth {
+
     <#
     These SIDs cannot be resolved from the NTAccount name:
         PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount]).Translate([System.Security.Principal.SecurityIdentifier])
@@ -17,6 +18,7 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefAppPkgAuth')]
 
     [OutputType([PSCustomObject])]
+
 
     param (
 
@@ -38,6 +40,7 @@
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 

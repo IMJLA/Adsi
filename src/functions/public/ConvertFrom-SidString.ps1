@@ -1,4 +1,5 @@
 ﻿function ConvertFrom-SidString {
+
     <#
     .SYNOPSIS
 
@@ -28,6 +29,7 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
+
     param (
 
         # Security Identifier (SID) string to convert to a DirectoryEntry
@@ -36,6 +38,7 @@
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
     )
 
 

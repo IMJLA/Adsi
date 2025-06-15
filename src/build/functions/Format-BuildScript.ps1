@@ -1,4 +1,5 @@
 ﻿<#
+<#
 .SYNOPSIS
     Formats PowerShell script content by fixing spacing around comment-based help and param blocks.
 
@@ -35,18 +36,20 @@
     - Parse errors will cause the function to return the original content unchanged
     - Only adds spacing; does not remove existing blank lines
     - Designed specifically for PowerShell script formatting
+
 #>
 
+[CmdletBinding()]
+
+param(
+    # The PowerShell script content to format. Must be a valid PowerShell script string.
+    [Parameter(Mandatory, ValueFromPipeline)]
+    [string]$Content
+
+)
+
+
 function Format-BuildScript {
-    [CmdletBinding()]
-
-
-    param(
-        # The PowerShell script content to format. Must be a valid PowerShell script string.
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string]$Content
-
-    )
 
     process {
         Write-Verbose 'Processing PowerShell content for spacing fixes'
@@ -74,6 +77,8 @@ function Format-BuildScript {
 
         # Fix function element sequence
 
+
+
         $functions = $ast.FindAll({
 
                 param($astNode)
@@ -88,22 +93,35 @@ function Format-BuildScript {
             $functionEnd = $function.Extent.EndLineNumber - 1
 
             # Find function components
-            $components = @{
-            }
+            $components = @{}
 
-            # Find comment-based help (look for multi-line comment before function body)
+            # Find comment-based help - look for it both inside and immediately before the function
+            $helpComment = $null
+
+            # First, look for comment-based help inside the function body
             $helpComment = $tokens | Where-Object {
                 $_.Kind -eq 'Comment' -and
                 $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
-                $_.Extent.StartLineNumber -ge ($functionStart + 1) -and
+                $_.Extent.StartLineNumber -gt $functionStart -and
                 $_.Extent.EndLineNumber -le $functionEnd
             } | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
+
+            # If not found inside, look for it immediately before the function (common pattern)
+            if (-not $helpComment) {
+                $helpComment = $tokens | Where-Object {
+                    $_.Kind -eq 'Comment' -and
+                    $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
+                    $_.Extent.EndLineNumber -lt $functionStart -and
+                    ($_.Extent.EndLineNumber + 3) -ge $functionStart  # Within 2 lines of function start
+                } | Sort-Object { $_.Extent.StartLineNumber } -Descending | Select-Object -First 1
+            }
 
             if ($helpComment) {
                 $components['Help'] = @{
                     StartLine = $helpComment.Extent.StartLineNumber - 1
                     EndLine   = $helpComment.Extent.EndLineNumber - 1
                     Content   = $lines[($helpComment.Extent.StartLineNumber - 1)..($helpComment.Extent.EndLineNumber - 1)]
+                    IsOutside = $helpComment.Extent.EndLineNumber -lt $functionStart
                 }
             }
 
@@ -143,21 +161,29 @@ function Format-BuildScript {
                 }
             }
 
-            # Check if reordering is needed
+            # Check if reordering is needed or if help needs to be moved inside
             $currentOrder = @()
+            $needsReordering = $false
+
+            # If help is outside the function, we need to move it
+            if ($components.ContainsKey('Help') -and $components['Help'].IsOutside) {
+                $needsReordering = $true
+                Write-Verbose 'Found comment-based help outside function - will move inside'
+            }
+
             foreach ($comp in @('Help', 'CmdletBinding', 'OutputType', 'ParamBlock')) {
-                if ($components.ContainsKey($comp)) {
+                if ($components.ContainsKey($comp) -and -not ($comp -eq 'Help' -and $components[$comp].IsOutside)) {
                     $currentOrder += @{ Name = $comp; StartLine = $components[$comp].StartLine }
                 }
             }
 
-            $sortedOrder = $currentOrder | Sort-Object StartLine
-            $needsReordering = $false
-
-            for ($i = 0; $i -lt $currentOrder.Count; $i++) {
-                if ($currentOrder[$i].Name -ne $sortedOrder[$i].Name) {
-                    $needsReordering = $true
-                    break
+            if ($currentOrder.Count -gt 1) {
+                $sortedOrder = $currentOrder | Sort-Object StartLine
+                for ($i = 0; $i -lt $currentOrder.Count; $i++) {
+                    if ($currentOrder[$i].Name -ne $sortedOrder[$i].Name) {
+                        $needsReordering = $true
+                        break
+                    }
                 }
             }
 
@@ -169,17 +195,33 @@ function Format-BuildScript {
 
                 # Remove all components from their current positions (from bottom to top)
                 $componentsToRemove = $components.Values | Sort-Object StartLine -Descending
+                $linesRemovedBeforeInsertion = 0
+
                 foreach ($comp in $componentsToRemove) {
+                    # Track how many lines we're removing before the insertion point
+                    if ($comp.StartLine -lt $insertionPoint) {
+                        $linesRemovedBeforeInsertion += ($comp.EndLine - $comp.StartLine + 1)
+                        # Add any blank lines that might be removed
+                        if ($comp.EndLine + 1 -lt $lines.Count -and $lines[$comp.EndLine + 1].Trim() -eq '') {
+                            $linesRemovedBeforeInsertion += 1
+                        }
+                    }
+
+                    # Remove the component lines
                     for ($lineIdx = $comp.EndLine; $lineIdx -ge $comp.StartLine; $lineIdx--) {
-                        $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                        if ($lineIdx -lt $lines.Count) {
+                            $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                        }
+                    }
+
+                    # Remove trailing blank line if it exists
+                    if ($comp.StartLine -lt $lines.Count -and $lines[$comp.StartLine].Trim() -eq '') {
+                        $lines = $lines[0..($comp.StartLine - 1)] + $lines[($comp.StartLine + 1)..($lines.Count - 1)]
                     }
                 }
 
-                # Recalculate insertion point after removals
-                $removedLinesBefore = ($componentsToRemove | Where-Object { $_.StartLine -lt $insertionPoint } | Measure-Object).Count
-                if ($removedLinesBefore -gt 0) {
-                    $insertionPoint -= $removedLinesBefore
-                }
+                # Adjust insertion point
+                $insertionPoint -= $linesRemovedBeforeInsertion
 
                 # Insert components in correct order
                 $orderedComponents = @()
@@ -200,7 +242,11 @@ function Format-BuildScript {
                 }
 
                 # Insert the reordered components
-                $lines = $lines[0..($insertionPoint - 1)] + $insertLines + $lines[$insertionPoint..($lines.Count - 1)]
+                if ($insertionPoint -lt $lines.Count) {
+                    $lines = $lines[0..($insertionPoint - 1)] + $insertLines + $lines[$insertionPoint..($lines.Count - 1)]
+                } else {
+                    $lines = $lines + $insertLines
+                }
                 $modified = $true
             }
         }
@@ -237,6 +283,7 @@ function Format-BuildScript {
 
         # Fix param block spacing
         $paramBlocks = $ast.FindAll({
+
 
 
 

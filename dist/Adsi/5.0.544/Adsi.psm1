@@ -108,6 +108,7 @@ class FakeDirectoryEntry {
 
 }
 function ConvertFrom-AppCapabilitySid {
+
     <#
     .SYNOPSIS
 
@@ -164,6 +165,7 @@ function ConvertFrom-AppCapabilitySid {
 
     param (
         [string]$SID
+
 
     )
 
@@ -382,6 +384,7 @@ function ConvertTo-AccountCache {
 
 }
 function ConvertTo-DirectoryEntry {
+
     <#
 .SYNOPSIS
 
@@ -416,6 +419,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         $IdentityReference,
         $DomainDn,
         [ref]$Cache
+
 
     )
 
@@ -655,6 +659,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
 }
 function ConvertTo-PermissionPrincipal {
+
     <#
 .SYNOPSIS
 
@@ -696,6 +701,7 @@ None. This function populates the PrincipalById cache with permission principal 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -925,6 +931,7 @@ function ConvertTo-ServiceSID {
 
 }
 function ConvertTo-SidString {
+
     <#
 .SYNOPSIS
 
@@ -955,6 +962,7 @@ System.Security.Principal.SecurityIdentifier
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
 
 
@@ -974,6 +982,7 @@ System.Security.Principal.SecurityIdentifier
 
 }
 function Find-AdsiProvider {
+
     <#
         .SYNOPSIS
 
@@ -1011,6 +1020,7 @@ function Find-AdsiProvider {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -1175,6 +1185,7 @@ function Find-WinNTGroupMember {
 
 }
 function Get-CachedDirectoryEntry {
+
     <#
         Path to the directory object to retrieve
         Defaults to the root of the current domain
@@ -1203,6 +1214,7 @@ function Get-CachedDirectoryEntry {
 
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -1389,6 +1401,7 @@ function Get-SidTypeMap {
     }
 }
 function Invoke-IADsGroupMembersMethod {
+
     <#
         .SYNOPSIS
 
@@ -1430,11 +1443,13 @@ function Invoke-IADsGroupMembersMethod {
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry
+
 
 
     )
@@ -1485,6 +1500,7 @@ function Invoke-ScShowSid {
 
 }
 function Resolve-IdRefAppPkgAuth {
+
     <#
     These SIDs cannot be resolved from the NTAccount name:
         PS C:> [System.Security.Principal.SecurityIdentifier]::new('S-1-15-2-1').Translate([System.Security.Principal.NTAccount]).Translate([System.Security.Principal.SecurityIdentifier])
@@ -1503,6 +1519,7 @@ function Resolve-IdRefAppPkgAuth {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefAppPkgAuth')]
 
     [OutputType([PSCustomObject])]
+
 
     param (
 
@@ -1524,6 +1541,7 @@ function Resolve-IdRefAppPkgAuth {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -1781,6 +1799,7 @@ function Resolve-IdRefSearchDir {
 
 }
 function Resolve-IdRefSID {
+
     <#
                 This .Net method makes it impossible to redirect the error stream directly
                 Wrapping it in a scriptblock (which is then executed with &) fixes the problem
@@ -1792,6 +1811,7 @@ function Resolve-IdRefSID {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
 
     [OutputType([PSCustomObject])]
+
 
     param (
 
@@ -1813,6 +1833,7 @@ function Resolve-IdRefSID {
 
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+
 
     )
 
@@ -2054,6 +2075,7 @@ function Resolve-IdRefSvc {
 
 }
 function Resolve-SidAuthority {
+
     <#
     .SYNOPSIS
 
@@ -2098,6 +2120,7 @@ function Resolve-SidAuthority {
             'NULL SID AUTHORITY'            = $null
             'WORLD SID AUTHORITY'           = $null
         }
+
 
 
     )
@@ -2168,6 +2191,7 @@ function Split-DirectoryPath {
 
 }
 function Test-AdsiProvider {
+
     <#
     .SYNOPSIS
 
@@ -2205,6 +2229,7 @@ function Test-AdsiProvider {
         [ref]$Cache
 
 
+
     )
 
 
@@ -2232,6 +2257,7 @@ function Test-AdsiProvider {
 
 }
 function Add-DomainFqdnToLdapPath {
+
     <#
     .SYNOPSIS
 
@@ -2268,6 +2294,7 @@ function Add-DomainFqdnToLdapPath {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -2325,6 +2352,7 @@ function Add-DomainFqdnToLdapPath {
 
 }
 function Add-SidInfo {
+
     <#
     .SYNOPSIS
 
@@ -2358,6 +2386,7 @@ function Add-SidInfo {
 
         # In-process cache to reduce calls to other processes or to disk
         [ref]$DomainsBySid
+
 
 
     )
@@ -2447,6 +2476,7 @@ function Add-SidInfo {
 
 }
 function ConvertFrom-DirectoryEntry {
+
     <#
     .SYNOPSIS
 
@@ -2479,6 +2509,7 @@ function ConvertFrom-DirectoryEntry {
         [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
 
 
+
     )
 
 
@@ -2499,6 +2530,7 @@ function ConvertFrom-DirectoryEntry {
 
 }
 function ConvertFrom-PropertyValueCollectionToString {
+
     <#
     .SYNOPSIS
 
@@ -2530,6 +2562,7 @@ function ConvertFrom-PropertyValueCollectionToString {
         [System.DirectoryServices.PropertyValueCollection]$PropertyValueCollection
 
 
+
     )
 
 
@@ -2545,6 +2578,7 @@ function ConvertFrom-PropertyValueCollectionToString {
 
 }
 function ConvertFrom-ResolvedID {
+
     <#
     .SYNOPSIS
 
@@ -2598,6 +2632,7 @@ function ConvertFrom-ResolvedID {
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
 
+
     )
 
 
@@ -2648,6 +2683,7 @@ function ConvertFrom-ResolvedID {
 
 }
 function ConvertFrom-ResultPropertyValueCollectionToString {
+
     <#
     .SYNOPSIS
 
@@ -2675,6 +2711,7 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
         # ResultPropertyValueCollection object to convert to a string
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
 
+
     )
 
 
@@ -2690,6 +2727,7 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
 
 }
 function ConvertFrom-SearchResult {
+
     <#
     .SYNOPSIS
 
@@ -2732,6 +2770,7 @@ function ConvertFrom-SearchResult {
         [System.DirectoryServices.SearchResult[]]$SearchResult
 
 
+
     )
 
 
@@ -2760,6 +2799,7 @@ function ConvertFrom-SearchResult {
 
 }
 function ConvertFrom-SidString {
+
     <#
     .SYNOPSIS
 
@@ -2789,6 +2829,7 @@ function ConvertFrom-SidString {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
+
     param (
 
         # Security Identifier (SID) string to convert to a DirectoryEntry
@@ -2797,6 +2838,7 @@ function ConvertFrom-SidString {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
     )
 
 
@@ -2811,6 +2853,7 @@ function ConvertFrom-SidString {
 
 }
 function ConvertTo-DecStringRepresentation {
+
     <#
     .SYNOPSIS
 
@@ -2838,6 +2881,7 @@ function ConvertTo-DecStringRepresentation {
         [byte[]]$ByteArray
 
 
+
     )
 
 
@@ -2850,6 +2894,7 @@ function ConvertTo-DecStringRepresentation {
 
 }
 function ConvertTo-DistinguishedName {
+
     <#
     .SYNOPSIS
 
@@ -2912,6 +2957,7 @@ function ConvertTo-DistinguishedName {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
 
@@ -3123,6 +3169,7 @@ function ConvertTo-DomainNetBIOS {
 
 }
 function ConvertTo-DomainSidString {
+
     <#
     .SYNOPSIS
 
@@ -3176,6 +3223,7 @@ function ConvertTo-DomainSidString {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
 
@@ -3253,6 +3301,7 @@ function ConvertTo-DomainSidString {
 
 }
 function ConvertTo-FakeDirectoryEntry {
+
     <#
     .SYNOPSIS
 
@@ -3356,6 +3405,7 @@ function ConvertTo-FakeDirectoryEntry {
         }
 
 
+
     )
 
 
@@ -3417,6 +3467,7 @@ function ConvertTo-FakeDirectoryEntry {
 
 }
 function ConvertTo-Fqdn {
+
     <#
     .SYNOPSIS
 
@@ -3462,6 +3513,7 @@ function ConvertTo-Fqdn {
         [ref]$Cache
 
 
+
     )
 
 
@@ -3498,6 +3550,7 @@ function ConvertTo-Fqdn {
 
 }
 function ConvertTo-HexStringRepresentation {
+
     <#
     .SYNOPSIS
 
@@ -3518,11 +3571,13 @@ function ConvertTo-HexStringRepresentation {
 
     [OutputType([System.String[]])]
 
+
     param (
         # SID
 
 
         [byte[]]$SIDByteArray
+
     )
 
 
@@ -3534,6 +3589,7 @@ function ConvertTo-HexStringRepresentation {
     return $SIDHexString
 }
 function ConvertTo-HexStringRepresentationForLDAPFilterString {
+
     <#
     .SYNOPSIS
 
@@ -3554,11 +3610,13 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
 
     [OutputType([System.String])]
 
+
     param (
         # SID to convert to a hex string
 
 
         [byte[]]$SIDByteArray
+
     )
 
 
@@ -3576,6 +3634,7 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
     "\$($Hexes -join '\')"
 }
 function ConvertTo-SidByteArray {
+
     <#
     .SYNOPSIS
 
@@ -3597,12 +3656,14 @@ function ConvertTo-SidByteArray {
 
     [OutputType([System.Byte[]])]
 
+
     param (
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
 
 
         [string[]]$SidString
+
     )
 
 
@@ -3616,6 +3677,7 @@ function ConvertTo-SidByteArray {
     }
 }
 function Expand-AdsiGroupMember {
+
     <#
     .SYNOPSIS
 
@@ -3649,6 +3711,7 @@ function Expand-AdsiGroupMember {
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
+
     param (
 
         # Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
@@ -3661,6 +3724,7 @@ function Expand-AdsiGroupMember {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -3768,6 +3832,7 @@ function Expand-AdsiGroupMember {
 
 }
 function Expand-WinNTGroupMember {
+
     <#
     .SYNOPSIS
 
@@ -3803,6 +3868,7 @@ function Expand-WinNTGroupMember {
 
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+
 
 
     )
@@ -3892,6 +3958,7 @@ function Expand-WinNTGroupMember {
 
 }
 function Find-LocalAdsiServerSid {
+
     <#
     .SYNOPSIS
 
@@ -3919,6 +3986,7 @@ function Find-LocalAdsiServerSid {
 
     [OutputType([System.String])]
 
+
     param (
 
         # Name of the computer to query via CIM
@@ -3927,6 +3995,7 @@ function Find-LocalAdsiServerSid {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -3953,6 +4022,7 @@ function Find-LocalAdsiServerSid {
 
 }
 function Get-AdsiGroup {
+
     <#
     .SYNOPSIS
 
@@ -4003,6 +4073,7 @@ function Get-AdsiGroup {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
 
@@ -4077,6 +4148,7 @@ function Get-AdsiGroup {
 
 }
 function Get-AdsiGroupMember {
+
     <#
     .SYNOPSIS
 
@@ -4131,6 +4203,7 @@ function Get-AdsiGroupMember {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -4292,6 +4365,7 @@ function Get-AdsiGroupMember {
 
 }
 function Get-AdsiServer {
+
     <#
     .SYNOPSIS
 
@@ -4338,6 +4412,7 @@ function Get-AdsiServer {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -4536,6 +4611,7 @@ function Get-AdsiServer {
 
 }
 function Get-CurrentDomain {
+
     <#
     .SYNOPSIS
 
@@ -4568,6 +4644,7 @@ function Get-CurrentDomain {
         [ref]$Cache
 
 
+
     )
 
 
@@ -4594,6 +4671,7 @@ function Get-CurrentDomain {
 
 }
 function Get-DirectoryEntry {
+
     <#
 
     .SYNOPSIS
@@ -4624,6 +4702,7 @@ function Get-DirectoryEntry {
 
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
 
+
     param (
 
         <#
@@ -4649,6 +4728,7 @@ function Get-DirectoryEntry {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -6539,6 +6619,7 @@ function Get-KnownSidHashTable {
 
 }
 function Get-ParentDomainDnsName {
+
     <#
     .SYNOPSIS
 
@@ -6578,6 +6659,7 @@ function Get-ParentDomainDnsName {
 
 
 
+
     )
 
 
@@ -6605,6 +6687,7 @@ function Get-ParentDomainDnsName {
     return $ParentDomainDnsName
 }
 function Get-TrustedDomain {
+
     <#
     .SYNOPSIS
 
@@ -6634,11 +6717,13 @@ function Get-TrustedDomain {
 
     [OutputType([PSCustomObject])]
 
+
     param (
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -6678,6 +6763,7 @@ function Get-TrustedDomain {
 
 }
 function Get-WinNTGroupMember {
+
     <#
     .SYNOPSIS
 
@@ -6715,6 +6801,7 @@ function Get-WinNTGroupMember {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )
@@ -6799,6 +6886,7 @@ function Get-WinNTGroupMember {
 
 }
 function Invoke-ComObject {
+
     <#
     .SYNOPSIS
 
@@ -6842,6 +6930,7 @@ function Invoke-ComObject {
         [Switch]$Method
 
 
+
     )
 
 
@@ -6870,6 +6959,7 @@ function Invoke-ComObject {
     [__ComObject].InvokeMember($Property, $Invoke, $Null, $ComObject, $Value)
 }
 function Resolve-IdentityReference {
+
     <#
     .SYNOPSIS
 
@@ -6912,6 +7002,7 @@ function Resolve-IdentityReference {
 
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+
 
 
     )
@@ -7048,6 +7139,7 @@ function Resolve-IdentityReference {
 
 }
 function Resolve-ServiceNameToSID {
+
     <#
     .SYNOPSIS
 
@@ -7072,6 +7164,7 @@ function Resolve-ServiceNameToSID {
         # Output of Get-Service or an instance of the Win32_Service CIM class
         [Parameter(ValueFromPipeline)]
         $InputObject
+
 
 
 

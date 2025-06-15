@@ -1,4 +1,5 @@
 ﻿function Resolve-IdRefSID {
+
     <#
                 This .Net method makes it impossible to redirect the error stream directly
                 Wrapping it in a scriptblock (which is then executed with &) fixes the problem
@@ -10,6 +11,7 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
 
     [OutputType([PSCustomObject])]
+
 
     param (
 
@@ -31,6 +33,7 @@
 
         # Properties of each Account to display on the report
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
+
 
     )
 

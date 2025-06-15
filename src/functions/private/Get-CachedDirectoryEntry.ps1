@@ -1,4 +1,5 @@
 ﻿function Get-CachedDirectoryEntry {
+
     <#
         Path to the directory object to retrieve
         Defaults to the root of the current domain
@@ -27,6 +28,7 @@
 
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )

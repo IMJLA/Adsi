@@ -1,4 +1,5 @@
 ﻿function ConvertTo-DirectoryEntry {
+
     <#
 .SYNOPSIS
 
@@ -33,6 +34,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
         $IdentityReference,
         $DomainDn,
         [ref]$Cache
+
 
     )
 

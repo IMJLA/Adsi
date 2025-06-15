@@ -1,4 +1,5 @@
 ﻿function ConvertTo-HexStringRepresentation {
+
     <#
     .SYNOPSIS
 
@@ -19,11 +20,13 @@
 
     [OutputType([System.String[]])]
 
+
     param (
         # SID
 
 
         [byte[]]$SIDByteArray
+
     )
 
 

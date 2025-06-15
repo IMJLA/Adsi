@@ -1,4 +1,5 @@
 ﻿function ConvertFrom-AppCapabilitySid {
+
     <#
     .SYNOPSIS
 
@@ -55,6 +56,7 @@
 
     param (
         [string]$SID
+
 
     )
 

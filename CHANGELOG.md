@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.544] - 2025-06-15
+### Fixed
+- fix script formatting
+
 ## [5.0.543] - 2025-06-15
 ### Fixed
 - fix script formatting

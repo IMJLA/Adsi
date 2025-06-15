@@ -1,4 +1,5 @@
 ﻿function Invoke-IADsGroupMembersMethod {
+
     <#
         .SYNOPSIS
 
@@ -40,11 +41,13 @@
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry
+
 
 
     )

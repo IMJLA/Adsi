@@ -1,4 +1,5 @@
 ﻿function ConvertTo-FakeDirectoryEntry {
+
     <#
     .SYNOPSIS
 
@@ -100,6 +101,7 @@
             'Users'                               = $null
             'WinRMRemoteWMIUsers__'               = $null
         }
+
 
 
     )

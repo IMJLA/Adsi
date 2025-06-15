@@ -1,4 +1,5 @@
 ﻿function ConvertTo-HexStringRepresentationForLDAPFilterString {
+
     <#
     .SYNOPSIS
 
@@ -19,11 +20,13 @@
 
     [OutputType([System.String])]
 
+
     param (
         # SID to convert to a hex string
 
 
         [byte[]]$SIDByteArray
+
     )
 
 

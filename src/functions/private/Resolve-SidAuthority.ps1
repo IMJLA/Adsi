@@ -1,4 +1,5 @@
 ﻿function Resolve-SidAuthority {
+
     <#
     .SYNOPSIS
 
@@ -43,6 +44,7 @@
             'NULL SID AUTHORITY'            = $null
             'WORLD SID AUTHORITY'           = $null
         }
+
 
 
     )

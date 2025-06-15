@@ -1,4 +1,5 @@
 ﻿function Invoke-ComObject {
+
     <#
     .SYNOPSIS
 
@@ -40,6 +41,7 @@
 
         # Use the InvokeMethod method of the ComObject
         [Switch]$Method
+
 
 
     )

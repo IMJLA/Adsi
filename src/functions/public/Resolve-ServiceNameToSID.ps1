@@ -1,4 +1,5 @@
 ﻿function Resolve-ServiceNameToSID {
+
     <#
     .SYNOPSIS
 
@@ -23,6 +24,7 @@
         # Output of Get-Service or an instance of the Win32_Service CIM class
         [Parameter(ValueFromPipeline)]
         $InputObject
+
 
 
 

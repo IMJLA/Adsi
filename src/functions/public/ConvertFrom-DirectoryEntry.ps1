@@ -1,4 +1,5 @@
 ﻿function ConvertFrom-DirectoryEntry {
+
     <#
     .SYNOPSIS
 
@@ -29,6 +30,7 @@
             Position = 0
         )]
         [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
+
 
 
     )

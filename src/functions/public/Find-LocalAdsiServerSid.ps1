@@ -1,4 +1,5 @@
 ﻿function Find-LocalAdsiServerSid {
+
     <#
     .SYNOPSIS
 
@@ -26,6 +27,7 @@
 
     [OutputType([System.String])]
 
+
     param (
 
         # Name of the computer to query via CIM
@@ -34,6 +36,7 @@
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
 
     )

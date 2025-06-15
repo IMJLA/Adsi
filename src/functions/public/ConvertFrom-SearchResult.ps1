@@ -1,4 +1,5 @@
 ﻿function ConvertFrom-SearchResult {
+
     <#
     .SYNOPSIS
 
@@ -39,6 +40,7 @@
             ValueFromPipeline
         )]
         [System.DirectoryServices.SearchResult[]]$SearchResult
+
 
 
     )

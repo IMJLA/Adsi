@@ -1,18 +1,23 @@
 ﻿<#
+<#
 .SYNOPSIS
     Custom PSScriptAnalyzer rules for enforcing consistent formatting
+
 #>
 
+[CmdletBinding()]
+
+[OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
+
+param(
+    [Parameter(Mandatory)]
+    [ValidateNotNullOrEmpty()]
+
+    [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
+)
+
+
 function Measure-CommentBasedHelpSpacing {
-    [CmdletBinding()]
-    [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
-
-    param(
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
-    )
-
     $results = @()
 
     try {
@@ -87,6 +92,7 @@ function Measure-ParamBlockSpacing {
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
     param(
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
@@ -98,6 +104,8 @@ function Measure-ParamBlockSpacing {
         if (-not $ScriptBlockAst.Extent -or -not $ScriptBlockAst.Extent.Text) {
             return $results
         }
+
+
 
         # Find param blocks
         $paramBlocks = $ScriptBlockAst.FindAll({

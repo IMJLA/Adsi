@@ -1,4 +1,5 @@
 ﻿function Expand-AdsiGroupMember {
+
     <#
     .SYNOPSIS
 
@@ -32,6 +33,7 @@
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
+
     param (
 
         # Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry
@@ -44,6 +46,7 @@
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
