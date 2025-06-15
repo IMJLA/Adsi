@@ -1,7 +1,5 @@
 ﻿using namespace System.Management.Automation
 
-#TODO : Use Fixer 'Get-TextFilesList $pwd | ConvertTo-SpaceIndentation'.
-
 Properties {
 
     # GitHub (Source Control, Releases, and the Online Help and Documentation Website hosted on GitHub Pages)

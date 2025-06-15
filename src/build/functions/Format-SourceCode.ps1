@@ -7,6 +7,7 @@
     .DESCRIPTION
     This script automatically formats all PowerShell script files in the source directory
     according to the PSScriptAnalyzer rules defined in the settings file.
+    TODO : Use Fixer 'Get-TextFilesList $pwd | ConvertTo-SpaceIndentation'.
 
     .EXAMPLE
     Format-SourceCode
