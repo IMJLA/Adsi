@@ -1,5 +1,7 @@
 ﻿function Format-SourceCode {
 
+    #requires -module PSScriptAnalyzer
+
     <#
     .SYNOPSIS
     Format PowerShell source code files using PSScriptAnalyzer rules.
@@ -13,10 +15,10 @@
     Format-SourceCode
 
     .EXAMPLE
+
     Format-SourceCode -Path "C:\MyProject\src" -WhatIf
     #>
 
-    #requires -module PSScriptAnalyzer
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
@@ -24,6 +26,7 @@
         [string]$Path = (Join-Path $PSScriptRoot '..' ),
 
         # Path to the PSScriptAnalyzer settings file
+
         [string]$SettingsPath = (Join-Path $PSScriptRoot 'psscriptanalyzerSettings.psd1')
     )
 
@@ -51,12 +54,14 @@
         $FileBytes = [System.IO.File]::ReadAllBytes($File.FullName)
         $HasBOM = $FileBytes.Length -ge 3 -and $FileBytes[0] -eq 0xEF -and $FileBytes[1] -eq 0xBB -and $FileBytes[2] -eq 0xBF
 
+
         <#
         Normalize line endings to Windows format (CRLF) before formatting
         In addition to ensuring consistency this prevents the following error from Invoke-Formatter:
 
             Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
         Also trim trailing whitespace from the end of the file
+
         #>
 
         $strings += "`t`$NormalizedContent = `"`$(`$OriginalContent.Trim())``r``n`" -replace `"``r``n|``n|``r`", `"``r``n`""

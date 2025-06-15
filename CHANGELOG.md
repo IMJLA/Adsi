@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.559] - 2025-06-15
+### Fixed
+- fix requires stmt positioning
+
 ## [5.0.558] - 2025-06-15
 ### Changed
 - debug custom rules

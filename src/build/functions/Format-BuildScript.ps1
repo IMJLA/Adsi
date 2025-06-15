@@ -96,6 +96,54 @@
             # Find function components
             $components = @{}
 
+            # Find #requires statements within this function
+            $requiresStatements = $tokens | Where-Object {
+                $_.Kind -eq 'Comment' -and
+                $_.Text -match '^\s*#requires\s' -and
+                $_.Extent.StartLineNumber -gt $functionStart -and
+                $_.Extent.EndLineNumber -le $functionEnd
+            } | Sort-Object { $_.Extent.StartLineNumber }
+
+            if ($requiresStatements) {
+                # Group consecutive #requires statements
+                $requiresGroups = @()
+                $currentGroup = @()
+                $lastLineNumber = -1
+
+                foreach ($req in $requiresStatements) {
+                    $currentLineNumber = $req.Extent.StartLineNumber - 1
+
+                    # If this is consecutive to the last one (within 1 line), add to current group
+                    if ($lastLineNumber -eq -1 -or $currentLineNumber -le ($lastLineNumber + 2)) {
+                        $currentGroup += $req
+                    } else {
+                        # Start a new group
+                        if ($currentGroup.Count -gt 0) {
+                            $requiresGroups += , $currentGroup
+                        }
+                        $currentGroup = @($req)
+                    }
+                    $lastLineNumber = $req.Extent.EndLineNumber - 1
+                }
+
+                # Add the last group
+                if ($currentGroup.Count -gt 0) {
+                    $requiresGroups += , $currentGroup
+                }
+
+                # For simplicity, treat all as one component (we'll handle them as a block)
+                if ($requiresGroups.Count -gt 0) {
+                    $firstRequires = $requiresGroups[0][0]
+                    $lastRequires = $requiresGroups[-1][-1]
+
+                    $components['Requires'] = @{
+                        StartLine = $firstRequires.Extent.StartLineNumber - 1
+                        EndLine   = $lastRequires.Extent.EndLineNumber - 1
+                        Content   = $requiresStatements | ForEach-Object { $lines[$_.Extent.StartLineNumber - 1] }
+                    }
+                }
+            }
+
             # Find comment-based help - look for it both inside and immediately before the function
             $helpComment = $null
 
@@ -185,6 +233,12 @@
             # Check if reordering is needed - be more conservative
             $needsReordering = $false
 
+            # Check if we have #requires statements that need repositioning
+            if ($components.ContainsKey('Requires')) {
+                $needsReordering = $true
+                Write-Verbose 'Found #requires statements - will reposition'
+            }
+
             # Only reorder if help is outside the function (needs to be moved in)
             if ($components.ContainsKey('Help') -and $components['Help'].IsOutside) {
                 $needsReordering = $true
@@ -192,7 +246,7 @@
             } else {
                 # Check if the order inside the function is wrong
                 $insideComponents = @()
-                foreach ($comp in @('Help', 'CmdletBinding', 'OutputType', 'ParamBlock')) {
+                foreach ($comp in @('Requires', 'Help', 'CmdletBinding', 'OutputType', 'ParamBlock')) {
                     if ($components.ContainsKey($comp) -and -not ($comp -eq 'Help' -and $components[$comp].IsOutside)) {
                         $insideComponents += @{ Name = $comp; StartLine = $components[$comp].StartLine }
                     }
@@ -200,8 +254,8 @@
 
                 # Only reorder if we have multiple components and they're in wrong order
                 if ($insideComponents.Count -gt 1) {
-                    # Check the expected order: Help, CmdletBinding, OutputType, ParamBlock
-                    $expectedOrder = @('Help', 'CmdletBinding', 'OutputType', 'ParamBlock')
+                    # Check the expected order: Requires, Help, CmdletBinding, OutputType, ParamBlock
+                    $expectedOrder = @('Requires', 'Help', 'CmdletBinding', 'OutputType', 'ParamBlock')
                     $actualOrder = ($insideComponents | Sort-Object StartLine | ForEach-Object { $_.Name })
                     $filteredExpectedOrder = $expectedOrder | Where-Object { $_ -in $actualOrder }
 
@@ -264,19 +318,23 @@
 
                 # Insert components in correct order
                 $orderedComponents = @()
+                if ($components.ContainsKey('Requires')) { $orderedComponents += $components['Requires'] }
                 if ($components.ContainsKey('Help')) { $orderedComponents += $components['Help'] }
                 if ($components.ContainsKey('CmdletBinding')) { $orderedComponents += $components['CmdletBinding'] }
                 if ($components.ContainsKey('OutputType')) { $orderedComponents += $components['OutputType'] }
                 if ($components.ContainsKey('ParamBlock')) { $orderedComponents += $components['ParamBlock'] }
 
                 $insertLines = @()
+                # Add blank line after function declaration
+                $insertLines += ''
+
                 foreach ($comp in $orderedComponents) {
                     $insertLines += $comp.Content
                     $insertLines += ''  # Add blank line after each component
                 }
 
                 # Remove the last blank line
-                if ($insertLines.Count -gt 0) {
+                if ($insertLines.Count -gt 1) {
                     $insertLines = $insertLines[0..($insertLines.Count - 2)]
                 }
 
@@ -287,6 +345,46 @@
                     $lines = $lines + $insertLines
                 }
                 $modified = $true
+            }
+        }
+
+        # Process standalone #requires statements (outside functions) for spacing
+        $standaloneRequires = $tokens | Where-Object {
+            $_ -and
+            $_.Kind -eq 'Comment' -and
+            $_.Text -and
+            $_.Text -match '^\s*#requires\s'
+        }
+
+        # Filter out #requires that are inside functions (already handled above)
+        $standaloneRequires = $standaloneRequires | Where-Object {
+            $requiresLine = $_.Extent.StartLineNumber
+            $isInFunction = $functions | Where-Object {
+                $requiresLine -gt $_.Extent.StartLineNumber -and
+                $requiresLine -le $_.Extent.EndLineNumber
+            }
+            -not $isInFunction
+        }
+
+        # Process from bottom to top to maintain line numbers
+        $standaloneRequires = $standaloneRequires | Sort-Object { $_.Extent.StartLineNumber } -Descending
+
+        foreach ($requiresToken in $standaloneRequires) {
+            $startLine = $requiresToken.Extent.StartLineNumber - 1
+            $endLine = $requiresToken.Extent.EndLineNumber - 1
+
+            # Add blank line after if missing
+            if (($endLine + 1) -lt $lines.Count -and $lines[$endLine + 1].Trim() -ne '') {
+                $lines = $lines[0..$endLine] + @('') + $lines[($endLine + 1)..($lines.Count - 1)]
+                $modified = $true
+                Write-Verbose "Added blank line after #requires statement at line $($endLine + 2)"
+            }
+
+            # Add blank line before if missing
+            if ($startLine -gt 0 -and $lines[$startLine - 1].Trim() -ne '') {
+                $lines = $lines[0..($startLine - 1)] + @('') + $lines[$startLine..($lines.Count - 1)]
+                $modified = $true
+                Write-Verbose "Added blank line before #requires statement at line $($startLine + 1)"
             }
         }
 

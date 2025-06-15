@@ -1,5 +1,7 @@
 ﻿function Update-BuildChangeLog {
 
+    #requires -Module ChangelogManagement
+
     <#
     .SYNOPSIS
     Updates the change log file with new version and commit message.
@@ -9,12 +11,12 @@
     then updates the change log with the new release version.
 
     .EXAMPLE
+
     Update-BuildChangeLog -Version '1.0.0' -CommitMessage 'Add new feature'
     #>
 
-    #requires -Module ChangelogManagement
-
     [CmdletBinding(SupportsShouldProcess)]
+
 
     param (
 
@@ -26,6 +28,7 @@
 
         # Path to the change log file
         [string]$ChangeLog = [IO.Path]::Combine('..', '..', 'CHANGELOG.md')
+
 
     )
 
