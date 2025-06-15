@@ -1,57 +1,54 @@
-﻿<#
+﻿function Format-BuildScript {
 
-<#
-.SYNOPSIS
-    Formats PowerShell script content by fixing spacing around comment-based help and param blocks.
+    <#
+    .SYNOPSIS
+        Formats PowerShell script content by fixing spacing around comment-based help and param blocks.
 
-.DESCRIPTION
-    The Format-BuildScript function processes PowerShell script content to ensure proper spacing
-    around comment-based help blocks and parameter blocks. It adds blank lines before and after
-    these elements when they are missing, improving code readability and following PowerShell
-    formatting best practices.
+    .DESCRIPTION
+        The Format-BuildScript function processes PowerShell script content to ensure proper spacing
+        around comment-based help blocks and parameter blocks. It adds blank lines before and after
+        these elements when they are missing, improving code readability and following PowerShell
+        formatting best practices.
 
-    The function uses the PowerShell AST (Abstract Syntax Tree) to parse the content and identify
-    comment-based help blocks and parameter blocks, then modifies the spacing accordingly.
+        The function uses the PowerShell AST (Abstract Syntax Tree) to parse the content and identify
+        comment-based help blocks and parameter blocks, then modifies the spacing accordingly.
 
-.EXAMPLE
-    $scriptContent = Get-Content -Path 'MyScript.ps1' -Raw
-    $formattedContent = Format-BuildScript -Content $scriptContent
+    .EXAMPLE
+        $scriptContent = Get-Content -Path 'MyScript.ps1' -Raw
+        $formattedContent = Format-BuildScript -Content $scriptContent
 
-    This example reads a PowerShell script file and formats its spacing.
+        This example reads a PowerShell script file and formats its spacing.
 
-.EXAMPLE
-    Get-Content -Path 'MyScript.ps1' -Raw | Format-BuildScript
+    .EXAMPLE
+        Get-Content -Path 'MyScript.ps1' -Raw | Format-BuildScript
 
-    This example demonstrates using the function with pipeline input.
+        This example demonstrates using the function with pipeline input.
 
-.INPUTS
-    System.String
-    The PowerShell script content to be formatted.
+    .INPUTS
+        System.String
+        The PowerShell script content to be formatted.
 
-.OUTPUTS
-    System.String
-    The formatted PowerShell script content with corrected spacing.
+    .OUTPUTS
+        System.String
+        The formatted PowerShell script content with corrected spacing.
 
-.NOTES
-    - The function processes content from bottom to top to maintain correct line numbers during modifications
-    - Parse errors will cause the function to return the original content unchanged
-    - Only adds spacing; does not remove existing blank lines
-    - Designed specifically for PowerShell script formatting
+    .NOTES
+        - The function processes content from bottom to top to maintain correct line numbers during modifications
+        - Parse errors will cause the function to return the original content unchanged
+        - Only adds spacing; does not remove existing blank lines
+        - Designed specifically for PowerShell script formatting
 
-#>
+    #>
 
-[CmdletBinding()]
+    [CmdletBinding()]
 
-param(
+    param(
 
-    # The PowerShell script content to format. Must be a valid PowerShell script string.
-    [Parameter(Mandatory, ValueFromPipeline)]
-    [string]$Content
+        # The PowerShell script content to format. Must be a valid PowerShell script string.
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string]$Content
 
-)
-
-
-function Format-BuildScript {
+    )
 
     process {
         Write-Verbose 'Processing PowerShell content for spacing fixes'
@@ -84,6 +81,7 @@ function Format-BuildScript {
         $functions = $ast.FindAll({
 
                 param($astNode)
+
                 $astNode -is [System.Management.Automation.Language.FunctionDefinitionAst]
             }, $true)
 
@@ -183,32 +181,50 @@ function Format-BuildScript {
                 }
             }
 
-            # Check if reordering is needed or if help needs to be moved inside
-            $currentOrder = @()
+            # Check if reordering is needed - be more conservative
             $needsReordering = $false
 
-            # If help is outside the function, we need to move it
+            # Only reorder if help is outside the function (needs to be moved in)
             if ($components.ContainsKey('Help') -and $components['Help'].IsOutside) {
                 $needsReordering = $true
                 Write-Verbose 'Found comment-based help outside function - will move inside'
-            }
-
-            foreach ($comp in @('Help', 'CmdletBinding', 'OutputType', 'ParamBlock')) {
-                if ($components.ContainsKey($comp) -and -not ($comp -eq 'Help' -and $components[$comp].IsOutside)) {
-                    $currentOrder += @{ Name = $comp; StartLine = $components[$comp].StartLine }
+            } else {
+                # Check if the order inside the function is wrong
+                $insideComponents = @()
+                foreach ($comp in @('Help', 'CmdletBinding', 'OutputType', 'ParamBlock')) {
+                    if ($components.ContainsKey($comp) -and -not ($comp -eq 'Help' -and $components[$comp].IsOutside)) {
+                        $insideComponents += @{ Name = $comp; StartLine = $components[$comp].StartLine }
+                    }
                 }
-            }
 
-            if ($currentOrder.Count -gt 1) {
-                $sortedOrder = $currentOrder | Sort-Object StartLine
-                for ($i = 0; $i -lt $currentOrder.Count; $i++) {
-                    if ($currentOrder[$i].Name -ne $sortedOrder[$i].Name) {
+                # Only reorder if we have multiple components and they're in wrong order
+                if ($insideComponents.Count -gt 1) {
+                    # Check the expected order: Help, CmdletBinding, OutputType, ParamBlock
+                    $expectedOrder = @('Help', 'CmdletBinding', 'OutputType', 'ParamBlock')
+                    $actualOrder = ($insideComponents | Sort-Object StartLine | ForEach-Object { $_.Name })
+                    $filteredExpectedOrder = $expectedOrder | Where-Object { $_ -in $actualOrder }
+
+                    # Compare arrays element by element
+                    $isCorrectOrder = $true
+                    if ($actualOrder.Count -eq $filteredExpectedOrder.Count) {
+                        for ($i = 0; $i -lt $actualOrder.Count; $i++) {
+                            if ($actualOrder[$i] -ne $filteredExpectedOrder[$i]) {
+                                $isCorrectOrder = $false
+                                break
+                            }
+                        }
+                    } else {
+                        $isCorrectOrder = $false
+                    }
+
+                    if (-not $isCorrectOrder) {
                         $needsReordering = $true
-                        break
+                        Write-Verbose "Function components are in wrong order. Expected: $($filteredExpectedOrder -join ', '), Actual: $($actualOrder -join ', ')"
                     }
                 }
             }
 
+            # Only proceed if we actually need to reorder
             if ($needsReordering -and $components.Count -gt 0) {
                 Write-Verbose "Reordering function components for function at line $($functionStart + 1)"
 
