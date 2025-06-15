@@ -42,7 +42,7 @@
         Write-Warning "No updatable help files found in '$DocsUpdatableDir'"
         return $false
     }
-    pause
+
     foreach ($helpFile in $UpdatableHelpFiles) {
 
         $destinationFile = [IO.Path]::Combine($destinationPath, $helpFile.Name)
@@ -52,7 +52,6 @@
             # Copy the original file to the website's directory for static content
             Write-Information "`tCopy-Item -Path '$($helpFile.FullName)' -Destination '$destinationFile' -Force"
             Copy-Item -Path $helpFile.FullName -Destination $destinationFile -Force -ErrorAction Stop
-            pause
 
         }
 
