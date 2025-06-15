@@ -411,9 +411,14 @@
                 # Add blank line after function declaration
                 $insertLines += ''
 
-                foreach ($comp in $orderedComponents) {
+                for ($i = 0; $i -lt $orderedComponents.Count; $i++) {
+                    $comp = $orderedComponents[$i]
                     $insertLines += $comp.Content
-                    $insertLines += ''  # Add blank line after each component
+
+                    # Add blank line after each component except the last one
+                    if ($i -lt ($orderedComponents.Count - 1)) {
+                        $insertLines += ''
+                    }
                 }
 
                 # Remove the last blank line
