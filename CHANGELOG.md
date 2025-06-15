@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.532] - 2025-06-14
+### Changed
+- resume copying updateable help
+
 ## [5.0.531] - 2025-06-14
 ### Changed
 - try build without file
