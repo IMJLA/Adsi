@@ -48,10 +48,6 @@
 
     )
 
-
-
-
-
     process {
 
         ForEach ($ThisDirectoryEntry in $DirectoryEntry) {

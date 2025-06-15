@@ -33,9 +33,6 @@
 
     )
 
-
-
-
     $CachedWellKnownSID = Find-CachedWellKnownSID -IdentityReference $IdentityReference -DomainNetBIOS $ServerNetBIOS -DomainByNetbios $Cache.Value['DomainByNetbios']
     $AccountProperties = @{}
 

@@ -34,7 +34,6 @@
 
         # Name of the module for which help is being generated
         [Parameter(Mandatory)]
-
         [string]$ModuleName
 
     )

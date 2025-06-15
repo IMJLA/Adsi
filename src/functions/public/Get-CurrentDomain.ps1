@@ -31,9 +31,6 @@
 
     )
 
-
-
-
     $ComputerName = $Cache.Value['ThisHostname'].Value
     $Suffix = " # for the computer running the script, named '$ComputerName'"
     Write-LogMsg -Text "Get-CachedCimInstance -ComputerName $ComputerName -ClassName 'Win32_ComputerSystem' -KeyProperty 'Name' -Cache `$Cache$Suffix" -Cache $Cache

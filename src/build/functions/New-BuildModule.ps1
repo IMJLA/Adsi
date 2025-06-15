@@ -38,12 +38,11 @@
         [string[]]$CopyDirectories = @(),
 
         # Default locale for the module
-
         [Parameter(Mandatory)]
+
         [string]$DocsDefaultLocale,
 
         # List of files (regular expressions) to exclude from output directory
-
         [string[]]$BuildExclude = @(),
 
         # Whether to convert ReadMe to about file
@@ -51,7 +50,6 @@
         [boolean]$DocsConvertReadMeToAboutFile = $false,
 
         # Path to the ReadMe file
-
         [string]$DocsMarkdownReadMePath
 
     )

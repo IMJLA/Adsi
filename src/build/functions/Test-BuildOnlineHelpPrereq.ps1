@@ -21,7 +21,6 @@
 
     )
 
-
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
     Write-InfoColor "FindOnlineHelpPrerequisites$NewLine" -ForegroundColor Blue
     Write-Information "`t& npm --version"

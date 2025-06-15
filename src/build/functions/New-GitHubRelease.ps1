@@ -39,13 +39,9 @@
         [bool]$Draft = $false,
 
         # Whether this is a prerelease
-
         [bool]$Prerelease = $false
 
     )
-
-
-
 
     $headers = @{
         'Authorization' = "Bearer $Token"

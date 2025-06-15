@@ -24,7 +24,6 @@
 
     )
 
-
     $SIDString = ConvertTo-ServiceSID -ServiceName $Name
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null

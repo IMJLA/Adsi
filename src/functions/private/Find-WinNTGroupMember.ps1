@@ -4,6 +4,7 @@
     # Find LDAP and WinNT group members to retrieve from their directories.
     # Convert COM objects from the IADsGroup::Members method into strings.
     # Use contextual information to determine whether each string represents an LDAP or a WinNT group member.
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
@@ -21,7 +22,6 @@
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
-
 
         [ref]$Cache
 

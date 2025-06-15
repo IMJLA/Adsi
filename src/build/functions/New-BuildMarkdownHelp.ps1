@@ -37,12 +37,10 @@
 
         # Forward link URL for updatable help
         [Parameter(Mandatory)]
-
         [string]$FwLink,
 
         # Metadata for the help files
         [hashtable]$Metadata = @{}
-
 
 
     )

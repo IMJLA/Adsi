@@ -30,7 +30,6 @@
 
     )
 
-
     switch -Wildcard ($CommitMessage) {
         'add*' { $Type = 'Added' }
         'bug*' { $Type = 'Fixed' }

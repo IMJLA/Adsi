@@ -43,9 +43,6 @@
 
     )
 
-
-
-
     $ServerNetBIOS = $AdsiServer.Netbios
     $splat1 = @{ AdsiServer = $AdsiServer; ServerNetBIOS = $ServerNetBIOS }
     $splat2 = @{ IdentityReference = $IdentityReference }

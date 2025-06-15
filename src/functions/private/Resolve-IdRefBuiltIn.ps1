@@ -24,7 +24,6 @@
 
     )
 
-
     # Some built-in groups such as BUILTIN\Users and BUILTIN\Administrators are not in the CIM class or translatable with the NTAccount.Translate() method
     # But they may have real DirectoryEntry objects
     # Try to find the DirectoryEntry object locally on the server

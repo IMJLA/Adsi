@@ -28,7 +28,6 @@ function Write-InfoColor {
 
     )
 
-
     $msg = [HostInformationMessage]@{
         'Message'         = $MessageData
         'ForegroundColor' = $ForegroundColor

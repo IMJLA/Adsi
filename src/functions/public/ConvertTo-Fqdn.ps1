@@ -45,9 +45,6 @@
 
     )
 
-
-
-
     process {
 
         ForEach ($DN in $DistinguishedName) {

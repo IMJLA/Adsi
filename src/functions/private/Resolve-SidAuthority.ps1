@@ -47,8 +47,6 @@
 
     )
 
-
-
     $Domain = $DirectorySplit['Domain']
 
     # Replace the well-known SID authorities with the computer name

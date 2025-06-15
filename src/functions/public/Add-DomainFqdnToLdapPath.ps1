@@ -37,9 +37,6 @@
 
     )
 
-
-
-
     begin {
         $DomainRegEx = '(?i)DC=\w{1,}?\b'
     }

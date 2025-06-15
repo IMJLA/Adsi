@@ -52,9 +52,6 @@
 
     )
 
-
-
-
     if ( -not $Cache.Value['PrincipalById'].Value[ $IdentityReference ] ) {
 
         $LogSuffix = "for resolved Identity Reference '$IdentityReference'"

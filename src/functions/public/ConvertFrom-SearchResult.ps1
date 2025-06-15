@@ -42,8 +42,6 @@
 
     )
 
-
-
     process {
 
         ForEach ($ThisSearchResult in $SearchResult) {

@@ -46,9 +46,7 @@
         # Skip console output
         [switch]$NoConsoleOutput
 
-
     )
-
 
     # Set console to UTF-8 to handle unicode output properly
     $originalOutputEncoding = [Console]::OutputEncoding

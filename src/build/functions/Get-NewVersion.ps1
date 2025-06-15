@@ -27,7 +27,6 @@
 
     )
 
-
     Write-Verbose "`tGet-NewVersion -IncrementMajorVersion:`$$IncrementMajorVersion -IncrementMinorVersion:`$$IncrementMinorVersion -OldVersion '$OldVersion'"
 
     # Version increment logic here

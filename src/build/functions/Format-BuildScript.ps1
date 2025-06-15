@@ -457,11 +457,34 @@
             $startLine = $paramBlock.Extent.StartLineNumber - 1
             $endLine = $paramBlock.Extent.EndLineNumber - 1
 
-            # Add blank line after if missing
-            if (($endLine + 1) -lt $lines.Count -and $lines[$endLine + 1].Trim() -ne '') {
-                $lines = $lines[0..$endLine] + @('') + $lines[($endLine + 1)..($lines.Count - 1)]
-                $modified = $true
-                Write-Verbose "Added blank line after param block at line $($endLine + 2)"
+            # Ensure exactly one blank line after param block
+            if (($endLine + 1) -lt $lines.Count) {
+                # Count consecutive blank lines after param block
+                $blankLinesAfterBlock = 0
+                $checkIdx = $endLine + 1
+
+                while ($checkIdx -lt $lines.Count -and $lines[$checkIdx].Trim() -eq '') {
+                    $blankLinesAfterBlock++
+                    $checkIdx++
+                }
+
+                # If we have content after the param block, ensure exactly one blank line
+                if ($checkIdx -lt $lines.Count) {
+                    if ($blankLinesAfterBlock -ne 1) {
+                        # Remove all blank lines after param block
+                        for ($removeIdx = $endLine + $blankLinesAfterBlock; $removeIdx -gt $endLine; $removeIdx--) {
+                            if ($removeIdx -lt $lines.Count) {
+                                $lines = $lines[0..($removeIdx - 1)] + $lines[($removeIdx + 1)..($lines.Count - 1)]
+                                $modified = $true
+                            }
+                        }
+
+                        # Add exactly one blank line
+                        $lines = $lines[0..$endLine] + @('') + $lines[($endLine + 1)..($lines.Count - 1)]
+                        $modified = $true
+                        Write-Verbose "Fixed blank lines after param block at line $($endLine + 2)"
+                    }
+                }
             }
 
             # Add blank line before if missing (unless preceded by comment-based help)

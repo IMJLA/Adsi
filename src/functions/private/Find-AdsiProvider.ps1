@@ -38,9 +38,6 @@
 
     )
 
-
-
-
     $CommandParameters = @{
         Cache        = $Cache
         ComputerName = $AdsiServer

@@ -36,8 +36,6 @@
 
     )
 
-
-
     # Errors are expected on non-domain-joined systems
     # Redirecting the error stream to null only suppresses the error in the console; it will still be in the transcript
     # Instead, redirect the error stream to the output stream and filter out the errors by type

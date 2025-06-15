@@ -32,8 +32,6 @@
 
     )
 
-
-
     ForEach ($ThisDirectoryEntry in $DirectoryEntry) {
 
         $OutputObject = @{}

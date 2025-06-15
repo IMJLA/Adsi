@@ -33,8 +33,6 @@ System.Security.Principal.SecurityIdentifier
 
     )
 
-
-
     # Try to resolve the account against the server the Access Control Entry came from (which may or may not be the directory server for the account)
     Write-LogMsg -Text "[System.Security.Principal.NTAccount]::new('$ServerNetBIOS', '$Name').Translate([System.Security.Principal.SecurityIdentifier])" -Cache $Cache
     $NTAccount = [System.Security.Principal.NTAccount]::new($ServerNetBIOS, $Name)

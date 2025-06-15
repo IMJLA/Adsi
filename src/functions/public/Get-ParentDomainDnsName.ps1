@@ -38,8 +38,6 @@
 
     )
 
-
-
     if (-not $CimSession) {
         Write-LogMsg -Text "Get-CachedCimSession -ComputerName '$DomainNetbios' -Cache `$Cache" -Cache $Cache
         $CimSession = Get-CachedCimSession -ComputerName $DomainNetbios -Cache $Cache

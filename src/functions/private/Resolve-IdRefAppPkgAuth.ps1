@@ -40,8 +40,6 @@
 
     )
 
-
-
     $Caption = "$ServerNetBIOS\$Name"
     $DomainCacheResult = $null
 

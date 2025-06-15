@@ -36,10 +36,6 @@
 
     )
 
-
-
-
-
     $Log = @{ 'Cache' = $Cache }
     $AdsiPath = "LDAP://$AdsiServer"
     Write-LogMsg @Log -Text "[System.DirectoryServices.DirectoryEntry]::Exists('$AdsiPath') # for '$AdsiServer'"

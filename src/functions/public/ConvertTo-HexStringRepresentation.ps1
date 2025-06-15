@@ -26,9 +26,6 @@
 
     )
 
-
-
-
     $SIDHexString = $SIDByteArray |
         ForEach-Object {
             '{0:X}' -f $_

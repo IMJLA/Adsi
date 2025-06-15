@@ -26,9 +26,6 @@
 
     )
 
-
-
-
     $ByteArray |
         ForEach-Object {
             '{0}' -f $_

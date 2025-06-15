@@ -29,8 +29,6 @@
 
     )
 
-
-
     if ($null -ne $ResultPropertyValueCollection.Value) {
         $SubType = $ResultPropertyValueCollection.Value.GetType().FullName
     }

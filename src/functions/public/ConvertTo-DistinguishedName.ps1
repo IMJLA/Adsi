@@ -66,8 +66,6 @@
 
     )
 
-
-
     begin {
 
         $DomainByNetbios = $Cache.Value['DomainByNetbios']

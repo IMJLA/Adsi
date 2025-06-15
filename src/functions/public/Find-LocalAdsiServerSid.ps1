@@ -37,10 +37,6 @@
 
     )
 
-
-
-
-
     $CimParams = @{
         Cache        = $Cache
         ComputerName = $ComputerName

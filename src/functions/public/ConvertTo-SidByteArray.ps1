@@ -28,7 +28,6 @@
 
     )
 
-
     process {
         ForEach ($ThisSID in $SidString) {
             $SID = [System.Security.Principal.SecurityIdentifier]::new($ThisSID)

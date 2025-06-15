@@ -47,9 +47,6 @@
 
     )
 
-
-
-
     begin {
 
         $Log = @{ Cache = $Cache }

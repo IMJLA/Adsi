@@ -50,8 +50,6 @@ None. This function populates the PrincipalById cache with permission principal 
 
     )
 
-
-
     $Log = @{
         'Cache'  = $Cache
         'Suffix' = $LogSuffixComment

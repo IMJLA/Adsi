@@ -43,8 +43,6 @@
 
     )
 
-
-
     <#
     # Don't remember what this is for
     If ($ComObject -IsNot "__ComObject") {

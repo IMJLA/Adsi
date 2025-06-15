@@ -38,9 +38,6 @@
 
     )
 
-
-
-
     begin {
 
         # Add the bare minimum required properties

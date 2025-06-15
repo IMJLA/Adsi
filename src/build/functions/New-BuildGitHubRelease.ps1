@@ -34,7 +34,6 @@
 
         # Release notes for the GitHub release
         [Parameter(Mandatory = $false)]
-
         [string]$ReleaseNotes = 'Automated release'
 
     )
