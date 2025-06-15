@@ -15,6 +15,7 @@
     [OutputType([bool])]
 
     param(
+
         # Path to the updatable help directory
         [Parameter(Mandatory)]
         [string]$DocsUpdatableDir

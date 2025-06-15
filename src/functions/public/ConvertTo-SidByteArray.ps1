@@ -21,6 +21,7 @@
     [OutputType([System.Byte[]])]
 
     param (
+
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
 

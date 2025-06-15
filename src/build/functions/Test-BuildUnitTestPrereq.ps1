@@ -21,8 +21,10 @@
     [OutputType([bool])]
 
     param(
+
         # Indicates whether unit testing is enabled for the build process.
         [bool]$TestEnabled,
+
         # String containing newline characters for formatting output messages.
         [string]$NewLine
     )

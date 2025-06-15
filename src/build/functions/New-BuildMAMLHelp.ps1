@@ -14,6 +14,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # Path to the directory containing Markdown help files
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDir,

@@ -21,6 +21,7 @@
     [OutputType([object])]
 
     param(
+
         # Path to the Pester configuration JSON file
         [string]$ConfigPath = '.\tests\config\pesterConfig.json',
 

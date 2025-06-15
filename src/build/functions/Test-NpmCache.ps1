@@ -15,6 +15,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # The working directory where npm cache verification should be performed
         [Parameter(Mandatory)]
         [string]$WorkingDirectory

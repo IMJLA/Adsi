@@ -20,6 +20,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # The name of the module to remove from the current PowerShell session
         [Parameter(Mandatory)]
         [string]$ModuleName

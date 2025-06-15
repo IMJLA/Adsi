@@ -16,6 +16,7 @@
     [OutputType([System.IO.DirectoryInfo])]
 
     param(
+
         # Path to the distribution directory containing the module
         [string]$DistPath
     )

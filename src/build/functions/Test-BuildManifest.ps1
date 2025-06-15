@@ -20,6 +20,7 @@
     [CmdletBinding()]
 
     param(
+
         # Path to the module manifest (.psd1) file to validate.
         [Parameter(Mandatory)]
         [string]$Path

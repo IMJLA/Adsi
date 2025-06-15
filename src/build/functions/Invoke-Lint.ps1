@@ -15,6 +15,7 @@
     [CmdletBinding()]
 
     param(
+
         # Path to the source code directory to analyze
         [Parameter(Mandatory)]
         [string]$SourceCodeDir,

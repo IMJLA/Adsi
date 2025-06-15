@@ -14,6 +14,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # Path to the build output directory to clean
         [Parameter(Mandatory)]
         [string]$BuildOutDir

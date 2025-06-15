@@ -15,6 +15,7 @@
     [CmdletBinding()]
 
     param (
+
         # Array of directory paths to evaluate for copying
         [string[]]$BuildCopyDirectoryPath
     )

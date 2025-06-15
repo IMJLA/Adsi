@@ -15,6 +15,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # Directory containing the markdown help files organized by locale
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDir,

@@ -26,12 +26,19 @@ None. This function populates the PrincipalById cache with permission principal 
     param (
 
         $DomainDn,
+
         $DomainNetBIOS,
+
         $IdentityReference,
+
         $DirectoryEntry,
+
         $NoGroupMembers,
+
         $LogSuffixComment,
+
         $SamAccountNameOrSid,
+
         $AceGuid,
 
         # Properties of each Account to display on the report

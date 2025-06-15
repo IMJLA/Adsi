@@ -15,6 +15,7 @@
     [CmdletBinding()]
 
     param(
+
         # Path to the directory containing public function files
         [string]$PublicFunctionPath
     )

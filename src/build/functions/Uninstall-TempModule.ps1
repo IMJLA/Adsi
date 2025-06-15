@@ -16,6 +16,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # Path to the temporary module installation directory to remove
         [Parameter(Mandatory)]
         [string]$ModuleInstallDir

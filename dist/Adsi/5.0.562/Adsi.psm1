@@ -372,7 +372,9 @@ function ConvertTo-AccountCache {
 
     param (
         $Account,
+
         [ref]$SidCache,
+
         [ref]$NameCache
     )
 
@@ -409,13 +411,21 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
     param (
         $CachedWellKnownSID,
+
         $DomainNetBIOS,
+
         $AccountProperty,
+
         $SamAccountNameOrSid,
+
         $AceGuid,
+
         $LogSuffixComment,
+
         $IdentityReference,
+
         $DomainDn,
+
         [ref]$Cache
 
 
@@ -684,12 +694,19 @@ None. This function populates the PrincipalById cache with permission principal 
     param (
 
         $DomainDn,
+
         $DomainNetBIOS,
+
         $IdentityReference,
+
         $DirectoryEntry,
+
         $NoGroupMembers,
+
         $LogSuffixComment,
+
         $SamAccountNameOrSid,
+
         $AceGuid,
 
         # Properties of each Account to display on the report
@@ -952,6 +969,7 @@ System.Security.Principal.SecurityIdentifier
 
     param (
         [string]$ServerNetBIOS,
+
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
@@ -1108,20 +1126,26 @@ function Find-WinNTGroupMember {
     # Find LDAP and WinNT group members to retrieve from their directories.
     # Convert COM objects from the IADsGroup::Members method into strings.
     # Use contextual information to determine whether each string represents an LDAP or a WinNT group member.
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
+
         $DirectoryEntry,
 
         # COM Objects representing the DirectoryPaths of the group members
+
         $ComObject,
 
+
         [hashtable]$Out,
+
 
         [string]$LogSuffix,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
+
         [ref]$Cache
 
     )
@@ -1336,6 +1360,7 @@ function Get-DirectoryEntryParentName {
 
     # Possibly a debugging issue, not sure whether I need to prepare for both here.
     # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
+
     param (
         $DirectoryEntry
     )
@@ -1461,10 +1486,15 @@ function Invoke-ScShowSid {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
 
     # Invoke sc.exe showsid
+
     param (
+
         [string]$ServiceName,
+
         [string]$ComputerName,
+
         [string]$ThisHostName,
+
         [string]$ThisFqdn,
         [hashtable]$Log
     )
@@ -2675,6 +2705,7 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString')]
 
     param (
+
         # ResultPropertyValueCollection object to convert to a string
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
 
@@ -3289,6 +3320,7 @@ function ConvertTo-FakeDirectoryEntry {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
 
     param (
+
         # Full directory path for the fake entry in the format "Provider://Domain/Name"
         [string]$DirectoryPath,
 
@@ -3528,6 +3560,7 @@ function ConvertTo-HexStringRepresentation {
     [OutputType([System.String[]])]
 
     param (
+
         # SID
 
 
@@ -3565,6 +3598,7 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
     [OutputType([System.String])]
 
     param (
+
         # SID to convert to a hex string
 
 
@@ -3609,6 +3643,7 @@ function ConvertTo-SidByteArray {
     [OutputType([System.Byte[]])]
 
     param (
+
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
 
@@ -4815,6 +4850,7 @@ function Get-KnownCaptionHashTable {
     [OutputType([System.Collections.Hashtable])]
 
     param (
+
         # Hashtable of well-known Security Identifiers (SIDs) with their properties
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable)
     )
@@ -5320,6 +5356,7 @@ function Get-KnownSidByName {
     [OutputType([System.Collections.Hashtable])]
 
     param (
+
         # Hashtable containing well-known SIDs as keys with their properties as values
         [hashtable]$WellKnownSIDBySID
     )

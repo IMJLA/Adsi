@@ -14,6 +14,7 @@
     [CmdletBinding()]
 
     param(
+
         # The directory containing the SVG files to convert
         [Parameter(Mandatory)]
         [string]$Path

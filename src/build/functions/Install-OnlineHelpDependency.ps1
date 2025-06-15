@@ -15,6 +15,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # The working directory where npm dependencies should be installed
         [Parameter(Mandatory)]
         [string]$WorkingDirectory,

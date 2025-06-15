@@ -25,13 +25,21 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 
     param (
         $CachedWellKnownSID,
+
         $DomainNetBIOS,
+
         $AccountProperty,
+
         $SamAccountNameOrSid,
+
         $AceGuid,
+
         $LogSuffixComment,
+
         $IdentityReference,
+
         $DomainDn,
+
         [ref]$Cache
 
 

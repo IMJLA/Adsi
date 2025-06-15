@@ -15,6 +15,7 @@
     [OutputType([bool])]
 
     param(
+
         # The name of the module
         [Parameter(Mandatory)]
         [string]$ModuleName,

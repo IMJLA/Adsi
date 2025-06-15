@@ -23,6 +23,7 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString')]
 
     param (
+
         # ResultPropertyValueCollection object to convert to a string
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
 

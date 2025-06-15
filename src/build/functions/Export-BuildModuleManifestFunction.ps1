@@ -15,6 +15,7 @@
     [CmdletBinding()]
 
     param(
+
         # Path to the module manifest file to update
         [Parameter(Mandatory)]
         [string]$ModuleManifestPath,

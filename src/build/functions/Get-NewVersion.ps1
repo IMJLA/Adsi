@@ -15,6 +15,7 @@
     [OutputType([System.Version])]
 
     param(
+
         # Whether to increment the major version number
         [bool]$IncrementMajorVersion,
 

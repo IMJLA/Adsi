@@ -15,6 +15,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # The directory where the online help website should be created
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir,

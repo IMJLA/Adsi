@@ -22,6 +22,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # The path to format. Defaults to the src directory
         [string]$Path = (Join-Path $PSScriptRoot '..' ),
 

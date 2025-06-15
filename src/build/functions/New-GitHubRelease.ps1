@@ -15,6 +15,7 @@
     [CmdletBinding(SupportsShouldProcess)]
 
     param(
+
         # GitHub authentication token
         [Parameter(Mandatory)]
         [string]$Token,

@@ -21,8 +21,10 @@
     [OutputType([bool])]
 
     param(
+
         # Indicates whether linting is enabled for the build process.
         [bool]$LintEnabled,
+
         # String containing newline characters for formatting output messages.
         [string]$NewLine
     )

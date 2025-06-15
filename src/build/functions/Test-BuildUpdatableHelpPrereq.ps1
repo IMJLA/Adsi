@@ -16,6 +16,7 @@
     [OutputType([bool])]
 
     param(
+
         # Whether the module is ready for updatable help
         [bool]$ReadyForUpdatableHelp,
 

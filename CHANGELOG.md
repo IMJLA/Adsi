@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.562] - 2025-06-15
+### Fixed
+- fix param padding
+
 ## [5.0.561] - 2025-06-15
 ### Fixed
 - fix attrib padding
