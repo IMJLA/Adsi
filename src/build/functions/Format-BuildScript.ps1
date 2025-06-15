@@ -421,11 +421,6 @@
                     }
                 }
 
-                # Remove the last blank line
-                if ($insertLines.Count -gt 1) {
-                    $insertLines = $insertLines[0..($insertLines.Count - 2)]
-                }
-
                 # Insert the reordered components
                 if ($insertionPoint -lt $lines.Count) {
                     $lines = $lines[0..($insertionPoint - 1)] + $insertLines + $lines[$insertionPoint..($lines.Count - 1)]
@@ -482,6 +477,25 @@
             $_.Kind -eq 'Comment' -and
             $_.Text -and
             $_.Text -match '^\s*<#[\s\S]*?#>\s*$'
+        }
+
+        # Filter out comment-based help that is inside param blocks (parameter help)
+        $commentTokens = $commentTokens | Where-Object {
+            $commentLine = $_.Extent.StartLineNumber
+            $isInsideParamBlock = $false
+
+            foreach ($function in $functions) {
+                if ($function.Body.ParamBlock) {
+                    $paramStart = $function.Body.ParamBlock.Extent.StartLineNumber
+                    $paramEnd = $function.Body.ParamBlock.Extent.EndLineNumber
+                    if ($commentLine -gt $paramStart -and $commentLine -lt $paramEnd) {
+                        $isInsideParamBlock = $true
+                        break
+                    }
+                }
+            }
+
+            -not $isInsideParamBlock
         }
 
         # Process from bottom to top to maintain line numbers
@@ -733,7 +747,7 @@
                                 # Continue looking through blank lines
                                 continue
                             } else {
-                                # Hit non-comment, non-blank line
+                                # Hit non-comment, non-blank line - stop looking
                                 break
                             }
                         }
@@ -887,65 +901,72 @@
         }
 
         # Remove multiple consecutive blank lines within the param block (but not within comment blocks)
-        $paramBlockStartLine = $paramBlock.Extent.StartLineNumber - 1
-        $paramBlockEndLine = $paramBlock.Extent.EndLineNumber - 1
+        foreach ($function in $functions) {
+            if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Parameters) {
+                $paramBlock = $function.Body.ParamBlock
+                $paramBlockStartLine = $paramBlock.Extent.StartLineNumber - 1
+                $paramBlockEndLine = $paramBlock.Extent.EndLineNumber - 1
 
-        # Find all comment-based help blocks within this param block
-        $commentBlocks = $tokens | Where-Object {
-            $_.Kind -eq 'Comment' -and
-            $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
-            $_.Extent.StartLineNumber -gt ($paramBlockStartLine + 1) -and
-            $_.Extent.EndLineNumber -lt $paramBlockEndLine
-        }
-
-        # Process from bottom to top to maintain line numbers
-        for ($lineIdx = $paramBlockEndLine - 1; $lineIdx -gt ($paramBlockStartLine + 1); $lineIdx--) {
-            # Check if we're inside a comment block
-            $insideCommentBlock = $false
-            foreach ($commentBlock in $commentBlocks) {
-                if ($lineIdx -ge ($commentBlock.Extent.StartLineNumber - 1) -and
-                    $lineIdx -le ($commentBlock.Extent.EndLineNumber - 1)) {
-                    $insideCommentBlock = $true
-                    break
+                # Find all comment-based help blocks within this param block
+                $commentBlocks = $tokens | Where-Object {
+                    $_.Kind -eq 'Comment' -and
+                    $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
+                    $_.Extent.StartLineNumber -gt ($paramBlockStartLine + 1) -and
+                    $_.Extent.EndLineNumber -lt $paramBlockEndLine
                 }
-            }
 
-            # Only process blank lines that are not inside comment blocks
-            if (-not $insideCommentBlock -and $lines[$lineIdx].Trim() -eq '') {
-                # Count consecutive blank lines
-                $consecutiveBlankLines = 1
-                $checkIdx = $lineIdx - 1
-
-                while ($checkIdx -gt $paramBlockStartLine -and $lines[$checkIdx].Trim() -eq '') {
-                    # Make sure this blank line is also not inside a comment block
-                    $blankLineInsideComment = $false
+                # Process from bottom to top to maintain line numbers
+                for ($lineIdx = $paramBlockEndLine - 1; $lineIdx -gt ($paramBlockStartLine + 1); $lineIdx--) {
+                    # Check if we're inside a comment block
+                    $insideCommentBlock = $false
                     foreach ($commentBlock in $commentBlocks) {
-                        if ($checkIdx -ge ($commentBlock.Extent.StartLineNumber - 1) -and
-                            $checkIdx -le ($commentBlock.Extent.EndLineNumber - 1)) {
-                            $blankLineInsideComment = $true
+                        if ($lineIdx -ge ($commentBlock.Extent.StartLineNumber - 1) -and
+                            $lineIdx -le ($commentBlock.Extent.EndLineNumber - 1)) {
+                            $insideCommentBlock = $true
                             break
                         }
                     }
 
-                    if ($blankLineInsideComment) {
-                        break
+                    # Only process blank lines that are not inside comment blocks
+                    if (-not $insideCommentBlock -and $lineIdx -lt $lines.Count -and $lines[$lineIdx].Trim() -eq '') {
+                        # Count consecutive blank lines
+                        $consecutiveBlankLines = 1
+                        $checkIdx = $lineIdx - 1
+
+                        while ($checkIdx -gt $paramBlockStartLine -and $checkIdx -ge 0 -and $checkIdx -lt $lines.Count -and $lines[$checkIdx].Trim() -eq '') {
+                            # Make sure this blank line is also not inside a comment block
+                            $blankLineInsideComment = $false
+                            foreach ($commentBlock in $commentBlocks) {
+                                if ($checkIdx -ge ($commentBlock.Extent.StartLineNumber - 1) -and
+                                    $checkIdx -le ($commentBlock.Extent.EndLineNumber - 1)) {
+                                    $blankLineInsideComment = $true
+                                    break
+                                }
+                            }
+
+                            if ($blankLineInsideComment) {
+                                break
+                            }
+
+                            $consecutiveBlankLines++
+                            $checkIdx--
+                        }
+
+                        # If we have more than one consecutive blank line, remove the extras
+                        if ($consecutiveBlankLines -gt 1) {
+                            # Remove the extra blank lines (keep only one)
+                            for ($removeIdx = $lineIdx; $removeIdx -gt ($lineIdx - $consecutiveBlankLines + 1); $removeIdx--) {
+                                if ($removeIdx -ge 0 -and $removeIdx -lt $lines.Count) {
+                                    $lines = $lines[0..($removeIdx - 1)] + $lines[($removeIdx + 1)..($lines.Count - 1)]
+                                    $modified = $true
+                                    Write-Verbose "Removed extra blank line within param block at line $($removeIdx + 1)"
+                                }
+                            }
+
+                            # Skip past the blank lines we just processed
+                            $lineIdx = $lineIdx - $consecutiveBlankLines + 1
+                        }
                     }
-
-                    $consecutiveBlankLines++
-                    $checkIdx--
-                }
-
-                # If we have more than one consecutive blank line, remove the extras
-                if ($consecutiveBlankLines -gt 1) {
-                    # Remove the extra blank lines (keep only one)
-                    for ($removeIdx = $lineIdx; $removeIdx -gt ($lineIdx - $consecutiveBlankLines + 1); $removeIdx--) {
-                        $lines = $lines[0..($removeIdx - 1)] + $lines[($removeIdx + 1)..($lines.Count - 1)]
-                        $modified = $true
-                        Write-Verbose "Removed extra blank line within param block at line $($removeIdx + 1)"
-                    }
-
-                    # Skip past the blank lines we just processed
-                    $lineIdx = $lineIdx - $consecutiveBlankLines + 1
                 }
             }
         }

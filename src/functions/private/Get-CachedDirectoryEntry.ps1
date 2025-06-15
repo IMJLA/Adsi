@@ -2,7 +2,7 @@
 
     <#
     .SYNOPSIS
-        Retrieves a cached directory entry from well-known SID and domain caches.
+        Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
 
     .DESCRIPTION
         The Get-CachedDirectoryEntry function searches through various in-memory caches to find
@@ -77,10 +77,6 @@
         [ref]$Cache
 
     )
-
-    # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
-
-    #>
 
     $ID = "$Server\$AccountName"
     $DomainCacheResult = $null

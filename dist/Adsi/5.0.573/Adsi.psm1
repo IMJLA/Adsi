@@ -1258,7 +1258,7 @@ function Get-CachedDirectoryEntry {
 
     <#
     .SYNOPSIS
-        Retrieves a cached directory entry from well-known SID and domain caches.
+        Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
 
     .DESCRIPTION
         The Get-CachedDirectoryEntry function searches through various in-memory caches to find
@@ -1333,10 +1333,6 @@ function Get-CachedDirectoryEntry {
         [ref]$Cache
 
     )
-
-    # Search the cache of CIM instances and well-known SIDs for the DirectoryEntry
-
-    #>
 
     $ID = "$Server\$AccountName"
     $DomainCacheResult = $null
@@ -4114,22 +4110,18 @@ function Get-AdsiGroup {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
-
         [string]$GroupName,
 
         # Properties of the group members to retrieve
-
         [string[]]$PropertiesToLoad = @('distinguishedName', 'groupType', 'member', 'name', 'objectClass', 'objectSid', 'primaryGroupToken', 'samAccountName'),
 
         # In-process cache to reduce calls to other processes or to disk
 
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -4737,7 +4729,6 @@ function Get-DirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
@@ -4748,18 +4739,15 @@ function Get-DirectoryEntry {
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve
-
         [string[]]$PropertiesToLoad,
 
         # Mapping of SID types to descriptions used for converting security identifiers
-
         [hashtable]$SidTypeMap = (Get-SidTypeMap),
 
         # In-process cache to reduce calls to other processes or to disk
 
         [Parameter(Mandatory)]
         [ref]$Cache
-
 
     )
 
@@ -7219,15 +7207,12 @@ function Search-Directory {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
 
         # Filter for the LDAP search
-
         [string]$Filter,
 
         # Number of results to return in each page
-
         [int]$PageSize = 1000,
 
         # Search scope (Base, OneLevel, or Subtree)
@@ -7235,19 +7220,17 @@ function Search-Directory {
         [System.DirectoryServices.SearchScope]$SearchScope = [System.DirectoryServices.SearchScope]::Subtree,
 
         # Additional properties to return
-
         [string[]]$PropertiesToLoad,
 
         # Credentials to use
-
         [pscredential]$Credential,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
 
-
     )
+
 
 
 
