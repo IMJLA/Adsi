@@ -162,7 +162,6 @@ function ConvertFrom-AppCapabilitySid {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-AppCapabilitySid')]
 
-
     param (
         [string]$SID
 
@@ -407,7 +406,6 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
 #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DirectoryEntry')]
-
 
     param (
         $CachedWellKnownSID,
@@ -683,7 +681,6 @@ None. This function populates the PrincipalById cache with permission principal 
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
 
-
     param (
 
         $DomainDn,
@@ -953,7 +950,6 @@ System.Security.Principal.SecurityIdentifier
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidString')]
 
-
     param (
         [string]$ServerNetBIOS,
         [string]$Name,
@@ -1009,7 +1005,6 @@ function Find-AdsiProvider {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-AdsiProvider')]
     [OutputType([System.String])]
-
 
     param (
 
@@ -1113,7 +1108,6 @@ function Find-WinNTGroupMember {
     # Find LDAP and WinNT group members to retrieve from their directories.
     # Convert COM objects from the IADsGroup::Members method into strings.
     # Use contextual information to determine whether each string represents an LDAP or a WinNT group member.
-
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
@@ -1191,7 +1185,6 @@ function Get-CachedDirectoryEntry {
         #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CachedDirectoryEntry')]
-
 
     param (
 
@@ -1343,7 +1336,6 @@ function Get-DirectoryEntryParentName {
 
     # Possibly a debugging issue, not sure whether I need to prepare for both here.
     # in vscode Watch shows it as a DirectoryEntry with properties but the console (and results) have it as a String
-
     param (
         $DirectoryEntry
     )
@@ -1441,7 +1433,6 @@ function Invoke-IADsGroupMembersMethod {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
@@ -1470,7 +1461,6 @@ function Invoke-ScShowSid {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ScShowSid')]
 
     # Invoke sc.exe showsid
-
     param (
         [string]$ServiceName,
         [string]$ComputerName,
@@ -1516,7 +1506,6 @@ function Resolve-IdRefAppPkgAuth {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefAppPkgAuth')]
     [OutputType([PSCustomObject])]
-
 
     param (
 
@@ -1804,7 +1793,6 @@ function Resolve-IdRefSID {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
     [OutputType([PSCustomObject])]
 
-
     param (
 
         # IdentityReference from an Access Control Entry
@@ -2088,7 +2076,6 @@ function Resolve-SidAuthority {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
 
-
     param (
 
         # A DirectoryPath which has been split on the / character then parsed into a dictionary of constituent components
@@ -2208,7 +2195,6 @@ function Test-AdsiProvider {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
     [OutputType([System.String])]
 
-
     param (
 
         # IP address or hostname of the directory server whose ADSI provider type to determine
@@ -2272,7 +2258,6 @@ function Add-DomainFqdnToLdapPath {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-DomainFqdnToLdapPath')]
     [OutputType([System.String])]
-
 
     param (
 
@@ -2363,7 +2348,6 @@ function Add-SidInfo {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
     [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
-
 
     param (
 
@@ -2487,7 +2471,6 @@ function ConvertFrom-DirectoryEntry {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
 
-
     param (
 
         # DirectoryEntry objects to convert to PSCustomObjects
@@ -2542,7 +2525,6 @@ function ConvertFrom-PropertyValueCollectionToString {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-PropertyValueCollectionToString')]
-
 
     param (
 
@@ -2600,7 +2582,6 @@ function ConvertFrom-ResolvedID {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
     [OutputType([void])]
-
 
     param (
 
@@ -2693,7 +2674,6 @@ function ConvertFrom-ResultPropertyValueCollectionToString {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResultPropertyValueCollectionToString')]
 
-
     param (
         # ResultPropertyValueCollection object to convert to a string
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
@@ -2745,7 +2725,6 @@ function ConvertFrom-SearchResult {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult')]
-
 
     param (
 
@@ -2816,7 +2795,6 @@ function ConvertFrom-SidString {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
-
     param (
 
         # Security Identifier (SID) string to convert to a DirectoryEntry
@@ -2860,7 +2838,6 @@ function ConvertTo-DecStringRepresentation {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
     [OutputType([System.String])]
 
-
     param (
 
         # Byte array.  Often the binary format of an objectSid or LoginHours
@@ -2902,7 +2879,6 @@ function ConvertTo-DistinguishedName {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
     [OutputType([System.String])]
-
 
     param (
 
@@ -3188,7 +3164,6 @@ function ConvertTo-DomainSidString {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainSidString')]
 
-
     param (
 
         # Domain DNS name to convert to the domain's SID
@@ -3312,7 +3287,6 @@ function ConvertTo-FakeDirectoryEntry {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
-
 
     param (
         # Full directory path for the fake entry in the format "Provider://Domain/Name"
@@ -3475,7 +3449,6 @@ function ConvertTo-Fqdn {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-Fqdn')]
     [OutputType([System.String])]
 
-
     param (
 
         # distinguishedName of the domain
@@ -3554,7 +3527,6 @@ function ConvertTo-HexStringRepresentation {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation')]
     [OutputType([System.String[]])]
 
-
     param (
         # SID
 
@@ -3591,7 +3563,6 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString')]
     [OutputType([System.String])]
-
 
     param (
         # SID to convert to a hex string
@@ -3636,7 +3607,6 @@ function ConvertTo-SidByteArray {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
     [OutputType([System.Byte[]])]
-
 
     param (
         # SID to convert to binary
@@ -3690,7 +3660,6 @@ function Expand-AdsiGroupMember {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
-
 
     param (
 
@@ -3834,7 +3803,6 @@ function Expand-WinNTGroupMember {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry
@@ -3964,7 +3932,6 @@ function Find-LocalAdsiServerSid {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
     [OutputType([System.String])]
 
-
     param (
 
         # Name of the computer to query via CIM
@@ -4030,7 +3997,6 @@ function Get-AdsiGroup {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroup')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
-
 
     param (
 
@@ -4149,7 +4115,6 @@ function Get-AdsiGroupMember {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
-
 
     param (
 
@@ -4370,7 +4335,6 @@ function Get-AdsiServer {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiServer')]
     [OutputType([System.String])]
-
 
     param (
 
@@ -4610,7 +4574,6 @@ function Get-CurrentDomain {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-CurrentDomain')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # In-process cache to reduce calls to other processes or to disk
@@ -4674,7 +4637,6 @@ function Get-DirectoryEntry {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
-
 
     param (
 
@@ -6614,7 +6576,6 @@ function Get-ParentDomainDnsName {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
 
-
     param (
 
         # NetBIOS name of the domain whose parent domain DNS to return
@@ -6689,7 +6650,6 @@ function Get-TrustedDomain {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
     [OutputType([PSCustomObject])]
 
-
     param (
 
         # In-process cache to reduce calls to other processes or to disk
@@ -6758,7 +6718,6 @@ function Get-WinNTGroupMember {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
-
 
     param (
 
@@ -6883,7 +6842,6 @@ function Invoke-ComObject {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
 
-
     param (
 
         # The ComObject whose member method to invoke
@@ -6954,7 +6912,6 @@ function Resolve-IdentityReference {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdentityReference')]
     [OutputType([PSCustomObject])]
-
 
     param (
 
@@ -7127,7 +7084,6 @@ function Resolve-ServiceNameToSID {
     #>
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
-
 
     param (
 

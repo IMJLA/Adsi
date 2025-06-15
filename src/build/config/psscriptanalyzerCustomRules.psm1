@@ -19,7 +19,6 @@
     [CmdletBinding()]
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
-
     param(
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]

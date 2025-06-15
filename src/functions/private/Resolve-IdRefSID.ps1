@@ -11,7 +11,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-IdRefSID')]
     [OutputType([PSCustomObject])]
 
-
     param (
 
         # IdentityReference from an Access Control Entry

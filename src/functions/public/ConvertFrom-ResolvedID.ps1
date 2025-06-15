@@ -34,7 +34,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ResolvedID')]
     [OutputType([void])]
 
-
     param (
 
         # The NTFS AccessControlEntry object(s), grouped by their IdentityReference property

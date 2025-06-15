@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.561] - 2025-06-15
+### Fixed
+- fix attrib padding
+
 ## [5.0.560] - 2025-06-15
 ### Fixed
 - fix function attrib spacing

@@ -40,7 +40,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get

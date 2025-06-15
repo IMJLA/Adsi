@@ -29,7 +29,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SidString')]
 
-
     param (
 
         # Security Identifier (SID) string to convert to a DirectoryEntry

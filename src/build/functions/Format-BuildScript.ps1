@@ -477,26 +477,61 @@
 
         # Process function attributes for proper grouping and spacing
         foreach ($function in $functions) {
-            if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes -and $function.Body.ParamBlock.Attributes.Count -gt 1) {
+            if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
                 $functionStart = $function.Extent.StartLineNumber - 1
                 $attributes = $function.Body.ParamBlock.Attributes | Sort-Object { $_.Extent.StartLineNumber }
 
                 # Check if attributes need spacing fixes (remove blank lines between them)
-                for ($i = 0; $i -lt ($attributes.Count - 1); $i++) {
-                    $currentAttr = $attributes[$i]
-                    $nextAttr = $attributes[$i + 1]
+                if ($attributes.Count -gt 1) {
+                    for ($i = 0; $i -lt ($attributes.Count - 1); $i++) {
+                        $currentAttr = $attributes[$i]
+                        $nextAttr = $attributes[$i + 1]
 
-                    $currentEndLine = $currentAttr.Extent.EndLineNumber - 1
-                    $nextStartLine = $nextAttr.Extent.StartLineNumber - 1
+                        $currentEndLine = $currentAttr.Extent.EndLineNumber - 1
+                        $nextStartLine = $nextAttr.Extent.StartLineNumber - 1
 
-                    # Remove blank lines between consecutive attributes
-                    while (($currentEndLine + 1) -lt $nextStartLine -and
-                        ($currentEndLine + 1) -lt $lines.Count -and
-                        $lines[$currentEndLine + 1].Trim() -eq '') {
-                        $lines = $lines[0..$currentEndLine] + $lines[($currentEndLine + 2)..($lines.Count - 1)]
-                        $nextStartLine--
+                        # Remove blank lines between consecutive attributes
+                        while (($currentEndLine + 1) -lt $nextStartLine -and
+                            ($currentEndLine + 1) -lt $lines.Count -and
+                            $lines[$currentEndLine + 1].Trim() -eq '') {
+                            $lines = $lines[0..$currentEndLine] + $lines[($currentEndLine + 2)..($lines.Count - 1)]
+                            $nextStartLine--
+                            $modified = $true
+                            Write-Verbose 'Removed blank line between function attributes'
+                        }
+                    }
+                }
+
+                # Fix spacing between attributes group and param block
+                if ($function.Body.ParamBlock) {
+                    $lastAttribute = $attributes | Sort-Object { $_.Extent.EndLineNumber } | Select-Object -Last 1
+                    $paramBlock = $function.Body.ParamBlock
+
+                    $lastAttrEndLine = $lastAttribute.Extent.EndLineNumber - 1
+                    $paramStartLine = $paramBlock.Extent.StartLineNumber - 1
+
+                    # Count blank lines between last attribute and param block
+                    $blankLineCount = 0
+                    for ($lineIdx = $lastAttrEndLine + 1; $lineIdx -lt $paramStartLine; $lineIdx++) {
+                        if ($lineIdx -lt $lines.Count -and $lines[$lineIdx].Trim() -eq '') {
+                            $blankLineCount++
+                        }
+                    }
+
+                    # Ensure exactly one blank line between attributes and param block
+                    if ($blankLineCount -ne 1) {
+                        # Remove all blank lines between attributes and param block
+                        for ($lineIdx = $paramStartLine - 1; $lineIdx -gt $lastAttrEndLine; $lineIdx--) {
+                            if ($lineIdx -lt $lines.Count -and $lines[$lineIdx].Trim() -eq '') {
+                                $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                $modified = $true
+                            }
+                        }
+
+                        # Add exactly one blank line
+                        $lines = $lines[0..$lastAttrEndLine] + @('') + $lines[($lastAttrEndLine + 1)..($lines.Count - 1)]
                         $modified = $true
-                        Write-Verbose 'Removed blank line between function attributes'
+                        Write-Verbose 'Fixed spacing between attribute group and param block'
                     }
                 }
             }

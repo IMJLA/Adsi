@@ -25,7 +25,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Test-AdsiProvider')]
     [OutputType([System.String])]
 
-
     param (
 
         # IP address or hostname of the directory server whose ADSI provider type to determine

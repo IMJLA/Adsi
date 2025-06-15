@@ -18,7 +18,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
 
-
     param (
 
         # Output of Get-Service or an instance of the Win32_Service CIM class

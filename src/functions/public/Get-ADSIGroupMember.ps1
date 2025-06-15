@@ -24,7 +24,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-AdsiGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # Directory entry of the LDAP group whose members to get

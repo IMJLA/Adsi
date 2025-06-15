@@ -21,7 +21,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
 
-
     param (
 
         # NetBIOS name of the domain whose parent domain DNS to return

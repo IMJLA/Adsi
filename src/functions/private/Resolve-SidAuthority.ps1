@@ -21,7 +21,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-SidAuthority')]
 
-
     param (
 
         # A DirectoryPath which has been split on the / character then parsed into a dictionary of constituent components

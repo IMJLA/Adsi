@@ -25,7 +25,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-ComObject')]
 
-
     param (
 
         # The ComObject whose member method to invoke

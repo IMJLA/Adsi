@@ -23,7 +23,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-WinNTGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get

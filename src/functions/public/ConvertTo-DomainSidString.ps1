@@ -33,7 +33,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DomainSidString')]
 
-
     param (
 
         # Domain DNS name to convert to the domain's SID

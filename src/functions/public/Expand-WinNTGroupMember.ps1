@@ -21,7 +21,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-WinNTGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # Expecting a DirectoryEntry from the WinNT provider, or a PSObject imitation from Get-DirectoryEntry

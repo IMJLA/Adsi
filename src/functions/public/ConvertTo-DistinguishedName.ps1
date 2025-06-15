@@ -22,7 +22,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DistinguishedName')]
     [OutputType([System.String])]
 
-
     param (
 
         # NetBIOS name of the domain

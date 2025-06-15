@@ -26,7 +26,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
     [OutputType([System.String])]
 
-
     param (
 
         # Name of the computer to query via CIM

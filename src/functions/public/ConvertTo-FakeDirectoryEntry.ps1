@@ -26,7 +26,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-FakeDirectoryEntry')]
 
-
     param (
         # Full directory path for the fake entry in the format "Provider://Domain/Name"
         [string]$DirectoryPath,

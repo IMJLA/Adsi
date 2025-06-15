@@ -19,7 +19,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DecStringRepresentation')]
     [OutputType([System.String])]
 
-
     param (
 
         # Byte array.  Often the binary format of an objectSid or LoginHours

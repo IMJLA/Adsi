@@ -28,7 +28,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
     [OutputType([PSCustomObject])]
 
-
     param (
 
         # In-process cache to reduce calls to other processes or to disk

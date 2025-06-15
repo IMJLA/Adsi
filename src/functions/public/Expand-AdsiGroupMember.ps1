@@ -32,7 +32,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
-
     param (
 
         # Expecting a DirectoryEntry from the LDAP or WinNT providers, or a PSObject imitation from Get-DirectoryEntry

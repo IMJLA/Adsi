@@ -20,7 +20,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
     [OutputType([System.Byte[]])]
 
-
     param (
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]

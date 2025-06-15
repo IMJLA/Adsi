@@ -31,7 +31,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-SearchResult')]
 
-
     param (
 
         # SearchResult objects to convert to PSCustomObjects

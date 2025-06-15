@@ -22,7 +22,6 @@
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Add-SidInfo')]
     [OutputType([System.DirectoryServices.DirectoryEntry[]], [PSCustomObject[]])]
 
-
     param (
 
         # Expecting a [System.DirectoryServices.DirectoryEntry] from the LDAP or WinNT providers, or a [PSCustomObject] imitation from Get-DirectoryEntry.

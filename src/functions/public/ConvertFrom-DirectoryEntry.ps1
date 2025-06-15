@@ -22,7 +22,6 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-DirectoryEntry')]
 
-
     param (
 
         # DirectoryEntry objects to convert to PSCustomObjects

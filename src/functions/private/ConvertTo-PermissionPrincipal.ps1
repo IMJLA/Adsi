@@ -23,7 +23,6 @@ None. This function populates the PrincipalById cache with permission principal 
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-PermissionPrincipal')]
 
-
     param (
 
         $DomainDn,
