@@ -60,7 +60,6 @@
     Write-InfoColor "`t# Successfully updated the Change Log with the new version and commit message." -ForegroundColor Green
 
     <#
-
     TODO
         This task runs before the Test task so that tests of the change log will pass
         But I also need one that runs *after* the build to compare it against the previous build

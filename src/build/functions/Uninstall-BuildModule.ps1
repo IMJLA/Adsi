@@ -41,7 +41,7 @@
             switch ("$ErrorMessage") {
                 "No match was found for the specified search criteria and module names '$ModuleName'." {
                     if ($ModuleInstallDir) {
-                        Write-Information "`tRemove-Item -Path '$ModuleInstallDir' -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue"
+                        Write-Information "`tRemove-Item -Path '$ModuleInstallDir' -Recurse -Force"
                         Remove-Item $ModuleInstallDir -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
                     }
                 }

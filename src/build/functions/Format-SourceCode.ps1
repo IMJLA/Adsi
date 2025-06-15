@@ -57,7 +57,6 @@
 
 
         <#
-
         Normalize line endings to Windows format (CRLF) before formatting
         In addition to ensuring consistency this prevents the following error from Invoke-Formatter:
 

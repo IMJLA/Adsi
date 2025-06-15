@@ -61,10 +61,10 @@
     #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Cache miss" -Cache $Cache
 
     <#
-
     If no match was found in any cache, the resolution method depends on the IdentityReference.
     First, determine whether the IdentityReference is an NTAccount (DOMAIN\Name vs Name).
     #>
+
 
     $LastSlashIndex = $IdentityReference.LastIndexOf('\')
 

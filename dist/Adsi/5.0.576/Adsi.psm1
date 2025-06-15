@@ -4695,7 +4695,6 @@ function Get-CurrentDomain {
 function Get-DirectoryEntry {
 
     <#
-
     .SYNOPSIS
     Use Active Directory Service Interfaces to retrieve an object from a directory
     .DESCRIPTION
@@ -4718,6 +4717,7 @@ function Get-DirectoryEntry {
 
     As the current user on a workgroup computer, bind to the local system and retrieve the DirectoryEntry for the root of the directory
     #>
+
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-DirectoryEntry')]
     [OutputType([System.DirectoryServices.DirectoryEntry], [PSCustomObject])]
@@ -7017,10 +7017,10 @@ function Resolve-IdentityReference {
     #Write-LogMsg -Text " # IdentityReference '$IdentityReference' # Cache miss" -Cache $Cache
 
     <#
-
     If no match was found in any cache, the resolution method depends on the IdentityReference.
     First, determine whether the IdentityReference is an NTAccount (DOMAIN\Name vs Name).
     #>
+
 
     $LastSlashIndex = $IdentityReference.LastIndexOf('\')
 

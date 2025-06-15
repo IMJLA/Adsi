@@ -505,6 +505,45 @@
             $startLine = $commentToken.Extent.StartLineNumber - 1
             $endLine = $commentToken.Extent.EndLineNumber - 1
 
+            # Fix internal spacing within comment-based help blocks
+            # Remove blank lines immediately after opening <#
+            if ($startLine -lt $lines.Count) {
+                # Check if this is a multi-line comment block
+                if ($endLine -gt $startLine) {
+                    # Look for blank lines after the opening <# line
+                    $currentLineIdx = $startLine + 1
+                    $blankLinesToRemove = @()
+
+                    # Find consecutive blank lines after opening <#
+                    while ($currentLineIdx -lt $endLine -and $currentLineIdx -lt $lines.Count) {
+                        $line = $lines[$currentLineIdx].Trim()
+                        if ($line -eq '') {
+                            $blankLinesToRemove += $currentLineIdx
+                            $currentLineIdx++
+                        } else {
+                            # Hit non-blank content, stop looking
+                            break
+                        }
+                    }
+
+                    # Remove the blank lines (from bottom to top to maintain indices)
+                    if ($blankLinesToRemove.Count -gt 0) {
+                        $blankLinesToRemove = $blankLinesToRemove | Sort-Object -Descending
+                        foreach ($blankLineIdx in $blankLinesToRemove) {
+                            if ($blankLineIdx -ge 0 -and $blankLineIdx -lt $lines.Count -and $lines[$blankLineIdx].Trim() -eq '') {
+                                $lines = $lines[0..($blankLineIdx - 1)] + $lines[($blankLineIdx + 1)..($lines.Count - 1)]
+                                $modified = $true
+                                Write-Verbose "Removed blank line after opening <# in comment-based help at line $($blankLineIdx + 1)"
+                            }
+                        }
+                    }
+                }
+            }
+
+            # Update line numbers after potential modifications
+            $startLine = $commentToken.Extent.StartLineNumber - 1
+            $endLine = $commentToken.Extent.EndLineNumber - 1
+
             # Add blank line after if missing
             if (($endLine + 1) -lt $lines.Count -and $lines[$endLine + 1].Trim() -ne '') {
                 $lines = $lines[0..$endLine] + @('') + $lines[($endLine + 1)..($lines.Count - 1)]
