@@ -9,6 +9,7 @@
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         [string]$Server,
@@ -21,12 +22,14 @@
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
 
     <#
     The WinNT provider only throws an error if you try to retrieve certain accounts/identities
     We will create own dummy objects instead of performing the query
     #>
+
     $ID = "$Server\$AccountName"
     $DomainCacheResult = $null
     $TryGetValueResult = $Cache.Value['DomainByFqdn'].Value.TryGetValue($Server, [ref]$DomainCacheResult)

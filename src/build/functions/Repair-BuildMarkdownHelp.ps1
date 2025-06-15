@@ -14,6 +14,7 @@
     #>
 
     [CmdletBinding()]
+
     param (
         # The directory where build output is stored
         [string]
@@ -71,7 +72,9 @@
                 # Find the function definition
                 $AllFunctionDefinitions = $ast.FindAll(
                     {
+
                         param($node)
+
                         $node -is [System.Management.Automation.Language.FunctionDefinitionAst]
                     },
                     $true
@@ -105,12 +108,14 @@
     }
 
     # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
+
     <#
         Error: 4/8/2025 11:35:12 PM:
         At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): ".\docs\en-US\ConvertTo-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
         Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
         Invalid yaml: expected simple key-value pairs
     #>
+
     Write-Verbose "`t`$ModuleHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
     $ModuleHelp = $ModuleHelp -replace '\r?\n[ ]{12}', ' ; '
     $ModuleHelp = $ModuleHelp -replace '{ ;', '{ '
@@ -129,12 +134,14 @@
         [string]$ThisFunctionHelp = Get-Content -LiteralPath $ThisFunctionHelpFile -Raw
 
         # Change multi-line default parameter values (especially hashtables) to be a single line to avoid the error below:
+
         <#
         Error: 4/8/2025 11:35:12 PM:
         At C:\Users\User\OneDrive\Documents\PowerShell\Modules\platyPS\0.14.2\platyPS.psm1:1412 char:22 +     $markdownFiles | ForEach-Object { +                      ~~~~~~~~~~~~~~~~ [<<==>>] Exception: Exception calling "NodeModelToMamlModel" with "1" argument(s): ".\Adsi\docs\en-US\ConvertTo-FakeDirectoryEntry.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
         Invalid yaml: expected simple key-value pairs" --> C:\blah.md:90:(200) '```yamlType: System.Collections.HashtableParam...'
         Invalid yaml: expected simple key-value pairs
         #>
+
         Write-Verbose "`t`$ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; ' -replace '{ ;', '{ ' -replace '[ ]{2,}', ' ' -replace '\r?\n\s\}', ' }'"
         $ThisFunctionHelp = $ThisFunctionHelp -replace '\r?\n[ ]{12}', ' ; '
         $ThisFunctionHelp = $ThisFunctionHelp -replace '{ ;', '{ '
@@ -144,6 +151,7 @@
         # Get rid of squiggly braces in parameter descriptions, synopsis, example descriptions, etc. to avoid Docusaurus HTML conversion issues due to JSON escaping not being supported.
         # This is a workaround for functions without these fields, which result in PlatyPS generating one in the format: {{ Fill in the Synopsis }}.
         # This can also be a bug in PlatyPS where it does not populate those fields correctly.
+
         <#
         [ERROR] Client bundle compiled with errors therefore further build is impossible.
     Error: MDX compilation failed for file ".\docs\online\Adsi\docs\en-US\Adsi.md"
@@ -174,6 +182,7 @@
     }
 
         #>
+
         while ($ThisFunctionHelp -match '{{(?<expression>[^}]+)}}') {
             $ThisFunctionHelp = $ThisFunctionHelp.Replace( $Matches[0], $Matches['expression'].Trim() )
         }

@@ -12,6 +12,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # Path to the source code directory
         [Parameter(Mandatory)]

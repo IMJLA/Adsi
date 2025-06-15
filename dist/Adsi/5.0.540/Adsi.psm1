@@ -337,6 +337,7 @@ function ConvertFrom-AppCapabilitySid {
 function ConvertFrom-ScShowSidResult {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ScShowSidResult')]
     # Convert the results from sc.exe into an object
+
     param (
         [string[]]$Result
     )
@@ -1158,6 +1159,7 @@ function Get-CachedDirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         [string]$Server,
@@ -1170,12 +1172,14 @@ function Get-CachedDirectoryEntry {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
 
     <#
     The WinNT provider only throws an error if you try to retrieve certain accounts/identities
     We will create own dummy objects instead of performing the query
     #>
+
     $ID = "$Server\$AccountName"
     $DomainCacheResult = $null
     $TryGetValueResult = $Cache.Value['DomainByFqdn'].Value.TryGetValue($Server, [ref]$DomainCacheResult)
@@ -1355,6 +1359,7 @@ function Get-SidTypeMap {
 }
 function Invoke-IADsGroupMembersMethod {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Invoke-IADsGroupMembersMethod')]
+
     <#
         .SYNOPSIS
         Get members of a group from the WinNT provider
@@ -1393,11 +1398,13 @@ function Invoke-IADsGroupMembersMethod {
 
     [OutputType([System.DirectoryServices.DirectoryEntry])]
 
+
     param (
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] of the WinNT group whose members to get
         [Parameter(ValueFromPipeline)]
         $DirectoryEntry
+
 
     )
 
@@ -1487,6 +1494,7 @@ function Resolve-IdRefAppPkgAuth {
         APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
     So we will instead hardcode a map of SIDs
     #>
+
     $Known = $Cache.Value['WellKnownSidByCaption'].Value[$IdentityReference]
 
     if ($null -eq $Known) {
@@ -1809,6 +1817,7 @@ function Resolve-IdRefSID {
                 I don't understand exactly why
                 The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
             #>
+
             $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 
         } catch {
@@ -2789,11 +2798,13 @@ function ConvertTo-DistinguishedName {
 
         Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet
         #>
+
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -3045,11 +3056,13 @@ function ConvertTo-DomainSidString {
 
         Useful when that has been done already but the DomainsByFqdn and DomainsByNetbios caches have not been updated yet
         #>
+
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -3358,6 +3371,7 @@ function ConvertTo-Fqdn {
 }
 function ConvertTo-HexStringRepresentation {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentation')]
+
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format
@@ -3372,9 +3386,11 @@ function ConvertTo-HexStringRepresentation {
 
     Convert the binary SID $Bytes to a hexadecimal string representation
     #>
+
     [OutputType([System.String[]])]
     param (
         # SID
+
         [byte[]]$SIDByteArray
     )
 
@@ -3386,6 +3402,7 @@ function ConvertTo-HexStringRepresentation {
 }
 function ConvertTo-HexStringRepresentationForLDAPFilterString {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString')]
+
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
@@ -3400,9 +3417,11 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
 
     Convert the binary SID $Bytes to a hexadecimal string representation, formatted for use in an LDAP filter string
     #>
+
     [OutputType([System.String])]
     param (
         # SID to convert to a hex string
+
         [byte[]]$SIDByteArray
     )
     $Hexes = $SIDByteArray |
@@ -3420,6 +3439,7 @@ function ConvertTo-HexStringRepresentationForLDAPFilterString {
 }
 function ConvertTo-SidByteArray {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
+
     <#
     .SYNOPSIS
     Convert a SID from a string to binary format (byte array)
@@ -3435,10 +3455,12 @@ function ConvertTo-SidByteArray {
     Converts the SID string for the built-in Administrators group ('S-1-5-32-544') to a byte array
     representation, which is required when working with directory services that expect SIDs in binary format.
     #>
+
     [OutputType([System.Byte[]])]
     param (
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
+
         [string[]]$SidString
     )
     process {
@@ -3452,6 +3474,7 @@ function ConvertTo-SidByteArray {
 }
 function Expand-AdsiGroupMember {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
+
     <#
     .SYNOPSIS
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
@@ -3479,6 +3502,7 @@ function Expand-AdsiGroupMember {
     information such as SID and domain information. Foreign security principals from trusted domains are
     resolved to their actual DirectoryEntry objects from the appropriate domain.
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
 
@@ -3716,6 +3740,7 @@ function Expand-WinNTGroupMember {
 }
 function Find-LocalAdsiServerSid {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Find-LocalAdsiServerSid')]
+
     <#
     .SYNOPSIS
         Finds the SID prefix of the local server by querying the built-in administrator account.
@@ -3740,6 +3765,7 @@ function Find-LocalAdsiServerSid {
 
     [OutputType([System.String])]
 
+
     param (
 
         # Name of the computer to query via CIM
@@ -3748,6 +3774,7 @@ function Find-LocalAdsiServerSid {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -3805,6 +3832,7 @@ function Get-AdsiGroup {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
@@ -3816,6 +3844,7 @@ function Get-AdsiGroup {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 
@@ -3923,6 +3952,7 @@ function Get-AdsiGroupMember {
 
         Otherwise the search will be recursive by default
         #>
+
         [switch]$NoRecurse,
 
         <#
@@ -3930,6 +3960,7 @@ function Get-AdsiGroupMember {
 
         Ignore the memberOf attribute
         #>
+
         [switch]$PrimaryGroupOnly,
 
         # In-process cache to reduce calls to other processes or to disk
@@ -4416,12 +4447,14 @@ function Get-DirectoryEntry {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
         Credentials to use to bind to the directory
         Defaults to the credentials of the current user
         #>
+
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve
@@ -5137,6 +5170,7 @@ function Get-KnownSidHashTable {
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable')]
     [OutputType([System.Collections.Hashtable])]
+
     param()
 
     return @{
@@ -5751,6 +5785,7 @@ function Get-KnownSidHashTable {
             An object can add access control entries (ACEs) to its access control list (Get-Acl) to grant access to low IL.
             There are a few security identifiers (SIDs) you may see when an object extends access to low IL.
             #>
+
         'S-1-15-2-1'                                                                                           = [PSCustomObject]@{
             'Description'     = 'All applications running in an app package context have this app container SID (WellKnownSidType WinBuiltinAnyPackageSid) (SID constant SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE)'
             'DisplayName'     = 'All Application Packages'
@@ -5798,6 +5833,7 @@ function Get-KnownSidHashTable {
         For app capabilities, the eight 32-bit decimal numbers represent the 32 bytes of the SHA256 hash of the capability name.
         You can programmatically generate these app capability SIDs by calling Derive­Capability­Sids­From­Name.
         #>
+
         'S-1-15-3-1'                                                                                           = [PSCustomObject]@{
             'Description'     = 'internetClient containerized app capability SID (WellKnownSidType WinCapabilityInternetClientSid)'
             'DisplayName'     = 'Your Internet connection'
@@ -5929,6 +5965,7 @@ function Get-KnownSidHashTable {
         }
 
         <#Other known SIDs#>
+
         'S-1-5-80-242729624-280608522-2219052887-3187409060-2225943459'                                        = [PSCustomObject]@{
             'Description'     = 'Windows Cryptographic service account'
             'DisplayName'     = 'CryptSvc'
@@ -6317,6 +6354,7 @@ function Get-KnownSidHashTable {
 }
 function Get-ParentDomainDnsName {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-ParentDomainDnsName')]
+
     <#
     .SYNOPSIS
         Gets the DNS name of the parent domain for a given computer or domain.
@@ -6350,6 +6388,7 @@ function Get-ParentDomainDnsName {
         [Parameter(Mandatory)]
         [ref]$Cache
 
+
     )
 
     if (-not $CimSession) {
@@ -6376,6 +6415,7 @@ function Get-ParentDomainDnsName {
 }
 function Get-TrustedDomain {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
+
     <#
     .SYNOPSIS
     Returns a dictionary of trusted domains by the current computer
@@ -6399,6 +6439,7 @@ function Get-TrustedDomain {
     subsequent operations involving these trusted domains.
     .NOTES
     #>
+
     [OutputType([PSCustomObject])]
     param (
 
@@ -6598,6 +6639,7 @@ function Invoke-ComObject {
         [Switch]$Method
 
     )
+
     <#
     # Don't remember what this is for
     If ($ComObject -IsNot "__ComObject") {
@@ -6610,6 +6652,7 @@ function Invoke-ComObject {
         $ComObject = $ComInvoke.$ComObject
     }
     #>
+
     If ($Method) {
         $Invoke = 'InvokeMethod'
     } ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {
@@ -6643,6 +6686,7 @@ function Resolve-IdentityReference {
     #>
 
     [OutputType([PSCustomObject])]
+
     param (
 
         # IdentityReference from an Access Control Entry
@@ -6790,6 +6834,7 @@ function Resolve-IdentityReference {
 }
 function Resolve-ServiceNameToSID {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
+
     <#
     .SYNOPSIS
         Resolves Windows service names to their corresponding security identifiers (SIDs).
@@ -6810,6 +6855,7 @@ function Resolve-ServiceNameToSID {
         # Output of Get-Service or an instance of the Win32_Service CIM class
         [Parameter(ValueFromPipeline)]
         $InputObject
+
 
     )
 
@@ -6864,6 +6910,7 @@ function Search-Directory {
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
 
         # Filter for the LDAP search
@@ -6884,6 +6931,7 @@ function Search-Directory {
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 

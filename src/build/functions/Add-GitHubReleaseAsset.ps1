@@ -12,6 +12,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # GitHub authentication token
         [string]$Token,

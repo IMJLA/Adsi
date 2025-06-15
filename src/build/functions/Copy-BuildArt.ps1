@@ -13,6 +13,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # The source directory containing static SVG art files
         [Parameter(Mandatory)]

@@ -13,6 +13,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # The path to the Docusaurus static directory
         [Parameter(Mandatory)]

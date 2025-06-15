@@ -35,6 +35,7 @@
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         # Name (CN or Common Name) of the group to retrieve
@@ -46,6 +47,7 @@
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 

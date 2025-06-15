@@ -6,6 +6,7 @@
 function Measure-CommentBasedHelpSpacing {
     [CmdletBinding()]
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
+
     param(
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -84,6 +85,7 @@ function Measure-CommentBasedHelpSpacing {
 function Measure-ParamBlockSpacing {
     [CmdletBinding()]
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
+
     param(
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -99,7 +101,9 @@ function Measure-ParamBlockSpacing {
 
         # Find param blocks
         $paramBlocks = $ScriptBlockAst.FindAll({
+
                 param($ast)
+
                 $ast -is [System.Management.Automation.Language.ParamBlockAst]
             }, $true)
 

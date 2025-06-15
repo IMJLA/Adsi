@@ -13,6 +13,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
 
         # The working directory containing the Docusaurus project

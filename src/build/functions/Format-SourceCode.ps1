@@ -58,11 +58,14 @@
             Cannot determine line endings as the text probably contain mixed line endings. (Parameter 'text')
         Also trim trailing whitespace from the end of the file
         #>
-        $strings += "`t`$NormalizedContent = `"`$(`$OriginalContent.Trim())``r``n`" -replace `"``r``n|``n|``r`", `"``r``n`""
-        [string]$NormalizedContent = "$($OriginalContent.Trim())`r`n" -replace "`r`n|`n|`r", "`r`n"
 
-        $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$NormalizedContent -Settings '$SettingsPath'"
-        [string]$FormattedContent = Invoke-Formatter -ScriptDefinition $NormalizedContent -Settings $SettingsPath -ErrorAction Stop
+        $strings += "`t`$NormalizedContent = `"`$(`$OriginalContent.Trim())``r``n`" -replace `"``r``n|``n|``r`", `"``r``n`""
+        $NormalizedContent = "$($OriginalContent.Trim())`r`n" -replace "`r`n|`n|`r", "`r`n"
+        $strings += "`t`$ScriptDefinition = Format-PowerShellSpacing -Content `$NormalizedContent"
+        $ScriptDefinition = Format-PowerShellSpacing -Content $NormalizedContent
+
+        $strings += "`t`$FormattedContent = Invoke-Formatter -ScriptDefinition `$ScriptDefinition -Settings '$SettingsPath'"
+        [string]$FormattedContent = Invoke-Formatter -ScriptDefinition $ScriptDefinition -Settings $SettingsPath -ErrorAction Stop
 
         # Update file if content changed or encoding needs to be fixed
         $ContentChanged = $FormattedContent -ne $OriginalContent

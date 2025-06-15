@@ -19,6 +19,7 @@
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = 'Using Console.WriteLine to preserve ANSI color codes from command output')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = 'Variables are passed to ScriptBlock via ArgumentList parameter and PSScriptAnalyzer cannot figure this out')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseUsingScopeModifierInNewRunspaces', '', Justification = 'Variables are passed to ScriptBlock via ArgumentList parameter and PSScriptAnalyzer cannot figure this out')]
+
     param(
 
         # The command to execute
@@ -74,6 +75,7 @@
 
         # Use Start-Job to run npm commands in isolation
         $job = Start-Job -ScriptBlock {
+
             param($Command, $ArgumentsArray, $WorkingDirectory, $EnvironmentVariables)
 
             # Apply environment variables

@@ -12,6 +12,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # Path to the Markdown help directory containing locale subdirectories
         [Parameter(Mandatory)]

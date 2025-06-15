@@ -1,5 +1,6 @@
 ﻿function Expand-AdsiGroupMember {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Expand-AdsiGroupMember')]
+
     <#
     .SYNOPSIS
     Use the LDAP provider to add information about group members to a DirectoryEntry of a group for easier access
@@ -27,6 +28,7 @@
     information such as SID and domain information. Foreign security principals from trusted domains are
     resolved to their actual DirectoryEntry objects from the appropriate domain.
     #>
+
     [OutputType([System.DirectoryServices.DirectoryEntry])]
     param (
 

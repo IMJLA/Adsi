@@ -19,6 +19,7 @@
 
     [CmdletBinding()]
     [OutputType([bool])]
+
     param(
         # Indicates whether the module should be compiled during the build process.
         [bool]$BuildCompileModule,

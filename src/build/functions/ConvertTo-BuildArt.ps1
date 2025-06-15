@@ -1,4 +1,5 @@
 ﻿function ConvertTo-BuildArt {
+
     <#
     .SYNOPSIS
     Convert SVG art files to PNG using Inkscape.
@@ -15,6 +16,7 @@
         # The directory containing the SVG files to convert
         [Parameter(Mandatory)]
         [string]$Path
+
     )
 
     Write-Information "`tConvertTo-BuildArt -Path '$Path'"

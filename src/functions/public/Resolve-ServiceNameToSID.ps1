@@ -1,5 +1,6 @@
 ﻿function Resolve-ServiceNameToSID {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Resolve-ServiceNameToSID')]
+
     <#
     .SYNOPSIS
         Resolves Windows service names to their corresponding security identifiers (SIDs).
@@ -20,6 +21,7 @@
         # Output of Get-Service or an instance of the Win32_Service CIM class
         [Parameter(ValueFromPipeline)]
         $InputObject
+
 
     )
 

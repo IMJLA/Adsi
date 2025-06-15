@@ -76,6 +76,7 @@
                 I don't understand exactly why
                 The scriptblock will evaluate null if the SID cannot be translated, and the error stream redirection supresses the error (except in the transcript which catches it)
             #>
+
             $NTAccount = & { $SecurityIdentifier.Translate([System.Security.Principal.NTAccount]).Value } 2>$null
 
         } catch {

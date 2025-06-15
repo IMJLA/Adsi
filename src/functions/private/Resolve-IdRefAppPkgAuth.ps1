@@ -43,6 +43,7 @@
         APPLICATION PACKAGE AUTHORITY\ALL APPLICATION PACKAGES
     So we will instead hardcode a map of SIDs
     #>
+
     $Known = $Cache.Value['WellKnownSidByCaption'].Value[$IdentityReference]
 
     if ($null -eq $Known) {

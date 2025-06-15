@@ -13,6 +13,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # The commit message to use for the git commit
         [Parameter(Mandatory)]

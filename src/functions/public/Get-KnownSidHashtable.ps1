@@ -33,6 +33,7 @@
 
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-KnownSidHashTable')]
     [OutputType([System.Collections.Hashtable])]
+
     param()
 
     return @{
@@ -647,6 +648,7 @@
             An object can add access control entries (ACEs) to its access control list (Get-Acl) to grant access to low IL.
             There are a few security identifiers (SIDs) you may see when an object extends access to low IL.
             #>
+
         'S-1-15-2-1'                                                                                           = [PSCustomObject]@{
             'Description'     = 'All applications running in an app package context have this app container SID (WellKnownSidType WinBuiltinAnyPackageSid) (SID constant SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE)'
             'DisplayName'     = 'All Application Packages'
@@ -694,6 +696,7 @@
         For app capabilities, the eight 32-bit decimal numbers represent the 32 bytes of the SHA256 hash of the capability name.
         You can programmatically generate these app capability SIDs by calling Derive­Capability­Sids­From­Name.
         #>
+
         'S-1-15-3-1'                                                                                           = [PSCustomObject]@{
             'Description'     = 'internetClient containerized app capability SID (WellKnownSidType WinCapabilityInternetClientSid)'
             'DisplayName'     = 'Your Internet connection'
@@ -825,6 +828,7 @@
         }
 
         <#Other known SIDs#>
+
         'S-1-5-80-242729624-280608522-2219052887-3187409060-2225943459'                                        = [PSCustomObject]@{
             'Description'     = 'Windows Cryptographic service account'
             'DisplayName'     = 'CryptSvc'

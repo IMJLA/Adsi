@@ -69,6 +69,7 @@ Properties {
         NUnitXml
         JUnitXml
     #>
+
     enum TestOutputFormat {
         NUnitXml # NUnit-compatible XML
         JUnitXml # JUnit-compatible XML
@@ -440,8 +441,10 @@ Properties {
 
 FormatTaskName {
 
+
     param(
         [string]$taskName
+
     )
 
     Write-InfoColor "$NewLine`Task: " -ForegroundColor Cyan -NoNewline
@@ -686,7 +689,7 @@ $UpdatableHelpPrereq = { Test-BuildUpdatableHelpPrereq -ReadyForUpdatableHelp $s
 
 Task -name BuildUpdatableHelp -precondition $UpdatableHelpPrereq -action {
 
-    New-BuildUpdatableHelp -BuildOutputDir $script:BuildOutputDir -ModuleGuid $script:ManifestTest.Guid @buildUpdatableHelpSplat
+    New-BuildUpdatableHelp -BuildOutputDir $script:BuildOutputDir @buildUpdatableHelpSplat
 
 } -description 'Create updatable help .cab files based on PlatyPS markdown help.'
 

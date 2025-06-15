@@ -33,12 +33,14 @@
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         <#
         Credentials to use to bind to the directory
         Defaults to the credentials of the current user
         #>
+
         [pscredential]$Credential,
 
         # Properties of the target object to retrieve

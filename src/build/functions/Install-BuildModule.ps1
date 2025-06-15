@@ -23,6 +23,7 @@
 
     [CmdletBinding()]
     [OutputType([System.Boolean])]
+
     param(
         [Parameter(Mandatory)]
         [string]$ModuleName,

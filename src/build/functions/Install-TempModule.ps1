@@ -14,6 +14,7 @@
 
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([string])]
+
     param(
 
         # The name of the module to install

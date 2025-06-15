@@ -27,6 +27,7 @@
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
+
         [string]$DirectoryPath = (([adsisearcher]'').SearchRoot.Path),
 
         # Filter for the LDAP search
@@ -47,6 +48,7 @@
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 

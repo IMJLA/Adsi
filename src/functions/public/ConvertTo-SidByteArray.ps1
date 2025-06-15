@@ -1,5 +1,6 @@
 ﻿function ConvertTo-SidByteArray {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidByteArray')]
+
     <#
     .SYNOPSIS
     Convert a SID from a string to binary format (byte array)
@@ -15,10 +16,12 @@
     Converts the SID string for the built-in Administrators group ('S-1-5-32-544') to a byte array
     representation, which is required when working with directory services that expect SIDs in binary format.
     #>
+
     [OutputType([System.Byte[]])]
     param (
         # SID to convert to binary
         [Parameter(ValueFromPipeline)]
+
         [string[]]$SidString
     )
     process {

@@ -1,5 +1,6 @@
 ﻿function ConvertTo-HexStringRepresentationForLDAPFilterString {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-HexStringRepresentationForLDAPFilterString')]
+
     <#
     .SYNOPSIS
     Convert a SID from byte array format to a string representation of its hexadecimal format, properly formatted for an LDAP filter string
@@ -14,9 +15,11 @@
 
     Convert the binary SID $Bytes to a hexadecimal string representation, formatted for use in an LDAP filter string
     #>
+
     [OutputType([System.String])]
     param (
         # SID to convert to a hex string
+
         [byte[]]$SIDByteArray
     )
     $Hexes = $SIDByteArray |

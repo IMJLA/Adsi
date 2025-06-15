@@ -37,6 +37,7 @@
 
         Otherwise the search will be recursive by default
         #>
+
         [switch]$NoRecurse,
 
         <#
@@ -44,6 +45,7 @@
 
         Ignore the memberOf attribute
         #>
+
         [switch]$PrimaryGroupOnly,
 
         # In-process cache to reduce calls to other processes or to disk

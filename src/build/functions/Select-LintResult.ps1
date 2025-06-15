@@ -14,6 +14,7 @@
     #>
 
     [CmdletBinding()]
+
     param(
 
         # Fail ScriptAnalyser test if any issues are found with this threshold or higher

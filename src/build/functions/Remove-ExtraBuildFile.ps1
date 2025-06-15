@@ -16,6 +16,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # The path to the build output directory where files should be removed
         [Parameter(Mandatory)]

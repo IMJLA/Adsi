@@ -12,6 +12,7 @@
     #>
 
     [CmdletBinding()]
+
     param(
         # Path to the MAML help directory (source)
         [Parameter(Mandatory)]

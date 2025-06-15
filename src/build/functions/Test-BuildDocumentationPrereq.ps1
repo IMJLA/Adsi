@@ -14,6 +14,7 @@
 
     [CmdletBinding()]
     [OutputType([bool])]
+
     param(
         # Whether documentation is enabled
         [bool]$DocumentationEnabled,

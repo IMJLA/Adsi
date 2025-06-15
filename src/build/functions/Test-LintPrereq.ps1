@@ -19,6 +19,7 @@
 
     [CmdletBinding()]
     [OutputType([bool])]
+
     param(
         # Indicates whether linting is enabled for the build process.
         [bool]$LintEnabled,

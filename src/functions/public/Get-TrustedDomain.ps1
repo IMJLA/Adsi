@@ -1,5 +1,6 @@
 ﻿function Get-TrustedDomain {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/Get-TrustedDomain')]
+
     <#
     .SYNOPSIS
     Returns a dictionary of trusted domains by the current computer
@@ -23,6 +24,7 @@
     subsequent operations involving these trusted domains.
     .NOTES
     #>
+
     [OutputType([PSCustomObject])]
     param (
 

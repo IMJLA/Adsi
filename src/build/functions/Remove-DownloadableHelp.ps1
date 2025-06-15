@@ -13,6 +13,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # Directory of the online help website
         [Parameter(Mandatory)]

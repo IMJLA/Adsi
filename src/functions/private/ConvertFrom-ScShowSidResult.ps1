@@ -1,6 +1,7 @@
 ﻿function ConvertFrom-ScShowSidResult {
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertFrom-ScShowSidResult')]
     # Convert the results from sc.exe into an object
+
     param (
         [string[]]$Result
     )

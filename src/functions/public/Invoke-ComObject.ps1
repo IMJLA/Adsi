@@ -40,6 +40,7 @@
         [Switch]$Method
 
     )
+
     <#
     # Don't remember what this is for
     If ($ComObject -IsNot "__ComObject") {
@@ -52,6 +53,7 @@
         $ComObject = $ComInvoke.$ComObject
     }
     #>
+
     If ($Method) {
         $Invoke = 'InvokeMethod'
     } ElseIf ($MyInvocation.BoundParameters.ContainsKey('Value')) {

@@ -12,6 +12,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # Path to the MAML help directory
         [Parameter(Mandatory)]

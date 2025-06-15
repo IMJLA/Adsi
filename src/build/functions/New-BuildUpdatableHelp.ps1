@@ -13,6 +13,7 @@
     #>
 
     [CmdletBinding(SupportsShouldProcess)]
+
     param(
         # Directory containing the markdown help files organized by locale
         [Parameter(Mandatory)]
@@ -32,9 +33,7 @@
 
         # Name of the module for which help is being generated
         [Parameter(Mandatory)]
-        [string]$ModuleName,
-
-        [string]$ModuleGuid
+        [string]$ModuleName
     )
 
     if ($PSCmdlet.ShouldProcess('Updatable help .cab files', "Create for module '$ModuleName' in '$DocsUpdatableDir'")) {

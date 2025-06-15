@@ -53,11 +53,13 @@
 
         Useful when that has been done already but the DomainByFqdn and DomainByNetbios caches have not been updated yet
         #>
+
         [string]$AdsiProvider,
 
         # In-process cache to reduce calls to other processes or to disk
         [Parameter(Mandatory)]
         [ref]$Cache
+
 
     )
 

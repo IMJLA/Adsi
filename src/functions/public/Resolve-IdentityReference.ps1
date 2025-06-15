@@ -22,6 +22,7 @@
     #>
 
     [OutputType([PSCustomObject])]
+
     param (
 
         # IdentityReference from an Access Control Entry
