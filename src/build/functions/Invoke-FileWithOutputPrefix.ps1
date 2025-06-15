@@ -27,23 +27,29 @@
         [string]$Command,
 
         # Arguments as an array of strings
+
         [Parameter(ParameterSetName = 'ArgumentArray')]
         [string[]]$ArgumentArray = @(),
 
         # Arguments as a single string
+
         [Parameter(ParameterSetName = 'ArgumentString')]
         [string]$ArgumentString = '',
 
         # Working directory for the command
+
         [string]$WorkingDirectory = (Get-Location).Path,
 
         # Prefix to add to each output line
+
         [string]$OutputPrefix = "`t",
 
         # Environment variables to set for the command
+
         [hashtable]$EnvironmentVariables = @{},
 
         # Skip console output
+
         [switch]$NoConsoleOutput
 
     )

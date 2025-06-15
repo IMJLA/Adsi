@@ -24,6 +24,7 @@ System.DirectoryServices.DirectoryEntry or a custom object that mimics Directory
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-DirectoryEntry')]
 
     param (
+
         $CachedWellKnownSID,
 
         $DomainNetBIOS,

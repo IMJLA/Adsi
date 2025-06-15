@@ -21,18 +21,22 @@
         [string]$GitHubToken,
 
         # GitHub organization name
+
         [Parameter(Mandatory = $true)]
         [string]$GitHubOrgName,
 
         # Name of the module to release
+
         [Parameter(Mandatory = $true)]
         [string]$ModuleName,
 
         # Path to the distribution directory. Defaults to '.\dist'
+
         [Parameter(Mandatory = $false)]
         [string]$DistPath = '.\dist',
 
         # Release notes for the GitHub release
+
         [Parameter(Mandatory = $false)]
         [string]$ReleaseNotes = 'Automated release'
     )

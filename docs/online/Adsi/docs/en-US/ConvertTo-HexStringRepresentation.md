@@ -32,7 +32,7 @@ Convert the binary SID $Bytes to a hexadecimal string representation
 ## PARAMETERS
 
 ### -SIDByteArray
-Fill SIDByteArray Description
+SID
 
 ```yaml
 Type: System.Byte[]

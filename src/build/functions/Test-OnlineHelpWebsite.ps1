@@ -21,14 +21,17 @@
         [string]$ModuleName,
 
         # The root directory for online help
+
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpRoot,
 
         # The root directory to set as the working location
+
         [Parameter(Mandatory)]
         [string]$Root,
 
         # Character sequence for line separation in output
+
         [Parameter(Mandatory)]
         [string]$NewLine
     )

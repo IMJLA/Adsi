@@ -19,6 +19,7 @@
         # The directory containing the Node.js project with corrupted dependencies
         [Parameter(Mandatory)]
         [string]$WorkingDirectory
+
     )
 
     $InformationPreference = 'Continue'

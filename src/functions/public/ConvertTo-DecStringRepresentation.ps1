@@ -24,8 +24,6 @@
         # Byte array.  Often the binary format of an objectSid or LoginHours
         [byte[]]$ByteArray
 
-
-
     )
 
 

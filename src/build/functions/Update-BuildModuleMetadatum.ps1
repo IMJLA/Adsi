@@ -20,10 +20,12 @@
         [string]$ModuleManifestPath,
 
         # The new version number to set in the module manifest
+
         [Parameter(Mandatory)]
         [version]$NewVersion,
 
         # The help info URI for the module
+
         [Parameter(Mandatory)]
         [string]$HelpInfoUri
 

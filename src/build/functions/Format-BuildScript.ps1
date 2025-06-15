@@ -555,7 +555,7 @@
                         $nextParam = $parameters | Where-Object { $_.Extent.StartLineNumber -gt $param.Extent.EndLineNumber } |
                             Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
 
-                        if ($nextParam -or ($paramEndLine + 1) -lt ($paramBlock.Extent.EndLineNumber - 1)) {
+                        if ($nextParam) {
                             # Check if there's already a blank line after this parameter
                             $hasBlankLineAfter = ($paramEndLine + 1) -lt $lines.Count -and $lines[$paramEndLine + 1].Trim() -eq ''
 
@@ -576,33 +576,19 @@
                         $prevParam = $parameters | Where-Object { $_.Extent.EndLineNumber -lt $param.Extent.StartLineNumber } |
                             Sort-Object { $_.Extent.StartLineNumber } -Descending | Select-Object -First 1
 
-                        if ($prevParam -or $paramStartLine -gt ($paramBlock.Extent.StartLineNumber)) {
+                        if ($prevParam) {
                             # Check if there's already a blank line before this parameter
                             $hasBlankLineBefore = $paramStartLine -gt 0 -and $lines[$paramStartLine - 1].Trim() -eq ''
 
                             if (-not $hasBlankLineBefore) {
-                                # Don't add blank line if immediately after param( opening
-                                $paramBlockStart = $paramBlock.Extent.StartLineNumber - 1
-                                $isAfterParamOpen = $false
-
-                                # Check if we're right after the param block opening
-                                for ($lineIdx = $paramBlockStart; $lineIdx -lt $paramStartLine; $lineIdx++) {
-                                    if ($lines[$lineIdx] -match '^\s*param\s*\(\s*$') {
-                                        $isAfterParamOpen = $true
-                                        break
-                                    }
-                                }
-
-                                if (-not $isAfterParamOpen) {
-                                    $lines = $lines[0..($paramStartLine - 1)] + @('') + $lines[$paramStartLine..($lines.Count - 1)]
-                                    $modified = $true
-                                    Write-Verbose "Added blank line before parameter at line $($paramStartLine + 1)"
-                                }
+                                $lines = $lines[0..($paramStartLine - 1)] + @('') + $lines[$paramStartLine..($lines.Count - 1)]
+                                $modified = $true
+                                Write-Verbose "Added blank line before parameter at line $($paramStartLine + 1)"
                             }
                         }
                     }
 
-                    # Ensure blank line at the beginning of param block (after "param (")
+                    # Ensure exactly one blank line at the beginning of param block (after "param (")
                     $paramBlockStartLine = $paramBlock.Extent.StartLineNumber - 1
                     $firstParam = $parameters | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
                     $firstParamStartLine = $firstParam.Extent.StartLineNumber - 1
@@ -617,15 +603,32 @@
                     }
 
                     if ($paramOpenLine -ge 0) {
-                        # Check if there's a blank line after "param ("
-                        if (($paramOpenLine + 1) -lt $firstParamStartLine -and $lines[$paramOpenLine + 1].Trim() -ne '') {
+                        # Count and fix blank lines after "param ("
+                        $blankLinesAfterOpen = 0
+                        for ($lineIdx = $paramOpenLine + 1; $lineIdx -lt $firstParamStartLine; $lineIdx++) {
+                            if ($lines[$lineIdx].Trim() -eq '') {
+                                $blankLinesAfterOpen++
+                            }
+                        }
+
+                        # Ensure exactly one blank line after "param ("
+                        if ($blankLinesAfterOpen -ne 1) {
+                            # Remove all blank lines after "param ("
+                            for ($lineIdx = $firstParamStartLine - 1; $lineIdx -gt $paramOpenLine; $lineIdx--) {
+                                if ($lines[$lineIdx].Trim() -eq '') {
+                                    $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                    $modified = $true
+                                }
+                            }
+
+                            # Add exactly one blank line
                             $lines = $lines[0..$paramOpenLine] + @('') + $lines[($paramOpenLine + 1)..($lines.Count - 1)]
                             $modified = $true
-                            Write-Verbose 'Added blank line after param block opening'
+                            Write-Verbose 'Fixed blank lines after param block opening'
                         }
                     }
 
-                    # Ensure blank line at the end of param block (before ")")
+                    # Ensure exactly one blank line at the end of param block (before ")")
                     $lastParam = $parameters | Sort-Object { $_.Extent.EndLineNumber } | Select-Object -Last 1
                     $lastParamEndLine = $lastParam.Extent.EndLineNumber - 1
                     $paramBlockEndLine = $paramBlock.Extent.EndLineNumber - 1
@@ -639,12 +642,29 @@
                         }
                     }
 
-                    if ($paramCloseLine -ge 0 -and $paramCloseLine -gt ($lastParamEndLine + 1)) {
-                        # Check if there's a blank line before ")"
-                        if ($lines[$paramCloseLine - 1].Trim() -ne '') {
-                            $lines = $lines[0..($paramCloseLine - 1)] + @('') + $lines[$paramCloseLine..($lines.Count - 1)]
+                    if ($paramCloseLine -ge 0) {
+                        # Count blank lines before ")"
+                        $blankLinesBeforeClose = 0
+                        for ($lineIdx = $paramCloseLine - 1; $lineIdx -gt $lastParamEndLine; $lineIdx--) {
+                            if ($lines[$lineIdx].Trim() -eq '') {
+                                $blankLinesBeforeClose++
+                            }
+                        }
+
+                        # Ensure exactly one blank line before ")"
+                        if ($blankLinesBeforeClose -ne 1) {
+                            # Remove all blank lines before ")"
+                            for ($lineIdx = $paramCloseLine - 1; $lineIdx -gt $lastParamEndLine; $lineIdx--) {
+                                if ($lines[$lineIdx].Trim() -eq '') {
+                                    $lines = $lines[0..($lineIdx - 1)] + $lines[($lineIdx + 1)..($lines.Count - 1)]
+                                    $modified = $true
+                                }
+                            }
+
+                            # Add exactly one blank line
+                            $lines = $lines[0..$lastParamEndLine] + @('') + $lines[($lastParamEndLine + 1)..($lines.Count - 1)]
                             $modified = $true
-                            Write-Verbose 'Added blank line before param block closing'
+                            Write-Verbose 'Fixed blank lines before param block closing'
                         }
                     }
                 }

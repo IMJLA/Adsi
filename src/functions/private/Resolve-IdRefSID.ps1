@@ -19,9 +19,11 @@
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
+
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
+
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # In-process cache to reduce calls to other processes or to disk
@@ -30,6 +32,7 @@
         [ref]$Cache,
 
         # Properties of each Account to display on the report
+
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description')
 
 

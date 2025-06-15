@@ -22,6 +22,7 @@
         [string]$DocsUpdatableDir,
 
         # Directory of the online help website
+
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir
     )

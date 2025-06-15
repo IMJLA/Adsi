@@ -18,6 +18,7 @@
 
         # Array of directory paths to evaluate for copying
         [string[]]$BuildCopyDirectoryPath
+
     )
 
     Write-Verbose "`tGet-ChildItem -Path '.' -Directory"

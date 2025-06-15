@@ -22,11 +22,13 @@ System.Security.Principal.SecurityIdentifier
     [CmdletBinding(HelpUri = 'https://IMJLA.github.io/Adsi/docs/en-US/ConvertTo-SidString')]
 
     param (
+
         [string]$ServerNetBIOS,
 
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
+
         [Parameter(Mandatory)]
         [ref]$Cache
 

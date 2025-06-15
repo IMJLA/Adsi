@@ -21,6 +21,7 @@
         [string]$SourceCodeDir,
 
         # Path to the PSScriptAnalyzer settings file
+
         [Parameter(Mandatory)]
         [string]$LintSettingsFile
     )

@@ -22,11 +22,10 @@
     param (
 
         # SID
-
-
         [byte[]]$SIDByteArray
 
     )
+
 
 
 

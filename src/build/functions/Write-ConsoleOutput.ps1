@@ -25,15 +25,19 @@
         $Output,
 
         # Optional prefix to add to each line of output
+
         [string]$Prefix = '',
 
         # Limit output to the first N items from the array
+
         [int]$First = 0,
 
         # Return the processed output for further pipeline processing
+
         [switch]$PassThru,
 
         # Skip console output and only return data when PassThru is specified
+
         [switch]$NoConsoleOutput
 
     )

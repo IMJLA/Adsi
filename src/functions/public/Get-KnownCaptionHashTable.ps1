@@ -33,6 +33,7 @@
 
         # Hashtable of well-known Security Identifiers (SIDs) with their properties
         [hashtable]$WellKnownSidBySid = (Get-KnownSidHashTable)
+
     )
 
     $WellKnownSidByCaption = @{}

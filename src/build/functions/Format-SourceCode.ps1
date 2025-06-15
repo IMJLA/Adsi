@@ -29,6 +29,7 @@
         # Path to the PSScriptAnalyzer settings file
 
         [string]$SettingsPath = (Join-Path $PSScriptRoot 'psscriptanalyzerSettings.psd1')
+
     )
 
     # Verify PSScriptAnalyzer is available

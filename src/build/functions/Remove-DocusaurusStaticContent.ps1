@@ -19,6 +19,7 @@
         # The path to the Docusaurus static directory
         [Parameter(Mandatory)]
         [string]$DocsOnlineStaticDir
+
     )
 
     if (-not (Test-Path $DocsOnlineStaticDir)) {
@@ -38,10 +39,10 @@
         foreach ($item in $staticContent) {
             if ($item.PSIsContainer) {
                 Write-Information "`tRemove-Item -Path '$($item.FullName)' -Recurse -Force"
-                Remove-Item -Path $item.FullName -Recurse -Force -ErrorAction Stop
+                Remove-Item -Path $item.FullName -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
             } else {
                 Write-Information "`tRemove-Item -Path '$($item.FullName)' -Force"
-                Remove-Item -Path $item.FullName -Force -ErrorAction Stop
+                Remove-Item -Path $item.FullName -Force -ErrorAction Stop -ProgressAction SilentlyContinue
             }
         }
 

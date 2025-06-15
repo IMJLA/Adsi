@@ -21,6 +21,7 @@
         [string]$WorkingDirectory,
 
         # Array of npm packages to install (in addition to what is already in package.json)
+
         [string[]]$Dependency = @('@docusaurus/theme-mermaid', '@docusaurus/tsconfig')
     )
 

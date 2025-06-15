@@ -1908,7 +1908,7 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SIDByteArray</maml:name>
           <maml:description>
-            <maml:para>Fill SIDByteArray Description</maml:para>
+            <maml:para>SID</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
           <dev:type>
@@ -1923,7 +1923,7 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SIDByteArray</maml:name>
         <maml:description>
-          <maml:para>Fill SIDByteArray Description</maml:para>
+          <maml:para>SID</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
         <dev:type>
@@ -1987,7 +1987,7 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>SIDByteArray</maml:name>
           <maml:description>
-            <maml:para>Fill SIDByteArray Description</maml:para>
+            <maml:para>SID to convert to a hex string</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
           <dev:type>
@@ -2002,7 +2002,7 @@ $SearchResults | ConvertFrom-SearchResult</dev:code>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>SIDByteArray</maml:name>
         <maml:description>
-          <maml:para>Fill SIDByteArray Description</maml:para>
+          <maml:para>SID to convert to a hex string</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">System.Byte[]</command:parameterValue>
         <dev:type>

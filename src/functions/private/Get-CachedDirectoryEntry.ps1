@@ -10,11 +10,9 @@
     param (
 
         <#
-
         Path to the directory object to retrieve
         Defaults to the root of the current domain
         #>
-
         [string]$DirectoryPath = (([System.DirectoryServices.DirectorySearcher]::new()).SearchRoot.Path),
 
         [string]$Server,

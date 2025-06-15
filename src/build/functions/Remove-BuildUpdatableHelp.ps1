@@ -19,6 +19,7 @@
         # Path to the updatable help directory
         [Parameter(Mandatory)]
         [string]$DocsUpdatableDir
+
     )
 
     Write-Information "`tGet-ChildItem -Path '$DocsUpdatableDir' -Recurse | Remove-Item -Recurse -Force"

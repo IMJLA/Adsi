@@ -19,6 +19,7 @@
 
         # Path to the distribution directory containing the module
         [string]$DistPath
+
     )
 
     if (-not (Test-Path $DistPath)) {

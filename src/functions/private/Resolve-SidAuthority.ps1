@@ -28,9 +28,11 @@
         [hashtable]$DirectorySplit,
 
         # DirectoryEntry [System.DirectoryServices.DirectoryEntry] object whose Parent's Name will be used as the replacement Authority.
+
         $DirectoryEntry,
 
         # Well-Known local SID authorities to replace with the computer name in the InputObject string.
+
         [hashtable]$AuthoritiesToReplaceWithParentName = @{
             'APPLICATION PACKAGE AUTHORITY' = $null
             'BUILTIN'                       = $null

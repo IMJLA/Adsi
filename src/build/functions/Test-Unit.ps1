@@ -26,6 +26,7 @@
         [string]$ConfigPath = '.\tests\config\pesterConfig.json',
 
         # Common parameters for Write-Information calls
+
         [hashtable]$IO = @{ 'ErrorAction' = 'Stop'; 'InformationAction' = 'Continue' ; 'ProgressAction' = 'SilentlyContinue' }
     )
 

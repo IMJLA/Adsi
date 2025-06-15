@@ -32,13 +32,16 @@
         $ComObject,
 
         # The property to use with the invoked method
+
         [Parameter(Mandatory)]
         [String]$Property,
 
         # The value to set with the SetProperty method, or the name of the method to run with the InvokeMethod method
+
         $Value,
 
         # Use the InvokeMethod method of the ComObject
+
         [Switch]$Method
 
 

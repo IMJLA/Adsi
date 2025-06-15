@@ -22,11 +22,10 @@
     param (
 
         # SID to convert to a hex string
-
-
         [byte[]]$SIDByteArray
 
     )
+
 
 
     $Hexes = $SIDByteArray |

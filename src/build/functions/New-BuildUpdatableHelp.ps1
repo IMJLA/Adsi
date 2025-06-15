@@ -21,18 +21,22 @@
         [string]$DocsMarkdownDir,
 
         # Directory containing the default locale markdown files
+
         [Parameter(Mandatory)]
         [string]$DocsMarkdownDefaultLocaleDir,
 
         # Directory where the built module files are located
+
         [Parameter(Mandatory)]
         [string]$BuildOutputDir,
 
         # Output directory where the .cab files will be created
+
         [Parameter(Mandatory)]
         [string]$DocsUpdatableDir,
 
         # Name of the module for which help is being generated
+
         [Parameter(Mandatory)]
         [string]$ModuleName
     )

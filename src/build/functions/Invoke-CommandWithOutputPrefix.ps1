@@ -27,21 +27,27 @@
         [string]$Command,
 
         # Arguments as an array of objects
+
         [object[]]$ArgumentArray = @(),
 
         # Parameters as a hashtable (parameter names and values)
+
         [hashtable]$Parameter = @{},
 
         # Working directory for the command
+
         [string]$WorkingDirectory = (Get-Location).Path,
 
         # Prefix to add to each output line
+
         [string]$OutputPrefix = "`t",
 
         # Environment variables to set for the command
+
         [hashtable]$EnvironmentVariables = @{},
 
         # Skip console output
+
         [switch]$NoConsoleOutput
 
     )

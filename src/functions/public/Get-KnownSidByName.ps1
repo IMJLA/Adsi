@@ -33,6 +33,7 @@
 
         # Hashtable containing well-known SIDs as keys with their properties as values
         [hashtable]$WellKnownSIDBySID
+
     )
 
     $WellKnownSIDByName = @{}

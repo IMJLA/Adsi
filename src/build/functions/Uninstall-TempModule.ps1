@@ -20,6 +20,7 @@
         # Path to the temporary module installation directory to remove
         [Parameter(Mandatory)]
         [string]$ModuleInstallDir
+
     )
 
     if ($PSCmdlet.ShouldProcess($ModuleInstallDir, 'Remove temporary module installation directory')) {

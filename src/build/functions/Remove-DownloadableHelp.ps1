@@ -19,6 +19,7 @@
         # Directory of the online help website
         [Parameter(Mandatory)]
         [string]$DocsOnlineHelpDir
+
     )
 
     $downloadableHelpPath = [IO.Path]::Combine($DocsOnlineHelpDir, 'static', 'UpdatableHelp')
@@ -26,7 +27,7 @@
     if (Test-Path $downloadableHelpPath) {
         if ($PSCmdlet.ShouldProcess($downloadableHelpPath, 'Remove downloadable help directory')) {
             Write-Information "`tRemove-Item -Path '$downloadableHelpPath' -Recurse -Force"
-            Remove-Item -Path $downloadableHelpPath -Recurse -Force -ErrorAction Stop
+            Remove-Item -Path $downloadableHelpPath -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
         }
     }
 
@@ -35,7 +36,7 @@
     if (Test-Path $downloadableHelpPath) {
         if ($PSCmdlet.ShouldProcess($downloadableHelpPath, 'Remove downloadable help directory')) {
             Write-Information "`tRemove-Item -Path '$downloadableHelpPath' -Recurse -Force"
-            Remove-Item -Path $downloadableHelpPath -Recurse -Force -ErrorAction Stop
+            Remove-Item -Path $downloadableHelpPath -Recurse -Force -ErrorAction Stop -ProgressAction SilentlyContinue
         }
     }
 

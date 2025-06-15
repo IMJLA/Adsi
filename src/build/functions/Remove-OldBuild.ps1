@@ -18,6 +18,7 @@
         # Path to the build output directory to clean
         [Parameter(Mandatory)]
         [string]$BuildOutDir
+
     )
 
     if ($PSCmdlet.ShouldProcess($BuildOutDir, 'Remove old build files')) {

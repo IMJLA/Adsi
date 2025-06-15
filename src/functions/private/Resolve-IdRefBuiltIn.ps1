@@ -10,15 +10,19 @@
         [string]$IdentityReference,
 
         # Object from Get-AdsiServer representing the directory server and its attributes
+
         [PSObject]$AdsiServer,
 
         # NetBIOS name of the ADSI server
+
         [string]$ServerNetBIOS = $AdsiServer.Netbios,
 
         # Name of the IdentityReference with the DOMAIN\ prefix removed
+
         [string]$Name,
 
         # In-process cache to reduce calls to other processes or to disk
+
         [Parameter(Mandatory)]
         [ref]$Cache
 

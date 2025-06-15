@@ -19,6 +19,7 @@
         # The working directory where npm cache verification should be performed
         [Parameter(Mandatory)]
         [string]$WorkingDirectory
+
     )
 
     if ($PSCmdlet.ShouldProcess($WorkingDirectory, 'Verify npm cache')) {

@@ -19,6 +19,7 @@
     [OutputType([bool])]
 
     param(
+
         [string]$NewLine = "`n"
     )
 

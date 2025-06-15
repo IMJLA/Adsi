@@ -42,9 +42,11 @@ None. This function populates the PrincipalById cache with permission principal 
         $AceGuid,
 
         # Properties of each Account to display on the report
+
         [string[]]$AccountProperty = @('DisplayName', 'Company', 'Department', 'Title', 'Description'),
 
         # In-process cache to reduce calls to other processes or to disk
+
         [Parameter(Mandatory)]
         [ref]$Cache
 

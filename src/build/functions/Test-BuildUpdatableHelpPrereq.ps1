@@ -21,6 +21,7 @@
         [bool]$ReadyForUpdatableHelp,
 
         # Character sequence for line separation in output
+
         [string]$NewLine
     )
 

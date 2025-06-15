@@ -20,6 +20,7 @@
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
     param(
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
 
@@ -128,6 +129,7 @@ function Measure-ParamBlockSpacing {
         [ValidateNotNullOrEmpty()]
 
         [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
+
     )
 
     [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results = @()

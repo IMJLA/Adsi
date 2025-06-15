@@ -19,15 +19,19 @@
         [string]$Token,
 
         # GitHub release upload URL
+
         [string]$UploadUrl,
 
         # Full path to the file to upload
+
         [string]$FilePath,
 
         # Name for the uploaded file
+
         [string]$FileName,
 
         # Display path for the file (for logging purposes)
+
         [string]$FileDisplayPath
     )
 

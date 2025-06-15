@@ -30,8 +30,6 @@
         )]
         [System.DirectoryServices.DirectoryEntry[]]$DirectoryEntry
 
-
-
     )
 
 

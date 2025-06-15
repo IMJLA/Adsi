@@ -18,6 +18,7 @@
 
         # Path to the directory containing public function files
         [string]$PublicFunctionPath
+
     )
 
     Write-Verbose "`tGet-ChildItem -Path '$PublicFunctionPath'"

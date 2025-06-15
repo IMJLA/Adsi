@@ -18,6 +18,7 @@
         # Path to the MAML help directory
         [Parameter(Mandatory)]
         [string]$DocsMamlDir
+
     )
 
     Write-Information "`tGet-ChildItem -Path '$DocsMamlDir' -Recurse | Remove-Item -Recurse -Force"

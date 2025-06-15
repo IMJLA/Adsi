@@ -24,6 +24,7 @@
         # The name of the module to remove from the current PowerShell session
         [Parameter(Mandatory)]
         [string]$ModuleName
+
     )
 
     if ($PSCmdlet.ShouldProcess($ModuleName, 'Remove module from current PowerShell session')) {

@@ -23,14 +23,17 @@
         [string]$DocsOnlineHelpDir = '.',
 
         # The GitHub organization name
+
         [Parameter(Mandatory)]
         [string]$GitHubOrgName,
 
         # The module information object, ideally from Get-Module or Test-ModuleManifest
+
         [Parameter(Mandatory)]
         [PSModuleInfo]$ModuleInfo,
 
         # Comments to add to the configuration file
+
         [hashtable]$ElementComment = @{
             'title'                 = @(
                 'Set the title of your site here',
@@ -89,6 +92,7 @@
                 '    undefined (default): Keeps URLs unchanged.',
                 '    "false": Removes trailing slashes and generates /docs/myDoc.html for /docs/myDoc.md',
                 '    "true":  Adds trailing slashes to URLs and generates /docs/myDoc/index.html for /docs/myDoc.md',
+
                 'This can affect how links are resolved and should be consistent across your site.'
             )
         }

@@ -21,6 +21,7 @@
         [string]$ModuleName,
 
         # The directory containing the GitHub Actions workflow files. Defaults to '.github/workflows'
+
         [string]$WorkflowDir = [IO.Path]::Combine('.github', 'workflows')
 
     )

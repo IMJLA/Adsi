@@ -24,6 +24,7 @@
         # Path to the module manifest (.psd1) file to validate.
         [Parameter(Mandatory)]
         [string]$Path
+
     )
 
     Write-Information "`tTest-ModuleManifest -Path '$Path'"

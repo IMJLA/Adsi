@@ -24,9 +24,11 @@
         [string]$BuildOutputDir,
 
         # Array of filenames to remove from the build output directory. Default removes 'psdependRequirements.psd1' and 'psscriptanalyzerSettings.psd1'
+
         [string[]]$FilesToRemove = @(
             'psdependRequirements.psd1',
             'psscriptanalyzerSettings.psd1'
+
         )
     )
 

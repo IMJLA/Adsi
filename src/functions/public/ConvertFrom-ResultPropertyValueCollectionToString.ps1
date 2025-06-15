@@ -27,7 +27,6 @@
         # ResultPropertyValueCollection object to convert to a string
         [System.DirectoryServices.ResultPropertyValueCollection]$ResultPropertyValueCollection
 
-
     )
 
 

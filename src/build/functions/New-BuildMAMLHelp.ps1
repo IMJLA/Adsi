@@ -20,6 +20,7 @@
         [string]$DocsMarkdownDir,
 
         # Destination path for the MAML help files
+
         [Parameter(Mandatory)]
         [string]$DocsMamlDir
     )

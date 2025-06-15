@@ -20,6 +20,7 @@
         [string]$DocsMamlDir,
 
         # Path to the build output directory (destination)
+
         [Parameter(Mandatory)]
         [string]$BuildOutputDir
     )
