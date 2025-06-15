@@ -1,4 +1,5 @@
 ﻿<#
+
 <#
 .SYNOPSIS
     Formats PowerShell script content by fixing spacing around comment-based help and param blocks.
@@ -42,6 +43,7 @@
 [CmdletBinding()]
 
 param(
+
     # The PowerShell script content to format. Must be a valid PowerShell script string.
     [Parameter(Mandatory, ValueFromPipeline)]
     [string]$Content
@@ -107,13 +109,27 @@ function Format-BuildScript {
             } | Sort-Object { $_.Extent.StartLineNumber } | Select-Object -First 1
 
             # If not found inside, look for it immediately before the function (common pattern)
+            # Only consider it if it's not part of another function
             if (-not $helpComment) {
-                $helpComment = $tokens | Where-Object {
+                $candidateHelp = $tokens | Where-Object {
                     $_.Kind -eq 'Comment' -and
                     $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
                     $_.Extent.EndLineNumber -lt $functionStart -and
                     ($_.Extent.EndLineNumber + 3) -ge $functionStart  # Within 2 lines of function start
                 } | Sort-Object { $_.Extent.StartLineNumber } -Descending | Select-Object -First 1
+
+                # Verify this help comment isn't inside another function
+                if ($candidateHelp) {
+                    $isInsideOtherFunction = $functions | Where-Object {
+                        $_ -ne $function -and
+                        $candidateHelp.Extent.StartLineNumber -gt ($_.Extent.StartLineNumber) -and
+                        $candidateHelp.Extent.EndLineNumber -lt ($_.Extent.EndLineNumber)
+                    }
+
+                    if (-not $isInsideOtherFunction) {
+                        $helpComment = $candidateHelp
+                    }
+                }
             }
 
             if ($helpComment) {
@@ -125,10 +141,13 @@ function Format-BuildScript {
                 }
             }
 
-            # Find CmdletBinding attribute
-            $cmdletBinding = $function.Body.ParamBlock.Attributes | Where-Object {
-                $_.TypeName.Name -eq 'CmdletBinding'
-            } | Select-Object -First 1
+            # Find CmdletBinding attribute - only within this function's param block
+            $cmdletBinding = $null
+            if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
+                $cmdletBinding = $function.Body.ParamBlock.Attributes | Where-Object {
+                    $_.TypeName.Name -eq 'CmdletBinding'
+                } | Select-Object -First 1
+            }
 
             if ($cmdletBinding) {
                 $components['CmdletBinding'] = @{
@@ -138,10 +157,13 @@ function Format-BuildScript {
                 }
             }
 
-            # Find OutputType attribute
-            $outputType = $function.Body.ParamBlock.Attributes | Where-Object {
-                $_.TypeName.Name -eq 'OutputType'
-            } | Select-Object -First 1
+            # Find OutputType attribute - only within this function's param block
+            $outputType = $null
+            if ($function.Body.ParamBlock -and $function.Body.ParamBlock.Attributes) {
+                $outputType = $function.Body.ParamBlock.Attributes | Where-Object {
+                    $_.TypeName.Name -eq 'OutputType'
+                } | Select-Object -First 1
+            }
 
             if ($outputType) {
                 $components['OutputType'] = @{
@@ -151,7 +173,7 @@ function Format-BuildScript {
                 }
             }
 
-            # Find param block
+            # Find param block - only for this specific function
             if ($function.Body.ParamBlock) {
                 $paramBlock = $function.Body.ParamBlock
                 $components['ParamBlock'] = @{
@@ -251,12 +273,54 @@ function Format-BuildScript {
             }
         }
 
-        # Fix comment-based help spacing
+        # Skip the global comment-based help spacing section to avoid conflicts
+        # Only process comment blocks that are NOT associated with functions
+        $functionRanges = $functions | ForEach-Object {
+            @{
+                Start = $_.Extent.StartLineNumber - 1
+                End   = $_.Extent.EndLineNumber - 1
+            }
+        }
+
+        # Also include help comments that are immediately before functions
+        $functionHelpRanges = @()
+        foreach ($function in $functions) {
+            $functionStart = $function.Extent.StartLineNumber - 1
+            $helpComment = $tokens | Where-Object {
+                $_.Kind -eq 'Comment' -and
+                $_.Text -match '^\s*<#[\s\S]*?#>\s*$' -and
+                $_.Extent.EndLineNumber -lt $functionStart -and
+                ($_.Extent.EndLineNumber + 3) -ge $functionStart
+            } | Sort-Object { $_.Extent.StartLineNumber } -Descending | Select-Object -First 1
+
+            if ($helpComment) {
+                $functionHelpRanges += @{
+                    Start = $helpComment.Extent.StartLineNumber - 1
+                    End   = $helpComment.Extent.EndLineNumber - 1
+                }
+            }
+        }
+
         $commentTokens = $tokens | Where-Object {
             $_ -and
             $_.Kind -eq 'Comment' -and
             $_.Text -and
             $_.Text -match '^\s*<#[\s\S]*?#>\s*$'
+        } | Where-Object {
+            $commentStart = $_.Extent.StartLineNumber - 1
+            $commentEnd = $_.Extent.EndLineNumber - 1
+
+            # Skip if this comment is inside a function
+            $isInFunction = $functionRanges | Where-Object {
+                $commentStart -ge $_.Start -and $commentEnd -le $_.End
+            }
+
+            # Skip if this comment is function help
+            $isFunctionHelp = $functionHelpRanges | Where-Object {
+                $commentStart -ge $_.Start -and $commentEnd -le $_.End
+            }
+
+            -not $isInFunction -and -not $isFunctionHelp
         }
 
         # Process from bottom to top to maintain line numbers

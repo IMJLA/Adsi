@@ -1,23 +1,21 @@
-﻿<#
-<#
-.SYNOPSIS
-    Custom PSScriptAnalyzer rules for enforcing consistent formatting
+﻿function Measure-CommentBasedHelpSpacing {
+    <#
+    .SYNOPSIS
+        Custom PSScriptAnalyzer rules for enforcing consistent formatting
 
-#>
+    #>
 
-[CmdletBinding()]
+    [CmdletBinding()]
 
-[OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
+    [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
-param(
-    [Parameter(Mandatory)]
-    [ValidateNotNullOrEmpty()]
+    param(
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
 
-    [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
-)
+        [System.Management.Automation.Language.ScriptBlockAst]$ScriptBlockAst
+    )
 
-
-function Measure-CommentBasedHelpSpacing {
     $results = @()
 
     try {
@@ -88,6 +86,7 @@ function Measure-CommentBasedHelpSpacing {
 }
 
 function Measure-ParamBlockSpacing {
+
     [CmdletBinding()]
     [OutputType([Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]])]
 
