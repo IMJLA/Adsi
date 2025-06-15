@@ -141,7 +141,9 @@ function Measure-ParamBlockSpacing {
 
         # Find param blocks and deduplicate by position
         $paramBlocks = $ScriptBlockAst.FindAll({
+
                 param($ast)
+
                 $ast -is [System.Management.Automation.Language.ParamBlockAst]
             }, $true) | Sort-Object { $_.Extent.StartOffset } | Group-Object { $_.Extent.StartOffset } | ForEach-Object { $_.Group[0] }
 
