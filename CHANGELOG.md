@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.531] - 2025-06-14
+### Changed
+- try build without file
+
 ## [5.0.530] - 2025-06-14
 ### Changed
 - rebuild to force GitHub Pages update

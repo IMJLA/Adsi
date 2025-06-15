@@ -720,7 +720,7 @@ Task -name RemoveDownloadableHelp -action {
 
 Task -name CopyUpdatableHelp -action {
 
-    $script:UpdatableHelpCopied = Copy-BuildUpdatableHelp @copyUpdatableHelpSplat
+    #$script:UpdatableHelpCopied = Copy-BuildUpdatableHelp @copyUpdatableHelpSplat
 
 } -description 'Copy updatable help files to the online help website static directory.'
 
