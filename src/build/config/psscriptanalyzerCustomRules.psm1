@@ -141,7 +141,9 @@ function Measure-ParamBlockSpacing {
 
         # Find param blocks and deduplicate by position
         $paramBlocks = $ScriptBlockAst.FindAll({
+
                 param($ast)
+
                 $ast -is [System.Management.Automation.Language.ParamBlockAst]
             }, $true) | Sort-Object { $_.Extent.StartOffset } | Group-Object { $_.Extent.StartOffset } | ForEach-Object { $_.Group[0] }
 
@@ -192,42 +194,6 @@ function Measure-ParamBlockSpacing {
     }
 
     return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
-}
-
-Export-ModuleMember -Function Measure-CommentBasedHelpSpacing, Measure-ParamBlockSpacing
-}
-
-# Check blank line before (allow comment-based help immediately before)
-if ($startLine -gt 0 -and $startLine -lt $lines.Count) {
-    $prevLine = $lines[$startLine - 1].Trim()
-    if ($prevLine -ne '' -and $prevLine -notmatch '#>$') {
-        $results += [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord]@{
-            Message  = 'Param block should have a blank line before it'
-            Extent   = $paramBlock.Extent
-            RuleName = 'ParamBlockSpacing'
-            Severity = 'Warning'
-        }
-    }
-}
-
-# Check blank line after - ensure we're not at the end of the file and the next line isn't blank
-if ($endLine -ge 0 -and ($endLine + 1) -lt $lines.Count) {
-    $nextLine = $lines[$endLine + 1].Trim()
-    if ($nextLine -ne '') {
-        $results += [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord]@{
-            Message  = 'Param block should have a blank line after it'
-            Extent   = $paramBlock.Extent
-            RuleName = 'ParamBlockSpacing'
-            Severity = 'Warning'
-        }
-    }
-}
-}
-} catch {
-    Write-Warning "Error in Measure-ParamBlockSpacing: $_"
-}
-
-return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
 }
 
 Export-ModuleMember -Function Measure-CommentBasedHelpSpacing, Measure-ParamBlockSpacing

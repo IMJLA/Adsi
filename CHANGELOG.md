@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.557] - 2025-06-15
+### Fixed
+- fix custom formatter
+
 ## [5.0.556] - 2025-06-15
 ### Fixed
 - fix custom formatter
