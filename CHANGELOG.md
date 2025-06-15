@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [5.0.538] - 2025-06-14
+### Fixed
+- fix ps7 compat
+
 ## [5.0.532] - 2025-06-14
 ### Changed
 - resume copying updateable help

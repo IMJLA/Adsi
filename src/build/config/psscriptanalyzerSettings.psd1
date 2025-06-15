@@ -6,6 +6,11 @@
     # Need a test to detect .Net type accelerators (aliases) and a Fix to replace them with their corresponding fully-qualified types
     #####[System.Management.Automation.PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get
 
+    # Path to custom rules module
+    CustomRulePath      = @(
+        '.\src\build\config\psscriptanalyzerCustomRules.psm1'
+    )
+
     # Include all default PSScriptAnalyzer rules
     IncludeDefaultRules = $true
 
