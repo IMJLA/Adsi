@@ -141,9 +141,7 @@ function Measure-ParamBlockSpacing {
 
         # Find param blocks and deduplicate by position
         $paramBlocks = $ScriptBlockAst.FindAll({
-
                 param($ast)
-
                 $ast -is [System.Management.Automation.Language.ParamBlockAst]
             }, $true) | Sort-Object { $_.Extent.StartOffset } | Group-Object { $_.Extent.StartOffset } | ForEach-Object { $_.Group[0] }
 
@@ -160,26 +158,8 @@ function Measure-ParamBlockSpacing {
 
             $startLine = $paramBlock.Extent.StartLineNumber - 1
 
-            # For param blocks, we want to find the line containing the closing parenthesis
-            # The AST extent may include trailing whitespace or comments after the )
-            $paramText = $paramBlock.Extent.Text
-            $paramLines = $paramText -split "`r?`n"
-
-            # Find the last line that contains a closing parenthesis
-            $closingParenLineIndex = -1
-            for ($i = $paramLines.Count - 1; $i -ge 0; $i--) {
-                if ($paramLines[$i] -match '\)') {
-                    $closingParenLineIndex = $i
-                    break
-                }
-            }
-
-            if ($closingParenLineIndex -ge 0) {
-                $endLine = $startLine + $closingParenLineIndex
-            } else {
-                # Fallback to the AST extent end line
-                $endLine = $paramBlock.Extent.EndLineNumber - 1
-            }
+            # Simply use the AST extent end line - the AST should know where the param block actually ends
+            $endLine = $paramBlock.Extent.EndLineNumber - 1
 
             # Check blank line before (allow comment-based help immediately before)
             if ($startLine -gt 0 -and $startLine -lt $lines.Count) {
@@ -212,6 +192,42 @@ function Measure-ParamBlockSpacing {
     }
 
     return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
+}
+
+Export-ModuleMember -Function Measure-CommentBasedHelpSpacing, Measure-ParamBlockSpacing
+}
+
+# Check blank line before (allow comment-based help immediately before)
+if ($startLine -gt 0 -and $startLine -lt $lines.Count) {
+    $prevLine = $lines[$startLine - 1].Trim()
+    if ($prevLine -ne '' -and $prevLine -notmatch '#>$') {
+        $results += [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord]@{
+            Message  = 'Param block should have a blank line before it'
+            Extent   = $paramBlock.Extent
+            RuleName = 'ParamBlockSpacing'
+            Severity = 'Warning'
+        }
+    }
+}
+
+# Check blank line after - ensure we're not at the end of the file and the next line isn't blank
+if ($endLine -ge 0 -and ($endLine + 1) -lt $lines.Count) {
+    $nextLine = $lines[$endLine + 1].Trim()
+    if ($nextLine -ne '') {
+        $results += [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord]@{
+            Message  = 'Param block should have a blank line after it'
+            Extent   = $paramBlock.Extent
+            RuleName = 'ParamBlockSpacing'
+            Severity = 'Warning'
+        }
+    }
+}
+}
+} catch {
+    Write-Warning "Error in Measure-ParamBlockSpacing: $_"
+}
+
+return [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord[]]$results
 }
 
 Export-ModuleMember -Function Measure-CommentBasedHelpSpacing, Measure-ParamBlockSpacing
