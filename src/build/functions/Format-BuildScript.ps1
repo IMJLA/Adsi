@@ -290,15 +290,6 @@
             }
         }
 
-        # Skip the global comment-based help spacing section to avoid conflicts
-        # Only process comment blocks that are NOT associated with functions
-        $functionRanges = $functions | ForEach-Object {
-            @{
-                Start = $_.Extent.StartLineNumber - 1
-                End   = $_.Extent.EndLineNumber - 1
-            }
-        }
-
         # Process ALL comment-based help blocks for spacing (including function help)
         $commentTokens = $tokens | Where-Object {
             $_ -and

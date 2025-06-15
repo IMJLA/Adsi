@@ -174,22 +174,8 @@ function Measure-ParamBlockSpacing {
 
             $startLine = $paramBlock.Extent.StartLineNumber - 1
 
-            # Find the actual end of the param block by looking for the closing parenthesis
-            $paramStartOffset = $paramBlock.Extent.StartOffset
-            $paramEndOffset = $paramBlock.Extent.EndOffset
-
-            # Find the closing parenthesis token that matches this param block
-            $closingParen = $tokens | Where-Object {
-                $_.Kind -eq 'RParen' -and
-                $_.Extent.StartOffset -ge $paramStartOffset -and
-                $_.Extent.StartOffset -le $paramEndOffset
-            } | Select-Object -Last 1
-
-            if ($closingParen) {
-                $endLine = $closingParen.Extent.EndLineNumber - 1
-            } else {
-                $endLine = $paramBlock.Extent.EndLineNumber - 1
-            }
+            # Use the param block's actual end line from its extent
+            $endLine = $paramBlock.Extent.EndLineNumber - 1
 
             # Check blank line before (allow comment-based help immediately before)
             if ($startLine -gt 0 -and $startLine -lt $lines.Count) {
@@ -204,13 +190,16 @@ function Measure-ParamBlockSpacing {
                 }
             }
 
-            # Check blank line after
-            if ($endLine -ge 0 -and ($endLine + 1) -lt $lines.Count -and $lines[$endLine + 1].Trim() -ne '') {
-                $results += [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord]@{
-                    Message  = 'Param block should have a blank line after it'
-                    Extent   = $paramBlock.Extent
-                    RuleName = 'ParamBlockSpacing'
-                    Severity = 'Warning'
+            # Check blank line after - ensure we're not at the end of the file and the next line isn't blank
+            if ($endLine -ge 0 -and ($endLine + 1) -lt $lines.Count) {
+                $nextLine = $lines[$endLine + 1].Trim()
+                if ($nextLine -ne '') {
+                    $results += [Microsoft.Windows.PowerShell.ScriptAnalyzer.Generic.DiagnosticRecord]@{
+                        Message  = 'Param block should have a blank line after it'
+                        Extent   = $paramBlock.Extent
+                        RuleName = 'ParamBlockSpacing'
+                        Severity = 'Warning'
+                    }
                 }
             }
         }
